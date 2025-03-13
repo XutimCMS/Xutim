@@ -1,0 +1,19 @@
+{% set contentColumns = block('header') != '' ? 8 : 12 %}
+{% set content = block('content') %}
+<div
+    {{
+        attributes.defaults({
+            class: 'row py-2',
+        })
+    }}
+>
+    {% if block('header') != '' %}
+        <div class="col-4">{% block header %}{% endblock %}</div>
+    {% endif %}
+
+    {% if block('header') != '' %}
+        <div class="col-{{ contentColumns }}">{{ content|raw }}</div>
+    {% else %}
+        {{ content|raw }}
+    {% endif %}
+</div>

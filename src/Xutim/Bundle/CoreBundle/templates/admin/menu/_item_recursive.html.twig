@@ -1,0 +1,142 @@
+{% set isSelectedItem = selectedItem and selectedItem.id.equals(item.id) %}
+
+<li
+    class="my-2 ms-3{{ isSelectedItem ? ' bg-yellow-lt' : '' }}"
+    id="menu-item-tree-{{ item.id }}"
+>
+    {% if node.children is empty %}
+        <twig:Xutim:Admin:Icon name="chevron-down-left" class="text-black" />
+        {{ _self.itemLine(items, node, item, child, loop.first, loop.last, selectedItem) }}
+        {{ _self.subTree(items, node, item, child, path, selectedItem) }}
+    {% else %}
+        {% set detailsOpened = path|reduce((carry, sec, k) => carry is same as(true) or item.id.equals(sec.id), false) %}
+        <details {{ detailsOpened ? ' open="open"' : '' }} class="text-black">
+            <summary class="ms-2{{ isSelectedItem ? ' fw-bold' : '' }}">
+                {{ _self.itemLine(items, node, item, child, loop.first, loop.last, selectedItem) }}
+            </summary>
+            {{ _self.subTree(items, node, item, child, path, selectedItem) }}
+        </details>
+    {% endif %}
+</li>
+
+{% macro subTree(items, node, item, child, path, selectedItem) %}
+    {% if node.children is not empty %}
+        <ul class="list-unstyled">
+            {% for childId in node.children %}
+                {{
+                    include('@XutimCore/admin/menu/_item_recursive.html.twig', {
+                    node: items[childId],
+                    item: items[childId].item,
+                    child: true,
+                    path: path,
+                    selectedItem: selectedItem,
+                    })
+                }}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% macro itemLine(items, node, item, child, first, last, selectedItem) %}
+    {% set isSelectedItem = selectedItem and selectedItem.id.equals(item.id) %}
+    {% set translation = item.object.translationByLocaleOrDefault(content_context_language()) %}
+
+    <span class="me-1"></span>
+
+    {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
+    {{ translatable.languageBadge(translation) }}
+
+    {% if item.article is null %}
+        <twig:Xutim:Admin:Icon name="folder" class="me-2" />
+    {% else %}
+        <twig:Xutim:Admin:Icon name="article" class="me-2" />
+    {% endif %}
+    <a href="{{ path('admin_menu_list', {id: item.id}) }}">
+        <span class="text-black{{ isSelectedItem ? ' fw-bold' : '' }}">
+            {{ item.object.translationByLocaleOrDefault(content_context_language()).title }}
+        </span>
+    </a>
+
+    {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+        <div class="dropdown float-end">
+            <a href="#" class="link-secondary" data-bs-toggle="dropdown">
+                <twig:Xutim:Admin:Icon name="dots" />
+            </a>
+            <div class="dropdown-menu dropdown-menu-end">
+                {% set showUrl = null %}
+                {% if item.hasArticle() %}{% set showUrl = 'admin_article_show' %}{% endif %}
+                {% if item.hasPage() %}{% set showUrl = 'admin_page_list' %}{% endif %}
+                {% if showUrl %}
+                    <twig:Xutim:Admin:Button
+                        tag="a"
+                        variant="dropdown"
+                        href="{{ path(showUrl, {id: item.object.id}) }}"
+                    >
+                        <twig:Xutim:Admin:Icon name="search" class="me-2" />
+                        {{ 'show'|trans|capitalize }}
+                    </twig:Xutim:Admin:Button>
+                {% endif %}
+                <twig:Xutim:Admin:Button
+                    tag="a"
+                    variant="dropdown"
+                    data-turbo-frame="modal"
+                    href="{{ path('admin_menu_item_edit', {id: item.id}) }}"
+                >
+                    <twig:Xutim:Admin:Icon name="edit" class="me-2" />
+                    {{ 'edit'|trans|capitalize }}
+                </twig:Xutim:Admin:Button>
+                <twig:Xutim:Admin:Button
+                    tag="a"
+                    variant="dropdown"
+                    data-turbo-frame="modal"
+                    href="{{ path('admin_menu_item_delete', {id: item.id}) }}"
+                >
+                    <twig:Xutim:Admin:Icon name="trash" class="me-2" />
+                    {{ 'delete'|trans|capitalize }}
+                </twig:Xutim:Admin:Button>
+
+                <div class="dropdown-divider"></div>
+
+                <twig:Xutim:Admin:Button
+                    tag="a"
+                    variant="dropdown"
+                    data-turbo-frame="modal"
+                    href="{{ path('admin_menu_item_new', {id: item.id}) }}"
+                >
+                    <twig:Xutim:Admin:Icon name="plus" />
+                    {{ 'New menu item'|trans({}, 'admin') }}
+                </twig:Xutim:Admin:Button>
+
+                {% if first is not same as(true) or last is not same as(true) %}
+                    <div class="dropdown-divider"></div>
+
+                    {% if first is not same as(true) %}
+                        <a
+                            class="dropdown-item"
+                            href="{{ path('admin_menu_item_move', {id: item.id, dir: 'up'}) }}"
+                        >
+                            <twig:Xutim:Admin:Icon
+                                name="arrow-up"
+                                class="me-2"
+                            />
+                            {{ 'move up'|trans({}, 'admin')|capitalize }}
+                        </a>
+                    {% endif %}
+
+                    {% if last is not same as(true) %}
+                        <a
+                            class="dropdown-item"
+                            href="{{ path('admin_menu_item_move', {id: item.id, dir: 'down'}) }}"
+                        >
+                            <twig:Xutim:Admin:Icon
+                                name="arrow-down"
+                                class="me-2"
+                            />
+                            {{ 'move down'|trans({}, 'admin')|capitalize }}
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}

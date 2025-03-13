@@ -1,0 +1,40 @@
+<div {{ attributes }}>
+    {{ form_start(form) }}
+    {{ form_row(form.new_file) }}
+    {% if form.existing_file is defined %}
+        <div class="row g-2">
+            {% for label, value in field_choices(form.existing_file) %}
+                <div class="col-6 col-sm-4">
+                    <label class="form-imagecheck mb-2">
+                        <input
+                            name="form-imagecheck-radio"
+                            type="radio"
+                            value="{{ value }}"
+                            class="form-imagecheck-input"
+                        />
+                        <span class="form-imagecheck-figure">
+                            <img
+                                src="{{ path('file_show', {id: value, extension: 'ext'}) }}"
+                                alt="Group of people sightseeing in the city"
+                                class="form-imagecheck-image"
+                            />
+                        </span>
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if form.name is defined %}
+        {{ form_row(form.name) }}
+    {% endif %}
+
+    {% if form.alt is defined %}
+        {{ form_row(form.alt) }}
+    {% endif %}
+
+    {% if form.locale is defined %}
+        {{ form_row(form.locale) }}
+    {% endif %}
+    {{ form_end(form, {render_rest: false}) }}
+</div>

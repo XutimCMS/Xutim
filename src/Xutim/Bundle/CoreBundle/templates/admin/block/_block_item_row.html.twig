@@ -1,0 +1,144 @@
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+<tr
+    class="draggable-item"
+    data-sortable-index-value="{{ item.position }}"
+    id="block-item-{{ item.id }}"
+>
+    <td style="cursor: grab;" class="draggable-handle w-6">
+        <twig:ux:icon name="tabler:grip-vertical" />
+    </td>
+    <td class="text-center">{{ badges.blockItemColorBadge(item) }}</td>
+    <td class="text-center w-6">
+        {% if item.hasArticle %}
+            <twig:ux:icon
+                name="tabler:news"
+                title="{{ 'article'|trans({}, 'admin') }}"
+                data-controller="tooltip"
+            />
+        {% endif %}
+        {% if item.hasPage %}
+            <twig:ux:icon
+                name="tabler:folder"
+                title="{{ 'page'|trans({}, 'admin') }}"
+                data-controller="tooltip"
+            />
+        {% endif %}
+        {% if item.isSimpleItem() and item.hasSnippet() %}
+            <twig:ux:icon
+                name="tabler:abc"
+                title="{{ 'snippet'|trans({}, 'admin') }}"
+                data-controller="tooltip"
+            />
+        {% endif %}
+        {% if item.isSimpleItem() and item.hasFile() %}
+            <twig:ux:icon
+                name="tabler:file"
+                title="{{ 'file'|trans({}, 'admin') }}"
+                data-controller="tooltip"
+            />
+        {% endif %}
+    </td>
+    {% if block.blockItems|filter(item => item.file) is not empty %}
+        <td class="w-6">
+            {% if item.file %}
+                <a
+                    data-fslightbox="articles-images"
+                    href="{{ path('file_show', {id: item.file.id, extension: 'image'}) }}"
+                >
+                    <span
+                        class="avatar me-2"
+                        style="background-image: url({{ path('file_show', {id: item.file.id, extension: 'image'}) }})"
+                    ></span>
+                </a>
+            {% endif %}
+        </td>
+    {% endif %}
+    <td>
+        {% if item.hasObject() %}
+            {% for trans in item.object.translations %}
+                {% if trans.isPublished() == false %}
+                    {{ badges.untranslatedBadge }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if item.hasArticle %}
+            <a href="{{ path('admin_article_show', {id: item.article.id}) }}">
+                {{ item.article.defaultTranslation.title }}
+            </a>
+        {% endif %}
+        {% if item.hasPage %}
+            <a href="{{ path('admin_page_list', {id: item.page.id}) }}">
+                {{ item.page.defaultTranslation.title }}
+            </a>
+        {% endif %}
+        {% if item.isSimpleItem() %}
+            {% if item.hasSnippet() %}
+                <a href="{{ path('admin_snippet_list') }}">
+                    {{ render_snippet(item.snippet.code) }}
+                </a>
+            {% endif %}
+            {% if item.hasFile() %}
+                <a href="{{ path('admin_media_edit', {id: item.file.id}) }}">
+                    {{ item.file.translationByLocaleOrDefault(app.locale).name }}
+                </a>
+            {% endif %}
+        {% endif %}
+    </td>
+    <td>
+        {% if item.hasArticle %}
+            <twig:Xutim:Admin:Icon name="article" />
+        {% endif %}
+        {% if item.hasPage %}
+            <twig:Xutim:Admin:Icon name="folder" />
+        {% endif %}
+    </td>
+    {% if block.blockItems|filter(item => item.link) is not empty %}
+        <td>
+            {% if item.link %}
+                <a href="{{ item.link }}">{{ item.link }}</a>
+            {% endif %}
+        </td>
+    {% endif %}
+    <td class="text-center">
+        {% if item.hasArticle %}
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                data-turbo-frame="modal"
+                href="{{ path('admin_block_edit_article', {id: item.id}) }}"
+            >
+                <twig:Xutim:Admin:Icon name="edit" />
+            </twig:Xutim:Admin:Button>
+        {% endif %}
+        {% if item.hasPage %}
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                data-turbo-frame="modal"
+                href="{{ path('admin_block_edit_page', {id: item.id}) }}"
+            >
+                <twig:Xutim:Admin:Icon name="edit" />
+            </twig:Xutim:Admin:Button>
+        {% endif %}
+
+        {% if item.hasPage == false and item.hasArticle == false %}
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                data-turbo-frame="modal"
+                href="{{ path('admin_block_edit_simple_item', {id: item.id}) }}"
+            >
+                <twig:Xutim:Admin:Icon name="edit" />
+            </twig:Xutim:Admin:Button>
+        {% endif %}
+
+        <twig:Xutim:Admin:ModalDialog
+            class="btn-link text-danger px-0"
+            action="{{ path('admin_block_remove_item', {id: item.id}) }}"
+            confirmActionLabel="{{ 'action.remove'|trans({}, 'admin')|capitalize }}"
+            modalDialogColor="danger"
+        >
+            <twig:Xutim:Admin:Icon name="x" />
+        </twig:Xutim:Admin:ModalDialog>
+    </td>
+</tr>

@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Xutim\CoreBundle\Domain\Event\Block;
+
+use DateTimeImmutable;
+use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\DomainEvent;
+use Xutim\CoreBundle\Entity\Block;
+
+final readonly class BlockCreatedEvent implements DomainEvent
+{
+    public function __construct(
+        public Uuid $id,
+        public string $code,
+        public string $name,
+        public string $description,
+        public DateTimeImmutable $createdAt,
+        public ?string $layout
+    ) {
+    }
+
+    public static function fromBlock(Block $block): self
+    {
+        return new self(
+            $block->getId(),
+            $block->getCode(),
+            $block->getName(),
+            $block->getDescription(),
+            $block->getCreatedAt(),
+            $block->getLayout()
+        );
+    }
+}

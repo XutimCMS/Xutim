@@ -1,0 +1,33 @@
+{% for fragment in fragments.blocks %}
+    {% if fragment.type == 'paragraph' %}
+        {{ include('@XutimCore/admin/content_fragment/paragraph.html.twig') }}
+    {% endif %}
+
+    {% if fragment.type == 'header' %}
+        {{ include('@XutimCore/admin/content_fragment/header.html.twig') }}
+    {% endif %}
+
+    {% if fragment.type == 'list' %}
+        {{ include('@XutimCore/admin/content_fragment/list.html.twig') }}
+    {% endif %}
+
+    {% if fragment.type == 'quote' %}
+        {{ include('@XutimCore/admin/content_fragment/quote.html.twig') }}
+    {% endif %}
+
+    {% if fragment.type == 'image' %}
+        {{ include('@XutimCore/admin/content_fragment/image.html.twig') }}
+    {% endif %}
+
+    {% if fragment.type == 'embed' %}
+        {{ include('@XutimCore/admin/content_fragment/embed.html.twig') }}
+    {% endif %}
+
+    {% if fragment.type == 'block' %}
+        {{ include('@XutimCore/admin/content_fragment/block.html.twig') }}
+    {% endif %}
+
+    {% if fragment.type == 'delimiter' %}
+        {{ include('@XutimCore/admin/content_fragment/delimiter.html.twig') }}
+    {% endif %}
+{% endfor %}

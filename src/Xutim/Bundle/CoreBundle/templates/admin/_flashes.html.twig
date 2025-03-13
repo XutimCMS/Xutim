@@ -1,0 +1,17 @@
+{% for message in app.flashes('success') %}
+    {{
+        component('Xutim:Admin:Alert', {
+            type: 'success',
+            message: message,
+        })
+    }}
+{% endfor %}
+
+{% for message in app.flashes('danger') %}
+    {{
+        component('Xutim:Admin:Alert', {
+            type: 'danger',
+            message: message,
+        })
+    }}
+{% endfor %}

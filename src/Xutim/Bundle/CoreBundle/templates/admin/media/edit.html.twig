@@ -1,0 +1,155 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+{%- import '@XutimCore/admin/common/translatable.html.twig' as translatable -%}
+
+{% block pageTitle %}
+    {{- translatable.titleWithBadge(file) -}}
+{% endblock %}
+
+{% block languageBar %}
+    <twig:Xutim:Admin:LanguageContextBar
+        :entity="file"
+        :simpleTranslation="true"
+        class="d-flex justify-content-end align-items-center mb-2"
+    />
+{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        {%- import '@XutimCore/admin/common/translatable.html.twig' as translatable -%}
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_media_list') }}">Media list</a>
+        </li>
+        <li class="breadcrumb-item">{{ translatable.toString(file) }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ path('homepage') }}"
+    >
+        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+        Public page
+    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:Button
+        tag="a"
+        class="text-danger"
+        variant="nav"
+        data-turbo-frame="modal"
+        href="{{ path('admin_media_delete', {id: file.id}) }}"
+    >
+        <twig:Xutim:Admin:Icon name="trash" class="me-1" />
+        Delete
+    </twig:Xutim:Admin:Button>
+
+    <twig:Xutim:Admin:Button
+        tag="button"
+        variant="nav"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#default-locale-offcanvas"
+        role="button"
+        aria-controls="offcanvasEnd"
+    >
+        <twig:Xutim:Admin:Icon name="search" />
+        {{ 'show reference translation'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div
+                    class="col-md-4 d-flex alignt-items-center justify-content-center"
+                >
+                    <div
+                        class="media-container d-flex justify-content-center align-items-center"
+                    >
+                        {% if file.isImage() %}
+                            <img
+                                src="{{ path('file_show', {id: file.id, extension: file.extension}) }}"
+                                alt=""
+                                style="max-width: 300px; max-height: 300px;"
+                                class="p-1"
+                            />
+                        {% else %}
+                            <img
+                                src="{{ asset('@XutimCore/admin/images/icons/file-card-image.svg') }}"
+                                alt=""
+                            />
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div id="main-form" class="tab-pane active show">
+                                {{ form_start(form, {attr: {'data-turbo-action': 'advanced'}})
+                                }} {{ form_row(form.name) }}
+                                {{ form_row(form.alt) }}
+                                {{ form_row(form.submit) }}
+                                {{ form_end(form) }}
+                            </div>
+                            <div id="translations" class="tab-pane p-0">
+                                <div class="table-responsive">
+                                    <table
+                                        class="table table-vcenter card-table"
+                                    >
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    {{ 'name'|trans({}, 'admin') }}
+                                                </th>
+                                                <th>
+                                                    {{ 'language'|trans({}, 'admin') }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for trans in file.translations %}
+                                                <tr>
+                                                    <td>{{ trans.name }}</td>
+                                                    <td>{{ trans.locale }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div
+        class="offcanvas offcanvas-end"
+        data-bs-scroll="true"
+        data-bs-backdrop="false"
+        tabindex="-1"
+        id="default-locale-offcanvas"
+        aria-labelledby="offcanvasEndLabel"
+        aria-modal="true"
+        role="dialog"
+    >
+        <div class="offcanvas-header">
+            <h2 class="offcanvas-title" id="offcanvasEndLabel">
+                {{ 'reference translation'|trans({}, 'admin')|capitalize }}
+            </h2>
+
+            <twig:Xutim:Admin:Button
+                variant="default"
+                type="button"
+                class="btn-close text-reset"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+            >
+            </twig:Xutim:Admin:Button>
+        </div>
+        <div class="offcanvas-body">
+            {{ include('@XutimCore/admin/media/show_translation.html.twig', {file: file, translation: file.translations.first}) }}
+        </div>
+    </div>
+{% endblock %}

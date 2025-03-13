@@ -1,0 +1,21 @@
+{% macro colorInput(name, checkedValue) %}
+    <div class="row g-2">
+        {% for color in constant('Xutim\\CoreBundle\\Entity\\Color::COLORS') %}
+            <div class="col-auto">
+                <label class="form-colorinput">
+                    <input
+                        name="{{ name }}"
+                        type="radio"
+                        value="{{ color }}"
+                        class="form-colorinput-input"
+                        {{ checkedValue == color ? ' checked="checked"' : '' }}
+                    />
+                    <span
+                        class="form-colorinput-color"
+                        style="background-color: #{{ color }}"
+                    ></span>
+                </label>
+            </div>
+        {% endfor %}
+    </div>
+{% endmacro %}

@@ -1,0 +1,18 @@
+includes:
+    - phpstan-baseline.neon
+parameters:
+    level: max
+    paths:
+        - src
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+        consoleApplicationLoader: tests/console-application.php
+    doctrine:
+        objectManagerLoader: tests/object-manager.php
+    excludePaths:
+        - %rootDir%/../../../tests/*
+        - src/Infra/Doctrine/TreeObjectHydrator.php
+    bootstrapFiles:
+        - vendor/bin/.phpunit/phpunit/vendor/autoload.php
+    stubFiles:
+        - tests/Stubs/DataMapperInterface.stub

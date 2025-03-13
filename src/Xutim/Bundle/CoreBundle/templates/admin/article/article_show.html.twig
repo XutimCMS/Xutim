@@ -1,0 +1,133 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+{% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:BreadcrumbsArticle :article="article" />
+{% endblock %}
+
+{% block pageTitle %}
+    {{ translatable.titleWithBadge(article) }}
+{% endblock %}
+
+{% block languageBar %}
+    <twig:Xutim:Admin:LanguageContextBar
+        :entity="article"
+        class="d-flex justify-content-end align-items-center mb-2"
+    />
+{% endblock %}
+
+{% block sidebar %}
+    <twig:Xutim:Admin:Sidebar :title="">
+        <twig:block name="header">
+            <twig:Xutim:Admin:SidebarTabs>
+                <twig:Xutim:Admin:SidebarTab target="general-tab">
+                    <twig:Xutim:Admin:Button
+                        variant="tab"
+                        type="a"
+                        class="active"
+                        data-bs-toggle="tab"
+                        href="#general-tab"
+                        role="tab"
+                        aria-controls="general-tab"
+                        aria-selected="true"
+                    >
+                        General
+                    </twig:Xutim:Admin:Button>
+                </twig:Xutim:Admin:SidebarTab>
+                <twig:Xutim:Admin:SidebarTab target="translation-reference-tab">
+                    <twig:Xutim:Admin:Button
+                        variant="tab"
+                        type="a"
+                        data-bs-toggle="tab"
+                        href="#translation-reference-tab"
+                        role="tab"
+                        aria-controls="translation-reference-tab"
+                        aria-selected="false"
+                    >
+                        Translation Reference
+                    </twig:Xutim:Admin:Button>
+                </twig:Xutim:Admin:SidebarTab>
+            </twig:Xutim:Admin:SidebarTabs>
+        </twig:block>
+        <twig:block name="content">
+            <div class="tab-content">
+                <div id="general-tab" class="tab-pane active" role="tabpanel">
+                    {{ include('@XutimCore/admin/article/_article_sidebar.html.twig', {translation: currentTranslation}) }}
+                </div>
+                <div
+                    id="translation-reference-tab"
+                    class="tab-pane m-4"
+                    role="tabpanel"
+                >
+                    {{ include('@XutimCore/admin/article/article_translation_show.html.twig', {article: article, translation: article.defaultTranslation}) }}
+                </div>
+            </div>
+        </twig:block>
+    </twig:Xutim:Admin:Sidebar>
+{% endblock %}
+
+{% block pageMenu %}
+    {% if contextTranslation is not same as(null) %}
+        <twig:Xutim:Admin:Button
+            tag="a"
+            variant="nav"
+            href="{{ path('admin_content_translation_revisions', {id: contextTranslation.id}) }}"
+        >
+            <twig:Xutim:Admin:Icon name="history" class="me-1" />
+            History
+        </twig:Xutim:Admin:Button>
+
+        <twig:Xutim:Admin:Button
+            tag="a"
+            variant="nav"
+            href="{{ path('content_translation_show', {slug: contextTranslation.slug, _locale: contextTranslation.locale}) }}"
+        >
+            <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+            Public page
+        </twig:Xutim:Admin:Button>
+    {% endif %}
+
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ path('admin_article_edit', {id: article.id}) }}"
+    >
+        <twig:Xutim:Admin:Icon name="edit" class="me-1" />
+        Edit
+    </twig:Xutim:Admin:Button>
+
+    <twig:Xutim:Admin:Button
+        tag="button"
+        id="sidebar-toggle"
+        variant="nav"
+        href="{{ path('admin_article_edit', {id: article.id}) }}"
+    >
+        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        Sidebar
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block body %}
+    <div>
+        <div class="card mb-3">
+            <div class="card-body">
+                <turbo-frame id="article-preview-frame">
+                    <div
+                        data-controller="article-preview"
+                        data-article-preview-url-value="{{ path('admin_article_frame_show', {id: article.id}) }}"
+                    >
+                        <div
+                            id="preview-container"
+                            data-article-preview-target="preview"
+                        >
+                            <twig:Xutim:Admin:Placeholder />
+                        </div>
+                    </div>
+                </turbo-frame>
+            </div>
+        </div>
+
+        {{ include('@XutimCore/admin/article/_article_translations.html.twig') }}
+    </div>
+{% endblock %}

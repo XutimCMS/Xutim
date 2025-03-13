@@ -1,0 +1,147 @@
+<turbo-frame id="{{ this.frameId }}-list" data-turbo-action="advance">
+    <div class="card mb-3">
+        <div class="card-body border-bottom py-3" data-table-target="cardBody">
+            <div class="d-flex">
+                <div class="text-muted">
+                    {{ 'show'|trans({}, 'admin')|capitalize }}
+                    <div class="mx-2 d-inline-block">
+                        <div class="dropdown">
+                            <a
+                                href="#"
+                                class="btn btn-sm dropdown-toggle"
+                                data-bs-toggle="dropdown"
+                                >{{ filter.pageLength }}</a
+                            >
+                            <div class="dropdown-menu">
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ path(app.current_route, {...app.request.query.all(), pageLength: 10}) }}"
+                                    >10</a
+                                >
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ path(app.current_route, {...app.request.query.all(), pageLength: 20}) }}"
+                                    >20</a
+                                >
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ path(app.current_route, {...app.request.query.all(), pageLength: 50}) }}"
+                                    >50</a
+                                >
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ path(app.current_route, {...app.request.query.all(), pageLength: 100}) }}"
+                                    >100</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    {{ 'entries'|trans({}, 'admin') }}
+                </div>
+                <div class="ms-auto text-muted">
+                    {{ 'search'|trans({}, 'admin')|capitalize }}:
+                    <div class="ms-2 d-inline-block">
+                        <form
+                            method="GET"
+                            action=""
+                            data-controller="auto-submit"
+                        >
+                            <input
+                                type="text"
+                                id="searchTerm"
+                                name="searchTerm"
+                                autofocus
+                                class="form-control form-control-sm"
+                                aria-label="{{ 'search'|trans({}, 'admin')|capitalize }}"
+                                value="{{ filter.searchTerm }}"
+                                data-action="auto-submit#debouncedSubmit"
+                                onfocus="var temp_value=this.value; this.value=''; this.value=temp_value"
+                            />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive" data-table-target="tableContainer">
+            <table class="table card-table table-vcenter text-nowrap datatable">
+                <thead>
+                    <tr>
+                        {% block header %}{% endblock %}
+                    </tr>
+                </thead>
+                <tbody
+                    data-table-target="tableBody"
+                    {% if this.tableBodyId is defined %}
+                        id="{{ this.tableBodyId }}"
+                    {% endif %}
+                >
+                    {% block body %}{% endblock %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer d-flex align-items-center">
+            <p class="m-0 text-muted">
+                {{ 'page'|trans({}, 'admin')|capitalize }}
+                {{ pager.currentPage }}
+                {{ 'of'|trans({}, 'admin') }}
+                {{ pager.nbPages }}
+                ({{ pager.count }}
+                {{ 'entries'|trans({}, 'admin') }})
+            </p>
+            <ul class="pagination m-0 ms-auto">
+                {% if pager.hasPreviousPage %}
+                    <li class="page-item">
+                        <a
+                            href="{{ pagerfanta_page_url(pager, pager.previousPage) }}"
+                            class="page-link"
+                            tabindex="-1"
+                            aria-disabled="true"
+                        >
+                            <twig:Xutim:Admin:Icon name="chevron-left" />
+                            {{ 'prev'|trans({}, 'admin') }}
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a
+                            href="#"
+                            class="page-link"
+                            tabindex="-1"
+                            aria-disabled="true"
+                        >
+                            <twig:Xutim:Admin:Icon name="chevron-left" />
+                            {{ 'prev'|trans({}, 'admin') }}
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if pager.hasNextPage %}
+                    <li class="page-item">
+                        <a
+                            href="{{ pagerfanta_page_url(pager, pager.nextPage) }}"
+                            class="page-link"
+                            tabindex="-1"
+                            aria-disabled="true"
+                        >
+                            {{ 'next'|trans({}, 'admin') }}
+                            <twig:Xutim:Admin:Icon name="chevron-right" />
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a
+                            href="#"
+                            class="page-link"
+                            tabindex="-1"
+                            aria-disabled="true"
+                        >
+                            {{ 'next'|trans({}, 'admin') }}
+                            <twig:Xutim:Admin:Icon name="chevron-right" />
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</turbo-frame>

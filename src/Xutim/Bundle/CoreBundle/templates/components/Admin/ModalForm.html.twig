@@ -1,0 +1,16 @@
+<button
+    {{ attributes }}
+    role="button"
+    type="button"
+    data-action="modal-form#openModal"
+    data-controller="modal-form"
+    data-modal-form-url-value="{{ action }}"
+    data-modal-form-title-value="{{ title }}"
+    data-modal-form-close-button-label-value="{{ 'close'|trans({}, 'admin')|capitalize }}"
+    data-modal-form-submit-button-label-value="{{ submitButtonLabel|default('submit'|trans({}, 'admin')|capitalize) }}"
+    data-modal-form-submit-button-color-value="{{ submitButtonColor|default('primary') }}"
+    data-modal-form-modal-width-value="{% if modalWidth is defined and modalWidth %}{{ modalWidth }}{% else %}{% endif %}"
+    data-modal-form-redirect-url-value="{{ redirectAction|default(null) }}"
+>
+    {% block content %}{% endblock %}
+</button>

@@ -1,0 +1,17 @@
+<div class="card-body">
+    <h4 class="subheader">Super admin settings</h4>
+    <div class="list-group list-group-transparent">
+        <a
+            href="{{ path('admin_settings_site') }}"
+            class="list-group-item list-group-item-action {% if app.current_route == 'admin_settings_site' %}active{% endif %}"
+        >
+            {{ 'Site'|trans({}, 'admin')|capitalize }}
+        </a>
+        <a
+            href="{{ path('admin_menu_list') }}"
+            class="list-group-item list-group-item-action {% if app.current_route starts with 'admin_menu' %}active{% endif %}"
+        >
+            {{ 'Menu'|trans({}, 'admin')|capitalize }}
+        </a>
+    </div>
+</div>

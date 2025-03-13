@@ -1,0 +1,33 @@
+<div
+    {{
+        attributes.defaults({
+            class: 'offcanvas offcanvas-end show border-show d-none d-xl-block',
+            style: 'width: 300px; top: 112px;',
+            'data-bs-scroll': 'true',
+            'data-bs-backdrop': 'false',
+            tabindex: '-1',
+            id: 'local-sidebar',
+            'aria-labelledby': 'offcanvasEndLabel',
+            'aria-modal': 'false',
+            role: 'dialog',
+            'data-controller': 'sidebar',
+            'data-action': 'scroll@window->sidebar#updateSidebarPosition',
+        })
+    }}
+>
+    <div
+        class="offcanvas-header d-flex justify-content-between align-items-center ps-2 pe-3 pt-2 pb-0 border-bottom"
+    >
+        {% block header %}{% endblock %}
+
+        <twig:Xutim:Admin:Button
+            variant="link"
+            type="button"
+            class="btn-close text-reset"
+            data-action="click->sidebar#close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+        ></twig:Xutim:Admin:Button>
+    </div>
+    <div class="offcanvas-body p-0">{% block content %}{% endblock %}</div>
+</div>

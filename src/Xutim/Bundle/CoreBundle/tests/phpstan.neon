@@ -1,0 +1,18 @@
+# This is a phpstan setup for cases where we don't have anything in var/cache
+includes:
+    - ../phpstan-baseline.neon
+parameters:
+    level: max
+    #unused_public:
+    #    methods: true
+    #    properties: true
+    #    constants: true
+    paths:
+        - ../src
+    doctrine:
+        objectManagerLoader: object-manager.php
+    excludePaths:
+        - %rootDir%/../../../tests/*
+        - ../src/Infra/Doctrine/TreeObjectHydrator.php
+    stubFiles:
+        - Stubs/DataMapperInterface.stub

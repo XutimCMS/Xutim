@@ -1,0 +1,25 @@
+{% macro alertIcon(type) %}
+    {% if type == 'success' %}
+        <twig:Xutim:Admin:Icon name="check" />
+    {% endif %}
+    {% if type == 'error' %}
+        <twig:Xutim:Admin:Icon name="x" />
+    {% endif %}
+    {% if type == 'warning' %}
+        <twig:Xutim:Admin:Icon name="alert-circle" />
+    {% endif %}
+    {% if type == 'info' %}
+        <twig:Xutim:Admin:Icon name="info-circle" />
+    {% endif %}
+{% endmacro %}
+
+<div
+    class="alert alert-{{ this.type }} alert-dismissible bg-white"
+    role="alert"
+>
+    <div class="d-flex">
+        <div>{{ _self.alertIcon(this.type) }}</div>
+        <div>{{ this.message }}</div>
+    </div>
+    <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+</div>

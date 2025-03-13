@@ -1,0 +1,37 @@
+<div class="modal" tabindex="-1" id="{{ modalTitle }}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                {% if title is defined %}
+                    <h5 class="modal-title">{{ title }}</h5>
+                {% endif %}
+                <twig:Xutim:Admin:Button
+                    variant="default"
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></twig:Xutim:Admin:Button>
+            </div>
+            <div class="modal-body">{% block body %}{% endblock %}</div>
+            <div class="modal-footer">
+                <twig:Xutim:Admin:Button
+                    variant="default"
+                    type="button"
+                    class="me-auto"
+                    data-bs-dismiss="modal"
+                >
+                    {{ 'close'|trans({}, 'admin')|capitalize }}
+                </twig:Xutim:Admin:Button>
+                <twig:Xutim:Admin:Button
+                    variant="primary"
+                    type="button"
+                    data-bs-dismiss="modal"
+                    data-action="{{ buttonAction }}"
+                >
+                    {{ 'Save changes'|trans({}, 'admin') }}
+                </twig:Xutim:Admin:Button>
+            </div>
+        </div>
+    </div>
+</div>

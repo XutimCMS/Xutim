@@ -1,0 +1,25 @@
+{% if block('breadcrumbHeader') is not defined and (withoutHeader is not defined or withoutHeader is same as (false)) %}
+    {% set pageMenuBlock = block('pageMenu') is defined ? block('pageMenu') : '' %}
+    <div class="page-header d-print-none">
+        <div
+            class="{{ containerClass is defined ? containerClass : 'container-xl' }}"
+        >
+            {{ include('@XutimCore/admin/_flashes.html.twig') }}
+            <div class="row g-2 align-items-center">
+                <div class="col">
+                    {% if block('pagePreTitle') is defined %}
+                        {% set _pph = block('pagePreTitle') %}
+                        <div class="page-pretitle">{{ _pph }}</div>
+                    {% endif %}
+                    {% if block('pageTitle') is defined %}
+                        {% set _ph = block('pageTitle') %}
+                        <h2 class="page-title">{{ _ph|raw }}</h2>
+                    {% endif %}
+                </div>
+                <div class="col-auto ms-auto d-print-none">
+                    {{ pageMenuBlock|raw }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

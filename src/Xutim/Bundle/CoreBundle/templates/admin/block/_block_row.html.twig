@@ -1,0 +1,20 @@
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+<tr>
+    <td>
+        <a
+            href="{{ path('admin_block_show', {id: block.id}) }}"
+            data-turbo-frame="_top"
+            class="block-link"
+            title="{{ 'edit'|trans({}, 'admin') }}"
+        >
+            {{ block.name|truncate(40) }}
+        </a>
+    </td>
+    <td>{{ block.description|truncate(60) }}</td>
+    <td class="text-center">
+        <span class="badge">{{ block.articlesItems|length }}</span>
+    </td>
+    <td class="text-center">
+        <span class="badge">{{ block.pagesItems|length }}</span>
+    </td>
+</tr>

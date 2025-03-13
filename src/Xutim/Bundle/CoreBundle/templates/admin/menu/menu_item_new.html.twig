@@ -1,0 +1,79 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% import '@XutimCore/admin/common/forms.html.twig' as forms %}
+
+{% block pageTitle %}{{ 'New menu item'|trans({}, 'admin')|capitalize }}{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            {{
+                form_start(form, {attr: {
+                id: form.vars.id,
+                'data-controller': 'menu-item',
+                'data-menu-item-is-update-value': item is defined and item is not same as (null) ? true : false,
+            }})
+            }}
+            {% if item is not defined or item is same as(null) %}
+                <div class="mb-3">
+                    <label class="form-label">
+                        {{ 'Select a type of a menu item'|trans({}, 'admin') }}
+                    </label>
+                    <div class="form-selectgroup">
+                        <label class="form-selectgroup-item">
+                            <input
+                                type="radio"
+                                name="menu-item-type"
+                                value="page"
+                                class="form-selectgroup-input"
+                                data-action="click->menu-item#showPage"
+                            />
+                            <span class="form-selectgroup-label">
+                                <twig:Xutim:Admin:Icon name="folder" />
+                                {{ 'page'|trans({}, 'admin')|capitalize }}
+                            </span>
+                        </label>
+                        <label class="form-selectgroup-item">
+                            <input
+                                type="radio"
+                                name="menu-item-type"
+                                value="article"
+                                class="form-selectgroup-input"
+                                data-action="click->menu-item#showArticle"
+                            />
+                            <span class="form-selectgroup-label">
+                                <twig:Xutim:Admin:Icon name="article" />
+                                {{ 'article'|trans({}, 'admin')|capitalize }}
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div data-menu-item-target="pageForm">
+                {{ form_row(form.page) }}
+            </div>
+            <div data-menu-item-target="articleForm">
+                {{ form_row(form.article) }}
+            </div>
+            <div class="mb-3">{{ form_row(form.hasLink) }}</div>
+            <div class="mb-3" data-menu-item-target="submitButton">
+                <twig:Xutim:Admin:Button
+                    type="submit"
+                    variant="primary"
+                    id="menu_item_submit"
+                    form="{{ form.vars.id }}"
+                    role="submit"
+                >
+                    {{ 'submit'|trans({}, 'admin') }}
+                </twig:Xutim:Admin:Button>
+            </div>
+
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="refresh"></turbo-stream>
+{% endblock %}

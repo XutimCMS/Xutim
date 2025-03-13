@@ -1,0 +1,124 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}{{ 'New article'|trans({}, 'admin')|capitalize }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    {% if selectedPage is defined and selectedPage %}
+        <twig:Xutim:Admin:BreadcrumbsPage
+            :page="selectedPage"
+            :allLinks="true"
+        />
+    {% else %}
+        <twig:Xutim:Admin:Breadcrumbs>
+            <li class="breadcrumb-item">New Page</li>
+        </twig:Xutim:Admin:Breadcrumbs>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            <turbo-frame id="editorjs-frame">
+                {% form_theme form '@XutimCore/admin/common/image_choice.html.twig' %}
+                {{
+                    form_start(form, {
+                        attr: {
+                            id: form.vars.id,
+                            'data-controller': 'editorjs-form slug-generator',
+                            'data-editorjs-form-block-codes-value': fetch_block_codes()|json_encode,
+                            'data-editorjs-form-upload-file-url-value': path('admin_editorjs_file_upload'),
+                            'data-editorjs-form-fetch-file-url-value': path('admin_editorjs_file_fetch'),
+                            'data-editorjs-form-gallery-url-value': path('admin_json_file_list'),
+                            'data-editorjs-form-page-ids-url-value': path('admin_json_page_list'),
+                            'data-editorjs-form-article-ids-url-value': path('admin_json_article_list'),
+                            'data-slug-generator-url-value': path('admin_json_content_translation_generate_slug'),
+                            'data-slug-generator-enabled-value': article is defined ? 'false' : 'true',
+                        },
+                    })
+                }}
+                {{ form_row(form.layout) }}
+                {{ form_row(form.preTitle) }}
+                {{
+                    form_row(form.title, {
+                        attr: {
+                            'data-action': 'input->slug-generator#fetchAndReplaceSlugOnTitle',
+                            'data-slug-generator-target': 'titleField',
+                        },
+                    })
+                }}
+                {{ form_row(form.subTitle) }}
+                {{ form_label(form.slug) }}
+                <div class="input-group mb-3">
+                    {{
+                        form_widget(form.slug, {
+                            attr: {
+                                'data-slug-generator-target': 'slugField',
+                            },
+                        })
+                    }}
+                    {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+                        <twig:Xutim:Admin:Button
+                            variant="default"
+                            type="button"
+                            class="pe-1"
+                            id="slug-unblock"
+                            data-action="click->slug-generator#unblockSlugField"
+                        >
+                            <twig:Xutim:Admin:Icon name="lock" />
+                        </twig:Xutim:Admin:Button>
+                    {% endif %}
+
+                    {{ form_errors(form.slug) }}
+                </div>
+                {{ form_help(form.slug) }}
+
+                {{ form_row(form.description) }}
+
+                {{
+                    form_row(form.locale, {
+                        attr: {
+                            'data-action': 'change->slug-generator#fetchAndReplaceSlugOnLocale',
+                            'data-slug-generator-target': 'localeField',
+                        },
+                    })
+                }}
+
+                {{
+                    form_row(form.page, {
+                        attr: {
+                            'data-controller': 'tom-select',
+                        },
+                    })
+                }}
+
+                <div class="mb-3">
+                    <label for="article_translation_content" class="form-label">
+                        Content
+                    </label>
+                    <div data-editorjs-form-target="editorHolder"></div>
+                </div>
+
+                <div class="mb-3">
+                    <twig:Xutim:Admin:Button
+                        type="submit"
+                        variant="primary"
+                        id="article_translation_submit"
+                        form="{{ form.vars.id }}"
+                        disabled="{{ form.vars.disabled }}"
+                        data-action="click->editorjs-form#save:prevent"
+                    >
+                        {{ 'submit'|trans({}, 'admin') }}
+                    </twig:Xutim:Admin:Button>
+                </div>
+                {{
+                    form_widget(form.content, {
+                        attr: {
+                            'data-editorjs-form-target': 'contentInput',
+                        },
+                    })
+                }}
+                {{ form_end(form) }}
+            </turbo-frame>
+        </div>
+    </div>
+{% endblock %}

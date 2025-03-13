@@ -1,0 +1,23 @@
+{% macro order_arrow(currentField, order, orderDirection) %}
+    {% if currentField == order %}
+        {% if orderDirection == 'asc' %}
+            <twig:Xutim:Admin:Icon name="arrow-up" />
+        {% else %}
+            <twig:Xutim:Admin:Icon name="arrow-down" />
+        {% endif %}
+    {% else %}
+        <twig:Xutim:Admin:Icon name="arrows-sort" />
+    {% endif %}
+{% endmacro %}
+
+{% macro fileType(extension) %}
+    {%
+        set availableExtensions = ['bmp', 'css', 'css', 'csv', 'doc', 'docx', 'html',
+        'js', 'pdf', 'ppt', 'sql', 'svg', 'txt', 'xls', 'xml', 'zip']
+    %}
+    {% if extension in availableExtensions %}
+        <twig:Xutim:Admin:Icon name="file-type-{{ extension }}" />
+    {% else %}
+        <twig:Xutim:Admin:Icon name="file" />
+    {% endif %}
+{% endmacro %}

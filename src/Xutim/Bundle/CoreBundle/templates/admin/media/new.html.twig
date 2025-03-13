@@ -1,0 +1,32 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% set title = 'New media file'|trans({}, 'admin') %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.file) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.alt) }}
+            {% if form.locale is defined %}
+                {{ form_row(form.locale) }}
+            {% endif %}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="append" targets="#media-list">
+        <template>
+            {{ include('@XutimCore/admin/media/_row.html.twig') }}
+        </template>
+    </turbo-stream>
+{% endblock %}

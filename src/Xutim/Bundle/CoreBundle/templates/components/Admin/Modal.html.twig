@@ -1,0 +1,23 @@
+<div
+    {{
+        attributes.defaults({
+        'data-controller': 'modal',
+        'data-action': 'turbo:before-cache@window->modal#close'
+        })
+    }}
+>
+    <dialog
+        data-modal-target="dialog"
+        id="pulse-dialog"
+        class="shadow-lg dialog-md"
+        data-action="close->modal#close click->modal#clickOutside"
+    >
+        {% block content %}{% endblock %}
+    </dialog>
+
+    {% if block('loading_template') %}
+        <template data-modal-target="loadingContent">
+            {% block loading_template %}{% endblock %}
+        </template>
+    {% endif %}
+</div>

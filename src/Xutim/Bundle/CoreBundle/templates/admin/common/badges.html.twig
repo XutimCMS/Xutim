@@ -1,0 +1,130 @@
+{% macro publicationStatusBadge(object, extraClass) %}
+    {% if object.hasUntranslatedChange() and object.status == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value %}
+        <span class="badge text-bg-green"></span>
+        <span
+            class="badge text-bg-yellow"
+            style="margin-left: -6px"
+            title="{{ 'Untranslated changes'|trans({}, 'admin') }}"
+            data-controller="tooltip"
+        ></span>
+    {% else %}
+        <span
+            class="badge text-bg-{{ object.status.colorClass }} {{ extraClass }}"
+            title="{{ object.status.value|trans({}, 'admin') }}"
+            data-controller="tooltip"
+        ></span>
+    {% endif %}
+{% endmacro %}
+
+{% macro languageBadge(object) %}
+    <twig:Xutim:Admin:Badge
+        data-controller="tooltip"
+        title="{{ 'There is no translation for language %language%.'|trans({'%language%': content_context_language()|language_name}, 'admin') }}"
+    >
+        {{ object.locale }}
+    </twig:Xutim:Admin:Badge>
+{% endmacro %}
+
+{# {% macro publicationStatusBadge(status, extraClass) %} #}
+{# <span class="badge text-bg-{{ status.colorClass }} {{ extraClass }}" title="{{ status.value|trans({}, 'admin') }}" data-controller="tooltip"></span> #}
+{# {% endmacro %} #}
+
+{% macro squareBadge(color, extraClass) %}
+    <div
+        class="avatar avatar-xs {{ extraClass }}"
+        style="background-color: {{ color }};"
+    ></div>
+{% endmacro %}
+
+{% macro articleColorBadge(article, extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+    {% set color = article.page.color ? article.page.color.HTMLHex : '6c7a91' %}
+
+    {{ badges.squareBadge(color, extraClass) }}
+{% endmacro %}
+
+{% macro blockItemColorBadge(item, extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+    {% set color = item.color ? item.color.HTMLHex : '6c7a91' %}
+
+    {{ badges.squareBadge(color, extraClass) }}
+{% endmacro %}
+
+{% macro pageColorBadge(page, extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+    {{ badges.squareBadge(page.color.HTMLHex, extraClass) }}
+{% endmacro %}
+
+{% macro translatedBadge(translation, extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+    {{ badges.squareBadge(page.color.HTMLHex, extraClass) }}
+{% endmacro %}
+
+{% macro badge(extraClass, title) %}
+    {% if extraClass %}
+        {% set class = extraClass ~ ' badge' %}
+    {% else %}
+        {% set class = 'badge' %}
+    {% endif %}
+    <span
+        class="{{ class }}"
+        title="{{ title }}"
+        data-controller="tooltip"
+    ></span>
+{% endmacro %}
+
+{% macro publishedBadge(extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+    {{ badges.badge('text-bg-green ' ~ extraClass, 'Published'|trans({}, 'admin')) }}
+{% endmacro %}
+
+{% macro missingBadge(extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+    {{ badges.badge('text-bg-secondary ' ~ extraClass, 'Translation is missing'|trans({}, 'admin')) }}
+{% endmacro %}
+
+{% macro draftBadge(extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+    {{ badges.badge('text-bg-blue ' ~ extraClass, 'Not published'|trans({}, 'admin')) }}
+{% endmacro %}
+
+{% macro translatedBadge(extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+    {{ badges.badge('text-bg-green ' ~ extraClass, 'Translated'|trans({}, 'admin')) }}
+{% endmacro %}
+
+{% macro untranslatedBadge(extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+    {{ badges.badge('text-bg-yellow ' ~ extraClass, 'Untranslated'|trans({}, 'admin')) }}
+{% endmacro %}
+
+{% macro untranslatedChangeBadge(extraClass) %}
+    <span class="badge text-bg-green"></span>
+    <span
+        class="badge text-bg-yellow"
+        style="margin-left: -6px"
+        title="{{ 'Untranslated changes'|trans({}, 'admin') }}"
+        data-controller="tooltip"
+    ></span>
+{% endmacro %}
+
+{% macro translationStatusBadge(status, extraClass) %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+    {% if status.isPublished %}
+        {{ badges.translatedBadge(extraClass) }}
+    {% endif %}
+    {% if status.hasUntranslatedChange %}
+        {{ badges.untranslatedChangeBadge(extraClass) }}
+    {% endif %}
+    {% if not status.hasUntranslatedChange and not status.isPublished %}
+        {{ badges.untranslatedBadge(extraClass) }}
+    {% endif %}
+{% endmacro %}

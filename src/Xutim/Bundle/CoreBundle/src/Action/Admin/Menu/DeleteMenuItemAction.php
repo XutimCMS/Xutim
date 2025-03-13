@@ -1,0 +1,56 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Xutim\CoreBundle\Action\Admin\Menu;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Entity\MenuItem;
+use Xutim\CoreBundle\Entity\User;
+use Xutim\CoreBundle\Form\Admin\DeleteType;
+use Xutim\CoreBundle\Repository\MenuItemRepository;
+
+#[Route('/menu/delete-item/{id}', name: 'admin_menu_item_delete', methods: ['get', 'post'])]
+class DeleteMenuItemAction extends AbstractController
+{
+    public function __construct(
+        private readonly MenuItemRepository $repo,
+        private readonly TranslatorInterface $translator,
+        private readonly SiteContext $siteContext
+    ) {
+    }
+
+    public function __invoke(Request $request, MenuItem $item): Response
+    {
+        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $form = $this->createForm(DeleteType::class, null, [
+            'action' => $this->generateUrl('admin_menu_item_delete', ['id' => $item->getId()])
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->repo->remove($item, true);
+            $this->siteContext->resetMenu();
+
+            $this->addFlash('success', $this->translator->trans('flash.changes_made_successfully', [], 'admin'));
+
+            if ($request->headers->has('turbo-frame')) {
+                $stream = $this->renderBlockView('@XutimCore/admin/menu/menu_item_delete.html.twig', 'stream_success');
+
+                $this->addFlash('stream', $stream);
+            }
+
+            return $this->redirectToRoute('admin_menu_list', ['id' => $item->getParent()?->getId()], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('@XutimCore/admin/menu/menu_item_delete.html.twig', [
+            'form' => $form,
+            'item' => $item
+        ]);
+    }
+}

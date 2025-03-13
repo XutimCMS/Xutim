@@ -1,0 +1,55 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+{% set title = 'Add block item'|trans({}, 'admin') %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_block_list') }}">Blocks</a>
+        </li>
+        <li class="breadcrumb-item">New block</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageTitle %}{{ title }}{% endblock %}
+{% import '@XutimCore/admin/common/forms.html.twig' as forms %}
+
+{% block body %}
+    <div class="card">
+        <h3 class="card-header">{{ title }}</h3>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {% if form.page is defined %}
+                {{ form_row(form.page, {attr: {'data-controller': 'tom-select'}})
+                }}
+            {% endif %}
+            {% if form.article is defined %}
+                {{ form_row(form.article, {attr: {'data-controller': 'tom-select'}})
+                }}
+            {% endif %}
+            {{ form_row(form.snippet, {attr: {'data-controller': 'tom-select'}})
+            }} {{ form_row(form.file) }}
+            {{ form_row(form.fileDescription) }}
+            <div class="mb-3">
+                {{ form_label(form.color) }}
+                {{ forms.colorInput(form.color.vars.name, '') }}
+                {{ form_help(form.color) }}
+                {{ form_errors(form.color) }}
+            </div>
+            {{ form_row(form.link) }}
+            {{ form_row(form.latitude) }}
+            {{ form_row(form.longitude) }}
+            {{ form_row(form.submit) }}
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="refresh" targets="#block-item-list-table-body">
+        <template>
+            {{ include('@XutimCore/admin/block/_block_item_row.html.twig') }}
+        </template>
+    </turbo-stream>
+{% endblock %}

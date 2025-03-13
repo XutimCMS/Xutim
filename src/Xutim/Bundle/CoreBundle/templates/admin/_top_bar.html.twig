@@ -1,0 +1,222 @@
+<header id="navbar-main" class="navbar navbar-expand-md d-print-none">
+    <div class="container-xl">
+        <twig:Xutim:Admin:Button
+            variant="default"
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbar-menu"
+            aria-controls="navbar-menu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </twig:Xutim:Admin:Button>
+
+        <div class="navbar-nav flex-row order-md-last">
+            <div class="my-2 my-md-0 nav-item dropdown me-3">
+                <div class="button-group">
+                    <a
+                        href="{{ path('admin_article_list', {searchTerm: ''}) }}"
+                        class="btn btn-xs btn-icon"
+                    >
+                        <twig:Xutim:Admin:Icon name="search" plain="true" />
+                    </a>
+                </div>
+            </div>
+            <div class="nav-item dropdown">
+                <a
+                    href="#"
+                    class="nav-link d-flex lh-1 text-reset p-0"
+                    data-bs-toggle="dropdown"
+                    aria-label="Open user menu"
+                >
+                    <span
+                        class="avatar avatar-sm"
+                        style="background-image: url({{ app.user.avatar }})"
+                    ></span>
+                    <div class="d-none d-xl-block ps-2">
+                        <div>{{ app.user.name }}</div>
+                        <div class="mt-1 small text-muted">
+                            {{ app.user.userIdentifier }}
+                        </div>
+                    </div>
+                </a>
+                <div
+                    class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
+                >
+                    <a
+                        href="{{ path('admin_user_profile') }}"
+                        class="dropdown-item"
+                    >
+                        Profile
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ path('admin_logout') }}" class="dropdown-item">
+                        <span class="me-2">
+                            <twig:Xutim:Admin:Icon name="logout" />
+                        </span>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar-collapse collapse" id="navbar-menu">
+            <ul class="navbar-nav">
+                <li
+                    class="nav-item{{ app.current_route == 'admin_homepage' ? ' active' : '' }}"
+                >
+                    <a class="nav-link" href="{{ path('admin_homepage') }}">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <twig:Xutim:Admin:Icon name="home" />
+                        </span>
+                        <span class="nav-link-title">
+                            {{ 'dashboard'|trans({}, 'admin')|capitalize }}
+                        </span>
+                    </a>
+                </li>
+                <li
+                    class="nav-item{{ app.current_route starts with 'admin_page' ? ' active' : '' }}"
+                >
+                    <a class="nav-link" href="{{ path('admin_page_list') }}">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <twig:Xutim:Admin:Icon name="folder" />
+                        </span>
+                        <span class="nav-link-title">
+                            {{ 'pages'|trans({}, 'admin')|capitalize }}
+                        </span>
+                    </a>
+                </li>
+                <li
+                    class="nav-item{{ app.current_route starts with 'admin_article' ? ' active' : '' }}"
+                >
+                    <a
+                        class="nav-link"
+                        href="{{ path('admin_article_list', {searchTerm: ''}) }}"
+                    >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <twig:Xutim:Admin:Icon name="article" />
+                        </span>
+                        <span class="nav-link-title">
+                            {{ 'articles'|trans({}, 'admin')|capitalize }}
+                        </span>
+                    </a>
+                </li>
+
+                <li
+                    class="nav-item{{ app.current_route starts with 'admin_snippet' ? ' active' : '' }}"
+                >
+                    <a
+                        class="nav-link"
+                        href="{{ path('admin_snippet_list', {searchTerm: ''}) }}"
+                    >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <twig:Xutim:Admin:Icon name="text" />
+                        </span>
+                        <span class="nav-link-title">
+                            {{ 'snippets'|trans({}, 'admin')|capitalize }}
+                        </span>
+                    </a>
+                </li>
+
+                <li
+                    class="nav-item{{ app.current_route starts with 'admin_media' ? ' active' : '' }}"
+                >
+                    <a
+                        class="nav-link"
+                        href="{{ path('admin_media_list', {searchTerm: ''}) }}"
+                    >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <twig:Xutim:Admin:Icon name="photo" />
+                        </span>
+                        <span class="nav-link-title">
+                            {{ 'media'|trans({}, 'admin')|capitalize }}
+                        </span>
+                    </a>
+                </li>
+
+                {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+                    <li
+                        class="nav-item{{ app.current_route starts with 'admin_block' ? ' active' : '' }}"
+                    >
+                        <a
+                            class="nav-link"
+                            href="{{ path('admin_block_list', {searchTerm: ''}) }}"
+                        >
+                            <span
+                                class="nav-link-icon d-md-none d-lg-inline-block"
+                            >
+                                <twig:Xutim:Admin:Icon name="block" />
+                            </span>
+                            <span class="nav-link-title">
+                                {{ 'blocks'|trans({}, 'admin')|capitalize }}
+                            </span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_ADMIN')) %}
+                    <li
+                        class="nav-item{{ app.current_route starts with 'admin_user' ? ' active' : '' }}"
+                    >
+                        <a
+                            class="nav-link"
+                            href="{{ path('admin_user_list', {searchTerm: ''}) }}"
+                        >
+                            <span
+                                class="nav-link-icon d-md-none d-lg-inline-block"
+                            >
+                                <twig:Xutim:Admin:Icon name="users" />
+                            </span>
+                            <span class="nav-link-title">
+                                {{ 'users'|trans({}, 'admin')|capitalize }}
+                            </span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {# <li class="nav-item"> #}
+                {# <a class="nav-link" href="./"> #}
+                {# <span class="nav-link-icon d-md-none d-lg-inline-block"> #}
+                {# <twig:Xutim:Admin:Icon name="tag" /> #}
+                {# </span> #}
+                {# <span class="nav-link-title"> #}
+                {# Tags #}
+                {# </span> #}
+                {# </a> #}
+                {# </li> #}
+
+                {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_DEVELOPER')) %}
+                    <li
+                        class="nav-item{{ app.current_route starts with 'admin_settings_' ? ' active' : '' }}"
+                    >
+                        <a
+                            class="nav-link"
+                            href="{{ path('admin_settings_site') }}"
+                        >
+                            <span
+                                class="nav-link-icon d-md-none d-lg-inline-block"
+                            >
+                                <twig:Xutim:Admin:Icon name="settings" />
+                            </span>
+                            <span class="nav-link-title">
+                                {{ 'settings'|trans({}, 'admin')|capitalize }}
+                            </span>
+                        </a>
+                    </li>
+                {% endif %}
+                {# <li class="nav-item"> #}
+                {# <a class="nav-link" href="{{ path('admin_settings_index') }}"> #}
+                {# <span class="nav-link-icon d-md-none d-lg-inline-block"> #}
+                {# <twig:Xutim:Admin:Icon name="settings" /> #}
+                {# </span> #}
+                {# <span class="nav-link-title"> #}
+                {# {{ 'settings'|trans({}, 'admin')|capitalize }} #}
+                {# </span> #}
+                {# </a> #}
+                {# </li> #}
+            </ul>
+        </div>
+    </div>
+</header>

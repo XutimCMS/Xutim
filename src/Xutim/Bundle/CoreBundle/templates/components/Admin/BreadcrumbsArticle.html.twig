@@ -1,0 +1,24 @@
+{% macro parentBreadcrumb(page, init) %}
+    {% if page.parent is not null %}
+        {{ _self.parentBreadcrumb(page.parent, false) }}
+    {% endif %}
+    {% set params = {id: page.id, locale: content_context_language()} %}
+    <li class="breadcrumb-item">
+        <a href="{{ path('admin_page_list', params) }}">
+            {{ page.translationByLocaleOrDefault(content_context_language()).title }}
+        </a>
+    </li>
+{% endmacro %}
+
+<ol class="breadcrumb breadcrumb-arrows" aria-label="breadcrumbs">
+    <li class="breadcrumb-item">
+        <a href="{{ path('admin_page_list') }}"
+            ><twig:Xutim:Admin:Icon name="home"
+        /></a>
+    </li>
+    {{ _self.parentBreadcrumb(article.page) }}
+
+    <li class="breadcrumb-item active" aria-current="page">
+        {{ article.translationByLocaleOrDefault(content_context_language()).title }}
+    </li>
+</ol>

@@ -1,0 +1,147 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}
+    {{ block.name }}
+{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_block_list') }}">Blocks</a>
+        </li>
+        <li class="breadcrumb-item">{{ block.name }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ path('homepage') }}"
+    >
+        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+        Public page
+    </twig:Xutim:Admin:Button>
+    {% if app.user.isDeveloper() %}
+        <twig:Xutim:Admin:Button
+            tag="a"
+            class="text-danger"
+            variant="nav"
+            data-turbo-frame="modal"
+            href="{{ path('admin_block_delete', {id: block.id}) }}"
+        >
+            <twig:Xutim:Admin:Icon name="trash" class="me-1" />
+            Delete
+        </twig:Xutim:Admin:Button>
+        <twig:Xutim:Admin:Button
+            tag="a"
+            variant="nav"
+            href="{{ path('admin_block_edit', {id: block.id}) }}"
+        >
+            <twig:Xutim:Admin:Icon name="edit" class="me-1" />
+            {{ 'Edit'|trans({}, 'admin') }}
+        </twig:Xutim:Admin:Button>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="card mb-3">
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.layout) }}
+            {{ form_row(form.code) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.description) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+
+    {% if layoutFulFilled is same as (false) %}
+        {{
+            component('Xutim:Admin:Alert', {
+                type: 'danger',
+                message: 'The block requirements are not met.',
+            })
+        }}
+    {% endif %}
+
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {{ 'items'|trans({}, 'admin')|capitalize }}
+                    </h3>
+                    <div class="card-actions">
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="default"
+                            data-turbo-frame="modal"
+                            href="{{ path('admin_block_add_page', {id: block.id}) }}"
+                        >
+                            <twig:Xutim:Admin:Icon name="folder" />
+                            {{ 'in page'|trans({}, 'admin')|capitalize }}
+                        </twig:Xutim:Admin:Button>
+
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="default"
+                            data-turbo-frame="modal"
+                            href="{{ path('admin_block_add_article', {id: block.id}) }}"
+                        >
+                            <twig:Xutim:Admin:Icon name="article" />
+                            {{ 'article'|trans({}, 'admin')|capitalize }}
+                        </twig:Xutim:Admin:Button>
+
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="default"
+                            data-turbo-frame="modal"
+                            href="{{ path('admin_block_add_simple_item', {id: block.id}) }}"
+                        >
+                            <twig:Xutim:Admin:Icon name="plus" />
+                            {{ 'item'|trans({}, 'admin')|capitalize }}
+                        </twig:Xutim:Admin:Button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="w-1">
+                                    {{ 'color'|trans({}, 'admin') }}
+                                </th>
+                                <th class="w-6">
+                                    {{ 'type'|trans({}, 'admin') }}
+                                </th>
+                                {% if block.blockItems|filter(item => item.file) is not empty %}
+                                    <th class="w-6">
+                                        {{ 'file'|trans({}, 'admin') }}
+                                    </th>
+                                {% endif %}
+                                <th>{{ 'name'|trans({}, 'admin') }}</th>
+                                <th class="w-1"></th>
+                                {% if block.blockItems|filter(item => item.link) is not empty %}
+                                    <th>{{ 'link'|trans({}, 'admin') }}</th>
+                                {% endif %}
+                                <th class="w-12 text-center">
+                                    {{ 'actions'|trans({}, 'admin') }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody
+                            data-controller="sortable"
+                            data-sortable-reorder-url-value="{{ path('admin_block_reorder_item', {id: block.id}) }}"
+                            id="block-item-list-table-body"
+                        >
+                            {% for item in block.blockItems %}
+                                {{ include('@XutimCore/admin/block/_block_item_row.html.twig') }}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

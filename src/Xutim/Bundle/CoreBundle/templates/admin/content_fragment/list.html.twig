@@ -1,0 +1,6 @@
+{% set tag = fragment.data.style == 'ordered' ? 'ol' : 'ul' -%}
+<{{ tag }}>
+    {% for item in fragment.data.items %}
+        <li>{{ item.content|replace({'<br>': ''})|raw }}</li>
+    {% endfor %}
+</{{ tag }}>

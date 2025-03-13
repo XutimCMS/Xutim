@@ -1,0 +1,79 @@
+<header class="navbar-expand-md">
+    <div class="collapse navbar-collapse" id="navbar-menu">
+        <div class="navbar navbar-light">
+            <div class="container-xl">
+                {% if block('breadcrumbHeader') is defined %}
+                    {% set pageMenuBlock = block('pageMenu') is defined ? block('pageMenu') : '' %}
+                    <div
+                        class="mt-2 {{ containerClass is defined ? containerClass : 'container-xl' }}"
+                    >
+                        {% set _bp = block('breadcrumbHeader') %}
+                        {{ _bp|raw }}
+                    </div>
+                    <div class="page-header d-print-none mt-2">
+                        <div
+                            class="{{ containerClass is defined ? containerClass : 'container-xl' }}"
+                        >
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    {% if block('pagePreTitle') is defined %}
+                                        {% set _pph = block('pagePreTitle') %}
+                                        <div class="page-pretitle">
+                                            {{ _pph }}
+                                        </div>
+                                    {% endif %}
+                                    {% if block('pageTitle') is defined %}
+                                        {% set _ph = block('pageTitle') %}
+                                        <h2 class="page-title">
+                                            <span
+                                                class="text-truncate d-flex align-items-center"
+                                            >
+                                                {{ _ph|raw }}
+                                            </span>
+                                        </h2>
+                                    {% endif %}
+                                </div>
+                                <div class="col-auto">
+                                    <div class="btn-list">
+                                        {{ pageMenuBlock|raw }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if block('breadcrumbHeader') is not defined and (withoutHeader is not defined or withoutHeader is same as (false)) %}
+                    {% set pageMenuBlock = block('pageMenu') is defined ? block('pageMenu') : '' %}
+                    <div class="page-header d-print-none">
+                        <div
+                            class="{{ containerClass is defined ? containerClass : 'container-xl' }}"
+                        >
+                            <div class="row g-2 align-items-center">
+                                <div class="col">
+                                    {% if block('pagePreTitle') is defined %}
+                                        {% set _pph = block('pagePreTitle') %}
+                                        <div class="page-pretitle">
+                                            {{ _pph }}
+                                        </div>
+                                    {% endif %}
+                                    {% if block('pageTitle') is defined %}
+                                        {% set _ph = block('pageTitle') %}
+                                        <h2 class="page-title">
+                                            {{ _ph|raw }}
+                                        </h2>
+                                    {% endif %}
+                                </div>
+                                <div
+                                    class="col-auto ms-auto d-flex justify-content-around"
+                                >
+                                    {{ pageMenuBlock|raw }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>

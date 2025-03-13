@@ -1,0 +1,16 @@
+{# 'class': 'Icon Icon--' ~ name, #}
+{%
+    set default_attributes = {
+       role: 'img',
+       'aria-hidden': 'true',
+       'aria-label': this.label,
+    }
+%}
+
+{% if this.plain is defined and this.plain is same as(true) %}
+    {{- this.rawSvg|raw -}}
+{% else %}
+    <i {{ attributes.defaults(default_attributes) }}>
+        {{- this.rawSvg|raw -}}
+    </i>
+{% endif %}

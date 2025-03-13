@@ -1,0 +1,48 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+{% set title = 'Edit block item'|trans({}, 'admin') %}
+
+{% block pageTitle %}{{ title }}{% endblock %}
+{% import '@XutimCore/admin/common/forms.html.twig' as forms %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            <h3>{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {% if form.page is defined %}
+                {{ form_row(form.page, {attr: {'data-controller': 'tom-select'}})
+                }}
+            {% endif %}
+            {% if form.article is defined %}
+                {{ form_row(form.article, {attr: {'data-controller': 'tom-select'}})
+                }}
+            {% endif %}
+            {{ form_row(form.snippet, {attr: {'data-controller': 'tom-select'}})
+            }} {{ form_row(form.file) }}
+            {{ form_row(form.fileDescription) }}
+            <div class="mb-3">
+                {{ form_label(form.color) }}
+                {{ forms.colorInput(form.color.vars.full_name, item.color.isSet() ? item.color.hex : '') }}
+                {{ form_help(form.color) }}
+                {{ form_errors(form.color) }}
+            </div>
+            {{ form_row(form.link) }}
+            {{ form_row(form.latitude) }}
+            {{ form_row(form.longitude) }}
+            {{ form_row(form.submit) }}
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#block-item-{{ item.id }}">
+        <template>
+            {{ include('@XutimCore/admin/block/_block_item_row.html.twig') }}
+        </template>
+    </turbo-stream>
+{% endblock %}

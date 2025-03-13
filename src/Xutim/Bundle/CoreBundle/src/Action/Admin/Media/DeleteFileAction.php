@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Xutim\CoreBundle\Action\Admin\Media;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Xutim\CoreBundle\Domain\Event\File\FileDeletedEvent;
+use Xutim\CoreBundle\Entity\Event;
+use Xutim\CoreBundle\Entity\File;
+use Xutim\CoreBundle\Form\Admin\DeleteType;
+use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\FileRepository;
+use Xutim\CoreBundle\Repository\FileTranslationRepository;
+use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\CoreBundle\Service\FileUploader;
+
+#[Route('/media/delete/{id}', name: 'admin_media_delete', methods: ['post', 'get'])]
+class DeleteFileAction extends AbstractController
+{
+    public function __construct(
+        private readonly FileRepository $fileRepo,
+        private readonly FileTranslationRepository $fileTransRepo,
+        private readonly UserStorage $userStorage,
+        private readonly EventRepository $eventRepo,
+        private readonly FileUploader $fileUploader,
+    ) {
+    }
+
+    public function __invoke(File $file, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_EDITOR');
+        $form = $this->createForm(DeleteType::class, [], [
+            'action' => $this->generateUrl('admin_media_delete', ['id' => $file->getId()]),
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file->removeConnections();
+            foreach ($file->getTranslations() as $trans) {
+                $this->fileTransRepo->remove($trans);
+            }
+
+            $fileName = $file->getFileName();
+            $id = $file->getId();
+            $userIdentifier = $this->userStorage->getUserWithException()->getUserIdentifier();
+            $event = new FileDeletedEvent($id);
+            $logEntry = new Event($id, $userIdentifier, File::class, $event);
+
+            $this->fileRepo->remove($file, true);
+            $this->eventRepo->save($logEntry, true);
+            $this->fileUploader->deleteFile($fileName);
+
+            return $this->redirectToRoute('admin_media_list');
+        }
+
+        return $this->render('@XutimCore/admin/media/delete.html.twig', [
+            'file' => $file,
+            'form' => $form
+        ]);
+    }
+}

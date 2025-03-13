@@ -1,0 +1,72 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}
+    {{ 'media library'|trans({}, 'admin') }}
+{% endblock %}
+
+{% block languageBar %}
+    <twig:Xutim:Admin:LanguageContextBar
+        class="d-flex justify-content-end align-items-center mb-2"
+    />
+{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">Media</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <div class="d-flex align-items-center">
+        <div class="me-3 align-items-center">
+            <div class="input-icon">
+                <form method="GET" action="" data-controller="auto-submit">
+                    <input
+                        type="text"
+                        id="searchTerm"
+                        name="searchTerm"
+                        autofocus
+                        class="form-control"
+                        aria-label="{{ 'search'|trans({}, 'admin')|capitalize }}"
+                        value="{{ app.request.get('searchTerm') }}"
+                        data-action="auto-submit#debouncedSubmit"
+                        onfocus="var temp_value=this.value; this.value=''; this.value=temp_value"
+                    />
+                    <span class="input-icon-addon">
+                        <twig:Xutim:Admin:Icon name="search" />
+                    </span>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ path('homepage') }}"
+    >
+        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+        Public page
+    </twig:Xutim:Admin:Button>
+
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        data-turbo-frame="modal"
+        href="{{ path('admin_media_new') }}"
+    >
+        <twig:Xutim:Admin:Icon name="photo" class="me-1" />
+        {{ 'add new media file'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block body %}
+    <div
+        class="row row-cards row-cols-lg-6 g-3 row-cols-md-4 row-cols-sm-3 row-cols-2"
+        id="media-list"
+    >
+        {% for file in files %}
+            {{ include('@XutimCore/admin/media/_row.html.twig') }}
+        {% endfor %}
+    </div>
+{% endblock %}

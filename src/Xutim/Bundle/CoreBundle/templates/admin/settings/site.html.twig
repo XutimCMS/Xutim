@@ -1,0 +1,25 @@
+{% extends '@XutimCore/admin/settings/settings_layout.html.twig' %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_settings_site') }}">Settings</a>
+        </li>
+        <li class="breadcrumb-item">Site</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ path('homepage') }}"
+    >
+        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+        Public page
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block settingsBody %}
+    {{ form(form) }}
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}{{ 'users'|trans({}, 'admin')|capitalize }}{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ path('homepage') }}"
+    >
+        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+        Public page
+    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        data-turbo-frame="modal"
+        href="{{ path('admin_user_new') }}"
+    >
+        <twig:Xutim:Admin:Icon name="users" />
+        {{ 'add a new user'|trans({}, 'admin')|capitalize }}
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">Users</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block body %}
+    {%
+        component 'Xutim:Admin:DataTable' with {
+            frameId: 'users-list',
+            pager: users,
+            filter: filter,
+            tableBodyId: 'user-list-body',
+        }
+    %}
+        {% block header %}
+            {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+            <th class="w-1"></th>
+            <th>
+                <a
+                    href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
+                >
+                    {{ 'name'|trans({}, 'admin')|capitalize }}
+                    {{ icons.order_arrow('name', filter.orderColumn, filter.orderDirection) }}
+                </a>
+            </th>
+            <th>
+                <a
+                    href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'email', orderDirection: filter.reverseDirection('email')}) }}"
+                >
+                    {{ 'email'|trans({}, 'admin')|capitalize }}
+                    {{ icons.order_arrow('email', filter.orderColumn, filter.orderDirection) }}
+                </a>
+            </th>
+            <th>{{ 'roles'|trans({}, 'admin')|capitalize }}</th>
+            <th class="w-8"></th>
+        {% endblock %}
+
+        {% block body %}
+            {% for user in users %}
+                {{ include('@XutimCore/admin/user/_user_row.html.twig') }}
+            {% endfor %}
+        {% endblock %}
+    {% endcomponent %}
+{% endblock %}

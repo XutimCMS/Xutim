@@ -1,0 +1,11 @@
+{% if 'nav' in this.variant %}
+    <li class="nav-item">
+{% endif %}
+<{{ this.tag }} {{ attributes.defaults({class: this.variantClasses}) }}
+    {% if this.disabled %}disabled="disabled"{% endif %}
+>
+    {% block content %}{% endblock %}
+</{{ this.tag }}>
+{% if 'nav' in this.variant %}
+    </li>
+{% endif %}

@@ -1,0 +1,23 @@
+<div class="row py-2 px-3" id="published-at-sidebar-item">
+    <div class="col-4">{{ 'publish'|trans({}, 'admin')|capitalize }}:</div>
+    <div class="col-8">
+        {{ article.createdAt|time_until }}
+        {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+            <div class="btn-group float-end">
+                <twig:Xutim:Admin:Button
+                    tag="a"
+                    variant="link"
+                    class="p-0"
+                    data-turbo-frame="modal"
+                    href="{{ path('admin_article_edit_publication_date', {id: article.id}) }}"
+                >
+                    <twig:Xutim:Admin:Icon name="edit" />
+                </twig:Xutim:Admin:Button>
+            </div>
+        {% endif %}
+
+        <p class="text-sm text-muted mb-0">
+            Applies to all translations that are published.
+        </p>
+    </div>
+</div>

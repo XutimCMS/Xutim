@@ -1,0 +1,109 @@
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h3 class="card-title">
+            <twig:Xutim:Admin:Icon
+                name="language"
+            />{{ 'all translations'|trans({}, 'admin')|capitalize }}
+        </h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead>
+                <tr>
+                    <th class="w-6" title="Status" data-controller="tooltip">
+                        S
+                    </th>
+                    <th
+                        class="w-1"
+                        title="Translation reference"
+                        data-controller="tooltip"
+                    >
+                        T
+                    </th>
+                    <th>{{ 'title'|trans({}, 'admin') }}</th>
+                    <th>{{ 'language'|trans({}, 'admin') }}</th>
+                    <th class="w-15 text-end">
+                        {{ 'actions'|trans({}, 'admin') }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for translation in article.translations %}
+                    <tr>
+                        <td class="w-6">
+                            <button
+                                type="button"
+                                role="button"
+                                class="btn-link p-0 border-0"
+                                data-bs-placement="bottom"
+                                data-controller="popover"
+                                data-bs-toggle="popover"
+                                data-bs-selector="#changeStatus"
+                            >
+                                {{ badges.publicationStatusBadge(translation) }}
+                            </button>
+                        </td>
+                        <td
+                            title="Translation reference"
+                            data-controller="tooltip"
+                        >
+                            {% if article.defaultTranslation.id == translation.id %}
+                                <span class="fw-bold text-green">
+                                    <twig:Xutim:Admin:Icon name="language" />
+                                </span>
+                            {% else %}
+                                <twig:Xutim:Admin:ModalDialog
+                                    class="btn-link d-sm-inline-block px-0 border-0"
+                                    action="{{ path('admin_page_mark_default_translation', {id: article.id, transId: translation.id}) }}"
+                                    confirmActionLabel="{{ 'action.mark_as_default'|trans({}, 'admin')|capitalize }}"
+                                >
+                                    <span
+                                        class="badge text-bg-secondary"
+                                    ></span>
+                                </twig:Xutim:Admin:ModalDialog>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted">
+                            {{ translation.title }}
+                            {% if article.defaultTranslation.id == translation.id %}
+                                ({{ 'reference for translations'|trans({}, 'admin') }})
+                            {% endif %}
+                        </td>
+                        <td class="text-muted">
+                            {{ translation.locale|locale_name }}
+                        </td>
+                        <td>
+                            <div
+                                class="d-flex justify-content-end align-items-center"
+                            >
+                                <a
+                                    href="{{ path('content_translation_show', {_locale: translation.locale, slug: translation.slug}) }}"
+                                    class="btn-link me-2 {% if not translation.status.isPublished() %}disabled{% endif %}"
+                                    aria-label="{{ 'Show on public page'|trans({}, 'admin') }}"
+                                    data-turbo="false"
+                                >
+                                    <twig:Xutim:Admin:Icon
+                                        name="cloud-search"
+                                    />
+                                </a>
+
+                                {% if app.user.canTranslate(translation.locale) %}
+                                    <a
+                                        href="{{ path('admin_content_translation_revisions', {id: translation.id}) }}"
+                                        class="btn-link"
+                                        aria-label="{{ 'revisions'|trans({}, 'admin') }}"
+                                    >
+                                        <twig:Xutim:Admin:Icon name="history" />
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer p-3"></div>
+</div>

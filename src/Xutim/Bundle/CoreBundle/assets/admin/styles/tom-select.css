@@ -1,0 +1,24 @@
+.ts-dropdown {
+    background: #fff;
+}
+
+.ts-dropdown .active,
+.ts-dropdown .active.create {
+    color: var(--tblr-body-color);
+}
+
+.ts-dropdown .active {
+    background-color: var(--tblr-tertiary-bg);
+}
+
+.plugin-dropdown_input.focus.dropdown-active .ts-control {
+    border: 1px solid var(--tblr-border-color);
+    box-shadow: none;
+    box-shadow: var(--tblr-box-shadow-inset);
+}
+
+.ts-control,
+.ts-wrapper.single.input-active .ts-control {
+    background: var(--tblr-body-bg);
+    cursor: text;
+}

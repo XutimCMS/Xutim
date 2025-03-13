@@ -1,0 +1,10 @@
+<div id="block-requirements-alert">
+    {% if layoutFulFilled is same as (false) %}
+        {{
+            component('Xutim:Admin:Alert', {
+                type: 'danger',
+                message: 'The block requirements are not met.',
+            })
+        }}
+    {% endif %}
+</div>

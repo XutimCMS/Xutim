@@ -1,0 +1,34 @@
+.list-group-item ul {
+    margin-top: 10px;
+    margin-right: -15px;
+    margin-bottom: -10px;
+}
+
+.list-group-item li {
+    padding: 10px 15px 10px 3em;
+}
+
+.list-group-item li:hover {
+    background-color: white !important;
+}
+
+.list-group-item li:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    margin-top: -11px;
+    background: #ddd;
+}
+
+.tag-list-root {
+    margin-bottom: 10px;
+}
+
+.list-group-item:active,
+.list-group-item:focus,
+.list-group-item:hover {
+    background-color: white;
+}

@@ -1,0 +1,29 @@
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+{% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
+{% set translation = page.translationByLocaleOrDefault(content_context_language()) %}
+
+<div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <turbo-frame id="article-preview-frame">
+                <div
+                    data-controller="article-preview"
+                    data-article-preview-url-value="{{ path('admin_page_frame_show', {id: page.id}) }}"
+                >
+                    <div
+                        id="preview-container"
+                        data-article-preview-target="preview"
+                    >
+                        <twig:Xutim:Admin:Placeholder />
+                    </div>
+                </div>
+            </turbo-frame>
+        </div>
+    </div>
+    {{
+        include('@XutimCore/admin/page/_page_articles_card_list.html.twig', {
+            title: 'Articles in this page'|trans({}, 'admin')|capitalize,
+            articles: page.articles,
+        })
+    }}
+</div>

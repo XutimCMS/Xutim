@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Xutim\CoreBundle\Domain\Event\File;
+
+use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\DomainEvent;
+
+readonly class FileUploadedEvent implements DomainEvent
+{
+    public function __construct(
+        public Uuid $id,
+        public string $dataPath,
+        public string $name
+    ) {
+    }
+}

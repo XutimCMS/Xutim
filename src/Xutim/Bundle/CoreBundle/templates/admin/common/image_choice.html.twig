@@ -1,0 +1,31 @@
+{% block image_choice_widget %}
+    <div class="mb-3">
+        <label class="form-label">{{ form.vars.label }}</label>
+        <div class="row g-2">
+            {% for child in form %}
+                <div class="col-6 col-sm-4">
+                    <label class="form-imagecheck mb-2">
+                        <input
+                            type="radio"
+                            id="{{ child.vars.name }}"
+                            name="{{ child.vars.full_name }}"
+                            value="{{ child.vars.value }}"
+                            class="form-imagecheck-input"
+                            {% if child.vars.checked %}checked{% endif %}
+                            {{ block('widget_attributes') }}
+                        />
+                        <span class="form-imagecheck-figure">
+                            <img
+                                src="{{ child.vars.attr['data-image'] }}"
+                                alt="{{ child.vars.label }}"
+                                width="124px"
+                                height="82px"
+                                class="form-imagecheck-image"
+                            />
+                        </span>
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

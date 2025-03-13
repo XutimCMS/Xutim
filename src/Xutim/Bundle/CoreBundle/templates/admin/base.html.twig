@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        {% block head %}
+            <meta charset="{{- _charset -}}" />
+            <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1, viewport-fit=cover"
+            />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="robots" content="noindex,nofollow" />
+            <meta name="view-transition" content="same-origin" />
+            <title>{% block title %}{% endblock %}</title>
+
+            {%- block css -%}{%- endblock -%}
+
+            {%- block javascripts -%}
+                {{ importmap('app-admin') }}
+            {%- endblock -%}
+        {% endblock head %}
+    </head>
+
+    <body>
+        <div class="page">
+            {{ include('@XutimCore/admin/_top_bar.html.twig') }}
+            <header id="navbar-local" class="navbar-expand-md">
+                <div class="collapse navbar-collapse" id="navbar-menu">
+                    <div class="navbar navbar-light">
+                        <div class="container-xl">
+                            {% if block('breadcrumbHeader') is defined %}
+                                <div>
+                                    {% set _bp = block('breadcrumbHeader') %}
+                                    {{ _bp|raw }}
+                                </div>
+                            {% endif %}
+                            <ul class="navbar-nav flex-row order-md-last">
+                                {% set pageMenuBlock = block('pageMenu') is defined ? block('pageMenu') : '' %}
+                                {{ pageMenuBlock|raw }}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            {{ include('@XutimCore/admin/_impersonate_bar.html.twig') }}
+            <div class="page-wrapper">
+                <div class="page-header">
+                    <div
+                        class="{{ containerClass is defined ? containerClass : 'container-xl' }}"
+                    >
+                        <div class="row g-2 align-items-center">
+                            <div class="col">
+                                {% if block('pagePreTitle') is defined %}
+                                    {% set _pph = block('pagePreTitle') %}
+                                    <div class="page-pretitle">{{ _pph }}</div>
+                                {% endif %}
+                                {% if block('pageTitle') is defined %}
+                                    {% set _ph = block('pageTitle') %}
+                                    <h2 class="page-title">{{ _ph|raw }}</h2>
+                                {% endif %}
+                            </div>
+                            {% if block('languageBar') is defined %}
+                                {% set langBarBlock = block('languageBar') %}
+                                <div class="col-auto ms-auto">
+                                    {{ langBarBlock|raw }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-body">
+                    <div
+                        class="{{ containerClass is defined ? containerClass : 'container-xl' }}"
+                    >
+                        <div id="flash-container">
+                            {{ include('@XutimCore/admin/_flashes.html.twig') }}
+                        </div>
+                        {% block body %}{% endblock %}
+
+                        {% block sidebar %}
+                        {% endblock %}
+                    </div>
+                </div>
+                {{ include('@XutimCore/admin/_footer.html.twig') }}
+            </div>
+        </div>
+        <twig:Xutim:Admin:Modal>
+            <turbo-frame
+                id="modal"
+                data-modal-target="dynamicContent"
+                data-action="turbo:before-fetch-request->modal#showLoading"
+            >
+                {{ include('@XutimCore/admin/_frameSuccessStream.html.twig', {frame: 'modal'}) }}
+            </turbo-frame>
+            <twig:block name="loading_template">
+                <div class="card placeholder-glow">
+                    <div
+                        class="ratio ratio-21x9 card-img-top placeholder"
+                    ></div>
+                    <div class="card-body">
+                        <div class="placeholder col-9 mb-3"></div>
+                        <div class="placeholder placeholder-xs col-10"></div>
+                        <div class="placeholder placeholder-xs col-11"></div>
+                        <div class="mt-3">
+                            <twig:Xutim:Admin:Button
+                                type="a"
+                                href="#"
+                                tabindex="-1"
+                                class="disabled placeholder col-4"
+                                aria-hidden="true"
+                            ></twig:Xutim:Admin:Button>
+                        </div>
+                    </div>
+                </div>
+            </twig:block>
+        </twig:Xutim:Admin:Modal>
+    </body>
+</html>

@@ -1,0 +1,31 @@
+<div {{ attributes }}>
+    {% for locale in site_context.locales|filter(locale => app.user.canTranslate(locale)) %}
+        <a
+            href="{{ path('admin_settings_change_language_content_context', {locale: locale}) }}"
+            data-turbo-prefetch="false"
+        >
+            {% set isActive = locale == content_context_language() %}
+            {% set classes = isActive ? ' bg-outline-primary border-3 border-primary' : 'text-secondary' %}
+            {% set entity = this.entity %}
+            {% set simpleTranslation = this.simpleTranslation %}
+
+            <twig:Xutim:Admin:Badge class="{{ classes }}">
+                {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+
+                {% if entity is not null %}
+                    {% set trans = entity.translationByLocale(locale) %}
+                    {% if trans is null %}
+                        {{ badges.missingBadge() }}
+                    {% else %}
+                        {% if simpleTranslation == true %}
+                            {{ badges.badge('text-bg-green', 'Translated'|trans({}, 'admin')) }}
+                        {% else %}
+                            {{ badges.publicationStatusBadge(trans) }}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+                {{ locale }}
+            </twig:Xutim:Admin:Badge>
+        </a>
+    {% endfor %}
+</div>

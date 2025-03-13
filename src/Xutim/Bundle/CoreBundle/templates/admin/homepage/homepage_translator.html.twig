@@ -1,0 +1,197 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+{% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
+
+{% block pageTitle %}{{ 'Dashboard'|trans({}, 'admin')|capitalize }}{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ path('homepage') }}"
+    >
+        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+        Public page
+    </twig:Xutim:Admin:Button>
+    {# {{ modals.modalForm(path('admin_user_new'), 'New user'|trans({}, 'admin'), 'plus', 'Add a new user'|trans({}, 'admin')) }} #}
+{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">Dashboard</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block body %}
+    <div class="row row-deck row-cards">
+        {% for locale, localeCount in translatedLocalesCount %}
+            {% set translatedPercentage = articlesCount ? (100 * localeCount / articlesCount)|round(1, 'floor') %}
+            <div class="col-md-6 col-lg-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="subheader">
+                                Translated {{ locale|language_name }} articles
+                            </div>
+                        </div>
+                        <div class="h1 mb-0">{{ translatedPercentage }}%</div>
+                        <div class="d-flex mb-2"></div>
+                        <div class="progress progress-sm">
+                            <div
+                                class="progress-bar bg-primary"
+                                style="width: {{ translatedPercentage }}%"
+                                role="progressbar"
+                                aria-valuenow="{{ translatedPercentage }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                aria-label="{{ translatedPercentage }}% Complete"
+                            >
+                                <span class="visually-hidden">
+                                    {{- translatedPercentage -}}% Complete
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row row-cards mt-4">
+        <div class="col-md-12 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {{ 'newest untranslated articles'|trans|capitalize }}
+                    </h3>
+                </div>
+                <div class="card-table table-responsive">
+                    <table class="table  table-vcenter">
+                        <thead>
+                            <tr>
+                                <th
+                                    title="{{ 'publication status'|trans({}, 'admin')|capitalize }}"
+                                    data-controller="tooltip"
+                                >
+                                    S
+                                </th>
+                                <th>
+                                    {{ 'title'|trans({}, 'admin')|capitalize }}
+                                </th>
+                                <th>
+                                    {{ 'created at'|trans({}, 'admin')|capitalize }}
+                                </th>
+                                <th>
+                                    {{ 'missing languages'|trans({}, 'admin')|capitalize }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for article in latestUntranslatedArticles %}
+                                {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
+                                <tr>
+                                    <td>
+                                        {{ badges.publicationStatusBadge(translation) }}
+                                    </td>
+                                    <td class="text-wrap">
+                                        <a
+                                            href="{{ path('admin_article_edit', {id: article.id}) }}"
+                                            data-turbo-frame="_top"
+                                            class="btn-link mt-1 text-dark"
+                                            aria-label="{{ 'show'|trans({}, 'admin') }}"
+                                        >
+                                            {{ translatable.languageBadge(translation) }}
+                                            {{ translation.title }}
+                                        </a>
+                                    </td>
+                                    <td class="text-secondary text-nowrap">
+                                        <twig:Xutim:Admin:Icon
+                                            name="calendar"
+                                        />
+                                        {{ article.createdAt|format_date }}
+                                    </td>
+                                    <td>
+                                        <div class="tags-list d-inline">
+                                            {% for userLocale in userLocales %}
+                                                {% if article.translations|reduce((carry, translation) => carry == true or userLocale == translation.locale) == false %}
+                                                    <span class="tag">
+                                                        {{ userLocale }}
+                                                    </span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {{ 'new version of translated articles'|trans|capitalize }}
+                    </h3>
+                </div>
+                <div class="card-table table-responsive">
+                    <table class="table table-vcenter">
+                        <thead>
+                            <tr>
+                                <th
+                                    title="{{ 'publication status'|trans({}, 'admin') }}"
+                                >
+                                    S
+                                </th>
+                                <th>{{ 'title'|trans({}, 'admin') }}</th>
+                                <th>{{ 'updated at'|trans({}, 'admin') }}</th>
+                                <th>
+                                    {{ 'missing languages'|trans({}, 'admin') }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for article in latestChangedArticles %}
+                                {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
+                                <tr>
+                                    <td>
+                                        {{ badges.publicationStatusBadge(translation) }}
+                                    </td>
+                                    <td class="text-wrap">
+                                        <a
+                                            href="{{ path('admin_article_edit', {id: article.id}) }}"
+                                            data-turbo-frame="_top"
+                                            class="btn-link mt-1 text-dark"
+                                            aria-label="{{ 'show'|trans({}, 'admin') }}"
+                                        >
+                                            {{ translatable.languageBadge(translation) }}
+                                            {{ translation.title }}
+                                        </a>
+                                    </td>
+                                    <td class="text-secondary text-nowrap">
+                                        <twig:Xutim:Admin:Icon
+                                            name="calendar"
+                                        />
+                                        {{ article.defaultTranslation.updatedAt|format_date }}
+                                    </td>
+                                    <td>
+                                        <div class="tag-list">
+                                            {% for userLocale in userLocales %}
+                                                {% if article.translations|reduce((carry, translation) => carry == true or (userLocale == translation.locale and translation.updatedAt < article.defaultTranslation.updatedAt), false) == true %}
+                                                    <span class="tag">
+                                                        {{ userLocale }}
+                                                    </span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% if block('breadcrumbHeader') is defined %}
+    {% set pageMenuBlock = block('pageMenu') is defined ? block('pageMenu') : '' %}
+    <div
+        class="mt-2 {{ containerClass is defined ? containerClass : 'container-xl' }}"
+    >
+        {% set _bp = block('breadcrumbHeader') %}
+        {{ _bp|raw }}
+    </div>
+
+    <div class="page-header d-print-none mt-2">
+        <div
+            class="{{ containerClass is defined ? containerClass : 'container-xl' }}"
+        >
+            <div class="row align-items-center">
+                <div class="col">
+                    {% if block('pageTitle') is defined %}
+                        {% set _ph = block('pageTitle') %}
+                        <h2 class="page-title">
+                            <span class="text-truncate">{{ _ph|raw }}</span>
+                        </h2>
+                    {% endif %}
+                </div>
+                <div class="col-auto">
+                    <div class="btn-list">{{ pageMenuBlock|raw }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

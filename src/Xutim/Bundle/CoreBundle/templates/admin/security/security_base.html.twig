@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="{{ app.request.locale }}">
+    <head>
+        <meta charset="{{ _charset }}" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="robots" content="noindex,nofollow" />
+
+        {%- block javascripts -%}
+            {{ importmap('app-admin') }}
+        {%- endblock -%}
+
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body class="hold-transition login-page">
+        <div class="page page-center">
+            <div class="container container-tight py-4">
+                <div id="flash-messages">
+                    {{ include('@XutimCore/admin/_flashes.html.twig') }}
+                </div>
+
+                {% block body %}{% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,38 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}{{ 'settings'|trans({}, 'admin')|capitalize }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_settings_site') }}">Settings</a>
+        </li>
+        <li class="breadcrumb-item">Menu</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ path('homepage') }}"
+    >
+        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+        Public page
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="row g-0">
+            <div class="col-3 d-none d-md-block border-end">
+                {{ include('@XutimCore/admin/settings/_settings_navigation.html.twig') }}
+            </div>
+            <div class="col d-flex flex-column">
+                <div class="card-body">
+                    {% block settingsBody %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
