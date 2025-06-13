@@ -62,7 +62,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Xutim\\Bundle\\EventBundle\\Tests\\": "tests/"
+            "Xutim\\EventBundle\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev",
