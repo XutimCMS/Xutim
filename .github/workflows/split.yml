@@ -27,6 +27,9 @@ jobs:
               with:
                   fetch-depth: 0 # required to see full git history
 
+            - name: Mark current directory as safe (scoped)
+              run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
             # no tag
             - if: "!startsWith(github.ref, 'refs/tags/')"
               uses: "symplify/monorepo-split-github-action@2.1"
