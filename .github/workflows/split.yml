@@ -29,7 +29,7 @@ jobs:
 
             # no tag
             - if: "!startsWith(github.ref, 'refs/tags/')"
-              uses: "danharrin/monorepo-split-github-action@2.3.0"
+              uses: "simplify/monorepo-split-github-action@2.3.0"
               with:
                   package_directory: "${{ matrix.package.local_path }}"
                   repository_organization: "XutimCMS"
@@ -39,7 +39,7 @@ jobs:
 
             # with tag
             - if: "startsWith(github.ref, 'refs/tags/')"
-              uses: "danharrin/monorepo-split-github-action@2.3.0"
+              uses: "simplify/monorepo-split-github-action@2.3.0"
               with:
                   tag: ${{ github.ref_name }}
                   package_directory: "${{ matrix.package.local_path }}"
