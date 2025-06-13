@@ -1,0 +1,11 @@
+<phpunit bootstrap="vendor/autoload.php"
+         colors="true"
+         stopOnFailure="false"
+         testdox="false">
+    <testsuites>
+        <testsuite name="Xutim Bundles">
+            <directory>src/Xutim/Bundle/CoreBundle/tests</directory>
+            <directory>src/Xutim/Bundle/EventBundle/tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

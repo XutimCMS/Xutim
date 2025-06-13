@@ -1,11 +1,5 @@
-includes:
-    - vendor/phpstan/phpstan-symfony/extension.neon
-    - vendor/phpstan/phpstan-doctrine/extension.neon
-
 parameters:
     level: max
     paths:
-        - src/
-        - tests/
-    symfony:
-        container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml
+        - src/Xutim/Bundle/CoreBundle/src
+        - src/Xutim/Bundle/EventBundle/src
