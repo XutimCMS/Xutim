@@ -1,4 +1,14 @@
-{% block success_stream %}
+{% macro modalDialogPage(id, status, confirmActionLabel, iconName) %}
+    <twig:Xutim:Admin:ModalDialog
+        class="btn-link text-{{ status.colorClass }} p-0"
+        modalDialogColor="{{ status.colorClass }}"
+        action="{{ path('admin_event_publication_status_edit', {id: id, status: status.value}) }}"
+        confirmActionLabel="{{ confirmActionLabel }}"
+    >
+        <twig:Xutim:Admin:Icon name="{{ iconName }}" plain="true" />
+    </twig:Xutim:Admin:ModalDialog>
+{% endmacro %}
+{% block stream_success %}
     <turbo-stream action="replace" targets="#translation-status-item">
         <template>
             <twig:Xutim:Admin:SidebarItem id="translation-status-item">
@@ -16,22 +26,32 @@
                     </div>
 
                     {% if is_granted_translation(content_context_language()) %}
-                        {% from '@XutimCore/admin/page/_page_sidebar.html.twig' import modalDialogPage %}
+                        {%
+                            from '@XutimCore/admin/translation/_status_item.html.twig' import modalDialogPage
+                        %}
                         <div>
                             {% if translation.status.canBeDrafted() %}
-                                {{ modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard') }}
+                                {{
+                                    modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard')
+                                }}
                             {% endif %}
 
                             {% if translation.status.canPublish %}
-                                {{ modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload') }}
+                                {{
+                                    modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload')
+                                }}
                             {% endif %}
 
                             {% if translation.status.canSubmitForEvaluation %}
-                                {{ modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert') }}
+                                {{
+                                    modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert')
+                                }}
                             {% endif %}
 
                             {% if translation.status.canBeArchived %}
-                                {{ modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived'), 'archive'|trans({}, 'admin')|capitalize, 'archive') }}
+                                {{
+                                    modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived'), 'archive'|trans({}, 'admin')|capitalize, 'archive')
+                                }}
                             {% endif %}
                         </div>
                     {% endif %}

@@ -6,15 +6,16 @@ namespace Xutim\CoreBundle\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Repository\SnippetTranslationRepository;
+use Xutim\CoreBundle\Domain\Model\SnippetInterface;
+use Xutim\CoreBundle\Domain\Model\SnippetTranslationInterface;
 
-#[Entity(repositoryClass: SnippetTranslationRepository::class)]
-class SnippetTranslation
+#[MappedSuperclass]
+class SnippetTranslation implements SnippetTranslationInterface
 {
     use TimestampableTrait;
 
@@ -28,11 +29,11 @@ class SnippetTranslation
     #[Column(type: Types::TEXT)]
     private string $content;
 
-    #[ManyToOne(targetEntity: Snippet::class, inversedBy: 'translations')]
+    #[ManyToOne(targetEntity: SnippetInterface::class, inversedBy: 'translations')]
     #[JoinColumn(nullable: false)]
-    private Snippet $snippet;
+    private SnippetInterface $snippet;
 
-    public function __construct(Snippet $snippet, string $locale, string $content)
+    public function __construct(SnippetInterface $snippet, string $locale, string $content)
     {
         $this->id = Uuid::v4();
         $this->snippet = $snippet;
@@ -46,7 +47,7 @@ class SnippetTranslation
         return $this->id;
     }
 
-    public function getSnippet(): Snippet
+    public function getSnippet(): SnippetInterface
     {
         return $this->snippet;
     }

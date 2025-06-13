@@ -1,16 +1,11 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 
-{% block pageTitle %}{{ 'articles'|trans({}, 'admin')|capitalize }}{% endblock %}
+{% block pageTitle %}{{ 'articles'|trans({}, 'admin')|capitalize }}{%
+    endblock
+%}
 
 {% block pageMenu %}
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ path('homepage') }}"
-    >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-        Public page
-    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:PublicPageLink />
     <twig:Xutim:Admin:Button
         tag="a"
         variant="nav"
@@ -41,77 +36,108 @@
             filter: filter,
         }
     %}
-        {% block header %}
-            {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
-            <th
-                class="w-1"
-                title="{{ 'publication status'|trans({}, 'admin') }}"
-                data-controller="tooltip"
+    {% block header %}
+        {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+        <th
+            class="w-1"
+            title="{{ 'publication status'|trans({}, 'admin') }}"
+            data-controller="tooltip"
+        >
+            S
+        </th>
+        <th>
+            <a
+                class=""
+                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'title', orderDirection: filter.reverseDirection('title')}) }}"
             >
-                S
-            </th>
-            <th>
-                <a
-                    class=""
-                    href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'title', orderDirection: filter.reverseDirection('title')}) }}"
-                >
-                    {{ 'title'|trans({}, 'admin') }}
-                    {{ icons.order_arrow('title', filter.orderColumn, filter.orderDirection) }}
-                </a>
-            </th>
-            <th>
-                <a
-                    class=""
-                    href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'page', orderDirection: filter.reverseDirection('page')}) }}"
-                >
-                    {{ 'in page'|trans({}, 'admin') }}
-                    {{ icons.order_arrow('slug', filter.orderColumn, filter.orderDirection) }}
-                </a>
-            </th>
-            <th>
-                <a
-                    class=""
-                    href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'updatedAt', orderDirection: filter.reverseDirection('updatedAt')}) }}"
-                >
-                    {{ 'updated at'|trans({}, 'admin') }}
-                    {{ icons.order_arrow('updatedAt', filter.orderColumn, filter.orderDirection) }}
-                </a>
-            </th>
-        {% endblock %}
+                {{ 'title'|trans({}, 'admin') }}
+                {{
+                    icons.order_arrow('title', filter.orderColumn, filter.orderDirection)
+                }}
+            </a>
+        </th>
+        <th>
+            <a
+                class=""
+                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'tags', orderDirection: filter.reverseDirection('tags')}) }}"
+            >
+                {{ 'tags'|trans({}, 'admin') }}
+                {{
+                    icons.order_arrow('tags', filter.orderColumn, filter.orderDirection)
+                }}
+            </a>
+        </th>
+        <th>
+            {{ 'in news'|trans({}, 'admin') }}
+        </th>
+        <th>
+            <a
+                class=""
+                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'updatedAt', orderDirection: filter.reverseDirection('updatedAt')}) }}"
+            >
+                {{ 'updated at'|trans({}, 'admin') }}
+                {{
+                    icons.order_arrow('updatedAt', filter.orderColumn, filter.orderDirection)
+                }}
+            </a>
+        </th>
+    {% endblock %}
 
-        {% block body %}
-            {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-            {% for article in articles %}
-                {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
-                <tr>
-                    <td>{{ badges.publicationStatusBadge(translation) }}</td>
-                    <td class="text-wrap">
-                        <twig:Xutim:Admin:Button
-                            tag="a"
-                            variant="link"
-                            href="{{ path('admin_article_show', {id: article.id}) }}"
-                            data-turbo-frame="_top"
-                            class="mt-1"
-                            aria-label="{{ 'show'|trans({}, 'admin') }}"
-                        >
-                            {%- import '@XutimCore/admin/common/translatable.html.twig' as translatable -%}
+    {% block body %}
+        {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+        {% for article in articles %}
+            {%
+                set translation = article.translationByLocaleOrAny(content_context_language())
+            %}
+            <tr>
+                <td>{{ badges.publicationStatusBadge(translation) }}</td>
+                <td class="text-wrap">
+                    <twig:Xutim:Admin:Button
+                        tag="a"
+                        variant="link"
+                        href="{{ path('admin_article_show', {id: article.id}) }}"
+                        data-turbo-frame="_top"
+                        class="mt-1"
+                        aria-label="{{ 'show'|trans({}, 'admin') }}"
+                    >
+                        {%
+                            import '@XutimCore/admin/common/translatable.html.twig' as translatable
+                        %}
 
-                            {{- translatable.titleWithBadge(article) -}}
-                        </twig:Xutim:Admin:Button>
-                    </td>
-                    <td class="text-wrap">
-                        <a
-                            href="{{ path('admin_page_edit', {id: article.page.id}) }}"
-                            data-turbo-frame="_top"
-                        >
-                            {{ article.page.translationByLocaleOrAny(content_context_language()).title }}
-                        </a>
-                    </td>
-                    <td>
-                        {{ article.updatedAt|format_datetime('medium', 'short') }}
-                    </td>
-                </tr>
-            {% endfor %}
-        {% endblock %}
+                        {{ translatable.titleWithBadge(article) }}
+                    </twig:Xutim:Admin:Button>
+                </td>
+                <td>
+                    {% for tag in article.tags %}
+                        <twig:Xutim:Admin:Tag :color="tag.color">
+                            {{
+                                tag.translationByLocaleOrAny(content_context_language()).name
+                            }}
+                        </twig:Xutim:Admin:Tag>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% set excludeFromNews = false %}
+                    {% for tag in article.tags %}
+                        {% if tag.excludeFromNews %}
+                            {% set excludeFromNews = true %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if excludeFromNews %}
+                        <span class="status status-danger">
+                            {{ 'no'|trans({}, 'admin') }}
+                        </span>
+                    {% else %}
+                        <span class="status status-green">
+                            {{ 'yes'|trans({}, 'admin') }}
+                        </span>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ article.updatedAt|time_ago() }}
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
     {% endcomponent %}
 {% endblock %}

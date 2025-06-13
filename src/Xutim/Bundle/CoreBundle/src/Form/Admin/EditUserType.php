@@ -36,7 +36,7 @@ class EditUserType extends AbstractType implements DataMapperInterface
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $locales = $this->siteContext->getLocales();
+        $locales = $this->siteContext->getAllLocales();
         $names = array_map(fn (string $locale) => Languages::getName($locale), $locales);
         $localeChoices = array_combine($names, $locales);
         $existingUser = $options['existing_user'];
@@ -57,10 +57,18 @@ class EditUserType extends AbstractType implements DataMapperInterface
                 'choices' => [
                     str_replace('ROLE_', '', User::ROLE_DEVELOPER) => User::ROLE_DEVELOPER,
                     str_replace('ROLE_', '', User::ROLE_ADMIN) => User::ROLE_ADMIN,
-                    str_replace('ROLE_', '', User::ROLE_USER) => User::ROLE_USER,
                     str_replace('ROLE_', '', User::ROLE_TRANSLATOR) => User::ROLE_TRANSLATOR,
                     str_replace('ROLE_', '', User::ROLE_EDITOR) => User::ROLE_EDITOR
                 ],
+                'choice_label' => function ($choice, string $key, mixed $value): string {
+                    return $key . ' (' . match ($value) {
+                        User::ROLE_DEVELOPER => new TranslatableMessage('Has full control over the CMS, including the ability to modify the code.'),
+                        User::ROLE_ADMIN => new TranslatableMessage('Has full control over the CMS, except for code-related operations.'),
+                        User::ROLE_TRANSLATOR => new TranslatableMessage('Can view and translate articles and pages in the assigned languages.'),
+                        User::ROLE_EDITOR => new TranslatableMessage('Can create and edit articles, pages, and other types of content.'),
+                        default => ''
+                    } . ')';
+                },
                 'multiple' => true,
                 'expanded' => true,
                 'required' => false,
@@ -72,17 +80,17 @@ class EditUserType extends AbstractType implements DataMapperInterface
                 'multiple' => true,
                 'expanded' => false,
                 'constraints' => [
-                    new NotNull()
+                new NotNull()
                 ],
                 'attr' => [
-                    'data-controller' => 'tom-select'
+                'data-controller' => 'tom-select'
                 ],
                 'choice_loader' => null
 
-            ])
+        ])
             ->add('submit', SubmitType::class, [
                 'label' => new TranslatableMessage('submit', [], 'admin')
-            ])
+        ])
             ->setDataMapper($this);
     }
 

@@ -32,7 +32,7 @@ class CreateFileAction extends AbstractController
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{file: UploadedFile, name: string, alt: string|null, language: string} $data */
+            /** @var array{file: UploadedFile, name: string, alt: string|null, language: string, copyright: ?string} $data */
             $data = $form->getData();
 
             $command = new UploadFileMessage(
@@ -43,6 +43,7 @@ class CreateFileAction extends AbstractController
                 $data['name'],
                 $data['alt'] ?? '',
                 $data['language'],
+                $data['copyright'] ?? '',
             );
             $file = $this->fileService->persistFile($command);
 

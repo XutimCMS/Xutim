@@ -1,6 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
 import axios from 'axios';
-import 'fslightbox';
 
 export default class extends Controller {
     static values = {

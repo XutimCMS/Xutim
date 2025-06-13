@@ -7,13 +7,13 @@ namespace Xutim\CoreBundle\Twig\Extension\Admin;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\UserRepository;
 
 class UserLogExtension extends AbstractExtension
 {
     public function __construct(
-        private readonly EventRepository $eventRepository,
+        private readonly LogEventRepository $eventRepository,
         private readonly UserRepository $userRepository
     ) {
     }

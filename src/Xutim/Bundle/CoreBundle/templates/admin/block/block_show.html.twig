@@ -14,14 +14,7 @@
 {% endblock %}
 
 {% block pageMenu %}
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ path('homepage') }}"
-    >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-        Public page
-    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:PublicPageLink />
     {% if app.user.isDeveloper() %}
         <twig:Xutim:Admin:Button
             tag="a"
@@ -115,14 +108,18 @@
                                 <th class="w-6">
                                     {{ 'type'|trans({}, 'admin') }}
                                 </th>
-                                {% if block.blockItems|filter(item => item.file) is not empty %}
+                                {%
+                                    if block.blockItems|filter(item => item.file) is not empty
+                                %}
                                     <th class="w-6">
                                         {{ 'file'|trans({}, 'admin') }}
                                     </th>
                                 {% endif %}
                                 <th>{{ 'name'|trans({}, 'admin') }}</th>
                                 <th class="w-1"></th>
-                                {% if block.blockItems|filter(item => item.link) is not empty %}
+                                {%
+                                    if block.blockItems|filter(item => item.link) is not empty
+                                %}
                                     <th>{{ 'link'|trans({}, 'admin') }}</th>
                                 {% endif %}
                                 <th class="w-12 text-center">
@@ -136,7 +133,9 @@
                             id="block-item-list-table-body"
                         >
                             {% for item in block.blockItems %}
-                                {{ include('@XutimCore/admin/block/_block_item_row.html.twig') }}
+                                {{
+                                    include('@XutimCore/admin/block/_block_item_row.html.twig')
+                                }}
                             {% endfor %}
                         </tbody>
                     </table>

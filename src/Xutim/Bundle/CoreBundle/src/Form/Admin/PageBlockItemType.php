@@ -11,19 +11,19 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\Length;
 use Traversable;
+use Xutim\CoreBundle\Domain\Model\Coordinates;
+use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\SnippetInterface;
+use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Entity\Color;
-use Xutim\CoreBundle\Entity\Snippet;
 use Xutim\CoreBundle\Form\Admin\Dto\PageBlockItemDto;
-use Xutim\CoreBundle\Model\Coordinates;
 use Xutim\CoreBundle\Repository\PageRepository;
 
 /**
@@ -32,8 +32,12 @@ use Xutim\CoreBundle\Repository\PageRepository;
  */
 class PageBlockItemType extends AbstractType implements DataMapperInterface
 {
-    public function __construct(private readonly PageRepository $pageRepository)
-    {
+    public function __construct(
+        private readonly PageRepository $pageRepository,
+        private readonly string $fileClass,
+        private readonly string $snippetClass,
+        private readonly string $tagClass,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -44,13 +48,22 @@ class PageBlockItemType extends AbstractType implements DataMapperInterface
                 'label' => new TranslatableMessage('page', [], 'admin'),
                 'required' => false,
             ])
-            ->add('file', FileType::class, [
-                'label' => 'File',
+            ->add('file', EntityType::class, [
+                'class' => $this->fileClass,
+                'choice_label' => 'id',
+                'placeholder' => new TranslatableMessage('select file', [], 'admin'),
                 'required' => false,
+                'attr' => ['data-controller' => 'media-field'],
+                'row_attr' => ['class' => 'd-none'],
             ])
             ->add('snippet', EntityType::class, [
                 'label' => 'snippet',
-                'class' => Snippet::class,
+                'class' => $this->snippetClass,
+                'required' => false,
+            ])
+            ->add('tag', EntityType::class, [
+                'class' => $this->tagClass,
+                'label' => 'tag',
                 'required' => false,
             ])
             ->add('link', TextType::class, [
@@ -98,6 +111,7 @@ class PageBlockItemType extends AbstractType implements DataMapperInterface
         // initialize form field values
         $forms['file']->setData($viewData->file);
         $forms['snippet']->setData($viewData->snippet);
+        $forms['tag']->setData($viewData->tag);
         $forms['page']->setData($viewData->page->getId());
         $forms['link']->setData($viewData->link);
         $forms['color']->setData($viewData->color);
@@ -122,19 +136,17 @@ class PageBlockItemType extends AbstractType implements DataMapperInterface
             );
         }
 
-        /** @var UploadedFile $file */
+        /** @var FileInterface|null $file */
         $file = $forms['file']->getData();
-        /** @var Snippet $snippet */
+        /** @var SnippetInterface $snippet */
         $snippet = $forms['snippet']->getData();
+        /** @var TagInterface $tag */
+        $tag = $forms['tag']->getData();
         /** @var string|null $link */
         $link = $forms['link']->getData();
         /** @var string|null $colorVal */
         $colorVal = $forms['color']->getData();
-        if ($colorVal === null) {
-            $color = new Color(null);
-        } else {
-            $color = new Color($colorVal);
-        }
+        $color = new Color($colorVal);
         /** @var string|null $description */
         $description = $forms['fileDescription']->getData();
         /** @var float|null $latitude */
@@ -144,6 +156,6 @@ class PageBlockItemType extends AbstractType implements DataMapperInterface
 
         $coords = $latitude !== null && $longitude !== null ? new Coordinates($latitude, $longitude) : null;
 
-        $viewData = new PageBlockItemDto($page, $file, $snippet, null, $link, $color, $description, $coords);
+        $viewData = new PageBlockItemDto($page, $file, $snippet, $tag, null, $link, $color, $description, $coords);
     }
 }

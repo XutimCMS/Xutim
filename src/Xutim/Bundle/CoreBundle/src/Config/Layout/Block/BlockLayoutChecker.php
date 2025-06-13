@@ -7,8 +7,8 @@ namespace Xutim\CoreBundle\Config\Layout\Block;
 use Doctrine\Common\Collections\Collection;
 use Xutim\CoreBundle\Config\Layout\Block\Option\BlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\BlockItemOptionCollection;
-use Xutim\CoreBundle\Entity\Block;
-use Xutim\CoreBundle\Entity\BlockItem;
+use Xutim\CoreBundle\Domain\Model\BlockInterface;
+use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Util\LinkedList;
 
@@ -17,7 +17,7 @@ class BlockLayoutChecker
     public function __construct(private readonly LayoutLoader $layoutLoader)
     {
     }
-    public function checkLayout(Block $block): bool
+    public function checkLayout(BlockInterface $block): bool
     {
         $layout = $this->layoutLoader->getBlockLayoutByCode($block->getLayout());
         if ($layout === null) {
@@ -38,8 +38,8 @@ class BlockLayoutChecker
     }
 
     /**
-     * @param Collection<int, BlockItem> $items
-     * @param array<BlockItemOption> $options
+     * @param Collection<int, BlockItemInterface> $items
+     * @param array<BlockItemOption>              $options
      */
     private function processItems(Collection $items, array $options): bool
     {

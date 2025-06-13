@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\Article;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 
@@ -37,7 +37,7 @@ class AdminHomepageAction extends AbstractController
     }
 
     /**
-     * @param array<Article> $latestArticles
+     * @param array<ArticleInterface> $latestArticles
      */
     private function renderDashboardForTranslators(
         array $latestArticles,
@@ -73,7 +73,7 @@ class AdminHomepageAction extends AbstractController
     }
 
     /**
-     * @param array<Article> $latestArticles
+     * @param array<ArticleInterface> $latestArticles
      */
     private function renderDashboardForUsers(array $latestArticles): Response
     {

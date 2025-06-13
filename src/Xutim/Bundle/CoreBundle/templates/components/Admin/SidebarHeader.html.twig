@@ -1,0 +1,11 @@
+<div {{
+        attributes.defaults({
+            class: 'row py-2',
+        })
+    }}>
+    <div class="d-flex justify-content-start">
+        <h4>
+            {% block content %}{% endblock %}
+        </h4>
+    </div>
+</div>

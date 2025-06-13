@@ -30,11 +30,15 @@ use Xutim\CoreBundle\Twig\Components\Admin\Modal;
 use Xutim\CoreBundle\Twig\Components\Admin\ModalDialog;
 use Xutim\CoreBundle\Twig\Components\Admin\ModalForm;
 use Xutim\CoreBundle\Twig\Components\Admin\Placeholder;
+use Xutim\CoreBundle\Twig\Components\Admin\PreviewSizesButtons;
+use Xutim\CoreBundle\Twig\Components\Admin\PublicPageLink;
 use Xutim\CoreBundle\Twig\Components\Admin\Sidebar;
+use Xutim\CoreBundle\Twig\Components\Admin\SidebarHeader;
 use Xutim\CoreBundle\Twig\Components\Admin\SidebarItem;
 use Xutim\CoreBundle\Twig\Components\Admin\SidebarSection;
 use Xutim\CoreBundle\Twig\Components\Admin\SidebarTab;
 use Xutim\CoreBundle\Twig\Components\Admin\SidebarTabs;
+use Xutim\CoreBundle\Twig\Components\Admin\Tag;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -183,6 +187,13 @@ return static function (ContainerConfigurator $container): void {
         ])
     ;
     $services
+        ->set(SidebarHeader::class)
+        ->tag('twig.component', [
+            'key' => 'Xutim:Admin:SidebarHeader',
+            'template' => '@XutimCore/components/Admin/SidebarHeader.html.twig'
+        ])
+    ;
+    $services
         ->set(SidebarSection::class)
         ->tag('twig.component', [
             'key' => 'Xutim:Admin:SidebarSection',
@@ -201,6 +212,29 @@ return static function (ContainerConfigurator $container): void {
         ->tag('twig.component', [
             'key' => 'Xutim:Admin:SidebarTabs',
             'template' => '@XutimCore/components/Admin/SidebarTabs.html.twig'
+        ])
+    ;
+    $services
+        ->set(Tag::class)
+        ->tag('twig.component', [
+            'key' => 'Xutim:Admin:Tag',
+            'template' => '@XutimCore/components/Admin/Tag.html.twig'
+        ])
+    ;
+
+    $services
+        ->set(PreviewSizesButtons::class)
+        ->tag('twig.component', [
+            'key' => 'Xutim:Admin:PreviewSizesButtons',
+            'template' => '@XutimCore/components/Admin/PreviewSizesButtons.html.twig'
+        ])
+    ;
+
+    $services
+        ->set(PublicPageLink::class)
+        ->tag('twig.component', [
+            'key' => 'Xutim:Admin:PublicPageLink',
+            'template' => '@XutimCore/components/Admin/PublicPageLink.html.twig'
         ])
     ;
 };

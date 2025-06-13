@@ -14,10 +14,14 @@
                     name="file_translation_language_default"
                     id="file_translation_language_default"
                 >
-                    {% for trans in file.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name) %}
+                    {%
+                        for trans in file.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name)
+                    %}
                         <option
                             value="{{ trans.locale }}"
-                            {% if trans.locale == translation.locale %}selected="selected"{% endif %}
+                            {% if trans.locale == translation.locale %}
+                                selected="selected"
+                            {% endif %}
                             data-url-value="{{ path('admin_media_translation_show', {id: trans.id, locale: trans.locale}) }}"
                         >
                             {{ trans.locale|language_name }}

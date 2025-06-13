@@ -9,24 +9,12 @@ use Xutim\CoreBundle\Entity\Page;
 
 final class PageTest extends TestCase
 {
-    // ?string $layout,
-    // ?string   $colorHex,
-    // array    $locales,
-    // string $preTitle,
-    // string   $title,
-    // string $subTitle,
-    // string   $slug,
-    // array   $content,
-    // string   $locale,
-    // string   $description,
-    // ?Page $parent,
-    // ?int     $spipId = null
     /**
      * @dataProvider changeDataProvider
      */
     public function testChange(?string $color, array $locales, string $preTitle, string $title, string $subTitle, string $slug, array $content, string $locale, string $description, ?Page $parent): void
     {
-        $page = new Page(null, '333333', [], $preTitle, $title, $subTitle, $slug, [], 'cs', '...', null);
+        $page = new Page(null, '333333', [], $preTitle, $title, $subTitle, $slug, [], 'cs', '...', null, null);
         $page->change($color, $locales, $parent);
         $this->assertEquals($locales, $page->getLocales());
         $this->assertEquals($parent, $page->getParent());
@@ -34,7 +22,7 @@ final class PageTest extends TestCase
 
     public function changeDataProvider(): array
     {
-        $parent = new Page(null, 'ffffff', ['en', 'fr'], 'Into title', 'Title', 'Sub title', 'title', [], 'en', 'Parent description', null);
+        $parent = new Page(null, 'ffffff', ['en', 'fr'], 'Into title', 'Title', 'Sub title', 'title', [], 'en', 'Parent description', null, null);
         return [
             [null, ['en', 'fr'], 'Intro title', 'Title', 'Sub title', 'title', [], 'en', 'Description', null],
             ['000000', ['en', 'fr', 'de'], 'Intro title 2', 'Title 2', 'Sub title 2', 'title-2', [], 'fr', 'Description 2', $parent],

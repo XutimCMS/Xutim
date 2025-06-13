@@ -1,6 +1,8 @@
 {% extends '@XutimCore/admin/modalBase.html.twig' %}
 {% import '@XutimCore/admin/common/forms.html.twig' as forms %}
-{% set title = 'edit layout'|trans({}, 'admin')|capitalize ~ ' - ' ~ page.defaultTranslation.title %}
+{%
+    set title = 'edit layout'|trans({}, 'admin')|capitalize ~ ' - ' ~ page.defaultTranslation.title
+%}
 
 {% block pageTitle %}
     {{ title }}
@@ -24,7 +26,9 @@
 {% block stream_success %}
     <turbo-stream action="replace" targets="#page-layout-item">
         <template>
-            <span id="page-layout-item">{{ page.layout }}</span>
+            {{
+                include('@XutimCore/admin/page/_layout_sidebar_item.html.twig')
+            }}
         </template>
     </turbo-stream>
 {% endblock %}

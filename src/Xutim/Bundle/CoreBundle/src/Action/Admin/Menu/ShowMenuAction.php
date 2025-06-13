@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Menu;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Xutim\CoreBundle\Entity\MenuItem;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 use Xutim\CoreBundle\Service\MenuBuilder;
 
@@ -21,8 +19,16 @@ class ShowMenuAction extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request, ?MenuItem $item): Response
+    public function __invoke(?string $id): Response
     {
+        if ($id === null) {
+            $item = null;
+        } else {
+            $item = $this->repo->find($id);
+            if ($item === null) {
+                throw $this->createNotFoundException('The menu item does not exist');
+            }
+        }
         $hierarchy = $this->menuBuilder->constructHierarchy();
         $path = $item !== null ? $this->repo->getPathHydrated($item) : [];
 

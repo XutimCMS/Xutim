@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\MenuItem;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\DeleteType;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
@@ -25,8 +24,12 @@ class DeleteMenuItemAction extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request, MenuItem $item): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $item = $this->repo->find($id);
+        if ($item === null) {
+            throw $this->createNotFoundException('The menu item does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $form = $this->createForm(DeleteType::class, null, [
             'action' => $this->generateUrl('admin_menu_item_delete', ['id' => $item->getId()])

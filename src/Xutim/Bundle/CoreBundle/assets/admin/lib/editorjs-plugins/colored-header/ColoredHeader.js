@@ -2,9 +2,6 @@ import Header from '@editorjs/header';
 
 export default class ColoredHeader extends Header {
     constructor({ data, config, api }) {
-        console.log(data);
-        console.log(config);
-        console.log(api);
         super({ data, config, api });
         this.api = api;
         this.data.color = data.color || config.defaultColor || '#000000';
@@ -41,7 +38,6 @@ export default class ColoredHeader extends Header {
     }
 
     save() {
-        console.log({ ...super.save(), color: this.data.color });
         return { ...super.save(), color: this.data.color };
     }
 }

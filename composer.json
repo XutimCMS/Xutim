@@ -1,4 +1,8 @@
 {
+    "name": "tomsgu/xutim",
+    "description": "Modular CMS system with Symfony, Doctrine ORM, Turbo/Stimulus, and Editor.js. Includes main application and internal bundles/libraries in a monorepo structure.",
+    "license": "MIT",
+    "type": "project",
     "authors": [
         {
             "name": "Tomas Jakl",
@@ -25,34 +29,34 @@
         "pagerfanta/twig": "^4.7",
         "php": ">=8.4",
         "stof/doctrine-extensions-bundle": "^1.13",
-        "symfony/asset": "7.2.*",
-        "symfony/asset-mapper": "7.2.*",
-        "symfony/console": "7.2.*",
-        "symfony/dotenv": "7.2.*",
+        "symfony/asset": "7.3.*",
+        "symfony/asset-mapper": "7.3.*",
+        "symfony/console": "7.3.*",
+        "symfony/dotenv": "7.3.*",
         "symfony/flex": "^2",
-        "symfony/form": "7.2.*",
-        "symfony/framework-bundle": "7.2.*",
-        "symfony/http-client": "7.2.*",
-        "symfony/intl": "7.2.*",
-        "symfony/mailer": "7.2.*",
-        "symfony/messenger": "7.2.*",
-        "symfony/mime": "7.2.*",
+        "symfony/form": "7.3.*",
+        "symfony/framework-bundle": "7.3.*",
+        "symfony/http-client": "7.3.*",
+        "symfony/intl": "7.3.*",
+        "symfony/mailer": "7.3.*",
+        "symfony/messenger": "7.3.*",
+        "symfony/mime": "7.3.*",
         "symfony/monolog-bundle": "^3.10",
-        "symfony/runtime": "7.2.*",
-        "symfony/security-bundle": "7.2.*",
-        "symfony/serializer": "7.2.*",
+        "symfony/runtime": "7.3.*",
+        "symfony/security-bundle": "7.3.*",
+        "symfony/serializer": "7.3.*",
         "symfony/stimulus-bundle": "^2.23",
-        "symfony/string": "7.2.*",
-        "symfony/translation": "7.2.*",
-        "symfony/twig-bundle": "7.2.*",
-        "symfony/uid": "7.2.*",
+        "symfony/string": "7.3.*",
+        "symfony/translation": "7.3.*",
+        "symfony/twig-bundle": "7.3.*",
+        "symfony/uid": "7.3.*",
         "symfony/ux-dropzone": "^2.23",
         "symfony/ux-icons": "^2.23",
         "symfony/ux-live-component": "^2.23",
         "symfony/ux-turbo": "^2.23",
         "symfony/ux-twig-component": "^2.17",
-        "symfony/validator": "7.2.*",
-        "symfony/yaml": "7.2.*",
+        "symfony/validator": "7.3.*",
+        "symfony/yaml": "7.3.*",
         "symfonycasts/dynamic-forms": "^0.1",
         "symfonycasts/reset-password-bundle": "^1.23",
         "symfonycasts/tailwind-bundle": "^0.7.0",
@@ -75,13 +79,13 @@
         "phpstan/phpstan-symfony": "^2.0",
         "phpstan/phpstan-webmozart-assert": "^2.0",
         "phpunit/phpunit": "^9.6",
-        "symfony/browser-kit": "7.2.*",
-        "symfony/css-selector": "7.2.*",
-        "symfony/debug-bundle": "7.2.*",
+        "symfony/browser-kit": "7.3.*",
+        "symfony/css-selector": "7.3.*",
+        "symfony/debug-bundle": "7.3.*",
         "symfony/maker-bundle": "^1.62",
-        "symfony/phpunit-bridge": "7.2.*",
-        "symfony/stopwatch": "7.2.*",
-        "symfony/web-profiler-bundle": "7.2.*",
+        "symfony/phpunit-bridge": "7.3.*",
+        "symfony/stopwatch": "7.3.*",
+        "symfony/web-profiler-bundle": "7.3.*",
         "symplify/easy-coding-standard": "^12.5",
         "symplify/monorepo-builder": "^11.2",
         "vincentlanglet/twig-cs-fixer": "^3.5"
@@ -94,26 +98,38 @@
         "symfony/polyfill-php74": "*",
         "symfony/polyfill-php80": "*",
         "symfony/polyfill-php81": "*",
-        "xutim/core-bundle": "self.version"
+        "xutim/core-bundle": "self.version",
+        "xutim/event-bundle": "self.version"
     },
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "Xutim\\Bundle\\CoreBundle\\": "src/Xutim/Bundle/CoreBundle/"
+            "Xutim\\": "src/Xutim/",
+            "Xutim\\CoreBundle\\": "src/Xutim/Bundle/CoreBundle/src/",
+            "Xutim\\EventBundle\\": "src/Xutim/Bundle/EventBundle/src/"
         },
         "exclude-from-classmap": [
-            "src/Xutim/Bundle/CoreBundle/Tests/"
+            "src/Xutim/Bundle/CoreBundle/Tests/",
+            "src/Xutim/Bundle/EventBundle/Tests/"
         ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Xutim\\Bundle\\CoreBundle\\Tests\\": "src/Xutim/Bundle/CoreBundle/tests/"
+            "Xutim\\Bundle\\CoreBundle\\Tests\\": "src/Xutim/Bundle/CoreBundle/tests/",
+            "Xutim\\Bundle\\EventBundle\\Tests\\": "src/Xutim/Bundle/EventBundle/tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/flex": false,
+            "symfony/runtime": true,
+            "phpstan/extension-installer": true
         }
     },
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.2.*"
+            "require": "7.3.*"
         }
     }
 }

@@ -1,0 +1,83 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Xutim\CoreBundle\Routing;
+
+use Symfony\Component\Config\Loader\Loader;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
+use Xutim\CoreBundle\Repository\SnippetRepository;
+
+class LocalizedRouteLoader extends Loader
+{
+    private bool $isLoaded = false;
+
+    /**
+     * Absolute path to the snippet route version file.
+     *
+     * This file is used as a cache dependency marker for all dynamically loaded
+     * routes that are based on translatable snippets (e.g., "route.news" → "/en/news").
+     *
+     * Whenever a route-related snippet is changed (e.g., via admin panel),
+     * this file should be "touched" (e.g., `file_put_contents($path, microtime())`)
+     * to trigger Symfony's route cache invalidation.
+     *
+     * Both this loader and others that rely on route snippets (e.g. fallback slug loaders)
+     * should depend on the same version file.
+     *
+     * Example path: "%kernel.cache_dir%/snippet_routes.version"
+     */
+    private readonly string $snippetVersionPath;
+
+    public function __construct(
+        private readonly SnippetRepository $snippetRepo,
+        string $snippetVersionPath,
+        ?string $env = null,
+    ) {
+        parent::__construct($env);
+        $this->snippetVersionPath = $snippetVersionPath;
+    }
+
+    public function load(mixed $resource, ?string $type = null): RouteCollection
+    {
+        if ($this->isLoaded) {
+            throw new \RuntimeException('Loader already loaded.');
+        }
+
+        $routes = new RouteCollection();
+
+        foreach (RouteSnippetRegistry::all() as $route) {
+            $snippet = $this->snippetRepo->findByCode($route->snippetKey);
+
+            foreach ($snippet->getTranslations() as $trans) {
+                if (trim($trans->getContent()) === '') {
+                    continue;
+                }
+                $locale = $trans->getLocale();
+                $path = sprintf('/%s/%s', $trans->getLocale(), ltrim($trans->getContent(), '/'));
+
+                $localizedRouteName = sprintf('xutim_%s.%s', $route->routeName, $locale);
+
+                $routes->add($localizedRouteName, new Route(
+                    path: $path,
+                    defaults: array_merge(['_controller' => $route->controller], $route->defaults),
+                    requirements: $route->requirements,
+                    host: $route->host,
+                    options: [
+                    'priority' => 100,
+                    'resource' => $this->snippetVersionPath,
+                    ]
+                ));
+            }
+        }
+
+        $this->isLoaded = true;
+        return $routes;
+    }
+
+    public function supports($resource, ?string $type = null): bool
+    {
+        return $type === 'snippet_routes';
+    }
+}

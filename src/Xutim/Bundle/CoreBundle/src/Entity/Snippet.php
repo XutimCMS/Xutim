@@ -8,20 +8,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\Model\SnippetInterface;
+use Xutim\CoreBundle\Domain\Model\SnippetTranslationInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\SnippetDto;
-use Xutim\CoreBundle\Repository\SnippetRepository;
 
-#[Entity(repositoryClass: SnippetRepository::class)]
-class Snippet
+#[MappedSuperclass]
+class Snippet implements SnippetInterface
 {
     use TimestampableTrait;
-    /** @use TranslatableTrait<SnippetTranslation> */
-    use TranslatableTrait;
+    /** @use BasicTranslatableTrait<SnippetTranslationInterface> */
+    use BasicTranslatableTrait;
 
     #[Id]
     #[Column(type: 'uuid')]
@@ -30,8 +31,8 @@ class Snippet
     #[Column(type: Types::STRING)]
     private string $code;
 
-    /** @var Collection<int, SnippetTranslation> */
-    #[OneToMany(mappedBy: 'snippet', targetEntity: SnippetTranslation::class, indexBy: 'locale')]
+    /** @var Collection<int, SnippetTranslationInterface> */
+    #[OneToMany(mappedBy: 'snippet', targetEntity: SnippetTranslationInterface::class, indexBy: 'locale')]
     #[OrderBy(['locale' => 'ASC'])]
     private Collection $translations;
 
@@ -43,7 +44,7 @@ class Snippet
         $this->createdAt = $this->updatedAt = new \DateTimeImmutable();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getCode();
     }
@@ -58,20 +59,25 @@ class Snippet
         return $this->code;
     }
 
+    public function isRouteType(): bool
+    {
+        return str_starts_with('route-', $this->code);
+    }
+
     public function change(string $code): void
     {
         $this->code = $code;
     }
 
     /**
-    * @return Collection<int, SnippetTranslation>
+     * @return Collection<int, SnippetTranslationInterface>
     */
     public function getTranslations(): Collection
     {
         return $this->translations;
     }
 
-    public function addTranslation(SnippetTranslation $translation): void
+    public function addTranslation(SnippetTranslationInterface $translation): void
     {
         $this->translations->add($translation);
     }
@@ -82,7 +88,7 @@ class Snippet
         /** @var array<string, string> */
         $translations = $this->getTranslations()->reduce(
             /** @param array<string, string> $carry */
-            function (array $carry, SnippetTranslation $item) {
+            function (array $carry, SnippetTranslationInterface $item) {
                 $carry[$item->getLocale()] = $item->getContent();
 
                 return $carry;

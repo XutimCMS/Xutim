@@ -5,19 +5,26 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\MessageHandler\Command\ContentTranslation;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Xutim\CoreBundle\Context\BlockContext;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\Event;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Service\SearchContentBuilder;
 
 readonly class EditContentTranslationHandler implements CommandHandlerInterface
 {
     public function __construct(
+        private readonly LogEventFactory $logEventFactory,
         private ContentTranslationRepository $contentTransRepo,
-        private EventRepository $eventRepository
+        private LogEventRepository $eventRepository,
+        private BlockContext $blockContext,
+        private SiteContext $siteContext,
+        private SearchContentBuilder $searchContentBuilder
     ) {
     }
 
@@ -59,7 +66,14 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
             $cmd->description
         );
 
+        $searchContent = $this->searchContentBuilder->build($translation);
+        $searchTagContent = $this->searchContentBuilder->buildTagContent($translation);
+        $translation->changeSearchContent($searchContent);
+        $translation->changeSearchTagContent($searchTagContent);
+
         $this->contentTransRepo->save($translation, true);
+        $this->siteContext->resetMenu();
+        $this->blockContext->resetBlocksBelongsToContentTranslation($translation);
 
         $event = new ContentTranslationUpdatedEvent(
             $translation->getId(),
@@ -73,7 +87,7 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
             $translation->getCreatedAt()
         );
 
-        $log = new Event(
+        $log = $this->logEventFactory->create(
             $translation->getId(),
             $cmd->userIdentifier,
             ContentTranslation::class,

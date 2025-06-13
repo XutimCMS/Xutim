@@ -9,10 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\User;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Repository\ArticleRepository;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Repository\TagRepository;
 
 #[Route('/article/{id<[^/]+>}', name: 'admin_article_show', methods: ['get'])]
 class ShowArticleAction extends AbstractController
@@ -21,14 +21,19 @@ class ShowArticleAction extends AbstractController
         private readonly SiteContext $siteContext,
         private readonly ContentContext $contentContext,
         private readonly ArticleRepository $articleRepo,
-        private readonly EventRepository $eventRepo
+        private readonly LogEventRepository $eventRepo,
+        private readonly TagRepository $tagRepo
     ) {
     }
 
-    public function __invoke(Article $article): Response
+    public function __invoke(string $id): Response
     {
+        $article = $this->articleRepo->find($id);
+        if ($article === null) {
+            throw $this->createNotFoundException('The article does not exist');
+        }
         if ($this->isGranted('ROLE_ADMIN') === false && $this->isGranted('ROLE_TRANSLATOR')) {
-            /** @var User $user */
+            /** @var UserInterface $user */
             $user = $this->getUser();
             $locales = $user->getTranslationLocales();
             $totalTranslations = count($locales);
@@ -58,7 +63,8 @@ class ShowArticleAction extends AbstractController
             'lastRevision' => $lastRevision,
             'contextTranslation' => $contextTranslation,
             'totalTranslations' => $totalTranslations,
-            'translatedTranslations' => $translatedArticles
+            'translatedTranslations' => $translatedArticles,
+            'allTags' => $this->tagRepo->findAll()
         ]);
     }
 }

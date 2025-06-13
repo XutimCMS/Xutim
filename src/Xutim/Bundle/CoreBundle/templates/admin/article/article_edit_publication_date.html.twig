@@ -23,7 +23,9 @@
 {% block stream_success %}
     <turbo-stream action="replace" targets="#published-at-sidebar-item">
         <template>
-            {{ include('@XutimCore/admin/article/_published_sidebar_item.html.twig', {article: article}) }}
+            {{
+                include('@XutimCore/admin/article/_published_sidebar_item.html.twig', {article: article})
+            }}
         </template>
     </turbo-stream>
 {% endblock %}

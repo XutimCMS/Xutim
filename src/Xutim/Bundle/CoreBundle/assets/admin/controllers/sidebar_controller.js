@@ -3,7 +3,9 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     connect() {
+        this.widthValue = this.widthValue || 300;
         this.openedCanvas = null;
+        this.#setupSidebar();
         this.updateSidebarPosition();
 
         const expandButton = document.querySelector('#sidebar-toggle');
@@ -18,6 +20,23 @@ export default class extends Controller {
             'resize',
             this.updateSidebarPosition.bind(this),
         );
+    }
+    #setupSidebar() {
+        this.element.style.position = 'fixed';
+        this.element.style.top = '0';
+        this.element.style.right = `-${this.widthValue}px`; // Initially hidden
+        this.element.style.width = `${this.widthValue}px`;
+        this.element.style.height = '100vh';
+        this.element.style.transition = 'right 0.3s ease-in-out';
+        this.element.style.overflowY = 'auto';
+        this.element.style.overflowX = 'hidden';
+
+        const content = document.getElementById('main-content');
+        content.style.transition = 'margin-right 0.3s ease-in-out';
+
+        if (!window.matchMedia('(max-width: 991.98px)').matches) {
+            this.#showSidebar();
+        }
     }
     disconnect() {
         const expandButton = document.querySelector('#sidebar-toggle');
@@ -40,35 +59,16 @@ export default class extends Controller {
     }
 
     close(event) {
-        const offcanvas = this.element;
-        if (this.openedCanvas && this.openedCanvas !== offcanvas) {
-            this.openedCanvas.classList.remove('show');
-            this.openedCanvas.setAttribute('aria-hidden', 'true');
-            this.openedCanvas = null;
-        }
-
-        if (offcanvas.classList.contains('show')) {
-            offcanvas.classList.remove('show');
-            offcanvas.setAttribute('aria-hidden', 'true');
-        }
+        this.#hideSidebar();
     }
 
     toggle(event) {
-        const offcanvas = this.element;
+        const isOpen = this.element.style.right === '0px';
 
-        if (this.openedCanvas && this.openedCanvas !== offcanvas) {
-            this.openedCanvas.classList.remove('show');
-            this.openedCanvas.setAttribute('aria-hidden', 'true');
-            this.openedCanvas = null;
-        }
-
-        if (offcanvas.classList.contains('show')) {
-            offcanvas.classList.remove('show');
-            offcanvas.setAttribute('aria-hidden', 'true');
+        if (isOpen) {
+            this.#hideSidebar();
         } else {
-            offcanvas.classList.add('show');
-            offcanvas.setAttribute('aria-hidden', 'false');
-            this.openedCanvas = offcanvas;
+            this.#showSidebar();
         }
     }
 
@@ -93,5 +93,19 @@ export default class extends Controller {
 
         const newTop = Math.max(0, maxGap - scrollPosition);
         this.element.style.top = `${newTop}px`;
+    }
+
+    #hideSidebar() {
+        const content = document.getElementById('main-content');
+
+        this.element.style.right = `-${this.widthValue}px`;
+        content.style.marginRight = '0';
+    }
+
+    #showSidebar() {
+        const content = document.getElementById('main-content');
+
+        this.element.style.right = '0px';
+        content.style.marginRight = `${this.widthValue}px`;
     }
 }

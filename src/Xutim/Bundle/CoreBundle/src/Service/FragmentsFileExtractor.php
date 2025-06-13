@@ -9,8 +9,7 @@ class FragmentsFileExtractor
     public const string FILE_URL_PREFIX = '/admin/json/file/show/';
 
     /**
-     * @param array{}|array{time: int, blocks: array{}|array{id: string, type: string, data: array<string, mixed>}, version: string} $content
-     *
+     * @param EditorBlock $content
      *
      * @return array<int, string>
      */

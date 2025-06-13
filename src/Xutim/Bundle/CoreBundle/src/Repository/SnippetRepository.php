@@ -7,11 +7,11 @@ namespace Xutim\CoreBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
-use Xutim\CoreBundle\Entity\Snippet;
 
 /**
- * @extends ServiceEntityRepository<Snippet>
+ * @extends ServiceEntityRepository<SnippetInterface>
  */
 class SnippetRepository extends ServiceEntityRepository
 {
@@ -21,9 +21,9 @@ class SnippetRepository extends ServiceEntityRepository
         'content' => 'translation.content'
     ];
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, string $entityClass)
     {
-        parent::__construct($registry, Snippet::class);
+        parent::__construct($registry, $entityClass);
     }
 
     public function queryByFilter(FilterDto $filter, string $locale = 'en'): QueryBuilder
@@ -57,7 +57,18 @@ class SnippetRepository extends ServiceEntityRepository
         return $builder;
     }
 
-    public function save(Snippet $entity, bool $flush = false): void
+    public function findByCode(string $code): SnippetInterface
+    {
+        /** @var SnippetInterface */
+        return $this->createQueryBuilder('snippet')
+            ->where('snippet.code = :code')
+            ->setParameter('code', $code)
+            ->getQuery()
+            ->getSingleResult()
+        ;
+    }
+
+    public function save(SnippetInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -66,7 +77,7 @@ class SnippetRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Snippet $entity, bool $flush = false): void
+    public function remove(SnippetInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -74,29 +85,4 @@ class SnippetRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
-    //    /**
-    //     * @return Snippet[] Returns an array of Snippet objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Snippet
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }

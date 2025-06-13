@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Config\Layout\Block\Option;
 
-use Xutim\CoreBundle\Entity\BlockItem;
+use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 
 class BlockItemOptionComposed implements BlockItemOption
 {
@@ -16,7 +16,7 @@ class BlockItemOptionComposed implements BlockItemOption
         $this->options = $options;
     }
 
-    public function canFullFill(BlockItem $item): bool
+    public function canFullFill(BlockItemInterface $item): bool
     {
         foreach ($this->options as $option) {
             if ($option->canFullFill($item) === false) {

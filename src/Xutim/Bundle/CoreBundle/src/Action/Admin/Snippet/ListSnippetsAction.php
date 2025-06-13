@@ -29,7 +29,7 @@ class ListSnippetsAction extends AbstractController
         #[MapQueryParameter]
         int $page = 1,
         #[MapQueryParameter]
-        int $pageLength = 10,
+        int $pageLength = 50,
         #[MapQueryParameter]
         string $orderColumn = '',
         #[MapQueryParameter]

@@ -1,0 +1,38 @@
+<twig:Xutim:Admin:SidebarItem id="tags-sidebar-item">
+    <twig:block name="header">
+        {{ 'tags'|trans({}, 'admin')|capitalize }}:
+    </twig:block>
+    <twig:block name="content">
+        <div id="article-sidebar-tags-list">
+            {% for tag in article.tags %}
+                <div class="mt-1">
+                    <twig:Xutim:Admin:Tag :color="tag.color">
+                        {{tag.translationByLocaleOrAny(content_context_language()).name}}
+                    </twig:Xutim:Admin:Tag>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="ms-auto">
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                class="p-0 "
+                data-bs-toggle="dropdown"
+                data-turbo-frame="modal"
+                href="#"
+            >
+                <twig:Xutim:Admin:Icon name="edit" />
+            </twig:Xutim:Admin:Button>
+            <div class="dropdown-menu" data-controller="tag-menu" data-tag-menu-csrf-token-value="{{ csrf_token(constant('Xutim\\CoreBundle\\Action\\Admin\\Article\\ToggleTagAction::TOKEN_NAME'))}}">
+                {% for tag in allTags %}
+                    <label class="dropdown-item">
+                        <input class="form-check-input m-0 me-2" type="checkbox" value="{{ tag.id }}" data-action="tag-menu#submitChange" data-update-url="{{path('admin_article_toggle_tag', {id: article.id, tagId: tag.id})}}" {{article.hasTag(tag) ? 'checked': ''}}>
+                        <span class="badge badge-3 tag-status badge-dot" style="background-color: {{tag.color.HTMLHex}}"></span>
+                        {{ tag.translationByLocaleOrAny(content_context_language()).name }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+    </twig:block>
+</twig:Xutim:Admin:SidebarItem>

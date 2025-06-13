@@ -11,9 +11,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\EnumRequirement;
 use Symfony\UX\Turbo\TurboBundle;
-use Xutim\CoreBundle\Entity\ContentTranslation;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCommand;
+use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Security\TranslatorAuthChecker;
 use Xutim\CoreBundle\Security\UserStorage;
 use Xutim\CoreBundle\Service\CsrfTokenChecker;
@@ -30,15 +30,20 @@ class ChangeStatusAction extends AbstractController
         private readonly MessageBusInterface $commandBus,
         private readonly UserStorage $userStorage,
         private readonly CsrfTokenChecker $csrfTokenChecker,
-        private readonly TranslatorAuthChecker $transAuthChecker
+        private readonly TranslatorAuthChecker $transAuthChecker,
+        private readonly ContentTranslationRepository $transRepo
     ) {
     }
 
     public function __invoke(
         Request $request,
-        ContentTranslation $translation,
+        string $id,
         PublicationStatus $status
     ): Response {
+        $translation = $this->transRepo->find($id);
+        if ($translation === null) {
+            throw $this->createNotFoundException('The content translation does not exist');
+        }
         $this->transAuthChecker->denyUnlessCanTranslate($translation->getLocale());
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
 
@@ -52,14 +57,16 @@ class ChangeStatusAction extends AbstractController
         $this->addFlash('success', 'flash.changes_made_successfully');
 
         if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
-            // If the request comes from Turbo, set the content type as text/vnd.turbo-stream.html and only send the HTML to update
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
-            return $this->renderBlock('@XutimCore/admin/translation/_status_item.html.twig', 'success_stream', [
+            $stream = $this->renderBlockView('@XutimCore/admin/translation/_status_item.html.twig', 'stream_success', [
                 'translation' => $translation
             ]);
+            $this->addFlash('stream', $stream);
+
+            return $this->redirect($request->headers->get('referer', '/'));
         }
 
-        return $this->redirect($request->headers->get('referer', ''));
+        return $this->redirect($request->headers->get('referer', '/'));
     }
 }

@@ -37,19 +37,28 @@
                 data-controller="tooltip"
             />
         {% endif %}
+        {% if item.isSimpleItem() and item.hasTag() %}
+            <twig:ux:icon
+                name="tabler:tag"
+                title="{{ 'tag'|trans({}, 'admin') }}"
+                data-controller="tooltip"
+            />
+        {% endif %}
     </td>
     {% if block.blockItems|filter(item => item.file) is not empty %}
         <td class="w-6">
             {% if item.file %}
-                <a
-                    data-fslightbox="articles-images"
-                    href="{{ path('file_show', {id: item.file.id, extension: 'image'}) }}"
+                <button
+                    data-lightbox-url-value="{{ uploaded_asset(item.file.fileName) }}"
+                    data-controller="lightbox"
+                    data-action="click->lightbox#open"
+                    class="btn-link"
                 >
                     <span
                         class="avatar me-2"
                         style="background-image: url({{ path('file_show', {id: item.file.id, extension: 'image'}) }})"
                     ></span>
-                </a>
+                </button>
             {% endif %}
         </td>
     {% endif %}
@@ -77,9 +86,14 @@
                     {{ render_snippet(item.snippet.code) }}
                 </a>
             {% endif %}
+            {% if item.hasTag() %}
+                <a href="{{ path('admin_tag_edit', {id: item.tag.id}) }}">
+                    {{ item.tag.translationByLocaleOrAny(content_context_language()).name }}
+                </a>
+            {% endif %}
             {% if item.hasFile() %}
                 <a href="{{ path('admin_media_edit', {id: item.file.id}) }}">
-                    {{ item.file.translationByLocaleOrDefault(app.locale).name }}
+                    {{ item.file.translationByLocaleOrDefault(content_context_language()).name }}
                 </a>
             {% endif %}
         {% endif %}

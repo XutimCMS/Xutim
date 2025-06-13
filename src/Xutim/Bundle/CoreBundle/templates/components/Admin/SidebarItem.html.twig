@@ -1,18 +1,20 @@
 {% set contentColumns = block('header') != '' ? 8 : 12 %}
 {% set content = block('content') %}
-<div
-    {{
+<div {{
         attributes.defaults({
             class: 'row py-2',
         })
-    }}
->
+    }}>
     {% if block('header') != '' %}
-        <div class="col-4">{% block header %}{% endblock %}</div>
+        <div class="col-4 d-flex align-items-center">
+            {% block header %}{% endblock %}
+        </div>
     {% endif %}
 
     {% if block('header') != '' %}
-        <div class="col-{{ contentColumns }}">{{ content|raw }}</div>
+        <div class="col-{{ contentColumns }} d-flex align-items-center justify-content-between">
+            {{ content|raw }}
+        </div>
     {% else %}
         {{ content|raw }}
     {% endif %}

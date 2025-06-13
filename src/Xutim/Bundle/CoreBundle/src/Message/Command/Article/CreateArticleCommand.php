@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Message\Command\Article;
 
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Dto\Admin\Article\ArticleDto;
+use Xutim\CoreBundle\Form\Admin\Dto\CreateArticleFormData;
 
 final readonly class CreateArticleCommand
 {
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
+     * @param EditorBlock $content
      */
     public function __construct(
         public ?string $layout,
@@ -25,24 +21,33 @@ final readonly class CreateArticleCommand
         public array $content,
         public string $description,
         public string $defaultLanguage,
-        public ?Uuid $pageId,
-        public string $userIdentifier
+        public string $userIdentifier,
+        public ?Uuid $featuredImageId
     ) {
     }
 
-    public static function fromDto(ArticleDto $dto, string $userIdentifier): self
+    public static function fromFormData(CreateArticleFormData $data, string $userIdentifier): self
     {
         return new self(
-            $dto->layout,
-            $dto->preTitle,
-            $dto->title,
-            $dto->subTitle,
-            $dto->slug,
-            $dto->content,
-            $dto->description,
-            $dto->locale,
-            $dto->page->getId(),
-            $userIdentifier
+            $data->getLayout(),
+            $data->getPreTitle(),
+            $data->getTitle(),
+            $data->getSubTitle(),
+            $data->getSlug(),
+            $data->getContent(),
+            $data->getDescription(),
+            $data->getLocale(),
+            $userIdentifier,
+            $data->getFeaturedImageId()
         );
+    }
+
+    /**
+     * @phpstan-assert-if-true Uuid $this->featuredImageId
+     * @phpstan-assert-if-false null $this->featuredImageId
+     */
+    public function hasFeaturedImage(): bool
+    {
+        return $this->featuredImageId !== null;
     }
 }

@@ -8,25 +8,28 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
-use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
-use Xutim\CoreBundle\Service\ContentFragmentsConverter;
+use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
 #[Route('/article-frame/{id<[^/]+>}', name: 'admin_article_frame_show', methods: ['get'])]
 class ShowArticlePreviewAction extends AbstractController
 {
     public function __construct(
-        private readonly ContentFragmentsConverter $converter,
         private readonly ThemeFinder $themeFinder,
         private readonly LayoutLoader $layoutLoader,
         private readonly ContentContext $contentContext,
+        private readonly ArticleRepository $articleRepo,
     ) {
     }
 
-    public function __invoke(Article $article): Response
+    public function __invoke(string $id): Response
     {
+        $article = $this->articleRepo->find($id);
+        if ($article === null) {
+            throw $this->createNotFoundException('The article does not exist');
+        }
         $locale = $this->contentContext->getLanguage();
         $translation = $article->getTranslationByLocaleOrDefault($locale);
 
@@ -39,8 +42,8 @@ class ShowArticlePreviewAction extends AbstractController
             'preTitle' => $translation->getPreTitle(),
             'title' => $translation->getTitle(),
             'subTitle' => $translation->getSubTitle(),
-            'mainImageBlock' => $translation->getMainImageBlock(),
-            'content' => $this->converter->convertToThemeHtml($translation->getContent(), $this->themeFinder->getActiveThemePath()),
+            'featuredImage' => $article->getFeaturedImage(),
+            'contentFragments' => $translation->getContent(),
             'isPublished' => $translation->isPublished()
         ]);
     }

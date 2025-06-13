@@ -2,25 +2,25 @@
 
 <div class="col">
     <div class="card card-sm">
-        <a href="{{ path('admin_media_edit', {id: file.id}) }}" class="d-block">
+        <a
+            href="{{ path('admin_media_edit', {id: file.id}) }}"
+            class="d-block"
+        >
             {% if file.isImage() %}
                 <img
-                    class="card-img-top "
-                    {# src="{{ path('file_show',{'id': file.id, 'extension': file.extension} ) | imagine_filter('pulse_thumbnail') }}" #}
-                    src="{{ asset(file.id ~ '.' ~ file.extension)|imagine_filter('pulse_thumbnail') }}"
+                    class="card-img-top"
+                    src="{{ uploaded_asset(file.fileName)| imagine_filter('thumb_small') }}"
                     alt=""
                 />
             {% else %}
-                <img
-                    class="card-img-top "
-                    src="{{ asset('@XutimCore/admin/images/icons/file-card-image.svg') }}"
-                    alt=""
-                />
+                {% include '@XutimCore/admin/media/_image_icon.html.twig' %}
             {% endif %}
         </a>
 
         <div class="card-body border-top">
-            {% set trans = file.translationByLocaleOrAny(content_context_language()) %}
+            {%
+                set trans = file.translationByLocaleOrAny(content_context_language())
+            %}
             <div
                 class="d-flex align-items-center"
                 title="{{ trans.name }}"
@@ -28,9 +28,13 @@
             >
                 {% if trans.locale != content_context_language() %}
                     {{ badges.languageBadge(trans) }}
-                    {{ trans.name|truncate_center(12, file.extension|length + 1) }}
+                    {{
+                        trans.name|truncate_center(12, file.extension|length + 1)
+                    }}
                 {% else %}
-                    {{ trans.name|truncate_center(15, file.extension|length + 1) }}
+                    {{
+                        trans.name|truncate_center(15, file.extension|length + 1)
+                    }}
                 {% endif %}
             </div>
         </div>

@@ -1,0 +1,44 @@
+{% block file_widget %}
+    {% set data = form.file.vars.data %}
+    {%
+        set previewUrl = data ? uploaded_asset(data.fileName) | imagine_filter('front_preview') : ''
+    %}
+    <div
+        data-controller="media-field"
+        data-media-field-url-value="{{ path('admin_json_image_list') }}"
+        data-media-field-initial-url-value="{{ data ? previewUrl : '' }}"
+        data-media-field-initial-id-value="{{ data ? data.id : '' }}"
+        class="position-relative rounded p-2 mb-3 text-center cursor-pointer"
+        data-action="click->media-field#openModal"
+        style="border: 0.125rem dashed #bbb"
+    >
+        <input
+            type="hidden"
+            name="{{ form.file.vars.full_name }}"
+            value="{{ data ? data.id : '' }}"
+            data-media-field-target="hiddenInput"
+        />
+
+        <img
+            src="{{ previewUrl }}"
+            alt=""
+            class="img-fluid"
+            style="max-height: 200px"
+            data-media-field-target="preview"
+            {% if not data %}
+                hidden
+            {% endif %}
+        />
+
+        <div
+            data-media-field-target="placeholder"
+            {% if data %}
+                hidden
+            {% endif %}
+        >
+            <span class="text-muted">
+                {{ 'Click to select an image'|trans({}, 'admin') }}
+            </span>
+        </div>
+    </div>
+{% endblock %}

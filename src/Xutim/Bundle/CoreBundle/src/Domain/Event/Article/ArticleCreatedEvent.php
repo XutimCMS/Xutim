@@ -11,7 +11,7 @@ use Xutim\CoreBundle\Domain\DomainEvent;
 final readonly class ArticleCreatedEvent implements DomainEvent
 {
     /**
-     * @param array{}|array{time: int, blocks: array{}|array{id: string, type: string, data: array<string, mixed>}, version: string} $content
+     * @param EditorBlock $content
     */
     public function __construct(
         public Uuid $id,
@@ -24,8 +24,8 @@ final readonly class ArticleCreatedEvent implements DomainEvent
         public string $description,
         public string $defaultLanguage,
         public DateTimeImmutable $createdAt,
-        public Uuid $pageId,
-        public ?string $layout
+        public ?string $layout,
+        public ?Uuid $featuredImageId
     ) {
     }
 }

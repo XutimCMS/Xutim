@@ -7,7 +7,7 @@ namespace Xutim\CoreBundle\Form\Admin\Dto;
 readonly class SnippetDto
 {
     /**
-    * @param array<string, string> $contents
+     * @param array<string, string> $contents
     */
     public function __construct(
         public string $code,

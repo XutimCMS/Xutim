@@ -11,7 +11,9 @@
                             name="{{ child.vars.full_name }}"
                             value="{{ child.vars.value }}"
                             class="form-imagecheck-input"
-                            {% if child.vars.checked %}checked{% endif %}
+                            {% if child.vars.checked %}
+                                checked
+                            {% endif %}
                             {{ block('widget_attributes') }}
                         />
                         <span class="form-imagecheck-figure">

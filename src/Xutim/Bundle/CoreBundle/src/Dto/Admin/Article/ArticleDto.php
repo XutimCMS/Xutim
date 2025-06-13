@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Dto\Admin\Article;
 
+use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\Page;
 
 final readonly class ArticleDto
 {
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
+     * @param EditorBlock $content
      */
     public function __construct(
         public ?string $layout,
@@ -25,7 +21,7 @@ final readonly class ArticleDto
         public array $content,
         public string $description,
         public string $locale,
-        public Page $page
+        public ?Uuid $featuredImageId
     ) {
     }
 
@@ -42,7 +38,12 @@ final readonly class ArticleDto
             $translation->getContent(),
             $translation->getDescription(),
             $translation->getLocale(),
-            $article->getPage()
+            $article->getFeaturedImage()?->getId()
         );
+    }
+
+    public function hasFeaturedImage(): bool
+    {
+        return $this->featuredImageId !== null;
     }
 }

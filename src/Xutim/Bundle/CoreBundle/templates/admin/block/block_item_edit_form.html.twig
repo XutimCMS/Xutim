@@ -13,19 +13,27 @@
         <div class="card-body">
             {{ form_start(form) }}
             {% if form.page is defined %}
-                {{ form_row(form.page, {attr: {'data-controller': 'tom-select'}})
+                {{
+                    form_row(form.page, {attr: {'data-controller': 'tom-select'}})
                 }}
             {% endif %}
             {% if form.article is defined %}
-                {{ form_row(form.article, {attr: {'data-controller': 'tom-select'}})
+                {{
+                    form_row(form.article, {attr: {'data-controller': 'tom-select'}})
                 }}
             {% endif %}
-            {{ form_row(form.snippet, {attr: {'data-controller': 'tom-select'}})
-            }} {{ form_row(form.file) }}
+            {{
+                form_row(form.snippet, {attr: {'data-controller': 'tom-select'}})
+            }}
+            {{ form_row(form.tag, {attr: {'data-controller': 'tom-select'}}) }}
+            {{ form_row(form.file) }}
+            {% include '@XutimCore/admin/form/_file_widget.html.twig' %}
             {{ form_row(form.fileDescription) }}
             <div class="mb-3">
                 {{ form_label(form.color) }}
-                {{ forms.colorInput(form.color.vars.full_name, item.color.isSet() ? item.color.hex : '') }}
+                {{
+                    forms.colorInput(form.color.vars.full_name, item.color.isSet() ? item.color.hex : '')
+                }}
                 {{ form_help(form.color) }}
                 {{ form_errors(form.color) }}
             </div>

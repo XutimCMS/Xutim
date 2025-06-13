@@ -5,15 +5,7 @@
 {% block pageTitle %}{{ 'Dashboard'|trans({}, 'admin')|capitalize }}{% endblock %}
 
 {% block pageMenu %}
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ path('homepage') }}"
-    >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-        Public page
-    </twig:Xutim:Admin:Button>
-    {# {{ modals.modalForm(path('admin_user_new'), 'New user'|trans({}, 'admin'), 'plus', 'Add a new user'|trans({}, 'admin')) }} #}
+    <twig:Xutim:Admin:PublicPageLink />
 {% endblock %}
 
 {% block breadcrumbHeader %}
@@ -147,7 +139,7 @@
                                 <th>{{ 'title'|trans({}, 'admin') }}</th>
                                 <th>{{ 'updated at'|trans({}, 'admin') }}</th>
                                 <th>
-                                    {{ 'missing languages'|trans({}, 'admin') }}
+                                    {{ 'languages changed'|trans({}, 'admin') }}
                                 </th>
                             </tr>
                         </thead>

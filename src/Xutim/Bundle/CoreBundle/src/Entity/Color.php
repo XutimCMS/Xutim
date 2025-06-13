@@ -78,4 +78,28 @@ class Color
 
         return self::COLORS_BY_VALUE[$this->hexValue];
     }
+
+    // For more info: https://github.com/Myndex/max-contrast
+    public function getAccessibleTextColor(): Color
+    {
+        $rgb = [
+            hexdec(substr($this->getValueOrDefaultHex(), 0, 2)),
+            hexdec(substr($this->getValueOrDefaultHex(), 2, 2)),
+            hexdec(substr($this->getValueOrDefaultHex(), 4, 2)),
+        ];
+
+        $flipYs = 0.342; // APCA™ 0.98G threshold
+        $trc = 2.4;
+        $Rco = 0.2126729;
+        $Gco = 0.7151522;
+        $Bco = 0.0721750;
+
+        $Ys = pow($rgb[0] / 255.0, $trc) * $Rco +
+              pow($rgb[1] / 255.0, $trc) * $Gco +
+              pow($rgb[2] / 255.0, $trc) * $Bco;
+
+        $textHex = $Ys < $flipYs ? 'ffffff' : '000000';
+
+        return new Color($textHex);
+    }
 }

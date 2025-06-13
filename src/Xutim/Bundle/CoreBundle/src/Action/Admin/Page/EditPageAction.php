@@ -13,15 +13,15 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
-use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\Page;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\ContentTranslationType;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\CreateContentTranslationCommand;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Security\TranslatorAuthChecker;
 use Xutim\CoreBundle\Security\UserStorage;
@@ -37,12 +37,16 @@ class EditPageAction extends AbstractController
         private readonly MessageBusInterface $commandBus,
         private readonly ContentContext $contentContext,
         private readonly TranslatorAuthChecker $transAuthChecker,
-        private readonly EventRepository $eventRepo
+        private readonly LogEventRepository $eventRepo
     ) {
     }
 
-    public function __invoke(Request $request, Page $page, string $locale = ''): Response
+    public function __invoke(Request $request, string $id, string $locale = ''): Response
     {
+        $page = $this->pageRepo->find($id);
+        if ($page === null) {
+            throw $this->createNotFoundException('The page does not exist');
+        }
         $contentLocale = $this->contentContext->getLanguage();
         $translation = $page->getTranslationByLocale($contentLocale);
 
@@ -93,7 +97,7 @@ class EditPageAction extends AbstractController
     /**
      * @return FormInterface<ContentTranslationDto>
      */
-    private function createTranslationForm(Page $page, ?ContentTranslation $translation, string $contentLocale, string $locale): FormInterface
+    private function createTranslationForm(PageInterface $page, ?ContentTranslationInterface $translation, string $contentLocale, string $locale): FormInterface
     {
         $existingTranslation = $translation;
         if (strlen(trim($locale)) > 0) {
@@ -128,7 +132,7 @@ class EditPageAction extends AbstractController
         ]);
     }
 
-    private function createTranslationCommand(?ContentTranslation $translation, ContentTranslationDto $data, Page $page): CreateContentTranslationCommand|EditContentTranslationCommand
+    private function createTranslationCommand(?ContentTranslationInterface $translation, ContentTranslationDto $data, PageInterface $page): CreateContentTranslationCommand|EditContentTranslationCommand
     {
         if ($translation === null) {
             return CreateContentTranslationCommand::fromDto(

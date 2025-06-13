@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Security;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Xutim\CoreBundle\Entity\User;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 
 /**
  * @author Tomas Jakl <tomasjakll@gmail.com>
@@ -17,25 +17,25 @@ class UserStorage
     {
     }
 
-    public function getUser(): ?User
+    public function getUser(): ?UserInterface
     {
         $user = $this->tokenStorage->getToken()?->getUser();
         if ($user === null) {
             return null;
         }
 
-        /** @var User $user */
+        /** @var UserInterface $user */
         return $user;
     }
 
-    public function getUserWithException(): User
+    public function getUserWithException(): UserInterface
     {
         $user = $this->tokenStorage->getToken()?->getUser();
         if ($user === null) {
             throw new NotFoundHttpException('User is not authenticated.');
         }
 
-        /** @var User $user */
+        /** @var UserInterface $user */
         return $user;
     }
 }

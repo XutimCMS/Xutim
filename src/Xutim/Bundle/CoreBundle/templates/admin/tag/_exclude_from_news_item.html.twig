@@ -1,0 +1,41 @@
+<twig:Xutim:Admin:SidebarItem id="exclude-from-news-item">
+    <twig:block name="header">
+        {{ 'exclude from news'|trans({}, 'admin')|capitalize }}:
+    </twig:block>
+    <twig:block name="content">
+        {% if tag.excludeFromNews %}
+            <span class="status status-green">
+                {{ 'yes'|trans({}, 'admin') }}
+            </span>
+        {% else %}
+            <span class="status status-danger">
+                {{ 'no'|trans({}, 'admin') }}
+            </span>
+        {% endif %}
+        {% if tag.excludeFromNews %}
+            <twig:Xutim:Admin:ModalDialog
+                class="btn-link"
+                modalDialogColor="secondary"
+                action="{{ path('admin_tag_exclude_from_news_toggle', {id: tag.id}) }}"
+                confirmActionLabel="{{ 'include in news'|trans({}, 'admin')|capitalize }}"
+            >
+                <twig:ux:icon
+                    name="tabler:toggle-right"
+                    class="w-4 h-4"
+                />
+            </twig:Xutim:Admin:ModalDialog>
+        {% else %}
+            <twig:Xutim:Admin:ModalDialog
+                class="btn-link"
+                modalDialogColor="secondary"
+                action="{{ path('admin_tag_exclude_from_news_toggle', {id: tag.id}) }}"
+                confirmActionLabel="{{ 'exclude form news'|trans({}, 'admin')|capitalize }}"
+            >
+                <twig:ux:icon
+                    name="tabler:toggle-left"
+                    class="w-4 h-4"
+                />
+            </twig:Xutim:Admin:ModalDialog>
+        {% endif %}
+    </twig:block>
+</twig:Xutim:Admin:SidebarItem>

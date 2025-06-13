@@ -7,30 +7,39 @@ namespace Xutim\CoreBundle\Entity;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\InverseJoinColumn;
 use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Config\Layout\Layout;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Exception\LogicException;
-use Xutim\CoreBundle\Repository\ArticleRepository;
 
-#[Entity(repositoryClass: ArticleRepository::class)]
-class Article
+#[MappedSuperclass]
+class Article implements ArticleInterface
 {
     use TimestampableTrait;
     use FileTrait;
     use ArchiveStatusTrait;
-    /** @use TranslatableTrait<ContentTranslation> */
-    use TranslatableTrait;
+
+    /** @use BasicTranslatableTrait<ContentTranslationInterface> */
+    use BasicTranslatableTrait;
+
+    /** @use PublishableTranslatableTrait<string, ContentTranslationInterface> */
+    use PublishableTranslatableTrait;
 
     #[Id]
     #[Column(type: 'uuid')]
@@ -39,86 +48,72 @@ class Article
     #[Column(type: Types::STRING, nullable: true)]
     private ?string $layout;
 
-    #[ManyToOne(targetEntity: Page::class, inversedBy: 'articles')]
-    #[JoinColumn(nullable: false)]
-    private Page $page;
+    #[ManyToOne(targetEntity: FileInterface::class, inversedBy: 'featuredArticles')]
+    private ?FileInterface $featuredImage;
 
-    /** @var Collection<int, ContentTranslation> */
-    #[OneToMany(mappedBy: 'article', targetEntity: ContentTranslation::class, indexBy: 'locale')]
+    /** @var Collection<string, ContentTranslationInterface> */
+    #[OneToMany(mappedBy: 'article', targetEntity: ContentTranslationInterface::class, indexBy: 'locale')]
     #[OrderBy(['locale' => 'ASC'])]
     private Collection $translations;
 
-    #[OneToOne(targetEntity: ContentTranslation::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToOne(targetEntity: ContentTranslationInterface::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[JoinColumn(onDelete: 'SET NULL')]
-    private ContentTranslation $defaultTranslation;
+    private ContentTranslationInterface $defaultTranslation;
 
-    /** @var Collection<int, Tag> */
-    #[ManyToMany(targetEntity: Tag::class)]
+    /** @var Collection<int, TagInterface> */
+    #[ManyToMany(targetEntity: TagInterface::class, inversedBy: 'articles')]
+    #[JoinTable(name: 'xutim_article_tag')]
+    #[JoinColumn(name: 'article_id')]
+    #[InverseJoinColumn(name: 'tag_id')]
     private Collection $tags;
 
     /**
-     * @var Collection<int, File>
+     * @var Collection<int, FileInterface>
      */
-    #[ManyToMany(targetEntity: File::class, mappedBy: 'articles')]
+    #[ManyToMany(targetEntity: FileInterface::class, mappedBy: 'articles')]
     #[OrderBy(['createdAt' => 'ASC'])]
     private Collection $files;
 
-    /** @var Collection<int, BlockItem> */
-    #[OneToMany(mappedBy: 'article', targetEntity: BlockItem::class)]
+    /** @var Collection<int, BlockItemInterface> */
+    #[OneToMany(mappedBy: 'article', targetEntity: BlockItemInterface::class)]
     private Collection $blockItems;
 
     #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $publishedAt;
 
     /**
-     * @param Collection<int, Tag> $tags
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
+     * @param Collection<int, TagInterface> $tags
      */
     public function __construct(
         ?string $layout,
-        string $preTitle,
-        string $title,
-        string $subTitle,
-        string $slug,
-        array $content,
-        string $locale,
-        string $description,
-        Page $page,
         Collection $tags,
-        ?int $spipId = null
+        ?FileInterface $featuredImage
     ) {
         $this->id = Uuid::v4();
         $this->layout = $layout;
         $this->createdAt = $this->updatedAt = new DateTimeImmutable();
-        $this->page = $page;
         $this->tags = $tags;
         $this->blockItems = new ArrayCollection();
+        $this->translations = new ArrayCollection();
         $this->archived = false;
-
-        $this->defaultTranslation = new ContentTranslation(
-            $preTitle,
-            $title,
-            $subTitle,
-            $slug,
-            $content,
-            $locale,
-            $description,
-            null,
-            $this,
-            $spipId
-        );
-        $this->translations = new ArrayCollection([$this->defaultTranslation]);
+        $this->featuredImage = $featuredImage;
         $this->files = new ArrayCollection();
     }
 
-    public function change(Page $page): void
+    public function change(): void
     {
         $this->updatedAt = new DateTimeImmutable();
-        $this->page = $page;
+    }
+
+    public function addTranslation(ContentTranslationInterface $trans): void
+    {
+        if ($this->translations->contains($trans) === true) {
+            return;
+        }
+        $this->translations->add($trans);
+        if (count($this->translations) === 1) {
+            $this->defaultTranslation = $trans;
+        }
     }
 
     public function getId(): Uuid
@@ -127,19 +122,19 @@ class Article
     }
 
     /**
-     * @return Collection<int, ContentTranslation>
+     * @return Collection<string, ContentTranslationInterface>
      */
     public function getTranslations(): Collection
     {
         return $this->translations;
     }
 
-    public function getDefaultTranslation(): ContentTranslation
+    public function getDefaultTranslation(): ContentTranslationInterface
     {
         return $this->defaultTranslation;
     }
 
-    public function setDefaultTranslation(ContentTranslation $trans): void
+    public function setDefaultTranslation(ContentTranslationInterface $trans): void
     {
         if ($this->getTranslations()->contains($trans) === false) {
             throw new LogicException(sprintf(
@@ -174,11 +169,6 @@ class Article
         return ['total' => $total, 'translated' => $translated];
     }
 
-    public function getPage(): Page
-    {
-        return $this->page;
-    }
-
     public function getTitle(): string
     {
         return $this->defaultTranslation->getTitle();
@@ -194,21 +184,6 @@ class Article
         $this->layout = $layout?->code;
     }
 
-    public function getTranslationByLocaleOrDefault(string $locale): ContentTranslation
-    {
-        $criteria = Criteria::create()
-            ->where(Criteria::expr()->eq('locale', $locale))
-            ->setFirstResult(0)
-            ->setMaxResults(1);
-        /** @var ContentTranslation|false $translation */
-        $translation = $this->translations->matching($criteria)->first();
-
-        if ($translation === false) {
-            return $this->defaultTranslation;
-        }
-
-        return $translation;
-    }
 
     public function canBeDeleted(): bool
     {
@@ -260,5 +235,43 @@ class Article
         $now = new DateTimeImmutable();
 
         return $this->publishedAt > $now;
+    }
+
+    public function getFeaturedImage(): ?FileInterface
+    {
+        return $this->featuredImage;
+    }
+
+    public function changeFeaturedImage(?FileInterface $image): void
+    {
+        $this->featuredImage = $image;
+    }
+
+    public function hasFeaturedImage(): bool
+    {
+        return $this->featuredImage !== null;
+    }
+
+    /**
+     * @return Collection<int,TagInterface>
+    */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function hasTag(TagInterface $tag): bool
+    {
+        return $this->tags->contains($tag);
+    }
+
+    public function addTag(TagInterface $tag): void
+    {
+        $this->tags->add($tag);
+    }
+
+    public function removeTag(TagInterface $tag): void
+    {
+        $this->tags->removeElement($tag);
     }
 }

@@ -8,8 +8,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use Xutim\CoreBundle\Entity\BlockItem;
-use Xutim\CoreBundle\Entity\ContentTranslation;
+use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 
 class BlockItemExtension extends AbstractExtension
 {
@@ -27,7 +27,7 @@ class BlockItemExtension extends AbstractExtension
         ];
     }
 
-    public function getTranslation(BlockItem $item): ContentTranslation|null
+    public function getTranslation(BlockItemInterface $item): ContentTranslationInterface|null
     {
         $locale = $this->reqStack->getCurrentRequest()?->getLocale();
 
@@ -38,7 +38,7 @@ class BlockItemExtension extends AbstractExtension
         return null;
     }
 
-    public function getLink(BlockItem $item): string
+    public function getLink(BlockItemInterface $item): string
     {
         if ($item->isSimpleItem() === true) {
             return $item->getLink() ?? '';

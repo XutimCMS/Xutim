@@ -16,7 +16,9 @@
         <twig:Xutim:Admin:SidebarSection>
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="content">
-                    {{ '%locale% translation doesn\'t exist yet.'|trans({'%locale%': content_context_language()|language_name}, 'admin') }}
+                    {{
+                        '%locale% translation doesn\'t exist yet.'|trans({'%locale%': content_context_language()|language_name}, 'admin')
+                    }}
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
             <twig:Xutim:Admin:SidebarItem>
@@ -34,88 +36,37 @@
     {% endif %}
     {% if translation %}
         <twig:Xutim:Admin:SidebarSection>
-            <twig:Xutim:Admin:SidebarItem>
-                <twig:block name="header">
-                    {{ 'status'|trans({}, 'admin')|capitalize }}:
-                </twig:block>
+            {%
+                include '@XutimCore/admin/article/_publication_status_sidebar_item.html.twig'
+            %}
 
-                <twig:block name="content">
-                    <div>
-                        <span
-                            class="badge me-2 text-bg-{{ translation.status.colorClass }}"
-                        >
-                            {{ translation.status.name }}
-                        </span>
-                    </div>
-
-                    {% if is_granted_translation(content_context_language()) %}
-                        {% from '@XutimCore/admin/article/_article_sidebar.html.twig' import modalDialogPage %}
-                        <div>
-                            {% if translation.status.canBeDrafted() %}
-                                {{ modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard') }}
-                            {% endif %}
-
-                            {% if translation.status.canPublish %}
-                                {{ modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload') }}
-                            {% endif %}
-
-                            {% if translation.status.canSubmitForEvaluation %}
-                                {{ modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert') }}
-                            {% endif %}
-
-                            {% if translation.status.canBeArchived %}
-                                {{ modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived'), 'archive'|trans({}, 'admin')|capitalize, 'archive') }}
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                </twig:block>
-            </twig:Xutim:Admin:SidebarItem>
-
-            {% if translation is defined and translation is not same as(null) and translation.untranslatedChange() %}
+            {%
+                if translation is defined and translation is not same as(null) and translation.untranslatedChange()
+            %}
                 <twig:Xutim:Admin:SidebarItem>
                     <a
                         href="{{ path('admin_content_translation_revisions', {id: translation.id}) }}"
                         class="fw-bold"
                     >
-                        {{ 'New changes in reference translation'|trans({}, 'admin') }}
+                        {{
+                            'New changes in reference translation'|trans({}, 'admin')
+                        }}
                     </a>
                 </twig:Xutim:Admin:SidebarItem>
             {% endif %}
 
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="header">
-                    {{ 'in page'|trans({}, 'admin')|capitalize }}:
-                </twig:block>
-                <twig:block name="content">
-                    {% from '@XutimCore/admin/common/translatable.html.twig' import titleWithBadge %}
-                    <a
-                        id="article-page-link"
-                        href="{{ path('admin_page_list', {id: article.page.id}) }}"
-                    >
-                        {{ titleWithBadge(article.page) }}
-                    </a>
-                    <div class="btn-group float-end">
-                        <twig:Xutim:Admin:Button
-                            tag="a"
-                            variant="link"
-                            class="p-0"
-                            data-turbo-frame="modal"
-                            href="{{ path('admin_article_page_edit', {id: article.id}) }}"
-                        >
-                            <twig:Xutim:Admin:Icon name="edit" />
-                        </twig:Xutim:Admin:Button>
-                    </div>
-                </twig:block>
-            </twig:Xutim:Admin:SidebarItem>
-
-            <twig:Xutim:Admin:SidebarItem>
-                <twig:block name="header">
                     {{ 'layout'|trans({}, 'admin')|capitalize }}:
                 </twig:block>
                 <twig:block name="content">
-                    {{ article.layout }}
+                    <span id="article-layout-item">{{ article.layout }}</span>
 
-                    <div class="btn-group float-end">
+                    <div
+                        {% if article.layout is null %}
+                            class="ms-auto"
+                        {% endif %}
+                    >
                         <twig:Xutim:Admin:Button
                             tag="a"
                             variant="link"
@@ -129,31 +80,15 @@
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
 
-            <twig:Xutim:Admin:SidebarItem>
-                <twig:block name="header">
-                    {{ 'publish'|trans({}, 'admin')|capitalize }}:
-                </twig:block>
-                <twig:block name="content">
-                    {{ article.createdAt|time_until }}
-                    {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
-                        <div class="btn-group float-end">
-                            <twig:Xutim:Admin:Button
-                                tag="a"
-                                variant="link"
-                                class="p-0"
-                                data-turbo-frame="modal"
-                                href="{{ path('admin_article_edit_publication_date', {id: article.id}) }}"
-                            >
-                                <twig:Xutim:Admin:Icon name="edit" />
-                            </twig:Xutim:Admin:Button>
-                        </div>
-                    {% endif %}
-
-                    <p class="text-sm text-muted mb-0">
-                        Applies to all translations that are published.
-                    </p>
-                </twig:block>
-            </twig:Xutim:Admin:SidebarItem>
+            {{
+                include('@XutimCore/admin/article/_tags_sidebar_item.html.twig')
+            }}
+            {{
+                include('@XutimCore/admin/article/_featured_image_sidebar_item.html.twig')
+            }}
+            {{
+                include('@XutimCore/admin/article/_published_sidebar_item.html.twig')
+            }}
 
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="header">
@@ -194,77 +129,6 @@
                     </twig:Xutim:Admin:ModalDialog>
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
-        </twig:Xutim:Admin:SidebarSection>
-
-        <twig:Xutim:Admin:SidebarSection>
-            <div class="col-12">
-                {% if totalTranslations == 0 %}
-                    {% set translatedCompletion = 0 %}
-                {% else %}
-                    {% set translatedCompletion = (100 * translatedTranslations / totalTranslations)|round %}
-                {% endif %}
-                <div class="d-flex mb-2">
-                    <div class="subheader">
-                        {{ 'Translations completion'|trans({}, 'admin')|capitalize }}
-                    </div>
-                    <div class="ms-auto">
-                        <span
-                            class="{% if translatedCompletion == 100 %}text-green{% else %}text-blue{% endif %} d-inline-flex align-items-center lh-1"
-                        >
-                            {{ translatedCompletion }}%
-                        </span>
-                    </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div
-                        class="progress-bar {% if translatedCompletion == 100 %}bg-success{% else %}bg-primary{% endif %}"
-                        style="width: {{ translatedCompletion }}%"
-                        role="progressbar"
-                        aria-valuenow="{{ translatedCompletion }}"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                        aria-label="{{ translatedCompletion }}% Complete"
-                    >
-                        <span class="visually-hidden"
-                            >{{ translatedCompletion }}% Complete</span
-                        >
-                    </div>
-                </div>
-            </div>
-
-            <div class="row pt-4 px-2">
-                <div class="col-4">
-                    {{ 'missing'|trans({}, 'admin')|capitalize }}:
-                </div>
-                <div class="col-8">
-                    {% for locale in site_context.defaultSite().locales|sort()|filter((loc) => article.translationByLocale(loc) == null) %}
-                        {{ locale }}{% if not loop.last %},{% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </twig:Xutim:Admin:SidebarSection>
-        <twig:Xutim:Admin:SidebarSection>
-            <twig:Xutim:Admin:SidebarItem>
-                <twig:block name="header">
-                    {{ 'files'|trans({}, 'admin')|capitalize }}
-                </twig:block>
-
-                <twig:block name="content">
-                    {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
-                        <twig:Xutim:Admin:ModalForm
-                            class="btn-link float-end"
-                            action="{{ path('admin_article_media_add', {id: article.id}) }}"
-                            title="{{ 'Add a media file'|trans({}, 'admin')|capitalize }}"
-                        >
-                            <twig:Xutim:Admin:Icon name="plus" plain="true" />
-                        </twig:Xutim:Admin:ModalForm>
-                    {% endif %}
-                </twig:block>
-            </twig:Xutim:Admin:SidebarItem>
-
-            <div id="file-container"></div>
-
-            {{ include('@XutimCore/admin/translation/_file_container_stream.html.twig', {object: article}) }}
         </twig:Xutim:Admin:SidebarSection>
     {% endif %}
 </div>

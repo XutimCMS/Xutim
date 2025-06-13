@@ -6,6 +6,7 @@ namespace Xutim\CoreBundle\Twig\Extension\Public;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Entity\Page;
 
 class BreadcrumbsRendererExtension extends AbstractExtension
@@ -18,7 +19,7 @@ class BreadcrumbsRendererExtension extends AbstractExtension
     }
 
     /**
-     * @return array<Page>
+     * @return array<PageInterface>
      */
     public function getPageItems(Page $page): array
     {

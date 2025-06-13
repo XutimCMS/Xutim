@@ -1,31 +1,29 @@
 {% if is_granted('IS_IMPERSONATOR') %}
     <div class="container my-4">
         <div
-            class="alert alert-important alert-danger alert-dismissible"
+            class="alert alert-important alert-danger alert-dismissible d-flex justify-content-between"
             role="alert"
         >
-            <div class="d-flex">
-                <div>
-                    <twig:Xutim:Admin:Icon name="alert-circle" />
-                </div>
-                <div class="me-auto">
-                    {{ 'You\'re watching the app as a user'|trans({}, 'admin')|capitalize }}
-                    <a
-                        class="text-white"
-                        href="{{ path('admin_user_show', {id: app.user.id}) }}"
-                    >
-                        {{- app.user.email -}}
-                    </a>
-                </div>
-                <div class="ms-auto text-end">
-                    <a
-                        href="{{ impersonation_exit_path(path('admin_user_list')) }}"
-                        class="text-white"
-                        data-turbo-prefetch="false"
-                    >
-                        {{ 'Exit impersonation'|trans({}, 'admin')|capitalize }}
-                    </a>
-                </div>
+            <div>
+                <twig:Xutim:Admin:Icon name="alert-circle" />
+                {{
+                    'You\'re watching the app as a user'|trans({}, 'admin')|capitalize
+                }}
+                <a
+                    class="text-white fw-bold"
+                    href="{{ path('admin_user_show', {id: app.user.id}) }}"
+                >
+                    {{ app.user.email }}
+                </a>
+            </div>
+            <div>
+                <a
+                    href="{{ impersonation_exit_path(path('admin_user_list')) }}"
+                    class="text-white"
+                    data-turbo-prefetch="false"
+                >
+                    {{ 'Exit impersonation'|trans({}, 'admin')|capitalize }}
+                </a>
             </div>
         </div>
     </div>

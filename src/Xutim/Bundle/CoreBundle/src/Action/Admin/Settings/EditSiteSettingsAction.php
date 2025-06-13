@@ -34,10 +34,12 @@ class EditSiteSettingsAction extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var SiteDto $dto */
             $dto = $form->getData();
-            $site->change($dto->locales, $dto->theme, $dto->sender);
+            $site->change($dto->locales, $dto->extendedContentLocales, $dto->theme, $dto->sender);
             $this->siteRepository->save($site, true);
             $this->siteContext->resetDefaultSite();
             $this->layoutLoader->loadAllLayouts();
+
+            $this->addFlash('success', 'flash.changes_made_successfully');
 
             return $this->redirectToRoute('admin_settings_site');
         }

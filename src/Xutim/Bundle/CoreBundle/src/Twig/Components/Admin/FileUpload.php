@@ -20,7 +20,7 @@ class FileUpload extends AbstractController
     use DefaultActionTrait;
 
     /**
-    * @return FormInterface<array{new_file: ?UploadedFile, existing_file: ?File, name: ?string, alt: ?string, locale: ?string}|null>
+     * @return FormInterface<array{new_file: ?UploadedFile, existing_file: ?File, name: ?string, alt: ?string, locale: ?string, copyright: ?string}|null>
     */
     protected function instantiateForm(): FormInterface
     {

@@ -6,6 +6,8 @@ export default class extends Controller {
         'pageToggle',
         'articleForm',
         'pageForm',
+        'overwriteCheckbox',
+        'pageOverwriteLinkForm',
         'submitButton',
     ];
 
@@ -19,12 +21,22 @@ export default class extends Controller {
                 !this.articleFormTarget.getElementsByTagName('select')[0].value
             ) {
                 this.#hideArticleForm();
+                if (
+                    this.pageOverwriteLinkFormTarget.getElementsByTagName(
+                        'select',
+                    )[0].value
+                ) {
+                    this.#showPageOverwriteLink();
+                } else {
+                    this.#hidePageOverwriteLink();
+                }
             }
             if (!this.pageFormTarget.getElementsByTagName('select')[0].value) {
                 this.#hidePageForm();
             }
         } else {
             this.#hidePageForm();
+            this.#hidePageOverwriteLink();
             this.#hideArticleForm();
             this.submitButtonTarget.hidden = true;
         }
@@ -40,6 +52,24 @@ export default class extends Controller {
         this.#showPageForm();
         this.#hideArticleForm();
         this.#showSubmitButton();
+    }
+
+    togglePageOverwriteLink() {
+        if (this.pageOverwriteLinkFormTarget.hidden == true) {
+            this.#showPageOverwriteLink();
+        } else {
+            this.#hidePageOverwriteLink();
+        }
+    }
+
+    #showPageOverwriteLink() {
+        this.pageOverwriteLinkFormTarget.hidden = false;
+        this.overwriteCheckboxTarget.getElementsByTagName('input')[0].checked =
+            true;
+    }
+
+    #hidePageOverwriteLink() {
+        this.pageOverwriteLinkFormTarget.hidden = true;
     }
 
     #hidePageForm() {

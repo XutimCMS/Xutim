@@ -105,6 +105,22 @@
                 </li>
 
                 <li
+                    class="nav-item{{ app.current_route starts with 'admin_tag' ? ' active' : '' }}"
+                >
+                    <a
+                        class="nav-link"
+                        href="{{ path('admin_tag_list', {searchTerm: ''}) }}"
+                    >
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <twig:Xutim:Admin:Icon name="tag" />
+                        </span>
+                        <span class="nav-link-title">
+                            {{ 'tags'|trans({}, 'admin')|capitalize }}
+                        </span>
+                    </a>
+                </li>
+
+                <li
                     class="nav-item{{ app.current_route starts with 'admin_snippet' ? ' active' : '' }}"
                 >
                     <a
@@ -156,37 +172,6 @@
                     </li>
                 {% endif %}
 
-                {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_ADMIN')) %}
-                    <li
-                        class="nav-item{{ app.current_route starts with 'admin_user' ? ' active' : '' }}"
-                    >
-                        <a
-                            class="nav-link"
-                            href="{{ path('admin_user_list', {searchTerm: ''}) }}"
-                        >
-                            <span
-                                class="nav-link-icon d-md-none d-lg-inline-block"
-                            >
-                                <twig:Xutim:Admin:Icon name="users" />
-                            </span>
-                            <span class="nav-link-title">
-                                {{ 'users'|trans({}, 'admin')|capitalize }}
-                            </span>
-                        </a>
-                    </li>
-                {% endif %}
-
-                {# <li class="nav-item"> #}
-                {# <a class="nav-link" href="./"> #}
-                {# <span class="nav-link-icon d-md-none d-lg-inline-block"> #}
-                {# <twig:Xutim:Admin:Icon name="tag" /> #}
-                {# </span> #}
-                {# <span class="nav-link-title"> #}
-                {# Tags #}
-                {# </span> #}
-                {# </a> #}
-                {# </li> #}
-
                 {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_DEVELOPER')) %}
                     <li
                         class="nav-item{{ app.current_route starts with 'admin_settings_' ? ' active' : '' }}"
@@ -206,16 +191,6 @@
                         </a>
                     </li>
                 {% endif %}
-                {# <li class="nav-item"> #}
-                {# <a class="nav-link" href="{{ path('admin_settings_index') }}"> #}
-                {# <span class="nav-link-icon d-md-none d-lg-inline-block"> #}
-                {# <twig:Xutim:Admin:Icon name="settings" /> #}
-                {# </span> #}
-                {# <span class="nav-link-title"> #}
-                {# {{ 'settings'|trans({}, 'admin')|capitalize }} #}
-                {# </span> #}
-                {# </a> #}
-                {# </li> #}
             </ul>
         </div>
     </div>

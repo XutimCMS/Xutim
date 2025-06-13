@@ -8,20 +8,24 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
 use Gedmo\Mapping\Annotation\SortableGroup;
 use Gedmo\Mapping\Annotation\SortablePosition;
 use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\MenuItemInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
+use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
-use Xutim\CoreBundle\Repository\MenuItemRepository;
 
-#[Entity(repositoryClass: MenuItemRepository::class)]
-class MenuItem
+#[MappedSuperclass]
+class MenuItem implements MenuItemInterface
 {
     #[Id]
     #[Column(type: 'uuid')]
@@ -35,35 +39,52 @@ class MenuItem
     private bool $hasLink;
 
     #[ManyToOne]
-    private ?Page $page;
+    private ?PageInterface $page;
 
     #[ManyToOne]
-    private ?Article $article;
+    private ?PageInterface $overwritePage;
+
+    #[ManyToOne]
+    private ?SnippetInterface $snippetAnchor;
+
+    #[ManyToOne]
+    private ?ArticleInterface $article;
 
     #[SortableGroup]
-    #[ManyToOne(targetEntity: MenuItem::class, inversedBy: 'children')]
-    private ?MenuItem $parent;
+    #[ManyToOne(targetEntity: MenuItemInterface::class, inversedBy: 'children')]
+    private ?MenuItemInterface $parent;
 
-    /** @var Collection<int, MenuItem> */
-    #[OneToMany(mappedBy: 'parent', targetEntity: MenuItem::class)]
+    /** @var Collection<int, MenuItemInterface> */
+    #[OneToMany(mappedBy: 'parent', targetEntity: MenuItemInterface::class)]
     #[OrderBy(['position' => 'ASC'])]
     private Collection $children;
 
-    public function __construct(?MenuItem $parent, bool $hasLink, ?Page $page, ?Article $article)
-    {
+    public function __construct(
+        ?MenuItemInterface $parent,
+        bool $hasLink,
+        ?PageInterface $page,
+        ?ArticleInterface $article,
+        ?PageInterface $overwritePage,
+        ?SnippetInterface $snippetAnchor
+    ) {
         $this->id = Uuid::v4();
-        $this->hasLink = $hasLink;
-        $this->page = $page;
-        $this->article = $article;
+        $this->change($hasLink, $page, $article, $overwritePage, $snippetAnchor);
         $this->parent = $parent;
         $this->children = new ArrayCollection();
     }
 
-    public function change(bool $hasLink, ?Page $page, ?Article $article): void
-    {
+    public function change(
+        bool $hasLink,
+        ?PageInterface $page,
+        ?ArticleInterface $article,
+        ?PageInterface $overwritePage,
+        ?SnippetInterface $snippetAnchor
+    ): void {
         $this->hasLink = $hasLink;
         $this->page = $page;
         $this->article = $article;
+        $this->overwritePage = $overwritePage;
+        $this->snippetAnchor = $snippetAnchor;
     }
 
     public function getId(): Uuid
@@ -76,17 +97,17 @@ class MenuItem
         return $this->hasLink;
     }
 
-    public function getParent(): ?MenuItem
+    public function getParent(): ?MenuItemInterface
     {
         return $this->parent;
     }
 
-    public function getPage(): ?Page
+    public function getPage(): ?PageInterface
     {
         return $this->page;
     }
 
-    public function getObject(): Page|Article
+    public function getObject(): PageInterface|ArticleInterface
     {
         if ($this->page === null) {
             Assert::notNull($this->article);
@@ -97,7 +118,7 @@ class MenuItem
         return $this->page;
     }
 
-    public function getObjectTranslation(?string $locale): ContentTranslation
+    public function getObjectTranslation(?string $locale): ContentTranslationInterface
     {
         if ($this->page === null) {
             return $this->getArticleTranslation($locale);
@@ -106,7 +127,7 @@ class MenuItem
         return $this->getPageTranslation($locale);
     }
 
-    public function getPageTranslation(?string $locale): ContentTranslation
+    public function getPageTranslation(?string $locale): ContentTranslationInterface
     {
         Assert::notNull($this->page);
 
@@ -116,7 +137,7 @@ class MenuItem
         return $this->page->getTranslationByLocaleOrDefault($locale);
     }
 
-    public function getArticleTranslation(?string $locale): ContentTranslation
+    public function getArticleTranslation(?string $locale): ContentTranslationInterface
     {
         Assert::notNull($this->article);
 
@@ -126,7 +147,7 @@ class MenuItem
         return $this->article->getTranslationByLocaleOrDefault($locale);
     }
 
-    public function getArticle(): ?Article
+    public function getArticle(): ?ArticleInterface
     {
         return $this->article;
     }
@@ -161,12 +182,42 @@ class MenuItem
         return $this->page !== null;
     }
 
+    /**
+     * @phpstan-assert-if-true PageInterface $this->overwritePage
+     * @phpstan-assert-if-false null $this->overwritePage
+     */
+    public function ovewritesPage(): bool
+    {
+        return $this->overwritePage !== null;
+    }
+
+    public function getOverwritePage(): ?PageInterface
+    {
+        return $this->overwritePage;
+    }
+
+    /**
+     * @phpstan-assert-if-true SnippetInterface $this->snippetAnchor
+     * @phpstan-assert-if-false null $this->snippetAnchor
+     */
+    public function hasSnippetAnchor(): bool
+    {
+        return $this->snippetAnchor !== null;
+    }
+
+    public function getSnippetAnchor(): ?SnippetInterface
+    {
+        return $this->snippetAnchor;
+    }
+
     public function toDto(): MenuItemDto
     {
         return new MenuItemDto(
             $this->hasLink,
             $this->page,
-            $this->article
+            $this->article,
+            $this->overwritePage,
+            $this->snippetAnchor
         );
     }
 }

@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Xutim\CoreBundle\Entity\User;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Form\Admin\UserChangePasswordType;
 use Xutim\CoreBundle\Message\Command\User\ChangePasswordCommand;
 
@@ -31,7 +31,7 @@ class UserChangePasswordAction extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var string $password */
             $password = $form->get('password')->getData();
-            /** @var User $user */
+            /** @var UserInterface $user */
             $user = $this->getUser();
 
             $encodedPassword = $this->passwordHasher->hashPassword($user, $password);

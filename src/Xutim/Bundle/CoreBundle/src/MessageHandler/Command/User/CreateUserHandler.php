@@ -7,19 +7,22 @@ namespace Xutim\CoreBundle\MessageHandler\Command\User;
 use Jdenticon\Identicon;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Xutim\CoreBundle\Domain\Event\User\UserCreatedEvent;
-use Xutim\CoreBundle\Entity\Event;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
+use Xutim\CoreBundle\Domain\Factory\UserFactory;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Message\Command\User\CreateUserCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\UserRepository;
 
 readonly class CreateUserHandler implements CommandHandlerInterface
 {
     public function __construct(
+        private readonly LogEventFactory $logEventFactory,
         private UserRepository $userRepository,
-        private EventRepository $eventRepository,
-        private PasswordHasherFactoryInterface $passwordHasherFactory
+        private LogEventRepository $eventRepository,
+        private PasswordHasherFactoryInterface $passwordHasherFactory,
+        private UserFactory $UserFactory
     ) {
     }
 
@@ -33,7 +36,7 @@ readonly class CreateUserHandler implements CommandHandlerInterface
         $hasher = $this->passwordHasherFactory->getPasswordHasher(User::class);
         $hashedPassword = $hasher->hash($command->password);
 
-        $user = new User(
+        $user = $this->UserFactory->create(
             $command->id,
             $command->email,
             $command->name,
@@ -53,7 +56,7 @@ readonly class CreateUserHandler implements CommandHandlerInterface
             $avatar
         );
 
-        $logEntry = new Event($user->getId(), $command->userIdentifier, User::class, $event);
+        $logEntry = $this->logEventFactory->create($user->getId(), $command->userIdentifier, User::class, $event);
         $this->eventRepository->save($logEntry, true);
     }
 }

@@ -1,0 +1,237 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+{% import '@XutimCore/admin/common/forms.html.twig' as forms %}
+
+{% set pageTitle = 'Edit tag'|trans({}, 'admin')|capitalize %}
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">{{ pageTitle }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:PublicPageLink
+        :tagTranslation="tag.translationByLocale(content_context_language())"
+    />
+
+    <twig:Xutim:Admin:Button
+        tag="button"
+        id="sidebar-toggle"
+        variant="nav"
+    >
+        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        Sidebar
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block languageBar %}
+    <twig:Xutim:Admin:LanguageContextBar
+        :entity="tag"
+        :simpleTranslation="true"
+        class="d-flex justify-content-end align-items-center mb-2"
+    />
+{% endblock %}
+
+{% block sidebar %}
+    <twig:Xutim:Admin:Sidebar :title="">
+        <twig:block name="header">
+            <twig:Xutim:Admin:SidebarTabs>
+                <twig:Xutim:Admin:SidebarTab target="general-tab">
+                    <twig:Xutim:Admin:Button
+                        variant="tab"
+                        type="a"
+                        class="active"
+                        data-bs-toggle="tab"
+                        href="#general-tab"
+                        role="tab"
+                        aria-controls="general-tab"
+                        aria-selected="true"
+                    >
+                        General
+                    </twig:Xutim:Admin:Button>
+                </twig:Xutim:Admin:SidebarTab>
+            </twig:Xutim:Admin:SidebarTabs>
+        </twig:block>
+        <twig:block name="content">
+            <div class="tab-content">
+                <div id="general-tab" class="tab-pane active" role="tabpanel">
+                    {{ include('@XutimCore/admin/tag/_tag_sidebar.html.twig') }}
+                </div>
+            </div>
+        </twig:block>
+    </twig:Xutim:Admin:Sidebar>
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            {%
+                form_theme form '@XutimCore/admin/common/image_choice.html.twig'
+            %}
+            {{
+                form_start(form, {
+                        attr: {
+                            id: form.vars.id,
+                            'data-controller': 'slug-generator',
+                            'data-slug-generator-url-value': path('admin_json_tag_generate_slug'),
+                            'data-slug-generator-enabled-value': 'true',
+                        },
+                    })
+            }}
+            <div class="row g-6">
+                <div class="col-sm-6">
+                    {{
+                        form_row(form.name, {
+                                attr: {
+                                    'data-action': 'input->slug-generator#fetchAndReplaceSlugOnTitle',
+                                    'data-slug-generator-target': 'titleField',
+                                },
+                            })
+                    }}
+                    {{ form_label(form.slug) }}
+                    <div class="input-group mb-3">
+                        {{
+                            form_widget(form.slug, {
+                                    attr: {
+                                        'data-slug-generator-target': 'slugField',
+                                    },
+                                })
+                        }}
+                        {%
+                            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+                        %}
+                            <twig:Xutim:Admin:Button
+                                variant="default"
+                                type="button"
+                                class="pe-1"
+                                id="slug-unblock"
+                                data-action="click->slug-generator#unblockSlugField"
+                            >
+                                <twig:Xutim:Admin:Icon name="lock" />
+                            </twig:Xutim:Admin:Button>
+                        {% endif %}
+
+                        {{ form_errors(form.slug) }}
+                    </div>
+                    {{ form_help(form.slug) }}
+
+                    {{
+                        form_row(form.locale, {
+                                attr: {
+                                    'data-action': 'change->slug-generator#fetchAndReplaceSlugOnLocale',
+                                    'data-slug-generator-target': 'localeField',
+                                },
+                            })
+                    }}
+
+                    <div class="mb-3">
+                        {{ form_label(form.color) }}
+                        {{
+                            forms.colorInput(form.color.vars.full_name, tag.color.isSet() ? tag.color.hex : '')
+                        }}
+                        {{ form_errors(form.color) }}
+                    </div>
+
+                    {{ form_row(form.layout) }}
+                </div>
+                <div class="col-sm-6">
+                    {{ form_label(form.featuredImage) }}
+                    <div
+                        data-controller="featured-image"
+                        data-featured-image-url-value="{{ path('admin_json_image_list') }}"
+                        class="cursor-pointer mb-3"
+                    >
+                        <div
+                            class="media-container-extended d-flex justify-content-center align-items-center"
+                            data-action="click->featured-image#openModal"
+                        >
+                            <div
+                                class="featured-image-dropzone"
+                                data-featured-image-target="dropzone"
+                            >
+                                {% if form.featuredImage.vars.value %}
+                                    <img
+                                        src="{{ path('file_show', {id: form.featuredImage.vars.value, extension: 'image'}) }}"
+                                        alt="Featured Image"
+                                        style="max-width: auto; max-height: 300px"
+                                        class="p-1"
+                                    />
+                                {% else %}
+                                    {{
+                                        'Click to select a featured image'|trans({}, 'admin')
+                                    }}
+                                {% endif %}
+                            </div>
+                            {{
+                                form_widget(form.featuredImage, {
+                                        attr: {
+                                            'data-featured-image-target': 'imageInput',
+                                        },
+                                    })
+                            }}
+                        </div>
+
+                        <div
+                            class="modal fade"
+                            tabindex="-1"
+                            role="dialog"
+                            data-featured-image-target="modal"
+                        >
+                            <div
+                                class="modal-dialog modal-lg"
+                                role="document"
+                            >
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">
+                                            {{
+                                                'Select Featured Image'|trans({}, 'admin')
+                                            }}
+                                        </h5>
+                                        <button
+                                            type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="modal"
+                                            aria-label="{{ 'Close'|trans({}, 'admin') }}"
+                                        >
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div
+                                            class="row g-3"
+                                            data-featured-image-target="imageGallery"
+                                        >
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button
+                                            type="button"
+                                            class="btn btn-secondary"
+                                            data-bs-dismiss="modal"
+                                        >
+                                            {{ 'Close'|trans({}, 'admin') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <twig:Xutim:Admin:Button
+                    type="submit"
+                    variant="primary"
+                    form="{{ form.vars.id }}"
+                    disabled="{{ form.vars.disabled }}"
+                >
+                    {{ 'submit'|trans({}, 'admin') }}
+                </twig:Xutim:Admin:Button>
+            </div>
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}

@@ -11,11 +11,7 @@ final readonly class CreatePageCommand
 {
     /**
      * @param list<string> $locales
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
+     * @param EditorBlock  $content
      */
     public function __construct(
         public ?string $layout,
@@ -29,7 +25,8 @@ final readonly class CreatePageCommand
         public array $locales,
         public string $defaultLanguage,
         public ?Uuid $parentId,
-        public string $userIdentifier
+        public string $userIdentifier,
+        public ?Uuid $featuredImageId
     ) {
     }
 
@@ -47,7 +44,18 @@ final readonly class CreatePageCommand
             $dto->locales,
             $dto->locale,
             $dto->parent?->getId(),
-            $userIdentifier
+            $userIdentifier,
+            $dto->featuredImageId
         );
+    }
+
+
+    /**
+     * @phpstan-assert-if-true Uuid $this->featuredImageId
+     * @phpstan-assert-if-false null $this->featuredImageId
+     */
+    public function hasFeaturedImage(): bool
+    {
+        return $this->featuredImageId !== null;
     }
 }

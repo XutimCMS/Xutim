@@ -11,7 +11,7 @@ use Xutim\CoreBundle\Domain\DomainEvent;
 readonly class PageUpdatedEvent implements DomainEvent
 {
     /**
-     * @param array<int, string>  $locales
+     * @param array<int, string> $locales
      */
     public function __construct(
         public Uuid $id,

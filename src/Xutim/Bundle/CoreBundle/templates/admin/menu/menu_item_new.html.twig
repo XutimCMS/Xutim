@@ -1,7 +1,9 @@
 {% extends '@XutimCore/admin/modalBase.html.twig' %}
 {% import '@XutimCore/admin/common/forms.html.twig' as forms %}
 
-{% block pageTitle %}{{ 'New menu item'|trans({}, 'admin')|capitalize }}{% endblock %}
+{% block pageTitle %}{{ 'New menu item'|trans({}, 'admin')|capitalize }}{%
+    endblock
+%}
 
 {% block body %}
     <div class="card">
@@ -51,11 +53,41 @@
 
             <div data-menu-item-target="pageForm">
                 {{ form_row(form.page) }}
+                <div class="mb-3" data-menu-item-target="overwriteCheckbox">
+                    <div class="form-check">
+                        <input
+                            type="checkbox"
+                            id="menu-item-overwrite"
+                            class="form-check-input"
+                            value="0"
+                            data-action="click->menu-item#togglePageOverwriteLink"
+                        />
+                        <label
+                            class="form-check-label"
+                            for="menu-item-overwrite"
+                        >
+                            {{ 'Overwrite link'|trans({}, 'admin') }}
+                        </label>
+                    </div>
+                </div>
+                <div
+                    class="row align-items-start mb-3"
+                    id="page-overwrite-link-form"
+                    data-menu-item-target="pageOverwriteLinkForm"
+                >
+                    {{ form_row(form.pageLink, {row_attr: {class: 'col'}}) }}
+                    {{
+                        form_row(form.anchorSnippet, {row_attr: {class: 'col'}})
+                    }}
+                </div>
+                {#
+                <div class="mb-3">{{ form_row(form.hasLink) }}</div>
+                #}
             </div>
             <div data-menu-item-target="articleForm">
                 {{ form_row(form.article) }}
             </div>
-            <div class="mb-3">{{ form_row(form.hasLink) }}</div>
+
             <div class="mb-3" data-menu-item-target="submitButton">
                 <twig:Xutim:Admin:Button
                     type="submit"

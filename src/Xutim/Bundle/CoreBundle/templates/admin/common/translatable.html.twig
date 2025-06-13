@@ -1,20 +1,26 @@
-{%- macro languageBadge(translation) -%}
+{% macro languageBadge(translation) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 
     {% if translation.locale != content_context_language() %}
         {{ badges.languageBadge(translation) }}
     {% endif %}
-{%- endmacro -%}
+{% endmacro %}
 
-{%- macro titleWithBadge(translatable) -%}
-    {% import '@XutimCore/admin/common/translatable.html.twig' as translatableMacro %}
-    {% set trans = translatable.getTranslationByLocaleOrDefault(content_context_language()) %}
+{% macro titleWithBadge(translatable) %}
+    {%
+        import '@XutimCore/admin/common/translatable.html.twig' as translatableMacro
+    %}
+    {%
+        set trans = translatable.getTranslationByLocaleOrDefault(content_context_language())
+    %}
 
     {{ translatableMacro.languageBadge(trans) }}
     {{ trans }}
-{%- endmacro -%}
+{% endmacro %}
 
-{%- macro toString(translatable) -%}
-    {% set trans = translatable.getTranslationByLocaleOrDefault(content_context_language()) %}
+{% macro toString(translatable) %}
+    {%
+        set trans = translatable.getTranslationByLocaleOrDefault(content_context_language())
+    %}
     {{ trans }}
-{%- endmacro -%}
+{% endmacro %}

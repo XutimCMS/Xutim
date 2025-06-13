@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Traversable;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Form\Admin\Dto\SnippetDto;
+use Xutim\CoreBundle\Security\TranslatorAuthChecker;
 
 /**
  * @template-extends AbstractType<SnippetDto>
@@ -26,8 +27,10 @@ use Xutim\CoreBundle\Form\Admin\Dto\SnippetDto;
  */
 class SnippetType extends AbstractType implements DataMapperInterface
 {
-    public function __construct(private readonly SiteContext $context)
-    {
+    public function __construct(
+        private readonly SiteContext $context,
+        private readonly TranslatorAuthChecker $authChecker
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -51,7 +54,8 @@ class SnippetType extends AbstractType implements DataMapperInterface
             $builder
                 ->add($locale, TextareaType::class, [
                     'required' => false,
-                    'label' => strtoupper($locale)
+                    'label' => strtoupper($locale),
+                    'disabled' => $this->authChecker->canTranslate($locale) ? false : true
                 ]);
         }
     
@@ -83,7 +87,9 @@ class SnippetType extends AbstractType implements DataMapperInterface
         $forms['code']->setData($viewData->code);
 
         foreach ($viewData->contents as $locale => $content) {
-            $forms[$locale]->setData($content);
+            if (array_key_exists($locale, $forms) === true) {
+                $forms[$locale]->setData($content);
+            }
         }
     }
 

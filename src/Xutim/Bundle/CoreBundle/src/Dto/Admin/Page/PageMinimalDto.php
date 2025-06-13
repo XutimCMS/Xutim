@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Dto\Admin\Page;
 
-use Xutim\CoreBundle\Entity\Page;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 
 final class PageMinimalDto
 {
@@ -14,11 +14,11 @@ final class PageMinimalDto
     public function __construct(
         public ?string $color,
         public array $locales,
-        public ?Page $parent
+        public ?PageInterface $parent
     ) {
     }
 
-    public static function fromPage(Page $page): self
+    public static function fromPage(PageInterface $page): self
     {
         return new self(
             $page->getColor()->getHex(),

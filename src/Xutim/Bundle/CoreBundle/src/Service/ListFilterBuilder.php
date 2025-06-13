@@ -23,7 +23,7 @@ class ListFilterBuilder
         string $orderDirection
     ): FilterDto {
         Assert::greaterThanEq($page, 0);
-        Assert::inArray($pageLength, [10, 20, 50, 100]);
+        Assert::inArray($pageLength, [1, 4, 10, 12, 18, 20, 50, 100]);
         Assert::inArray($orderDirection, ['asc', 'desc']);
         $filter = new FilterDto($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
 

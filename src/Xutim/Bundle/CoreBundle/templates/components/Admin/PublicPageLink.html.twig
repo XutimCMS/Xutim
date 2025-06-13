@@ -1,0 +1,32 @@
+{% if this.hasTagTranslation() %}
+    {%
+        set publicUrl = path('tag_translation_show', {slug: tagTranslation.slug, _locale: tagTranslation.locale })
+    %}
+{% elseif this.hasContentTranslation() %}
+    {% if is_extended_locale(this.contentTranslation.locale) %}
+        {%
+            set publicUrl = path('content_translation_show', {
+                slug: this.contentTranslation.slug,
+                _content_locale: this.contentTranslation.locale
+            })
+        %}
+    {% else %}
+        {%
+            set publicUrl = path('content_translation_show', {
+                slug: this.contentTranslation.slug,
+                _locale: this.contentTranslation.locale
+            })
+        %}
+    {% endif %}
+{% else %}
+    {% set publicUrl = path('homepage') %}
+{% endif %}
+
+<twig:Xutim:Admin:Button
+    tag="a"
+    variant="nav"
+    href="{{ publicUrl }}"
+>
+    <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+    {{ 'public page'|trans({}, 'admin')|capitalize }}
+</twig:Xutim:Admin:Button>

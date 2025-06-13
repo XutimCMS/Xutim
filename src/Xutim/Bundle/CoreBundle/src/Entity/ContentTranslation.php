@@ -6,18 +6,20 @@ namespace Xutim\CoreBundle\Entity;
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
-use Xutim\CoreBundle\Repository\ContentTranslationRepository;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 
-#[Entity(repositoryClass: ContentTranslationRepository::class)]
+#[MappedSuperclass]
 #[UniqueConstraint(columns: ['slug', 'locale'])]
-class ContentTranslation
+class ContentTranslation implements ContentTranslationInterface
 {
     use PublicationStatusTrait;
     use TimestampableTrait;
@@ -27,26 +29,19 @@ class ContentTranslation
     #[Column(type: 'uuid')]
     private Uuid $id;
 
-    #[Column(type: 'integer', nullable: true)]
-    private ?int $spipId;
-
     #[Column(type: 'integer', nullable: false)]
     private int $visits;
 
-    #[ManyToOne(targetEntity: Page::class, inversedBy: 'translations')]
+    #[ManyToOne(targetEntity: PageInterface::class, inversedBy: 'translations')]
     #[JoinColumn(nullable: true)]
-    private ?Page $page;
+    private ?PageInterface $page;
 
-    #[ManyToOne(targetEntity: Article::class, inversedBy: 'translations')]
+    #[ManyToOne(targetEntity: ArticleInterface::class, inversedBy: 'translations')]
     #[JoinColumn(nullable: true)]
-    private ?Article $article;
+    private ?ArticleInterface $article;
 
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
+     * @param EditorBlock $content
      */
     public function __construct(
         string $preTitle,
@@ -56,9 +51,8 @@ class ContentTranslation
         array $content,
         string $locale,
         string $description,
-        ?Page $page,
-        ?Article $article,
-        ?int $spipId = null
+        ?PageInterface $page,
+        ?ArticleInterface $article
     ) {
         $this->id = Uuid::v4();
         $this->publishedAt = null;
@@ -74,7 +68,6 @@ class ContentTranslation
         $this->description = $description;
         $this->page = $page;
         $this->article = $article;
-        $this->spipId = $spipId;
         $this->visits = 0;
         Assert::false($page === null && $article === null, 'Content translation needs either page or article.');
     }
@@ -90,7 +83,7 @@ class ContentTranslation
     }
 
     /**
-     * @phpstan-assert-if-true Page $this->page
+     * @phpstan-assert-if-true PageInterface $this->page
      * @phpstan-assert-if-true null $this->article
      */
     public function hasPage(): bool
@@ -99,7 +92,7 @@ class ContentTranslation
     }
 
     /**
-     * @phpstan-assert-if-true Article $this->article
+     * @phpstan-assert-if-true ArticleInterface $this->article
      * @phpstan-assert-if-true null $this->page
      */
     public function hasArticle(): bool
@@ -107,19 +100,19 @@ class ContentTranslation
         return $this->article !== null;
     }
 
-    public function getPage(): Page
+    public function getPage(): PageInterface
     {
         Assert::notNull($this->page);
         return $this->page;
     }
 
-    public function getArticle(): Article
+    public function getArticle(): ArticleInterface
     {
         Assert::notNull($this->article);
         return $this->article;
     }
 
-    public function getObject(): Article|Page
+    public function getObject(): ArticleInterface|PageInterface
     {
         return $this->hasArticle() ? $this->article : $this->page;
     }

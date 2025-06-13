@@ -7,7 +7,6 @@ export default class extends Controller {
         this.updateSidebarPosition();
         const expandButton = document.querySelector('#sidebar-toggle');
         if (expandButton) {
-            console.log('activated');
             expandButton.addEventListener('click', this.toggle.bind(this));
         }
     }
@@ -24,9 +23,7 @@ export default class extends Controller {
     }
 
     toggle(event) {
-        const targetId = event.currentTarget.dataset.target;
         const offcanvas = this.element;
-        console.error('yes');
 
         if (this.openedCanvas && this.openedCanvas !== offcanvas) {
             this.openedCanvas.classList.remove('show');

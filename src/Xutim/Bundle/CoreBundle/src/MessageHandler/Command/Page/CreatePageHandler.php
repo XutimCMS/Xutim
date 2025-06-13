@@ -7,47 +7,51 @@ namespace Xutim\CoreBundle\MessageHandler\Command\Page;
 use Doctrine\ORM\EntityManagerInterface;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\Page\PageCreatedEvent;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
+use Xutim\CoreBundle\Domain\Factory\PageFactory;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\Event;
 use Xutim\CoreBundle\Entity\File;
 use Xutim\CoreBundle\Entity\Page;
 use Xutim\CoreBundle\Message\Command\Page\CreatePageCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Repository\EventRepository;
 use Xutim\CoreBundle\Repository\FileRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Service\FragmentsFileExtractor;
+use Xutim\CoreBundle\Service\SearchContentBuilder;
 
 readonly class CreatePageHandler implements CommandHandlerInterface
 {
     public function __construct(
+        private readonly LogEventFactory $logEventFactory,
         private EntityManagerInterface $entityManager,
         private PageRepository $pageRepository,
         private ContentTranslationRepository $contentTransRepo,
-        private EventRepository $eventRepository,
+        private LogEventRepository $eventRepository,
         private FileRepository $fileRepository,
-        private FragmentsFileExtractor $fragmentsFileExtractor
+        private FragmentsFileExtractor $fragmentsFileExtractor,
+        private SearchContentBuilder $searchContentBuilder,
+        private PageFactory $pageFactory
     ) {
     }
 
     public function __invoke(CreatePageCommand $cmd): void
     {
+        $file = null;
+        if ($cmd->hasFeaturedImage() === true) {
+            $file = $this->fileRepository->find($cmd->featuredImageId);
+        }
+
         $parentPage = $cmd->parentId !== null ? $this->pageRepository->find($cmd->parentId) : null;
-        $page = new Page(
-            $cmd->layout,
-            $cmd->color,
-            $cmd->locales,
-            $cmd->preTitle,
-            $cmd->title,
-            $cmd->subTitle,
-            $cmd->slug,
-            $cmd->content,
-            $cmd->defaultLanguage,
-            $cmd->description,
-            $parentPage
-        );
+        $page = $this->pageFactory->create($cmd, $file, $parentPage);
         $translation = $page->getDefaultTranslation();
+
+        $searchContent = $this->searchContentBuilder->build($translation);
+        $searchTagContent = $this->searchContentBuilder->buildTagContent($translation);
+        $translation->changeSearchContent($searchContent);
+        $translation->changeSearchTagContent($searchTagContent);
 
         $this->contentTransRepo->save($translation);
         $this->pageRepository->save($page, true);
@@ -61,7 +65,8 @@ readonly class CreatePageHandler implements CommandHandlerInterface
             $translation->getId(),
             $page->getCreatedAt(),
             $cmd->parentId,
-            $cmd->layout
+            $cmd->layout,
+            $cmd->featuredImageId
         );
 
         $translationCreatedEvent = new ContentTranslationCreatedEvent(
@@ -78,13 +83,13 @@ readonly class CreatePageHandler implements CommandHandlerInterface
             null
         );
 
-        $logEntrySec = new Event(
+        $logEntrySec = $this->logEventFactory->create(
             $page->getId(),
             $cmd->userIdentifier,
             Page::class,
             $pageCreatedEvent
         );
-        $logEntryTrans = new Event(
+        $logEntryTrans = $this->logEventFactory->create(
             $translation->getId(),
             $cmd->userIdentifier,
             ContentTranslation::class,
@@ -96,9 +101,9 @@ readonly class CreatePageHandler implements CommandHandlerInterface
     }
 
     /**
-     * @param array{}|array{time: int, blocks: array{}|array{id: string, type: string, data: array<string, mixed>}, version: string} $content
+     * @param EditorBlock $content
      */
-    private function connectFiles(array $content, Page $page): void
+    private function connectFiles(array $content, PageInterface $page): void
     {
         $files = $this->fragmentsFileExtractor->extractFiles($content);
         foreach ($files as $filename) {

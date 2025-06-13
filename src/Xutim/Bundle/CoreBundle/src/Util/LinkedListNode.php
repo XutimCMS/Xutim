@@ -10,7 +10,7 @@ namespace Xutim\CoreBundle\Util;
 final readonly class LinkedListNode
 {
     /**
-     * @param T $value
+     * @param T                  $value
      * @param ?LinkedListNode<T> $next
      */
     public function __construct(

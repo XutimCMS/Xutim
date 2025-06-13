@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Form\Admin\Dto;
 
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Xutim\CoreBundle\Domain\Model\Coordinates;
+use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
+use Xutim\CoreBundle\Domain\Model\SnippetInterface;
+use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Entity\Color;
-use Xutim\CoreBundle\Entity\Page;
-use Xutim\CoreBundle\Entity\Snippet;
-use Xutim\CoreBundle\Model\Coordinates;
 
 final readonly class PageBlockItemDto
 {
     public function __construct(
-        public Page $page,
-        public null|UploadedFile|File $file,
-        public ?Snippet $snippet,
+        public PageInterface $page,
+        public ?FileInterface $file,
+        public ?SnippetInterface $snippet,
+        public ?TagInterface $tag,
         public ?int $position,
         public ?string $link,
         public Color $color,
@@ -32,6 +33,6 @@ final readonly class PageBlockItemDto
 
     public function toBlockItemDto(): BlockItemDto
     {
-        return new BlockItemDto($this->page, null, $this->file, $this->snippet, $this->position, $this->link, $this->color->getHex(), $this->fileDescription, $this->coordinates);
+        return new BlockItemDto($this->page, null, $this->file, $this->snippet, $this->tag, $this->position, $this->link, $this->color->getHex(), $this->fileDescription, $this->coordinates);
     }
 }

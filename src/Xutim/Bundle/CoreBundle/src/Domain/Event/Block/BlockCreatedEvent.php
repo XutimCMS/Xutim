@@ -7,7 +7,7 @@ namespace Xutim\CoreBundle\Domain\Event\Block;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Domain\DomainEvent;
-use Xutim\CoreBundle\Entity\Block;
+use Xutim\CoreBundle\Domain\Model\BlockInterface;
 
 final readonly class BlockCreatedEvent implements DomainEvent
 {
@@ -21,7 +21,7 @@ final readonly class BlockCreatedEvent implements DomainEvent
     ) {
     }
 
-    public static function fromBlock(Block $block): self
+    public static function fromBlock(BlockInterface $block): self
     {
         return new self(
             $block->getId(),

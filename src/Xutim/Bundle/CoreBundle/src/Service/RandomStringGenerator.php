@@ -9,7 +9,7 @@ use Random\RandomException;
 class RandomStringGenerator
 {
     /**
-     * @param int<1,max> $bytesLen
+     * @param  int<1,max>      $bytesLen
      * @throws RandomException
      */
     public function generateRandomString(int $bytesLen): string

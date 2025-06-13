@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\MenuItem;
+use Xutim\CoreBundle\Domain\Factory\MenuItemFactory;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\CoreBundle\Form\Admin\MenuItemType;
@@ -22,12 +22,22 @@ class CreateMenuItemAction extends AbstractController
     public function __construct(
         private readonly MenuItemRepository $repo,
         private readonly TranslatorInterface $translator,
-        private readonly SiteContext $siteContext
+        private readonly SiteContext $siteContext,
+        private readonly MenuItemFactory $menuItemFactory
     ) {
     }
 
-    public function __invoke(Request $request, ?MenuItem $parentItem): Response
+    public function __invoke(Request $request, ?string $id): Response
     {
+        if ($id === null) {
+            $parentItem = null;
+        } else {
+            $parentItem = $this->repo->find($id);
+            if ($parentItem === null) {
+                throw $this->createNotFoundException('The parent menu item does not exist');
+            }
+        }
+
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $form = $this->createForm(MenuItemType::class, null, [
             'action' => $this->generateUrl('admin_menu_item_new', $parentItem === null ? [] : [
@@ -40,7 +50,7 @@ class CreateMenuItemAction extends AbstractController
             /** @var MenuItemDto $data */
             $data = $form->getData();
 
-            $item = new MenuItem($parentItem, $data->hasLink, $data->page, $data->article);
+            $item = $this->menuItemFactory->create($parentItem, $data->hasLink, $data->page, $data->article, $data->overwritePage, $data->snippetAnchor);
             $this->repo->save($item, true);
             $this->siteContext->resetMenu();
 

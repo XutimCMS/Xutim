@@ -13,9 +13,14 @@ use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 #[Route('/page/by-slug/{slug}', name: 'admin_page_show_by_slug')]
 class ShowPageBySlugAction extends AbstractController
 {
-    public function __invoke(Request $request, string $slug, ContentTranslationRepository $repo): Response
+    public function __construct(
+        private readonly ContentTranslationRepository $contentTransRepo,
+    ) {
+    }
+
+    public function __invoke(Request $request, string $slug): Response
     {
-        $trans = $repo->findOneBy(['slug' => $slug, 'locale' => $request->getLocale()]);
+        $trans = $this->contentTransRepo->findOneBy(['slug' => $slug, 'locale' => $request->getLocale()]);
         if ($trans === null) {
             throw $this->createNotFoundException(sprintf('The page translation with a slug %s was not found.', $slug));
         }

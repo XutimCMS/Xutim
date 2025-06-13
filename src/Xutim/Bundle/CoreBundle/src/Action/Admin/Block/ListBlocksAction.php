@@ -18,7 +18,7 @@ use Xutim\CoreBundle\Service\ListFilterBuilder;
 class ListBlocksAction extends AbstractController
 {
     public function __construct(
-        private readonly BlockRepository $blockRepository,
+        private readonly BlockRepository $blockRepo,
         private readonly ListFilterBuilder $filterBuilder
     ) {
     }
@@ -29,7 +29,7 @@ class ListBlocksAction extends AbstractController
         #[MapQueryParameter]
         int $page = 1,
         #[MapQueryParameter]
-        int $pageLength = 10,
+        int $pageLength = 50,
         #[MapQueryParameter]
         string $orderColumn = '',
         #[MapQueryParameter]
@@ -38,7 +38,7 @@ class ListBlocksAction extends AbstractController
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
-            new QueryAdapter($this->blockRepository->queryByFilter($filter)),
+            new QueryAdapter($this->blockRepo->queryByFilter($filter)),
             $filter->page,
             $filter->pageLength
         );

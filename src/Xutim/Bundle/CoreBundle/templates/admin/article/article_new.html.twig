@@ -1,34 +1,32 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 
-{% block pageTitle %}{{ 'New article'|trans({}, 'admin')|capitalize }}{% endblock %}
+{% block pageTitle %}{{ 'New article'|trans({}, 'admin')|capitalize }}{%
+    endblock
+%}
 
 {% block breadcrumbHeader %}
-    {% if selectedPage is defined and selectedPage %}
-        <twig:Xutim:Admin:BreadcrumbsPage
-            :page="selectedPage"
-            :allLinks="true"
-        />
-    {% else %}
-        <twig:Xutim:Admin:Breadcrumbs>
-            <li class="breadcrumb-item">New Page</li>
-        </twig:Xutim:Admin:Breadcrumbs>
-    {% endif %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">New Article</li>
+    </twig:Xutim:Admin:Breadcrumbs>
 {% endblock %}
 
 {% block body %}
     <div class="card">
         <div class="card-body">
             <turbo-frame id="editorjs-frame">
-                {% form_theme form '@XutimCore/admin/common/image_choice.html.twig' %}
+                {%
+                    form_theme form '@XutimCore/admin/common/image_choice.html.twig'
+                %}
                 {{
                     form_start(form, {
                         attr: {
                             id: form.vars.id,
                             'data-controller': 'editorjs-form slug-generator',
                             'data-editorjs-form-block-codes-value': fetch_block_codes()|json_encode,
-                            'data-editorjs-form-upload-file-url-value': path('admin_editorjs_file_upload'),
-                            'data-editorjs-form-fetch-file-url-value': path('admin_editorjs_file_fetch'),
-                            'data-editorjs-form-gallery-url-value': path('admin_json_file_list'),
+                            'data-editorjs-form-tags-value': fetch_tags()|json_encode,
+                            'data-editorjs-form-fetch-files-url-value': path('admin_json_file_list'),
+                            'data-editorjs-form-fetch-file-url-value': path('admin_json_file_show', {id: ':id:'}),
+                            'data-editorjs-form-fetch-images-url-value': path('admin_json_image_list'),
                             'data-editorjs-form-page-ids-url-value': path('admin_json_page_list'),
                             'data-editorjs-form-article-ids-url-value': path('admin_json_article_list'),
                             'data-slug-generator-url-value': path('admin_json_content_translation_generate_slug'),
@@ -36,60 +34,142 @@
                         },
                     })
                 }}
-                {{ form_row(form.layout) }}
-                {{ form_row(form.preTitle) }}
-                {{
-                    form_row(form.title, {
-                        attr: {
-                            'data-action': 'input->slug-generator#fetchAndReplaceSlugOnTitle',
-                            'data-slug-generator-target': 'titleField',
-                        },
-                    })
-                }}
-                {{ form_row(form.subTitle) }}
-                {{ form_label(form.slug) }}
-                <div class="input-group mb-3">
-                    {{
-                        form_widget(form.slug, {
-                            attr: {
-                                'data-slug-generator-target': 'slugField',
-                            },
-                        })
-                    }}
-                    {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
-                        <twig:Xutim:Admin:Button
-                            variant="default"
-                            type="button"
-                            class="pe-1"
-                            id="slug-unblock"
-                            data-action="click->slug-generator#unblockSlugField"
-                        >
-                            <twig:Xutim:Admin:Icon name="lock" />
-                        </twig:Xutim:Admin:Button>
-                    {% endif %}
+                <div class="row g-6">
+                    <div class="col-sm-6">
+                        {{ form_row(form.preTitle) }}
+                        {{
+                            form_row(form.title, {
+                                attr: {
+                                    'data-action': 'input->slug-generator#fetchAndReplaceSlugOnTitle',
+                                    'data-slug-generator-target': 'titleField',
+                                },
+                            })
+                        }}
+                        {{ form_row(form.subTitle) }}
+                        {{ form_label(form.slug) }}
+                        <div class="input-group mb-3">
+                            {{
+                                form_widget(form.slug, {
+                                    attr: {
+                                        'data-slug-generator-target': 'slugField',
+                                    },
+                                })
+                            }}
+                            {%
+                                if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+                            %}
+                                <twig:Xutim:Admin:Button
+                                    variant="default"
+                                    type="button"
+                                    class="pe-1"
+                                    id="slug-unblock"
+                                    data-action="click->slug-generator#unblockSlugField"
+                                >
+                                    <twig:Xutim:Admin:Icon name="lock" />
+                                </twig:Xutim:Admin:Button>
+                            {% endif %}
 
-                    {{ form_errors(form.slug) }}
+                            {{ form_errors(form.slug) }}
+                        </div>
+                        {{ form_help(form.slug) }}
+
+                        {{
+                            form_row(form.locale, {
+                                attr: {
+                                    'data-action': 'change->slug-generator#fetchAndReplaceSlugOnLocale',
+                                    'data-slug-generator-target': 'localeField',
+                                },
+                            })
+                        }}
+                    </div>
+                    <div class="col-sm-6">
+                        {{ form_label(form.featuredImage) }}
+                        <div
+                            data-controller="featured-image"
+                            data-featured-image-url-value="{{ path('admin_json_image_list') }}"
+                            class="cursor-pointer mb-3"
+                        >
+                            <div
+                                class="media-container-extended d-flex justify-content-center align-items-center"
+                                data-action="click->featured-image#openModal"
+                            >
+                                <div
+                                    class="featured-image-dropzone"
+                                    data-featured-image-target="dropzone"
+                                >
+                                    {% if form.featuredImage.vars.value %}
+                                        <img
+                                            src="{{ path('file_show', {id: form.featuredImage.vars.value, extension: 'image'}) }}"
+                                            alt="Featured Image"
+                                            style="max-width: auto; max-height: 300px"
+                                            class="p-1"
+                                        />
+                                    {% else %}
+                                        {{
+                                            'Click to select a featured image'|trans({}, 'admin')
+                                        }}
+                                    {% endif %}
+                                </div>
+                                {{
+                                    form_widget(form.featuredImage, {
+                                        attr: {
+                                            'data-featured-image-target': 'imageInput',
+                                        },
+                                    })
+                                }}
+                            </div>
+
+                            <div
+                                class="modal fade"
+                                tabindex="-1"
+                                role="dialog"
+                                data-featured-image-target="modal"
+                            >
+                                <div
+                                    class="modal-dialog modal-lg"
+                                    role="document"
+                                >
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                {{
+                                                    'Select Featured Image'|trans({}, 'admin')
+                                                }}
+                                            </h5>
+                                            <button
+                                                type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="{{ 'Close'|trans({}, 'admin') }}"
+                                            >
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div
+                                                class="row g-3"
+                                                data-featured-image-target="imageGallery"
+                                            >
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button
+                                                type="button"
+                                                class="btn btn-secondary"
+                                                data-bs-dismiss="modal"
+                                            >
+                                                {{ 'Close'|trans({}, 'admin') }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{ form_row(form.layout) }}
+                    </div>
                 </div>
-                {{ form_help(form.slug) }}
 
                 {{ form_row(form.description) }}
-
-                {{
-                    form_row(form.locale, {
-                        attr: {
-                            'data-action': 'change->slug-generator#fetchAndReplaceSlugOnLocale',
-                            'data-slug-generator-target': 'localeField',
-                        },
-                    })
-                }}
-
-                {{
-                    form_row(form.page, {
-                        attr: {
-                            'data-controller': 'tom-select',
-                        },
-                    })
-                }}
 
                 <div class="mb-3">
                     <label for="article_translation_content" class="form-label">

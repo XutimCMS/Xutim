@@ -53,14 +53,18 @@
         <twig:block name="content">
             <div class="tab-content">
                 <div id="general-tab" class="tab-pane active" role="tabpanel">
-                    {{ include('@XutimCore/admin/article/_article_sidebar.html.twig', {translation: currentTranslation}) }}
+                    {{
+                        include('@XutimCore/admin/article/_article_sidebar.html.twig', {translation: currentTranslation})
+                    }}
                 </div>
                 <div
                     id="translation-reference-tab"
                     class="tab-pane m-4"
                     role="tabpanel"
                 >
-                    {{ include('@XutimCore/admin/article/article_translation_show.html.twig', {article: article, translation: article.defaultTranslation}) }}
+                    {{
+                        include('@XutimCore/admin/article/article_translation_show.html.twig', {article: article, translation: article.defaultTranslation})
+                    }}
                 </div>
             </div>
         </twig:block>
@@ -78,14 +82,9 @@
             History
         </twig:Xutim:Admin:Button>
 
-        <twig:Xutim:Admin:Button
-            tag="a"
-            variant="nav"
-            href="{{ path('content_translation_show', {slug: contextTranslation.slug, _locale: contextTranslation.locale}) }}"
-        >
-            <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-            Public page
-        </twig:Xutim:Admin:Button>
+        <twig:Xutim:Admin:PublicPageLink
+            :contentTranslation="contextTranslation"
+        />
     {% endif %}
 
     <twig:Xutim:Admin:Button
@@ -109,25 +108,24 @@
 {% endblock %}
 
 {% block body %}
-    <div>
-        <div class="card mb-3">
-            <div class="card-body">
-                <turbo-frame id="article-preview-frame">
-                    <div
-                        data-controller="article-preview"
-                        data-article-preview-url-value="{{ path('admin_article_frame_show', {id: article.id}) }}"
-                    >
-                        <div
-                            id="preview-container"
-                            data-article-preview-target="preview"
-                        >
-                            <twig:Xutim:Admin:Placeholder />
-                        </div>
-                    </div>
-                </turbo-frame>
-            </div>
+    <turbo-frame
+        id="article-preview-frame"
+        class="d-flex justify-content-center"
+    >
+        <div
+            data-controller="article-preview"
+            class="border-0 position-relative"
+            style="width: 100%"
+        >
+            <iframe
+                src="{{ path('admin_article_frame_show', {id: article.id}) }}"
+                sandbox="allow-scripts allow-same-origin"
+                class="w-100 bg-white d-block"
+                data-article-preview-target="frame"
+                style="border: none"
+            >
+            </iframe>
+            <twig:Xutim:Admin:PreviewSizesButtons />
         </div>
-
-        {{ include('@XutimCore/admin/article/_article_translations.html.twig') }}
-    </div>
+    </turbo-frame>
 {% endblock %}

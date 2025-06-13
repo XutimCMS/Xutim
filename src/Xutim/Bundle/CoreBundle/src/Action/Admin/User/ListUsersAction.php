@@ -18,7 +18,7 @@ use Xutim\CoreBundle\Service\ListFilterBuilder;
 class ListUsersAction extends AbstractController
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
+        private readonly UserRepository $userRepo,
         private readonly ListFilterBuilder $filterBuilder
     ) {
     }
@@ -38,7 +38,7 @@ class ListUsersAction extends AbstractController
         $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
-            new QueryAdapter($this->userRepository->queryByFilter($filter)),
+            new QueryAdapter($this->userRepo->queryByFilter($filter)),
             $filter->page,
             $filter->pageLength
         );

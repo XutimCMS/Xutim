@@ -11,7 +11,6 @@ export default class ColorTune {
         this.config = config || {};
         this.block = block;
         this.currentBlockData = data || {};
-        console.log(this.currentBlockData);
         this.wrapper = null;
         this.allowedColors = this.config.colors || [
             '#000000',
@@ -80,8 +79,6 @@ export default class ColorTune {
             }
             blockContent.appendChild(wrapper); // Add wrapper to the block content
         }
-
-        console.log(this.currentBlockData);
     }
 
     highlightCurrentColor() {
@@ -131,7 +128,6 @@ export default class ColorTune {
 
     onBlockSelected(index) {
         // Receive the block *index*
-        console.log(index);
         this.currentBlockIndex = index;
         const block = this.api.blocks.getBlockByIndex(index);
         if (block) {

@@ -7,6 +7,7 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,6 +25,7 @@ class ListArticlesAction extends AbstractController
     }
 
     public function __invoke(
+        Request $request,
         #[MapQueryParameter]
         string $searchTerm = '',
         #[MapQueryParameter]
@@ -33,7 +35,7 @@ class ListArticlesAction extends AbstractController
         #[MapQueryParameter]
         string $orderColumn = '',
         #[MapQueryParameter]
-        string $orderDirection = 'asc'
+        string $orderDirection = 'asc',
     ): Response {
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
 

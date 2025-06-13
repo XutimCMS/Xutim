@@ -6,22 +6,27 @@ namespace Xutim\CoreBundle\MessageHandler\Command\ContentTranslation;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
+use Xutim\CoreBundle\Domain\Factory\ContentTranslationFactory;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\Event;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\CreateContentTranslationCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Service\SearchContentBuilder;
 
 readonly class CreateContentTranslationHandler implements CommandHandlerInterface
 {
     public function __construct(
+        private readonly LogEventFactory $logEventFactory,
         private ContentTranslationRepository $contentTransRepo,
         private PageRepository $pageRepo,
         private ArticleRepository $articleRepo,
-        private EventRepository $eventRepository
+        private LogEventRepository $eventRepository,
+        private SearchContentBuilder $searchContentBuilder,
+        private ContentTranslationFactory $contentTranslationFactory
     ) {
     }
 
@@ -47,7 +52,7 @@ readonly class CreateContentTranslationHandler implements CommandHandlerInterfac
             }
         }
 
-        $translation = new ContentTranslation(
+        $translation = $this->contentTranslationFactory->create(
             $cmd->preTitle,
             $cmd->title,
             $cmd->subTitle,
@@ -58,6 +63,11 @@ readonly class CreateContentTranslationHandler implements CommandHandlerInterfac
             $page,
             $article
         );
+
+        $searchContent = $this->searchContentBuilder->build($translation);
+        $searchTagContent = $this->searchContentBuilder->buildTagContent($translation);
+        $translation->changeSearchContent($searchContent);
+        $translation->changeSearchTagContent($searchTagContent);
 
         $this->contentTransRepo->save($translation, true);
 
@@ -75,7 +85,7 @@ readonly class CreateContentTranslationHandler implements CommandHandlerInterfac
             $cmd->articleId,
         );
 
-        $log = new Event(
+        $log = $this->logEventFactory->create(
             $translation->getId(),
             $cmd->userIdentifier,
             ContentTranslation::class,

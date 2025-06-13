@@ -1,1 +1,3 @@
-{% extends app.request.headers.get('turbo-frame') == 'modal' ? '@XutimCore/admin/modalFrame.html.twig' : '@XutimCore/admin/base.html.twig' %}
+{%
+    extends app.request.headers.get('turbo-frame') == 'modal' ? '@XutimCore/admin/modalFrame.html.twig' : '@XutimCore/admin/base.html.twig'
+%}

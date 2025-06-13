@@ -17,7 +17,7 @@ readonly class ThemeFinder
     }
 
     /**
-    * @return array<string>
+     * @return array<string>
     */
     public function findAvailableThemes(): array
     {

@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Menu;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\MenuItem;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 
@@ -23,8 +21,12 @@ class MoveMenuItemAction extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request, MenuItem $item, string $dir): Response
+    public function __invoke(string $id, string $dir): Response
     {
+        $item = $this->repo->find($id);
+        if ($item === null) {
+            throw $this->createNotFoundException('The menu item does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         if ($dir === 'up') {
             $this->repo->moveUp($item);

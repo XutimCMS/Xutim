@@ -14,6 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\ChangePasswordFormType;
 use Xutim\CoreBundle\Message\Command\User\ChangePasswordCommand;
@@ -53,7 +54,7 @@ class ResetPasswordAction extends AbstractController
         }
 
         try {
-            /** @var User $user */
+            /** @var UserInterface $user */
             $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
             $this->addFlash(

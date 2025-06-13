@@ -12,10 +12,10 @@ class FilteredResultDto
     public readonly int $totalPages;
 
     /**
-     * @param int<0,max> $currentPage
-     * @param int<0,max> $pageLength
-     * @param int<0,max> $resultLength
-     * @param iterable<int|string, T>   $filteredResult
+     * @param int<0,max>              $currentPage
+     * @param int<0,max>              $pageLength
+     * @param int<0,max>              $resultLength
+     * @param iterable<int|string, T> $filteredResult
      */
     public function __construct(
         public readonly int $currentPage,

@@ -1,6 +1,8 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 
-{% block pageTitle %}{{ 'snippets'|trans({}, 'admin')|capitalize }}{% endblock %}
+{% block pageTitle %}{{ 'snippets'|trans({}, 'admin')|capitalize }}{%
+    endblock
+%}
 
 {% block languageBar %}
     <twig:Xutim:Admin:LanguageContextBar
@@ -9,14 +11,7 @@
 {% endblock %}
 
 {% block pageMenu %}
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ path('homepage') }}"
-    >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-        Public page
-    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:PublicPageLink />
     <twig:Xutim:Admin:Button
         tag="a"
         variant="nav"
@@ -42,27 +37,31 @@
             filter: filter,
         }
     %}
-        {% block header %}
-            {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
-            <th>
-                <a
-                    class=""
-                    href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'code', orderDirection: filter.reverseDirection('code')}) }}"
-                >
-                    {{ 'code'|trans({}, 'admin') }}
-                    {{ icons.order_arrow('code', filter.orderColumn, filter.orderDirection) }}
-                </a>
-            </th>
-            {% for locale in site_context.locales %}
-                <th>{{ locale|upper }}</th>
-            {% endfor %}
-        {% endblock %}
+    {% block header %}
+        {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+        <th>
+            <a
+                class=""
+                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'code', orderDirection: filter.reverseDirection('code')}) }}"
+            >
+                {{ 'code'|trans({}, 'admin') }}
+                {{
+                    icons.order_arrow('code', filter.orderColumn, filter.orderDirection)
+                }}
+            </a>
+        </th>
+        {% for locale in site_context.locales %}
+            <th>{{ locale|upper }}</th>
+        {% endfor %}
+    {% endblock %}
 
-        {% block body %}
-            {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-            {% for snippet in snippets %}
-                {{ include('@XutimCore/admin/snippet/_snippet_row.html.twig', {snippet: snippet}) }}
-            {% endfor %}
-        {% endblock %}
+    {% block body %}
+        {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+        {% for snippet in snippets %}
+            {{
+                include('@XutimCore/admin/snippet/_snippet_row.html.twig', {snippet: snippet})
+            }}
+        {% endfor %}
+    {% endblock %}
     {% endcomponent %}
 {% endblock %}

@@ -6,18 +6,16 @@ namespace Xutim\CoreBundle\Entity;
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use JsonSerializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Repository\UserRepository;
+use Xutim\CoreBundle\Domain\Model\UserInterface as XutimUserInterface;
 
-#[Entity(repositoryClass: UserRepository::class)]
-#[Table(name: '`user`')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonSerializable
+#[MappedSuperclass]
+class User implements JsonSerializable, XutimUserInterface
 {
     use TimestampableTrait;
 

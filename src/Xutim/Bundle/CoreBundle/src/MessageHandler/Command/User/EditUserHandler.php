@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\MessageHandler\Command\User;
 
 use Xutim\CoreBundle\Domain\Event\User\UserUpdatedEvent;
-use Xutim\CoreBundle\Entity\Event;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\Message\Command\User\EditUserCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\UserRepository;
 
 readonly class EditUserHandler implements CommandHandlerInterface
 {
     public function __construct(
+        private readonly LogEventFactory $logEventFactory,
         private UserRepository $userRepository,
-        private EventRepository $eventRepository
+        private LogEventRepository $eventRepository
     ) {
     }
 
@@ -33,7 +34,7 @@ readonly class EditUserHandler implements CommandHandlerInterface
 
         $event = new UserUpdatedEvent($command->id, $command->name, $command->roles, $command->transLocales);
 
-        $logEntry = new Event($user->getId(), $command->userIdentifier, User::class, $event);
+        $logEntry = $this->logEventFactory->create($user->getId(), $command->userIdentifier, User::class, $event);
         $this->eventRepository->save($logEntry, true);
     }
 }

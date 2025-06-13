@@ -6,20 +6,20 @@ namespace Xutim\CoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Xutim\CoreBundle\Entity\Site;
+use Xutim\CoreBundle\Domain\Model\SiteInterface;
 use Xutim\CoreBundle\Exception\LogicException;
 
 /**
- * @extends ServiceEntityRepository<Site>
+ * @extends ServiceEntityRepository<SiteInterface>
  */
 class SiteRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, string $entityClass)
     {
-        parent::__construct($registry, Site::class);
+        parent::__construct($registry, $entityClass);
     }
 
-    public function findDefaultSite(): Site
+    public function findDefaultSite(): SiteInterface
     {
         $site = $this->findOneBy([]);
 
@@ -30,7 +30,7 @@ class SiteRepository extends ServiceEntityRepository
         return $site;
     }
 
-    public function save(Site $entity, bool $flush = false): void
+    public function save(SiteInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -39,7 +39,7 @@ class SiteRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Site $entity, bool $flush = false): void
+    public function remove(SiteInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 

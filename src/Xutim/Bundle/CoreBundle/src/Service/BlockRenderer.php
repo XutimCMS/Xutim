@@ -21,22 +21,33 @@ class BlockRenderer
     ) {
     }
 
-    public function renderBlock(string $locale, string $code): string
+    /**
+     * @return array{html: string, cachettl: int}
+     * @param  array<string, string>              $options
+    */
+    public function renderBlock(string $locale, string $code, array $options = []): array
     {
         $block = $this->repo->findByCode($code);
         if ($block === null) {
-            return '';
+            return ['html' => '', 'cachettl' => 1];
         }
 
         if ($this->blockLayoutChecker->checkLayout($block) === false) {
-            return 'The block requirements are not met.';
+            return [
+                'html' => 'The block requirements are not met.',
+                'cachettl' => 1
+            ];
         }
 
         $path = $this->layoutLoader->getBlockLayoutTemplate($block->getLayout());
+        $layout = $this->layoutLoader->getBlockLayoutByCode($block->getLayout());
 
-        return $this->localeSwitcher->runWithLocale(
-            $locale,
-            fn () => $this->twig->render($path, [ 'block' => $block ])
-        );
+        return [
+            'html' => $this->localeSwitcher->runWithLocale(
+                $locale,
+                fn () => $this->twig->render($path, [ 'block' => $block, 'blockOptions' => $options ])
+            ),
+            'cachettl' => $layout === null ? 0 : 1
+        ];
     }
 }

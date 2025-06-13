@@ -26,9 +26,6 @@ class PublishedDateType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NotNull()
-                ],
-                'attr' => [
-                    'data-controller' => 'date-time'
                 ]
             ])
             ->add('submit', SubmitType::class, [

@@ -7,15 +7,14 @@ namespace Xutim\CoreBundle\Entity;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Embedded;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\OrderBy;
@@ -23,18 +22,24 @@ use Gedmo\Mapping\Annotation\SortableGroup;
 use Gedmo\Mapping\Annotation\SortablePosition;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Config\Layout\Layout;
+use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Exception\LogicException;
-use Xutim\CoreBundle\Repository\PageRepository;
 
-#[Entity(repositoryClass: PageRepository::class)]
-class Page
+#[MappedSuperclass]
+class Page implements PageInterface
 {
     use TimestampableTrait;
     use FileTrait;
     use ArchiveStatusTrait;
 
-    /** @use TranslatableTrait<ContentTranslation> */
-    use TranslatableTrait;
+    /** @use BasicTranslatableTrait<ContentTranslationInterface> */
+    use BasicTranslatableTrait;
+
+    /** @use PublishableTranslatableTrait<string, ContentTranslationInterface> */
+    use PublishableTranslatableTrait;
 
     #[Id]
     #[Column(type: 'uuid')]
@@ -54,89 +59,66 @@ class Page
     #[Column(type: Types::INTEGER, nullable: false)]
     private int $position;
 
-    #[ManyToOne(targetEntity: Page::class)]
-    #[JoinColumn(nullable: false)]
-    private Page $rootParent;
+    #[ManyToOne(targetEntity: FileInterface::class, inversedBy: 'featuredPages')]
+    #[JoinColumn(name: 'featured_image')]
+    private ?FileInterface $featuredImage;
+
+    #[ManyToOne(targetEntity: PageInterface::class)]
+    #[JoinColumn(name: 'root_parent', nullable: false)]
+    private PageInterface $rootParent;
 
     #[SortableGroup]
-    #[ManyToOne(targetEntity: Page::class, inversedBy: 'children')]
-    private ?Page $parent;
+    #[ManyToOne(targetEntity: PageInterface::class, inversedBy: 'children')]
+    private ?PageInterface $parent;
 
-    /** @var Collection<int, Page> */
-    #[OneToMany(mappedBy: 'parent', targetEntity: Page::class)]
+    /** @var Collection<int, PageInterface> */
+    #[OneToMany(mappedBy: 'parent', targetEntity: PageInterface::class)]
     #[OrderBy(['position' => 'ASC'])]
     private Collection $children;
 
-    /** @var Collection<string, ContentTranslation> */
-    #[OneToMany(mappedBy: 'page', targetEntity: ContentTranslation::class, indexBy: 'locale')]
+    /** @var Collection<string, ContentTranslationInterface> */
+    #[OneToMany(mappedBy: 'page', targetEntity: ContentTranslationInterface::class, indexBy: 'locale')]
     #[OrderBy(['locale' => 'ASC'])]
     private Collection $translations;
 
-    /** @var Collection<int, File> */
-    #[ManyToMany(targetEntity: File::class, mappedBy: 'pages')]
+    /** @var Collection<int, FileInterface> */
+    #[ManyToMany(targetEntity: FileInterface::class, mappedBy: 'pages')]
     #[OrderBy(['createdAt' => 'ASC'])]
     private Collection $files;
 
-    #[OneToOne(targetEntity: ContentTranslation::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[OneToOne(targetEntity: ContentTranslationInterface::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[JoinColumn(onDelete: 'SET NULL')]
-    private ContentTranslation $defaultTranslation;
+    private ContentTranslationInterface $defaultTranslation;
 
-    /** @var Collection<int, Article> */
-    #[OneToMany(mappedBy: 'page', targetEntity: Article::class)]
-    private Collection $articles;
-
-    /** @var Collection<int, BlockItem> */
-    #[OneToMany(mappedBy: 'page', targetEntity: BlockItem::class)]
+    /** @var Collection<int, BlockItemInterface> */
+    #[OneToMany(mappedBy: 'page', targetEntity: BlockItemInterface::class)]
     private Collection $blockItems;
 
     /**
      * @param list<string> $locales
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
      */
     public function __construct(
         ?string $layout,
-        ?string   $colorHex,
-        array    $locales,
-        string $preTitle,
-        string   $title,
-        string $subTitle,
-        string   $slug,
-        array   $content,
-        string   $locale,
-        string   $description,
-        ?Page $parent,
-        ?int     $spipId = null
+        ?string $colorHex,
+        array $locales,
+        ?PageInterface $parent,
+        ?FileInterface $featuredImage
     ) {
         $this->id = Uuid::v4();
         $this->layout = $layout;
-        $this->createdAt = $this->updatedAt = new DateTimeImmutable();
-
         $this->color = new Color($colorHex);
         $this->translationLocales = $locales;
         $this->parent = $parent;
         $this->setRootParent($parent);
-        $this->children = new ArrayCollection();
-        $this->defaultTranslation = new ContentTranslation(
-            $preTitle,
-            $title,
-            $subTitle,
-            $slug,
-            $content,
-            $locale,
-            $description,
-            $this,
-            null,
-            $spipId
-        );
-        $this->translations = new ArrayCollection();
-        $this->translations->add($this->defaultTranslation);
+        $this->featuredImage = $featuredImage;
         $this->archived = false;
+        $this->position = -1;
+
+        $this->createdAt = $this->updatedAt = new DateTimeImmutable();
+
+        $this->children = new ArrayCollection();
+        $this->translations = new ArrayCollection();
         $this->blockItems = new ArrayCollection();
-        $this->articles = new ArrayCollection();
         $this->files = new ArrayCollection();
     }
 
@@ -148,7 +130,7 @@ class Page
     /**
      * @param list<string> $locales
      */
-    public function change(?string $colorHex, array $locales, ?Page $parent): void
+    public function change(?string $colorHex, array $locales, ?PageInterface $parent): void
     {
         $this->updatedAt = new DateTimeImmutable();
         $this->color = new Color($colorHex);
@@ -157,7 +139,18 @@ class Page
         $this->setRootParent($parent);
     }
 
-    private function setRootParent(?Page $parent): void
+    public function addTranslation(ContentTranslationInterface $trans): void
+    {
+        if ($this->translations->contains($trans) === true) {
+            return;
+        }
+        $this->translations->add($trans);
+        if (count($this->translations) === 1) {
+            $this->defaultTranslation = $trans;
+        }
+    }
+
+    private function setRootParent(?PageInterface $parent): void
     {
         if ($parent === null) {
             $this->rootParent = $this;
@@ -166,13 +159,13 @@ class Page
         }
     }
 
-    public function changeParent(?Page $parent): void
+    public function changeParent(?PageInterface $parent): void
     {
         $this->parent = $parent;
         $this->setRootParent($parent);
     }
 
-    public function setDefaultTranslation(ContentTranslation $trans): void
+    public function setDefaultTranslation(ContentTranslationInterface $trans): void
     {
         if ($this->getTranslations()->contains($trans) === false) {
             throw new LogicException(sprintf(
@@ -204,59 +197,32 @@ class Page
         return $this->color;
     }
 
-    public function getTranslationByLocaleOrDefault(string $locale): ContentTranslation
-    {
-        $criteria = Criteria::create()
-            ->where(Criteria::expr()->eq('locale', $locale))
-            ->setFirstResult(0)
-            ->setMaxResults(1);
-        /** @var ContentTranslation|false $translation */
-        $translation = $this->translations->matching($criteria)->first();
-
-        if ($translation === false) {
-            return $this->defaultTranslation;
-        }
-
-        return $translation;
-    }
-
     /**
      * @return array<string, string>
      */
     public function getExistingTranslationLocales(): array
     {
-        return $this->translations->map(fn (ContentTranslation $trans) => $trans->getLocale())->toArray();
+        return $this->translations->map(fn (ContentTranslationInterface $trans) => $trans->getLocale())->toArray();
     }
 
-    public function getPublishedTranslationByLocale(string $locale): ?ContentTranslation
-    {
-        $translation = $this->getTranslationByLocale($locale);
-
-        if ($translation !== null && $translation->isPublished() === false) {
-            return null;
-        }
-
-        return $translation;
-    }
-
-    public function getDefaultTranslation(): ContentTranslation
+    public function getDefaultTranslation(): ContentTranslationInterface
     {
         return $this->defaultTranslation;
     }
 
-    public function getRootPage(): Page
+    public function getRootPage(): PageInterface
     {
         return $this->rootParent;
     }
 
-    public function getParent(): ?Page
+    public function getParent(): ?PageInterface
     {
         return $this->parent;
     }
 
     /**
      * @phpstan-assert-if-true null $this->parent
-     * @phpstan-assert-if-false Page $this->parent
+     * @phpstan-assert-if-false PageInterface $this->parent
      */
     public function isRoot(): bool
     {
@@ -264,7 +230,7 @@ class Page
     }
 
     /**
-     * @return Collection<int, Page>
+     * @return Collection<int, PageInterface>
      */
     public function getChildren(): Collection
     {
@@ -280,60 +246,15 @@ class Page
     }
 
     /**
-     * @param string $locale
-     * @return array<ContentTranslation>
-     */
-    public function getPublishedArticlesByLocale(string $locale): array
-    {
-        $filteredArticles = [];
-        foreach ($this->articles->filter(fn (Article $article) => $article->getTranslationByLocale($locale)?->isPublished() === true) as $article) {
-            $translation = $article->getTranslationByLocale($locale);
-            if ($translation !== null) {
-                $filteredArticles[] = $translation;
-            }
-        }
-
-        return $filteredArticles;
-    }
-
-    /**
-     * @param string $locale
-     * @return array<ContentTranslation>
-     */
-    public function getUnPublishedArticlesByLocale(string $locale): array
-    {
-        $filteredArticles = [];
-        foreach ($this->articles->filter(fn (Article $article) => $article->getTranslationByLocale($locale)?->isPublished() === false) as $article) {
-            $translation = $article->getTranslationByLocale($locale);
-            if ($translation !== null) {
-                $filteredArticles[] = $translation;
-            }
-        }
-
-        return $filteredArticles;
-    }
-
-    /**
-     * @return Collection<string, ContentTranslation>
+     * @return Collection<string, ContentTranslationInterface>
      */
     public function getTranslations(): Collection
     {
         return $this->translations;
     }
 
-    /**
-     * @return Collection<int, Article>
-     */
-    public function getArticles(): Collection
-    {
-        return $this->articles;
-    }
-
     public function canBeDeleted(): bool
     {
-        if ($this->articles->isEmpty() === false) {
-            return false;
-        }
         if ($this->blockItems->isEmpty() === false) {
             return false;
         }
@@ -356,7 +277,7 @@ class Page
         return true;
     }
 
-    public function getRootParent(): Page
+    public function getRootParent(): PageInterface
     {
         return $this->rootParent;
     }
@@ -389,5 +310,20 @@ class Page
     public function changeLayout(?Layout $layout): void
     {
         $this->layout = $layout?->code;
+    }
+
+    public function getFeaturedImage(): ?FileInterface
+    {
+        return $this->featuredImage;
+    }
+
+    public function changeFeaturedImage(?FileInterface $image): void
+    {
+        $this->featuredImage = $image;
+    }
+
+    public function hasFeaturedImage(): bool
+    {
+        return $this->featuredImage !== null;
     }
 }

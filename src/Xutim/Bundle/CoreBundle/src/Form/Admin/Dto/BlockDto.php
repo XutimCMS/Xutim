@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Form\Admin\Dto;
 
-use Xutim\CoreBundle\Entity\Block;
+use Xutim\CoreBundle\Domain\Model\BlockInterface;
 
 final readonly class BlockDto
 {
@@ -17,7 +17,7 @@ final readonly class BlockDto
     ) {
     }
 
-    public static function fromBlock(Block $block): self
+    public static function fromBlock(BlockInterface $block): self
     {
         return new self(
             $block->getCode(),

@@ -4,17 +4,16 @@
 
 {% block pageTitle %}
     <twig:Xutim:Admin:Icon name="folder" />
-    {% set translation = page.translationByLocaleOrAny(content_context_language()) %}
+    {%
+        set translation = page.translationByLocaleOrAny(content_context_language())
+    %}
 
     {{ translatable.languageBadge(translation) }}
     {{ translation.title }}
 {% endblock %}
 
 {% block languageBar %}
-    <twig:Xutim:Admin:LanguageContextBar
-        :entity="page"
-        class="d-flex justify-content-end align-items-center mb-2"
-    />
+    <twig:Xutim:Admin:LanguageContextBar :entity="page" />
 {% endblock %}
 
 {% block breadcrumbHeader %}
@@ -32,14 +31,9 @@
             History
         </twig:Xutim:Admin:Button>
 
-        <twig:Xutim:Admin:Button
-            tag="a"
-            variant="nav"
-            href="{{ path('content_translation_show', {slug: translation.slug, _locale: translation.locale}) }}"
-        >
-            <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-            Public page
-        </twig:Xutim:Admin:Button>
+        <twig:Xutim:Admin:PublicPageLink :contentTranslation="translation" />
+    {% else %}
+        <twig:Xutim:Admin:PublicPageLink />
     {% endif %}
 
     <twig:Xutim:Admin:Button
@@ -98,14 +92,20 @@
         <twig:block name="content">
             <div class="tab-content">
                 <div id="general-tab" class="tab-pane active" role="tabpanel">
-                    {{ include('@XutimCore/admin/page/_page_sidebar.html.twig', {translation: translation}) }}
+                    {{
+                        include('@XutimCore/admin/page/_page_sidebar.html.twig', {translation: translation})
+                    }}
                 </div>
                 <div
                     id="translation-reference-tab"
                     class="tab-pane m-4"
                     role="tabpanel"
                 >
-                    {{ include('@XutimCore/admin/page/page_translation_show.html.twig', {page: page, translation: translation}) }}
+                    {% if translation != null %}
+                        {{
+                            include('@XutimCore/admin/page/page_translation_show.html.twig', {page: page, translation: translation})
+                        }}
+                    {% endif %}
                 </div>
             </div>
         </twig:block>
@@ -118,12 +118,15 @@
             <div class="tab-pane active show p-4">
                 {{
                     include('@XutimCore/admin/content_translation/_form.html.twig', {
-                        uploadFileUrl: path('admin_editorjs_file_upload_page', {id: page.id}),
-                        fetchFileUrl: path('admin_editorjs_file_fetch_page', {id: page.id}),
+                        disableEditing: not is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_DEVELOPER'))
                     })
                 }}
-                {% if not translation and page.translations|length > 0 and form.slug.vars.value is empty %}
-                    {{ include('@XutimCore/admin/page_translation/new_translation_modal.html.twig', {page: page}) }}
+                {%
+                    if not translation and page.translations|length > 0 and form.slug.vars.value is empty
+                %}
+                    {{
+                        include('@XutimCore/admin/page_translation/new_translation_modal.html.twig', {page: page})
+                    }}
                 {% endif %}
             </div>
         </div>

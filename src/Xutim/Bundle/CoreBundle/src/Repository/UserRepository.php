@@ -9,12 +9,11 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
-use Xutim\CoreBundle\Entity\User;
 
 /**
- * @extends ServiceEntityRepository<User>
- * @implements PasswordUpgraderInterface<User>
+ * @extends ServiceEntityRepository<UserInterface>
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
@@ -24,9 +23,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         'email' => 'user.email'
     ];
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, string $entityClass)
     {
-        parent::__construct($registry, User::class);
+        parent::__construct($registry, $entityClass);
     }
 
     /**
@@ -45,7 +44,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $emails;
     }
 
-    public function save(User $entity, bool $flush = false): void
+    public function save(UserInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -54,7 +53,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
-    public function remove(User $entity, bool $flush = false): void
+    public function remove(UserInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -70,6 +69,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         PasswordAuthenticatedUserInterface $user,
         string $newHashedPassword
     ): void {
+        /** @var UserInterface $user */
         $user->changePassword($newHashedPassword);
 
         $this->save($user, true);

@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import EditorJS from 'https://esm.sh/@editorjs/editorjs@2.30.8';
+import EditorJS from 'https://esm.sh/@editorjs/editorjs@2.31.0-rc.10';
 import Header from '@editorjs/header';
 import Paragraph from '@editorjs/paragraph';
 import MainHeader from '../lib/editorjs-plugins/header/main_header.js';
@@ -9,24 +9,32 @@ import Block from './../lib/editorjs-plugins/block/block.js';
 import createContentLink from './../lib/editorjs-plugins/content-link/content-link.js';
 import Delimiter from '@editorjs/delimiter';
 import Embed from '@editorjs/embed';
-import ImageTool from '@editorjs/image';
 import ImageRowTool from '../lib/editorjs-plugins/image-row/ImageRowTool.js';
+import XutimImageTool from '../lib/editorjs-plugins/image/XutimImageTool.js';
+import XutimFileTool from '../lib/editorjs-plugins/file/XutimFileTool.js';
 import AlignmentBlockTune from '../lib/editorjs-plugins/alignment-tune/AlignmentBlockTune.js';
+import XutimTagListTool from '../lib/editorjs-plugins/tag-list/XutimTagListTool.js';
+//import createInternalLink from '../lib/editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
 
 export default class extends Controller {
     static targets = ['editorHolder', 'contentInput'];
     static values = {
         blockCodes: Array,
+        tags: Array,
         pageIdsUrl: String,
         articleIdsUrl: String,
-        uploadFileUrl: String,
+        fetchImagesUrl: String,
+        fetchFilesUrl: String,
         fetchFileUrl: String,
-        galleryUrl: String,
+        disableEditing: Boolean,
     };
 
     #editor;
 
     connect() {
+        if (this.disableEditingValue === true) {
+            this.element.classList.add('editorjs-no-permission');
+        }
         const pageLinkIcon =
             '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" stroke="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="0" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>';
         const articleLinkIcon =
@@ -39,6 +47,14 @@ export default class extends Controller {
                 alignment: {
                     class: AlignmentBlockTune,
                 },
+                // xutimInternalLink: {
+                //     class: createInternalLink('Page link', pageLinkIcon),
+                //     config: {
+                //         listUrl: this.pageIdsUrlValue,
+                //         title: 'Select a page',
+                //     },
+                //     shortcut: 'CMD+SHIFT+K',
+                // },
                 paragraph: {
                     class: Paragraph,
                     tunes: ['alignment'],
@@ -91,20 +107,24 @@ export default class extends Controller {
                         },
                     },
                 },
-                image: {
-                    class: ImageTool,
+                xutimFile: {
+                    class: XutimFileTool,
                     config: {
-                        endpoints: {
-                            byFile: this.uploadFileUrlValue,
-                            byUrl: this.fetchFileUrlValue,
-                        },
+                        fetchFilesUrl: this.fetchFilesUrlValue,
+                        fetchFileUrl: this.fetchFileUrlValue,
+                    },
+                },
+                xutimImage: {
+                    class: XutimImageTool,
+                    config: {
+                        galleryUrl: this.fetchImagesUrlValue,
                     },
                     tunes: ['alignment'],
                 },
-                imagerow: {
+                imageRow: {
                     class: ImageRowTool,
                     config: {
-                        galleryUrl: this.galleryUrlValue,
+                        galleryUrl: this.fetchImagesUrlValue,
                         allowedImagesPerRow: [2, 3, 4, 5],
                         defaultImagesPerRow: 3,
                     },
@@ -127,6 +147,12 @@ export default class extends Controller {
                     class: Block,
                     config: {
                         codes: this.blockCodesValue,
+                    },
+                },
+                xutimTag: {
+                    class: XutimTagListTool,
+                    config: {
+                        tags: this.tagsValue,
                     },
                 },
             },

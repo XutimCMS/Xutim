@@ -16,12 +16,13 @@ class LayoutFinder
         private readonly string $templatesDir,
         private readonly string $articleLayoutRelativeDir,
         private readonly string $pageLayoutRelativeDir,
-        private readonly string $blockLayoutRelativeDir
+        private readonly string $blockLayoutRelativeDir,
+        private readonly string $tagLayoutRelativeDir
     ) {
     }
 
     /**
-    * @return list<Layout>
+     * @return list<Layout>
     */
     public function findArticleLayouts(): array
     {
@@ -29,7 +30,7 @@ class LayoutFinder
     }
 
     /**
-    * @return list<Layout>
+     * @return list<Layout>
     */
     public function findPageLayouts(): array
     {
@@ -37,7 +38,7 @@ class LayoutFinder
     }
 
     /**
-    * @return list<Layout>
+     * @return list<Layout>
     */
     public function findBlockLayouts(): array
     {
@@ -45,7 +46,15 @@ class LayoutFinder
     }
 
     /**
-    * @return list<Layout>
+     * @return list<Layout>
+    */
+    public function findTagLayouts(): array
+    {
+        return $this->findByPath($this->tagLayoutRelativeDir);
+    }
+
+    /**
+     * @return list<Layout>
     */
     private function findByPath(string $path): array
     {
@@ -87,6 +96,8 @@ class LayoutFinder
                 ));
             }
         }
+
+        usort($layouts, fn (Layout $l1, Layout $l2) => strcmp($l1->name, $l2->name));
 
         return $layouts;
     }

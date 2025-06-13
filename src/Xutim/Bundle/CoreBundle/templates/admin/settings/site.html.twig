@@ -10,14 +10,7 @@
 {% endblock %}
 
 {% block pageMenu %}
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ path('homepage') }}"
-    >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-        Public page
-    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:PublicPageLink />
 {% endblock %}
 
 {% block settingsBody %}

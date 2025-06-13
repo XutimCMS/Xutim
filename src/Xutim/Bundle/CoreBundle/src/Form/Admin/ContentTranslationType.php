@@ -15,6 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\Regex;
 use Traversable;
 use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
 use Xutim\CoreBundle\Entity\ContentTranslation;
@@ -57,7 +58,8 @@ class ContentTranslationType extends AbstractType implements DataMapperInterface
                 'constraints' => [
                     new Length(['min' => 1]),
                     new NotNull(),
-                    new UniqueSlugLocale($existingTranslation)
+                    new UniqueSlugLocale($existingTranslation),
+                    new Regex(['pattern' => '/^[a-z0-9]+(-[a-z0-9]+)*$/', 'message' => 'The slug should be written in kebab-case.'])
                 ]
             ])
             ->add('content', TextareaType::class, [
@@ -124,13 +126,7 @@ class ContentTranslationType extends AbstractType implements DataMapperInterface
         $slug = $forms['slug']->getData();
         /** @var string $jsonContent */
         $jsonContent = $forms['content']->getData();
-        /**
-         * @var array{}|array{
-         *     time: int,
-         *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-         *     version: string
-         * } $content
-         */
+        /** @var EditorBlock $content */
         $content = json_decode($jsonContent, true, 512, JSON_THROW_ON_ERROR);
         /** @var string|null $description */
         $description = $forms['description']->getData();

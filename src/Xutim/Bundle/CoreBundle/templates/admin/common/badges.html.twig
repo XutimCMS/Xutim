@@ -16,6 +16,14 @@
     {% endif %}
 {% endmacro %}
 
+{% macro publicationStatusBadgeSimple(object, extraClass) %}
+    <span
+        class="badge text-bg-{{ object.status.colorClass }} {{ extraClass }}"
+        title="{{ object.status.value|trans({}, 'admin') }}"
+        data-controller="tooltip"
+    ></span>
+{% endmacro %}
+
 {% macro languageBadge(object) %}
     <twig:Xutim:Admin:Badge
         data-controller="tooltip"
@@ -38,7 +46,7 @@
 
 {% macro articleColorBadge(article, extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-    {% set color = article.page.color ? article.page.color.HTMLHex : '6c7a91' %}
+    {% set color = '6c7a91' %}
 
     {{ badges.squareBadge(color, extraClass) }}
 {% endmacro %}

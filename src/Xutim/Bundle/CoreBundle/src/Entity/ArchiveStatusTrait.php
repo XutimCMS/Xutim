@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping\Column;
 
 trait ArchiveStatusTrait
 {
-    #[column(type: 'boolean', nullable: false)]
+    #[Column(type: 'boolean', nullable: false)]
     private bool $archived;
 
     public function isArchived(): bool

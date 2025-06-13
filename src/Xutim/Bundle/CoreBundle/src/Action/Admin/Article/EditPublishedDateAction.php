@@ -4,31 +4,38 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\Article;
 
+use App\Entity\Core\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticlePublicationDateUpdatedEvent;
-use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\Event;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\PublishedDateType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Security\UserStorage;
 
 #[Route('/article/edit-publication-date/{id?null}', name: 'admin_article_edit_publication_date', methods: ['get', 'post'])]
 class EditPublishedDateAction extends AbstractController
 {
     public function __construct(
+        private readonly LogEventFactory $logEventFactory,
         private readonly ArticleRepository $repo,
         private readonly UserStorage $userStorage,
-        private readonly EventRepository $eventRepository
+        private readonly LogEventRepository $eventRepository,
+        private readonly BlockContext $blockContext
     ) {
     }
 
-    public function __invoke(Request $request, Article $article): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $article = $this->repo->find($id);
+        if ($article === null) {
+            throw $this->createNotFoundException('The article does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getPublishedAt()], [
             'action' => $this->generateUrl('admin_article_edit_publication_date', ['id' => $article->getId()])
@@ -43,13 +50,14 @@ class EditPublishedDateAction extends AbstractController
             $this->repo->save($article, true);
 
             $event = new ArticlePublicationDateUpdatedEvent($article->getId(), $data['publishedAt']);
-            $logEntry = new Event(
+            $logEntry = $this->logEventFactory->create(
                 $article->getId(),
                 $this->userStorage->getUserWithException()->getUserIdentifier(),
                 Article::class,
                 $event
             );
             $this->eventRepository->save($logEntry, true);
+            $this->blockContext->resetBlocksBelongsToArticle($article);
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 
@@ -61,10 +69,11 @@ class EditPublishedDateAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
             
-            // todo: referer - can be show or edit page.
-            return $this->redirectToRoute('admin_article_edit', [
+            $fallbackUrl = $this->generateUrl('admin_article_edit', [
                 'id' => $article->getId()
             ]);
+
+            return $this->redirect($request->headers->get('referer', $fallbackUrl));
         }
 
         return $this->render('@XutimCore/admin/article/article_edit_publication_date.html.twig', [

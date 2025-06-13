@@ -11,7 +11,7 @@ use Xutim\CoreBundle\Domain\DomainEvent;
 final readonly class ContentTranslationCreatedEvent implements DomainEvent
 {
     /**
-     * @param array{}|array{time: int, blocks: array{}|array{id: string, type: string, data: array<string, mixed>}, version: string} $content
+     * @param EditorBlock $content
     */
     public function __construct(
         public Uuid $id,

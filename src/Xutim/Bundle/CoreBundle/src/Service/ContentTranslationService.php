@@ -7,14 +7,17 @@ namespace Xutim\CoreBundle\Service;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleDeletedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationDeletedEvent;
 use Xutim\CoreBundle\Domain\Event\Page\PageDeletedEvent;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\Event;
 use Xutim\CoreBundle\Entity\Page;
 use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Security\UserStorage;
@@ -22,16 +25,17 @@ use Xutim\CoreBundle\Security\UserStorage;
 class ContentTranslationService
 {
     public function __construct(
+        private readonly LogEventFactory $logEventFactory,
         private readonly UserStorage $userStorage,
         private readonly ContentTranslationRepository $transRepo,
         private readonly ArticleRepository $articleRepo,
         private readonly PageRepository $pageRepo,
-        private readonly EventRepository $eventRepo,
+        private readonly LogEventRepository $eventRepo,
         private readonly MenuItemRepository $menuItemRepo,
     ) {
     }
 
-    public function deleteTranslation(ContentTranslation $trans): bool
+    public function deleteTranslation(ContentTranslationInterface $trans): bool
     {
         $object = $trans->getObject();
 
@@ -47,16 +51,20 @@ class ContentTranslationService
         } else {
             // Check if the translation is not a translation reference.
             if ($object->getDefaultTranslation()->getId()->equals($trans->getId()) === true) {
-                /** @var ContentTranslation $nextDefaultTrans */
-                $nextDefaultTrans = $object->getTranslations()->first();
-                $object->setDefaultTranslation($nextDefaultTrans);
+                /** @var ContentTranslationInterface $nextTrans */
+                foreach ($object->getTranslations() as $nextTrans) {
+                    if ($object->getDefaultTranslation()->getId()->equals($nextTrans->getId()) === false) {
+                        $object->setDefaultTranslation($nextTrans);
+                        break;
+                    }
+                }
             }
             $object->getTranslations()->removeElement($trans);
         }
 
         $userIdentifier = $this->userStorage->getUserWithException()->getUserIdentifier();
         $event = new ContentTranslationDeletedEvent($trans->getId());
-        $logEntry = new Event($trans->getId(), $userIdentifier, ContentTranslation::class, $event);
+        $logEntry = $this->logEventFactory->create($trans->getId(), $userIdentifier, ContentTranslation::class, $event);
 
         $this->transRepo->remove($trans, true);
         $this->eventRepo->save($logEntry, true);
@@ -64,7 +72,7 @@ class ContentTranslationService
         return true;
     }
 
-    public function deleteArticle(Article $article): bool
+    public function deleteArticle(ArticleInterface $article): bool
     {
         $menuItem = $this->menuItemRepo->findOneBy(['article' => $article]);
         if ($menuItem !== null || $article->canBeDeleted() === false) {
@@ -74,8 +82,8 @@ class ContentTranslationService
         $defTrans = $article->getDefaultTranslation();
 
         $userIdentifier = $this->userStorage->getUserWithException()->getUserIdentifier();
-        $logEntryArt = new Event($article->getId(), $userIdentifier, Article::class, new ArticleDeletedEvent($article->getId()));
-        $logEntryTrans = new Event($defTrans->getId(), $userIdentifier, ContentTranslation::class, new ContentTranslationDeletedEvent($defTrans->getId()));
+        $logEntryArt = $this->logEventFactory->create($article->getId(), $userIdentifier, Article::class, new ArticleDeletedEvent($article->getId()));
+        $logEntryTrans = $this->logEventFactory->create($defTrans->getId(), $userIdentifier, ContentTranslation::class, new ContentTranslationDeletedEvent($defTrans->getId()));
 
         $article->prepareDeletion();
 
@@ -92,7 +100,7 @@ class ContentTranslationService
         return true;
     }
 
-    public function deletePage(Page $page): bool
+    public function deletePage(PageInterface $page): bool
     {
         $menuItem = $this->menuItemRepo->findOneBy(['page' => $page]);
         if ($menuItem !== null || $page->canBeDeleted() === false) {
@@ -101,9 +109,9 @@ class ContentTranslationService
         $trans = $page->getDefaultTranslation();
 
         $userIdentifier = $this->userStorage->getUserWithException()->getUserIdentifier();
-        $logEntrySec = new Event($page->getId(), $userIdentifier, Page::class, new PageDeletedEvent($page->getId()));
+        $logEntrySec = $this->logEventFactory->create($page->getId(), $userIdentifier, Page::class, new PageDeletedEvent($page->getId()));
 
-        $logEntryTrans = new Event($trans->getId(), $userIdentifier, ContentTranslation::class, new ContentTranslationDeletedEvent($trans->getId()));
+        $logEntryTrans = $this->logEventFactory->create($trans->getId(), $userIdentifier, ContentTranslation::class, new ContentTranslationDeletedEvent($trans->getId()));
 
         $page->prepareDeletion();
 

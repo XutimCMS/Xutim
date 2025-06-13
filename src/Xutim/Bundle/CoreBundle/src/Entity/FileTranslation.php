@@ -6,15 +6,16 @@ namespace Xutim\CoreBundle\Entity;
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Repository\FileTranslationRepository;
+use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\FileTranslationInterface;
 
-#[Entity(repositoryClass: FileTranslationRepository::class)]
-class FileTranslation
+#[MappedSuperclass]
+class FileTranslation implements FileTranslationInterface
 {
     use TimestampableTrait;
 
@@ -31,15 +32,15 @@ class FileTranslation
     #[Column(type: 'string', length: 10, nullable: false)]
     private string $locale;
 
-    #[ManyToOne(targetEntity: File::class, inversedBy: 'translations')]
+    #[ManyToOne(targetEntity: FileInterface::class, inversedBy: 'translations')]
     #[JoinColumn(nullable: false)]
-    private File $file;
+    private FileInterface $file;
 
     public function __construct(
         string $locale,
         string $name,
         string $alt,
-        File $file
+        FileInterface $file
     ) {
         $this->id = Uuid::v4();
         $this->locale = $locale;
@@ -77,7 +78,7 @@ class FileTranslation
         return $this->alt;
     }
 
-    public function getFile(): File
+    public function getFile(): FileInterface
     {
         return $this->file;
     }

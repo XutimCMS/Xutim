@@ -5,31 +5,98 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\String\AbstractUnicodeString;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\Page;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
+use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Entity\PublicationStatus;
+use Xutim\CoreBundle\Util\TsVectorLanguageMapper;
 
 /**
- * @extends ServiceEntityRepository<ContentTranslation>
+ * @extends ServiceEntityRepository<ContentTranslationInterface>
  */
 class ContentTranslationRepository extends ServiceEntityRepository
 {
+    private readonly string $tableName;
+
     public function __construct(
         ManagerRegistry $registry,
+        private readonly string $entityClass,
         private readonly SluggerInterface $slugger,
         private readonly SiteContext $siteContext
     ) {
-        parent::__construct($registry, ContentTranslation::class);
+        parent::__construct($registry, $entityClass);
+
+        $em = $registry->getManagerForClass($entityClass);
+        assert($em instanceof EntityManagerInterface); // safety check
+
+        $this->tableName = $em->getClassMetadata($entityClass)->getTableName();
     }
 
-    public function findPublishedBySlug(string $slug, string $locale): ?ContentTranslation
+    /**
+     * @return array{0: array<int, ContentTranslationInterface>, 1: int, 2: int}
+     */
+    public function queryByFilter(FilterDto $filter, string $locale): array
     {
-        /** @var ContentTranslation|null */
+        $dictionary = TsVectorLanguageMapper::getDictionary($locale);
+        $term = strtolower($filter->searchTerm);
+
+        $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+        $rsm->addRootEntityFromClassMetadata($this->entityClass, 'ct');
+
+        $sql = <<<SQL
+            SELECT *,
+                ts_rank(search_vector, plainto_tsquery(:dictionary, :term)) AS rank
+            FROM {$this->tableName} ct
+            WHERE ct.locale = :locale
+              AND ct.search_vector @@ plainto_tsquery(:dictionary, :term)
+              AND ct.status = :publishedStatus
+            ORDER BY rank DESC
+            LIMIT :limit OFFSET :offset
+        SQL;
+        $params = [
+            'dictionary' => $dictionary,
+            'term' => $term,
+            'locale' => $locale,
+            'publishedStatus' => PublicationStatus::Published->value,
+        ];
+
+        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+        $query->setParameters($params);
+        $query->setParameter('limit', $filter->pageLength);
+        $query->setParameter('offset', ($filter->page - 1) * $filter->pageLength);
+        /** @var array<int, ContentTranslationInterface> $result */
+        $result = $query->getResult();
+
+        $countQuery = $this->getEntityManager()->getConnection()->prepare(<<<SQL
+            SELECT COUNT(*) FROM {$this->tableName}
+            WHERE locale = :locale
+              AND search_vector @@ plainto_tsquery(:dictionary, :term)
+              AND status = :publishedStatus
+        SQL);
+        $countQuery->bindValue('dictionary', $params['dictionary']);
+        $countQuery->bindValue('term', $params['term']);
+        $countQuery->bindValue('locale', $params['locale']);
+        $countQuery->bindValue('publishedStatus', $params['publishedStatus']);
+        /** @var int $total */
+        $total = $countQuery->executeQuery()->fetchOne();
+
+        return [
+            $result,
+            $total,
+            (int)ceil($total / $filter->pageLength),
+        ];
+    }
+
+    public function findPublishedBySlug(string $slug, string $locale): ?ContentTranslationInterface
+    {
+        /** @var ContentTranslationInterface|null */
         return $this->createQueryBuilder('translation')
             ->where('translation.slug = :slugParam')
             ->andWhere('translation.locale = :localeParam')
@@ -46,7 +113,7 @@ class ContentTranslationRepository extends ServiceEntityRepository
      *
      * @return array<string>
      */
-    public function filterMissingTranslationsByLocales(Page|Article $object, array $locales): array
+    public function filterMissingTranslationsByLocales(PageInterface|ArticleInterface $object, array $locales): array
     {
         $missingLocales = $this->findMissingTranslationLocales($object);
 
@@ -56,12 +123,12 @@ class ContentTranslationRepository extends ServiceEntityRepository
     /**
      * @return array<string>
      */
-    public function findMissingTranslationLocales(Page|Article $object): array
+    public function findMissingTranslationLocales(PageInterface|ArticleInterface $object): array
     {
         /** @var array{locale: string} $translatedLocales */
         $translatedLocales = $this->createQueryBuilder('trans')
             ->select('trans.locale')
-            ->where($object instanceof Page ? 'trans.page = :objectParam' : 'trans.article = :objectParam')
+            ->where($object instanceof PageInterface ? 'trans.page = :objectParam' : 'trans.article = :objectParam')
             ->setParameter('objectParam', $object)
             ->getQuery()
             ->getSingleColumnResult();
@@ -91,7 +158,7 @@ class ContentTranslationRepository extends ServiceEntityRepository
         return $slug;
     }
 
-    public function isSlugUnique(AbstractUnicodeString $slug, string $locale, ?ContentTranslation $existingTrans = null): bool
+    public function isSlugUnique(AbstractUnicodeString $slug, string $locale, ?ContentTranslationInterface $existingTrans = null): bool
     {
         $translations = $this->findBy(['slug' => $slug->toString(), 'locale' => $locale]);
         if (count($translations) === 0) {
@@ -105,10 +172,10 @@ class ContentTranslationRepository extends ServiceEntityRepository
         return false;
     }
 
-    public function incrementVisits(ContentTranslation $translation): void
+    public function incrementVisits(ContentTranslationInterface $translation): void
     {
         $query = $this->getEntityManager()->createQuery(
-            'UPDATE Xutim\CoreBundle\\Entity\\ContentTranslation at 
+            'UPDATE ' . $this->entityClass . ' at 
              SET at.visits = at.visits + 1
              WHERE at.id = \'' . $translation->getId()->toRfc4122() . "'"
         );
@@ -116,7 +183,7 @@ class ContentTranslationRepository extends ServiceEntityRepository
         $query->execute();
     }
 
-    public function save(ContentTranslation $entity, bool $flush = false): void
+    public function save(ContentTranslationInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -125,7 +192,7 @@ class ContentTranslationRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(ContentTranslation $entity, bool $flush = false): void
+    public function remove(ContentTranslationInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 

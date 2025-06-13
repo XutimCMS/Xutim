@@ -10,8 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
-use Xutim\CoreBundle\Entity\ContentTranslation;
 use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\Form\Admin\ContentTranslationType;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
@@ -30,8 +30,12 @@ class EditTranslationAction extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request, ContentTranslation $translation): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $translation = $this->contentTransRepo->find($id);
+        if ($translation === null) {
+            throw $this->createNotFoundException('The content translation does not exist');
+        }
         $missingTranslations = $this->contentTransRepo->findMissingTranslationLocales($translation->getObject());
         $missingTranslations[] = $translation->getLocale();
         $form = $this->createForm(
@@ -85,7 +89,7 @@ class EditTranslationAction extends AbstractController
         throw new LogicException('Content translation should have either article or page.');
     }
 
-    private function redirectTranslationResponse(ContentTranslation $translation): RedirectResponse
+    private function redirectTranslationResponse(ContentTranslationInterface $translation): RedirectResponse
     {
         if ($translation->hasArticle()) {
             return $this->redirectToRoute('admin_article_show', ['id' => $translation->getArticle()->getId()]);

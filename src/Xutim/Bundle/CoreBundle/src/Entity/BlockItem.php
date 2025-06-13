@@ -9,21 +9,27 @@ use Deprecated;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Embedded;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Gedmo\Mapping\Annotation\SortableGroup;
 use Gedmo\Mapping\Annotation\SortablePosition;
 use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\BlockInterface;
+use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
+use Xutim\CoreBundle\Domain\Model\Coordinates;
+use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
+use Xutim\CoreBundle\Domain\Model\SnippetInterface;
+use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\ArticleBlockItemDto;
 use Xutim\CoreBundle\Form\Admin\Dto\PageBlockItemDto;
 use Xutim\CoreBundle\Form\Admin\Dto\SimpleBlockDto;
-use Xutim\CoreBundle\Model\Coordinates;
-use Xutim\CoreBundle\Repository\BlockItemRepository;
 
-#[Entity(repositoryClass: BlockItemRepository::class)]
-class BlockItem
+#[MappedSuperclass]
+class BlockItem implements BlockItemInterface
 {
     use TimestampableTrait;
 
@@ -51,33 +57,37 @@ class BlockItem
     private ?string $longitude = null;
 
     #[SortableGroup]
-    #[ManyToOne(targetEntity: Block::class, inversedBy: 'blockItems')]
+    #[ManyToOne(targetEntity: BlockInterface::class, inversedBy: 'blockItems')]
     #[JoinColumn(nullable: false)]
-    private Block $block;
+    private BlockInterface $block;
 
-    #[ManyToOne(targetEntity: File::class, inversedBy: 'blockItems')]
+    #[ManyToOne(targetEntity: FileInterface::class, inversedBy: 'blockItems')]
     #[JoinColumn(nullable: true)]
-    private ?File $file;
+    private ?FileInterface $file;
 
-    #[ManyToOne(targetEntity: Page::class, inversedBy: 'blockItems')]
+    #[ManyToOne(targetEntity: PageInterface::class, inversedBy: 'blockItems')]
     #[JoinColumn(nullable: true)]
-    private ?Page $page;
+    private ?PageInterface $page;
 
-    #[ManyToOne(targetEntity: Article::class, inversedBy: 'blockItems')]
+    #[ManyToOne(targetEntity: ArticleInterface::class, inversedBy: 'blockItems')]
     #[JoinColumn(nullable: true)]
-    private ?Article $article;
+    private ?ArticleInterface $article;
 
-    #[ManyToOne(targetEntity: Snippet::class)]
+    #[ManyToOne(targetEntity: SnippetInterface::class)]
     #[JoinColumn(nullable: true)]
-    private ?Snippet $snippet;
+    private ?SnippetInterface $snippet;
+
+    #[ManyToOne(targetEntity: TagInterface::class)]
+    #[JoinColumn(nullable: true)]
+    private ?TagInterface $tag;
 
     public function __construct(
-        Block $block,
-        ?Page $page,
-        ?Article $article,
-        ?File $file,
-        ?Snippet $snippet = null,
-        ?int $position = null,
+        BlockInterface $block,
+        ?PageInterface $page,
+        ?ArticleInterface $article,
+        ?FileInterface $file,
+        ?SnippetInterface $snippet = null,
+        ?TagInterface $tag = null,
         ?string $link = null,
         ?string $colorHex = null,
         ?string $fileDescription = null,
@@ -91,7 +101,8 @@ class BlockItem
         $this->article = $article;
         $this->file = $file;
         $this->snippet = $snippet;
-        $this->position = $position === null ? 0 : $position;
+        $this->tag = $tag;
+        $this->position = -1;
         $this->link = $link;
         $this->color = new Color($colorHex);
         $this->fileDescription = $fileDescription;
@@ -102,11 +113,11 @@ class BlockItem
     }
 
     public function change(
-        ?Page $page,
-        ?Article $article,
-        ?File $file,
-        ?Snippet $snippet,
-        ?int $position,
+        ?PageInterface $page,
+        ?ArticleInterface $article,
+        ?FileInterface $file,
+        ?SnippetInterface $snippet,
+        ?TagInterface $tag,
         ?string $link,
         ?string $colorHex,
         ?string $fileDescription,
@@ -117,7 +128,7 @@ class BlockItem
         $this->article = $article;
         $this->file = $file;
         $this->snippet = $snippet;
-        $this->position = $position === null ? 0 : $position;
+        $this->tag = $tag;
         $this->link = $link;
         $this->color = new Color($colorHex);
         $this->fileDescription = $fileDescription;
@@ -141,7 +152,7 @@ class BlockItem
     }
 
     /**
-     * @phpstan-assert-if-true File $this->file
+     * @phpstan-assert-if-true FileInterface $this->file
      * @phpstan-assert-if-false null $this->file
      */
     public function hasFile(): bool
@@ -149,7 +160,7 @@ class BlockItem
         return $this->file !== null;
     }
 
-    public function getFile(): ?File
+    public function getFile(): ?FileInterface
     {
         return $this->file;
     }
@@ -169,10 +180,7 @@ class BlockItem
         if ($this->color->isSet()) {
             return $this->color;
         }
-        if ($this->hasArticle() && $this->article->getPage()->getColor()->isSet() === true) {
-            return $this->article->getPage()->getColor();
-        }
-        if ($this->hasPage() && $this->page->getColor()->isSet() !== true) {
+        if ($this->hasPage() && $this->page->getColor()->isSet() === true) {
             return $this->page->getColor();
         }
 
@@ -184,7 +192,7 @@ class BlockItem
         return $this->fileDescription;
     }
 
-    public function getObject(): Page|Article|null
+    public function getObject(): PageInterface|ArticleInterface|null
     {
         return $this->hasArticle() ? $this->article : $this->page;
     }
@@ -200,18 +208,18 @@ class BlockItem
         return $this->hasArticle() || $this->hasPage();
     }
 
-    public function getPage(): ?Page
+    public function getPage(): ?PageInterface
     {
         return $this->page;
     }
 
-    public function getArticle(): ?Article
+    public function getArticle(): ?ArticleInterface
     {
         return $this->article;
     }
 
     /**
-     * @phpstan-assert-if-true Page $this->page
+     * @phpstan-assert-if-true PageInterface $this->page
      * @phpstan-assert-if-false null $this->page
      */
     public function hasPage(): bool
@@ -220,7 +228,7 @@ class BlockItem
     }
 
     /**
-     * @phpstan-assert-if-true Article $this->article
+     * @phpstan-assert-if-true ArticleInterface $this->article
      * @phpstan-assert-if-false null $this->article
      */
     public function hasArticle(): bool
@@ -228,13 +236,13 @@ class BlockItem
         return $this->article !== null;
     }
 
-    public function getSnippet(): ?Snippet
+    public function getSnippet(): ?SnippetInterface
     {
         return $this->snippet;
     }
 
     /**
-     * @phpstan-assert-if-true Snippet $this->snippet
+     * @phpstan-assert-if-true SnippetInterface $this->snippet
      * @phpstan-assert-if-false null $this->snippet
      */
     public function hasSnippet(): bool
@@ -242,18 +250,32 @@ class BlockItem
         return $this->snippet !== null;
     }
 
+    public function getTag(): ?TagInterface
+    {
+        return $this->tag;
+    }
+
+    /**
+     * @phpstan-assert-if-true TagInterface $this->tag
+     * @phpstan-assert-if-false null $this->tag
+     */
+    public function hasTag(): bool
+    {
+        return $this->tag !== null;
+    }
+
     /**
      * @phpstan-assert-if-true null $this->article
      * @phpstan-assert-if-true null $this->page
-     * @phpstan-assert-if-false Article $this->article
-     * @phpstan-assert-if-false Page $this->page
+     * @phpstan-assert-if-false ArticleInterface $this->article
+     * @phpstan-assert-if-false PageInterface $this->page
      */
     public function isSimpleItem(): bool
     {
         return $this->article === null && $this->page === null;
     }
 
-    public function getBlock(): Block
+    public function getBlock(): BlockInterface
     {
         return $this->block;
     }
@@ -267,16 +289,21 @@ class BlockItem
         return new Coordinates((float)$this->latitude, (float)$this->longitude);
     }
 
-    public function getDto(?\Symfony\Component\HttpFoundation\File\File $file): PageBlockItemDto|ArticleBlockItemDto|SimpleBlockDto
+    public function getDto(): PageBlockItemDto|ArticleBlockItemDto|SimpleBlockDto
     {
         if ($this->hasPage()) {
-            return new PageBlockItemDto($this->page, $file, $this->snippet, $this->position, $this->link, $this->color, $this->fileDescription, $this->getCoordinates());
+            return new PageBlockItemDto($this->page, $this->file, $this->snippet, $this->tag, $this->position, $this->link, $this->color, $this->fileDescription, $this->getCoordinates());
         }
 
         if ($this->hasArticle()) {
-            return new ArticleBlockItemDto($this->article, $file, $this->snippet, $this->position, $this->link, $this->color, $this->fileDescription, $this->getCoordinates());
+            return new ArticleBlockItemDto($this->article, $this->file, $this->snippet, $this->tag, $this->position, $this->link, $this->color, $this->fileDescription, $this->getCoordinates());
         }
 
-        return new SimpleBlockDto($file, $this->snippet, $this->position, $this->link, $this->color, $this->fileDescription, $this->getCoordinates());
+        return new SimpleBlockDto($this->file, $this->snippet, $this->tag, $this->position, $this->link, $this->color, $this->fileDescription, $this->getCoordinates());
+    }
+
+    public function changeFile(FileInterface $file): void
+    {
+        $this->file = $file;
     }
 }

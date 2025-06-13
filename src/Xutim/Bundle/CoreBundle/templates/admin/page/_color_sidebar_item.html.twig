@@ -1,0 +1,19 @@
+<twig:Xutim:Admin:SidebarItem id="color-sidebar-item">
+    <twig:block name="header">
+        {{ 'color'|trans({}, 'admin')|capitalize }}:
+    </twig:block>
+    <twig:block name="content">
+        <div id="page-color-item" class="badge" style="background-color: {{ page.color.HTMLHex }};">
+            &ensp;
+        </div>
+        <twig:Xutim:Admin:Button
+            tag="a"
+            variant="link"
+            class="p-0"
+            data-turbo-frame="modal"
+            href="{{ path('admin_page_details_edit', {id: page.id}) }}"
+        >
+            <twig:Xutim:Admin:Icon name="edit" />
+        </twig:Xutim:Admin:Button>
+    </twig:block>
+</twig:Xutim:Admin:SidebarItem>

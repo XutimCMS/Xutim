@@ -1,0 +1,36 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% import '@XutimCore/admin/common/forms.html.twig' as forms %}
+{% set title = 'edit article'|trans({}, 'admin')|capitalize %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header p-3">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.article) }}
+            {{ form_row(form.submit) }}
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#event-article-item">
+        <template>
+            <span id="event-article-item">
+                {% if event.article is not null %}
+                    {{
+                        event.article.translationByLocaleOrAny(content_context_language()).title
+                    }}
+                {% endif %}
+            </span>
+        </template>
+    </turbo-stream>
+{% endblock %}

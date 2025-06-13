@@ -9,14 +9,7 @@
 {% endblock %}
 
 {% block pageMenu %}
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ path('homepage') }}"
-    >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-        Public page
-    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:PublicPageLink />
     {% if app.user.isDeveloper() %}
         <twig:Xutim:Admin:Button
             tag="a"
@@ -38,25 +31,28 @@
             filter: filter,
         }
     %}
-        {% block header %}
-            {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
-            <th>
-                <a
-                    href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
-                >
-                    {{ 'name'|trans({}, 'admin') }}
-                    {{ icons.order_arrow('name', filter.orderColumn, filter.orderDirection) }}
-                </a>
-            </th>
-            <th>{{ 'description'|trans({}, 'admin')|capitalize }}</th>
-            <th class="w-1">{{ 'articles'|trans({}, 'admin')|capitalize }}</th>
-            <th class="w-1">{{ 'pages'|trans({}, 'admin')|capitalize }}</th>
-        {% endblock %}
+    {% block header %}
+        {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+        <th>
+            <a
+                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
+            >
+                {{ 'name'|trans({}, 'admin') }}
+                {{
+                    icons.order_arrow('name', filter.orderColumn, filter.orderDirection)
+                }}
+            </a>
+        </th>
+        <th>{{ 'description'|trans({}, 'admin')|capitalize }}</th>
+        <th>{{ 'layout'|trans({}, 'admin')|capitalize }}</th>
+        <th class="w-1">{{ 'articles'|trans({}, 'admin')|capitalize }}</th>
+        <th class="w-1">{{ 'pages'|trans({}, 'admin')|capitalize }}</th>
+    {% endblock %}
 
-        {% block body %}
-            {% for block in blocks %}
-                {{ include('@XutimCore/admin/block/_block_row.html.twig') }}
-            {% endfor %}
-        {% endblock %}
+    {% block body %}
+        {% for block in blocks %}
+            {{ include('@XutimCore/admin/block/_block_row.html.twig') }}
+        {% endfor %}
+    {% endblock %}
     {% endcomponent %}
 {% endblock %}

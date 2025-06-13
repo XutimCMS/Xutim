@@ -23,6 +23,9 @@ class UniqueSlugLocaleValidator extends ConstraintValidator
         if (!$constraint instanceof UniqueSlugLocale) {
             throw new UnexpectedTypeException($constraint, UniqueSlugLocale::class);
         }
+        if ($slug === null) {
+            return;
+        }
 
         $existingTranslation = $constraint->existingTranslation;
 

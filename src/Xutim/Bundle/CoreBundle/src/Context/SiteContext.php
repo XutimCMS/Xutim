@@ -69,6 +69,39 @@ class SiteContext
         return $this->getDefaultSite()->locales;
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getAllLocales(): array
+    {
+        return array_unique(
+            array_merge(
+                $this->getDefaultSite()->locales,
+                $this->getDefaultSite()->extendedContentLocales
+            )
+        );
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getExtendedContentLocales(): array
+    {
+        return $this->getDefaultSite()->extendedContentLocales;
+    }
+
+    /**
+     * @param array<string> $usedLocales
+     *
+     * @return array<string>
+     */
+    public function getMissingExtendedLocales(array $usedLocales): array
+    {
+        $extendedLocales = $this->getDefaultSite()->extendedContentLocales;
+
+        return array_values(array_diff($extendedLocales, $usedLocales));
+    }
+
     public function getSender(): string
     {
         return $this->getDefaultSite()->sender;

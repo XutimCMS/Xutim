@@ -40,7 +40,7 @@ class DateExtension extends AbstractExtension
             $parts[] = $interval->i . ' minute' . ($interval->i > 1 ? 's' : '');
         }
 
-        return implode(', ', $parts);
+        return 'in ' . implode(', ', $parts);
     }
 
     public function timeAgo(\DateTimeInterface $dateTime): string

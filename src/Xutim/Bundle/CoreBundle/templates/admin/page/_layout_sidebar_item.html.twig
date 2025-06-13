@@ -1,0 +1,20 @@
+<twig:Xutim:Admin:SidebarItem id="page-layout-item">
+    <twig:block name="header">
+        {{ 'layout'|trans({}, 'admin')|capitalize }}:
+    </twig:block>
+    <twig:block name="content">
+        {{ page.layout }}
+
+        <div {% if not page.layout %}class="ms-auto"{% endif %}>
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                class="p-0"
+                data-turbo-frame="modal"
+                href="{{ path('admin_page_layout_edit', {id: page.id}) }}"
+            >
+                <twig:Xutim:Admin:Icon name="edit" />
+            </twig:Xutim:Admin:Button>
+        </div>
+    </twig:block>
+</twig:Xutim:Admin:SidebarItem>

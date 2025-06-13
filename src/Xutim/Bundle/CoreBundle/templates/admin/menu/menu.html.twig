@@ -6,6 +6,17 @@
     />
 {% endblock %}
 
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">
+            <a href="{{ path('admin_settings_site') }}">
+                {{ 'settings'|trans({}, 'admin')|capitalize }}
+            </a>
+        </li>
+        <li class="breadcrumb-item">Menu</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
 {% block settingsBody %}
     <div class="row">
         <div class="col-md-12">
@@ -29,12 +40,18 @@
                 {% else %}
                     <div class="card-body">
                         <p>
-                            {{ 'There are no items in "%locale%" translation.'|trans({'%locale%': content_context_language()|language_name}, 'admin') }}
+                            {{
+                                'There are no items in "%locale%" translation.'|trans({'%locale%': content_context_language()|language_name}, 'admin')
+                            }}
                         </p>
-                        {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+                        {%
+                            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+                        %}
                             <p>
                                 <a href="{{ path('admin_menu_item_new') }}">
-                                    {{ 'Add a new menu item'|trans({}, 'admin') }}
+                                    {{
+                                        'Add a new menu item'|trans({}, 'admin')
+                                    }}
                                 </a>
                             </p>
                         {% endif %}
@@ -42,7 +59,9 @@
                 {% endif %}
             </div>
 
-            {% if items is not empty and is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+            {%
+                if items is not empty and is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+            %}
                 <p class="mt-3">
                     <twig:Xutim:Admin:Button
                         tag="a"

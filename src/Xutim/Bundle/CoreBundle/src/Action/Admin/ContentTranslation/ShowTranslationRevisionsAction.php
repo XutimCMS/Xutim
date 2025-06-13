@@ -12,10 +12,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
-use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\Event;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\LogEventInterface;
 use Xutim\CoreBundle\Form\Admin\RevisionListType;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\ContentTranslationRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\UserRepository;
 use Xutim\CoreBundle\Service\ContentFragmentsConverter;
 use Xutim\CoreBundle\Service\TextDiff;
@@ -24,19 +25,22 @@ use Xutim\CoreBundle\Service\TextDiff;
 class ShowTranslationRevisionsAction extends AbstractController
 {
     public function __construct(
-        private readonly EventRepository $eventRepository,
+        private readonly LogEventRepository $eventRepository,
         private readonly TextDiff $textDiff,
         private readonly ContentFragmentsConverter $fragmentsConverter,
-        private readonly UserRepository $userRepository
+        private readonly UserRepository $userRepository,
+        private readonly ContentTranslationRepository $contentTransRepo,
     ) {
     }
 
-    public function __invoke(
-        ContentTranslation $translation,
-        Request $request
-    ): Response {
+    public function __invoke(Request $request, string $id): Response
+    {
+        $translation = $this->contentTransRepo->find($id);
+        if ($translation === null) {
+            throw $this->createNotFoundException('The content translation does not exist');
+        }
         $events = $this->eventRepository->findByTranslation($translation);
-        $eventsId = array_map(fn (Event $e) => $e->getId()->toRfc4122(), $events);
+        $eventsId = array_map(fn (LogEventInterface $e) => $e->getId()->toRfc4122(), $events);
 
         $form = $this->createForm(RevisionListType::class, null, ['event_ids' => $eventsId]);
         $form->handleRequest($request);
@@ -61,12 +65,12 @@ class ShowTranslationRevisionsAction extends AbstractController
     }
 
     /**
-     * @param array<Event>                    $events
+     * @param array<LogEventInterface>                                                   $events
      * @param FormInterface<array{revision_version: string, revision_diff: string}|null> $form
      */
     private function handleFormNotSubmitted(
         array $events,
-        ContentTranslation $translation,
+        ContentTranslationInterface $translation,
         FormInterface $form
     ): Response {
         if (count($events) < 2) {
@@ -85,20 +89,20 @@ class ShowTranslationRevisionsAction extends AbstractController
         return $this->renderRevisions($event, $previousEvent, $translation, $events, $form);
     }
 
-    private function getEventById(string $eventId): ?Event
+    private function getEventById(string $eventId): ?LogEventInterface
     {
         return $this->eventRepository->findOneBy(['id' => $eventId]);
     }
 
 
     /**
-     * @param array<Event>                    $events
+     * @param array<LogEventInterface>                                                   $events
      * @param FormInterface<array{revision_version: string, revision_diff: string}|null> $form
      */
     private function renderRevisions(
-        Event $event,
-        Event $previousEvent,
-        ContentTranslation $translation,
+        LogEventInterface $event,
+        LogEventInterface $previousEvent,
+        ContentTranslationInterface $translation,
         array $events,
         FormInterface $form
     ): Response {

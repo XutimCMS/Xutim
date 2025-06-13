@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
+use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Form\Admin\ArticleBlockItemType;
+use Xutim\CoreBundle\Form\Admin\FileOrMediaType;
+use Xutim\CoreBundle\Form\Admin\MenuItemType;
+use Xutim\CoreBundle\Form\Admin\PageBlockItemType;
+use Xutim\CoreBundle\Form\Admin\SimpleBlockItemType;
+use Xutim\CoreBundle\Repository\ArticleRepository;
+use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Repository\SnippetRepository;
+
+return static function (ContainerConfigurator $container): void {
+    $services = $container->services();
+
+    $services->set(ArticleBlockItemType::class)
+        ->arg('$articleClass', '%xutim_core.model.article.class%')
+        ->arg('$fileClass', '%xutim_core.model.file.class%')
+        ->arg('$snippetClass', '%xutim_core.model.snippet.class%')
+        ->arg('$tagClass', '%xutim_core.model.tag.class%')
+        ->tag('form.type');
+
+    $services->set(PageBlockItemType::class)
+        ->arg('$pageRepository', service(PageRepository::class))
+        ->arg('$fileClass', '%xutim_core.model.file.class%')
+        ->arg('$snippetClass', '%xutim_core.model.snippet.class%')
+        ->arg('$tagClass', '%xutim_core.model.tag.class%')
+        ->tag('form.type');
+
+    $services->set(FileOrMediaType::class)
+        ->arg('$siteContext', service(SiteContext::class))
+        ->arg('$fileClass', '%xutim_core.model.file.class%')
+        ->tag('form.type');
+
+    $services->set(MenuItemType::class)
+        ->arg('$pageRepository', service(PageRepository::class))
+        ->arg('$articleRepository', service(ArticleRepository::class))
+        ->arg('$snippetRepository', service(SnippetRepository::class))
+        ->arg('$contentContext', service(ContentContext::class))
+        ->arg('$articleClass', '%xutim_core.model.article.class%')
+        ->arg('$snippetClass', '%xutim_core.model.snippet.class%')
+        ->tag('form.type');
+
+    $services->set(SimpleBlockItemType::class)
+        ->arg('$fileClass', '%xutim_core.model.file.class%')
+        ->arg('$snippetClass', '%xutim_core.model.snippet.class%')
+        ->arg('$tagClass', '%xutim_core.model.tag.class%')
+        ->tag('form.type');
+};

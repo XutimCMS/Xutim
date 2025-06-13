@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Tests\Unit\Admin\Entity;
 
 use PHPUnit\Framework\TestCase;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Entity\ContentTranslation;
 use Xutim\CoreBundle\Entity\Page;
 
@@ -12,7 +14,7 @@ class ContentTranslationTest extends TestCase
 {
     public function testCanInstantiateContentTranslation(): void
     {
-        $page = new Page(null, 'fffeff', ['fr'], 'pretitle', 'Page Name', 'subtitle', 'page-slug', [], 'en', 'page description', null);
+        $page = new Page(null, 'fffeff', ['fr'], null, null);
         $translation = new ContentTranslation(
             'pretitle',
             'Title',
@@ -22,11 +24,11 @@ class ContentTranslationTest extends TestCase
             'en',
             'Description',
             $page,
-            null
+            null,
         );
 
-        $this->assertInstanceOf(ContentTranslation::class, $translation);
-        $this->assertInstanceOf(Page::class, $translation->getPage());
+        $this->assertInstanceOf(ContentTranslationInterface::class, $translation);
+        $this->assertInstanceOf(PageInterface::class, $translation->getPage());
         $this->assertSame('Title', $translation->getTitle());
         $this->assertSame('pretitle', $translation->getPreTitle());
         $this->assertSame('subtitle', $translation->getSubTitle());
@@ -38,7 +40,7 @@ class ContentTranslationTest extends TestCase
 
     public function testCanChangeContentTranslation(): void
     {
-        $page = new Page(null, 'fffeff', ['fr'], 'pretitle', 'Page Name', 'subtitle', 'page-slug', [], 'en', 'page description', null);
+        $page = new Page(null, 'fffeff', ['fr'], null, null);
         $translation = new ContentTranslation(
             'pretitle',
             'Title',

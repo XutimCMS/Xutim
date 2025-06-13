@@ -1,7 +1,9 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 
 {% block pageTitle %}
-    {{ block is defined ? block.name : 'new block'|trans({}, 'admin')|capitalize }}
+    {{
+        block is defined ? block.name : 'new block'|trans({}, 'admin')|capitalize
+    }}
 {% endblock %}
 
 {% block breadcrumbHeader %}
@@ -14,14 +16,7 @@
 {% endblock %}
 
 {% block pageMenu %}
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ path('homepage') }}"
-    >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-        Public page
-    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:PublicPageLink />
     {% if block is defined %}
         <twig:Xutim:Admin:Button
             tag="a"

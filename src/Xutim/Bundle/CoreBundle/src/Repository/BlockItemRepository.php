@@ -6,19 +6,19 @@ namespace Xutim\CoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Xutim\CoreBundle\Entity\BlockItem;
+use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 
 /**
- * @extends ServiceEntityRepository<BlockItem>
+ * @extends ServiceEntityRepository<BlockItemInterface>
  */
 class BlockItemRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, string $entityClass)
     {
-        parent::__construct($registry, BlockItem::class);
+        parent::__construct($registry, $entityClass);
     }
 
-    public function save(BlockItem $entity, bool $flush = false): void
+    public function save(BlockItemInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -27,7 +27,7 @@ class BlockItemRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(BlockItem $entity, bool $flush = false): void
+    public function remove(BlockItemInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 

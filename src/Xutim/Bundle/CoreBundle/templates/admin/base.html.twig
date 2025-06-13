@@ -14,6 +14,16 @@
 
             {%- block css -%}{%- endblock -%}
 
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link
+                rel="preconnect"
+                href="https://fonts.gstatic.com"
+                crossorigin
+            />
+            <link
+                href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+                rel="stylesheet"
+            />
             {%- block javascripts -%}
                 {{ importmap('app-admin') }}
             {%- endblock -%}
@@ -42,7 +52,8 @@
                 </div>
             </header>
             {{ include('@XutimCore/admin/_impersonate_bar.html.twig') }}
-            <div class="page-wrapper">
+
+            <div class="page-wrapper" id="main-content">
                 <div class="page-header">
                     <div
                         class="{{ containerClass is defined ? containerClass : 'container-xl' }}"
@@ -76,14 +87,13 @@
                             {{ include('@XutimCore/admin/_flashes.html.twig') }}
                         </div>
                         {% block body %}{% endblock %}
-
-                        {% block sidebar %}
-                        {% endblock %}
                     </div>
                 </div>
                 {{ include('@XutimCore/admin/_footer.html.twig') }}
             </div>
         </div>
+        {% block sidebar %}
+        {% endblock %}
         <twig:Xutim:Admin:Modal>
             <turbo-frame
                 id="modal"

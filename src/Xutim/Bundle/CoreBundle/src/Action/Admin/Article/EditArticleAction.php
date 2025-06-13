@@ -13,16 +13,18 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
-use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\ContentTranslation;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\ContentTranslationType;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\CreateContentTranslationCommand;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Security\TranslatorAuthChecker;
 use Xutim\CoreBundle\Security\UserStorage;
 
@@ -37,12 +39,17 @@ class EditArticleAction extends AbstractController
         private readonly MessageBusInterface $commandBus,
         private readonly ContentContext $contentContext,
         private readonly TranslatorAuthChecker $transAuthChecker,
-        private readonly EventRepository $eventRepo,
+        private readonly LogEventRepository $eventRepo,
+        private readonly TagRepository $tagRepo,
     ) {
     }
 
-    public function __invoke(Request $request, Article $article, string $locale = ''): Response
+    public function __invoke(Request $request, string $id, string $locale = ''): Response
     {
+        $article = $this->articleRepo->find($id);
+        if ($article === null) {
+            throw $this->createNotFoundException('The article does not exist');
+        }
         $contentLocale = $this->contentContext->getLanguage();
         $translation = $article->getTranslationByLocale($contentLocale);
 
@@ -62,7 +69,7 @@ class EditArticleAction extends AbstractController
         }
 
         if ($this->isGranted(User::ROLE_ADMIN) === false && $this->isGranted(User::ROLE_TRANSLATOR)) {
-            /** @var User $user */
+            /** @var UserInterface $user */
             $user = $this->getUser();
             $locales = $user->getTranslationLocales();
             $totalTranslations = count($locales);
@@ -83,14 +90,15 @@ class EditArticleAction extends AbstractController
             'article' => $article,
             'translation' => $translation,
             'totalTranslations' => $totalTranslations,
-            'translatedTranslations' => $translatedArticles
+            'translatedTranslations' => $translatedArticles,
+            'allTags' => $this->tagRepo->findAll()
         ]);
     }
 
     /**
      * @return FormInterface<ContentTranslationDto>
      */
-    private function createTranslationForm(Article $article, ?ContentTranslation $translation, string $contentLocale, string $locale): FormInterface
+    private function createTranslationForm(ArticleInterface $article, ?ContentTranslationInterface $translation, string $contentLocale, string $locale): FormInterface
     {
         $existingTranslation = $translation;
         if (strlen(trim($locale)) > 0) {
@@ -120,7 +128,7 @@ class EditArticleAction extends AbstractController
         ]);
     }
 
-    private function createTranslationCommand(?ContentTranslation $translation, ContentTranslationDto $data, Article $article): CreateContentTranslationCommand|EditContentTranslationCommand
+    private function createTranslationCommand(?ContentTranslationInterface $translation, ContentTranslationDto $data, ArticleInterface $article): CreateContentTranslationCommand|EditContentTranslationCommand
     {
         if ($translation === null) {
             return CreateContentTranslationCommand::fromDto(

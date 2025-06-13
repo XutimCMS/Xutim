@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\Page;
 
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use App\Entity\Core\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Event\Page\PageDefaultTranslationUpdatedEvent;
-use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\Event;
-use Xutim\CoreBundle\Entity\Page;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\User;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\ContentTranslationRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Security\UserStorage;
 use Xutim\CoreBundle\Service\CsrfTokenChecker;
@@ -23,26 +22,32 @@ use Xutim\CoreBundle\Service\CsrfTokenChecker;
 class MarkDefaultTranslationAction extends AbstractController
 {
     public function __construct(
+        private readonly LogEventFactory $logEventFactory,
         private readonly CsrfTokenChecker $csrfTokenChecker,
-        private readonly PageRepository $repository,
+        private readonly ContentTranslationRepository $contentTransRepo,
+        private readonly PageRepository $pageRepo,
         private readonly UserStorage $userStorage,
-        private readonly EventRepository $eventRepository
+        private readonly LogEventRepository $eventRepository
     ) {
     }
 
-    public function __invoke(
-        Request $request,
-        Page $page,
-        #[MapEntity(mapping: ['transId' => 'id'])]
-        ContentTranslation $trans
-    ): Response {
+    public function __invoke(Request $request, string $id, string $transId): Response
+    {
+        $page = $this->pageRepo->find($id);
+        if ($page === null) {
+            throw $this->createNotFoundException('The page does not exist');
+        }
+        $trans = $this->contentTransRepo->find($transId);
+        if ($trans === null) {
+            throw $this->createNotFoundException('The content translation does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
         $page->setDefaultTranslation($trans);
-        $this->repository->save($page, true);
+        $this->pageRepo->save($page, true);
 
         $event = new PageDefaultTranslationUpdatedEvent($page->getId(), $trans->getId());
-        $logEntry = new Event(
+        $logEntry = $this->logEventFactory->create(
             $page->getId(),
             $this->userStorage->getUserWithException()->getUserIdentifier(),
             Page::class,

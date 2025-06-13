@@ -1,6 +1,8 @@
 {% extends '@XutimCore/admin/modalBase.html.twig' %}
 {% import '@XutimCore/admin/common/forms.html.twig' as forms %}
-{% set title = 'edit page'|trans({}, 'admin')|capitalize ~ ' - ' ~ page.defaultTranslation.title %}
+{%
+    set title = 'edit page'|trans({}, 'admin')|capitalize ~ ' - ' ~ page.defaultTranslation.title
+%}
 
 {% block pageTitle %}
     {{ title }}
@@ -23,7 +25,9 @@
 
             <div class="mb-3">
                 {{ form_label(form.color) }}
-                {{ forms.colorInput(form.color.vars.full_name, page.color.isSet() ? page.color.hex : '') }}
+                {{
+                    forms.colorInput(form.color.vars.full_name, page.color.isSet() ? page.color.hex : '')
+                }}
                 {{ form_errors(form.color) }}
             </div>
 
@@ -34,29 +38,18 @@
     </div>
 {% endblock %}
 
-{% block success_stream %}
-    <turbo-stream action="replace" targets="#page-parent-link">
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#parent-sidebar-item">
         <template>
-            {% if page.parent != null %}
-                <a
-                    href="{{ path('admin_page_list', {id: page.parent.id}) }}"
-                    id="page-parent-link"
-                >
-                    {{ page.parent.defaultTranslation.title|truncate(27) }}
-                </a>
-            {% endif %}
+            {{
+                include('@XutimCore/admin/page/_parent_sidebar_item.html.twig')
+            }}
         </template>
     </turbo-stream>
 
-    <turbo-stream action="replace" targets="#page-color-item">
+    <turbo-stream action="replace" targets="#color-sidebar-item">
         <template>
-            <div
-                id="page-color-item"
-                class="badge"
-                style="background-color: {{ page.color.HTMLHex }};"
-            >
-                &ensp;
-            </div>
+            {{ include('@XutimCore/admin/page/_color_sidebar_item.html.twig') }}
         </template>
     </turbo-stream>
 {% endblock %}

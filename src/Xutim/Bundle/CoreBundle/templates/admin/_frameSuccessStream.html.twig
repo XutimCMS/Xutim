@@ -4,8 +4,7 @@
             {{ include('@XutimCore/admin/_flashes.html.twig') }}
         </template>
     </turbo-stream>
-    {# {% for stream in app.flashes('stream') %}
+    {% for stream in app.flashes('stream') %}
         {{ stream|raw }}
     {% endfor %}
-    #}
 {% endif %}

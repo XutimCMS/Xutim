@@ -14,12 +14,12 @@
 {% endmacro %}
 
 <div
-    class="alert alert-{{ this.type }} alert-dismissible bg-white"
+    class="alert alert-{{ this.type }} alert-dismissible bg-white border-{{this.type}} text-{{this.type}}"
     role="alert"
 >
     <div class="d-flex">
         <div>{{ _self.alertIcon(this.type) }}</div>
-        <div>{{ this.message }}</div>
+        <div>{{ this.message|raw }}</div>
     </div>
     <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
 </div>

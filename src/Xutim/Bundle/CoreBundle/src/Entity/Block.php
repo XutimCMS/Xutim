@@ -11,15 +11,18 @@ use Doctrine\Common\Collections\ReadableCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Embedded;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Repository\BlockRepository;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\BlockInterface;
+use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 
-#[Entity(repositoryClass: BlockRepository::class)]
-class Block
+#[MappedSuperclass]
+class Block implements BlockInterface
 {
     use TimestampableTrait;
 
@@ -42,8 +45,8 @@ class Block
     #[Embedded(class: Color::class)]
     private Color $color;
 
-    /** @var Collection<int, BlockItem> */
-    #[OneToMany(mappedBy: 'block', targetEntity: BlockItem::class)]
+    /** @var Collection<int, BlockItemInterface> */
+    #[OneToMany(mappedBy: 'block', targetEntity: BlockItemInterface::class)]
     #[OrderBy(['position' => 'ASC'])]
     private Collection $blockItems;
 
@@ -97,7 +100,7 @@ class Block
         return $this->layout;
     }
 
-    public function simpleItemRandomizedByWeek(): ?BlockItem
+    public function simpleItemRandomizedByWeek(): ?BlockItemInterface
     {
         $simpleItems = $this->getSimpleItems();
         if ($simpleItems->isEmpty()) {
@@ -116,15 +119,15 @@ class Block
     }
 
     /**
-     * @return ReadableCollection<int, BlockItem>
+     * @return ReadableCollection<int, BlockItemInterface>
      */
     public function getObjectBlockItemsByLocale(string $locale): ReadableCollection
     {
-        return $this->blockItems->filter(function (BlockItem $item) use ($locale) {
+        return $this->blockItems->filter(function (BlockItemInterface $item) use ($locale) {
             if ($item->hasPage() === false && $item->hasArticle() === false) {
                 return false;
             }
-            /** @var Page|Article $object */
+            /** @var PageInterface|ArticleInterface $object */
             $object = $item->getObject();
 
             if ($object->getTranslationByLocale($locale) === null) {
@@ -136,7 +139,7 @@ class Block
     }
 
     /**
-     * @return Collection<int, BlockItem>
+     * @return Collection<int, BlockItemInterface>
      */
     public function getBlockItems(): Collection
     {
@@ -144,30 +147,30 @@ class Block
     }
 
     /**
-     * @return ReadableCollection<int, BlockItem>
+     * @return ReadableCollection<int, BlockItemInterface>
      */
     public function getPagesItems(): ReadableCollection
     {
-        return $this->blockItems->filter(fn (BlockItem $item) => $item->hasPage());
+        return $this->blockItems->filter(fn (BlockItemInterface $item) => $item->hasPage());
     }
 
     /**
-     * @return ReadableCollection<int, BlockItem>
+     * @return ReadableCollection<int, BlockItemInterface>
      */
     public function getArticlesItems(): ReadableCollection
     {
-        return $this->blockItems->filter(fn (BlockItem $item) => $item->hasArticle());
+        return $this->blockItems->filter(fn (BlockItemInterface $item) => $item->hasArticle());
     }
 
     /**
-     * @return ReadableCollection<int, BlockItem>
+     * @return ReadableCollection<int, BlockItemInterface>
      */
     public function getSimpleItems(): ReadableCollection
     {
-        return $this->blockItems->filter(fn (BlockItem $item) => $item->isSimpleItem());
+        return $this->blockItems->filter(fn (BlockItemInterface $item) => $item->isSimpleItem());
     }
 
-    public function addItem(BlockItem $item): void
+    public function addItem(BlockItemInterface $item): void
     {
         $this->blockItems->add($item);
     }

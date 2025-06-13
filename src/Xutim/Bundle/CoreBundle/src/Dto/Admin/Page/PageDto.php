@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Dto\Admin\Page;
 
-use Xutim\CoreBundle\Entity\Page;
+use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 
 final readonly class PageDto
 {
     /**
      * @param list<string> $locales
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
+     * @param EditorBlock  $content
      */
     public function __construct(
         public ?string $layout,
@@ -27,11 +24,12 @@ final readonly class PageDto
         public string $description,
         public array $locales,
         public string $locale,
-        public ?Page $parent
+        public ?PageInterface $parent,
+        public ?Uuid $featuredImageId
     ) {
     }
 
-    public static function fromPage(Page $page): self
+    public static function fromPage(PageInterface $page): self
     {
         $translation = $page->getDefaultTranslation();
         return new self(
@@ -45,7 +43,8 @@ final readonly class PageDto
             $translation->getDescription(),
             $page->getLocales(),
             $translation->getLocale(),
-            $page->getParent()
+            $page->getParent(),
+            $page->getFeaturedImage()?->getId()
         );
     }
 }

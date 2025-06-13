@@ -11,7 +11,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Block\BlockChangedEvent;
-use Xutim\CoreBundle\Entity\Block;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\BlockType;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockDto;
@@ -23,15 +22,19 @@ use Xutim\CoreBundle\Security\UserStorage;
 final class EditBlockAction extends AbstractController
 {
     public function __construct(
-        private readonly BlockRepository $blockRepository,
+        private readonly BlockRepository $blockRepo,
         private readonly UserStorage $userStorage,
         private readonly MessageBusInterface $eventBus,
         private readonly BlockContext $blockContext
     ) {
     }
 
-    public function __invoke(Request $request, Block $block): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $block = $this->blockRepo->find($id);
+        if ($block === null) {
+            throw $this->createNotFoundException('The block does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_DEVELOPER);
         $form = $this->createForm(BlockType::class, BlockDto::fromBlock($block));
         $form->handleRequest($request);
@@ -40,7 +43,7 @@ final class EditBlockAction extends AbstractController
             $dto = $form->getData();
 
             $block->change($dto->code, $dto->name, $dto->description, $dto->layout);
-            $this->blockRepository->save($block, true);
+            $this->blockRepo->save($block, true);
             $this->blockContext->resetAllLocalesBlockTemplate($block->getCode());
 
             $this->eventBus->dispatch(new DomainEventMessage(

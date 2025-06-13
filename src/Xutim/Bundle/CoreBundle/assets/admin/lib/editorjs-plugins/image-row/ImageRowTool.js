@@ -1,3 +1,5 @@
+import ImageGalleryModal from './../../ImageGalleryModal.js';
+
 export default class ImageRowTool {
     static get toolbox() {
         return {
@@ -43,9 +45,9 @@ export default class ImageRowTool {
 
         for (let i = 0; i < this.imagesPerRow; i++) {
             const imageContainer = document.createElement('div');
+            imageContainer.className = 'border rounded';
             imageContainer.style.flex = '1';
             imageContainer.style.position = 'relative';
-            imageContainer.style.border = '1px dashed #ccc';
             imageContainer.style.height = '100px';
             imageContainer.style.display = 'flex';
             imageContainer.style.alignItems = 'center';
@@ -58,6 +60,7 @@ export default class ImageRowTool {
             imageContainer.appendChild(placeholderText);
 
             const img = document.createElement('img');
+            img.className = 'rounded';
             img.style.maxWidth = '100%';
             img.style.height = 'auto';
             img.style.display = 'block';
@@ -70,7 +73,9 @@ export default class ImageRowTool {
             img.style.display = 'none';
 
             if (this.data.images[i] && this.data.images[i].url) {
-                img.src = this.data.images[i].url;
+                img.src = this.data.images[i].thumbnailUrl;
+                img.dataset.id = this.data.images[i].id;
+                img.dataset.url = this.data.images[i].url;
                 img.style.display = 'block';
                 placeholderText.style.display = 'none';
             }
@@ -89,100 +94,36 @@ export default class ImageRowTool {
 
     openImageEditor(index) {
         if (!this.modal) {
-            this.modal = this.createModal();
-        }
-        this.currentImageIndex = index;
-        this.modal.showModal();
-    }
-
-    createModal() {
-        const modal = document.createElement('modal');
-        modal.setAttribute('data-controller', 'modal');
-        modal.setAttribute(
-            'data-action',
-            'turbo:before-cache@window->modal#close',
-        );
-        const dialog = document.createElement('dialog');
-        dialog.setAttribute('data-modal-target', 'dialog');
-        dialog.setAttribute(
-            'data-action',
-            'close->modal#close click->modal#clickOutside',
-        );
-        dialog.id = 'pulse-dialog';
-        dialog.className = 'shadow-lg dialog-md';
-        modal.appendChild(dialog);
-
-        const modalContent = document.createElement('div');
-        modalContent.style.backgroundColor = 'white';
-        modalContent.style.padding = '20px';
-        modalContent.style.borderRadius = '5px';
-        modalContent.style.width = '100%';
-
-        const modalTitle = document.createElement('h3');
-        modalTitle.textContent = 'Select Image from Gallery';
-        modalContent.appendChild(modalTitle);
-
-        const gallery = document.createElement('div');
-        gallery.style.display = 'grid';
-        gallery.style.gridTemplateColumns = 'repeat(4, minmax(100px, 1fr))';
-        gallery.style.gap = '10px';
-        gallery.style.marginTop = '20px';
-        gallery.style.maxHeight = '400px';
-        gallery.style.overflowY = 'auto';
-
-        if (this.galleryUrl === '') {
-            console.error('No "galleryUrl" config.');
-        }
-
-        fetch(this.galleryUrl)
-            .then((response) => response.json())
-            .then((imageUrls) => {
-                imageUrls.forEach((imageUrl) => {
-                    const galleryImage = document.createElement('img');
-                    galleryImage.src = imageUrl;
-                    galleryImage.style.width = '100%';
-                    galleryImage.style.height = '100px';
-                    galleryImage.style.objectFit = 'cover';
-                    galleryImage.style.cursor = 'pointer';
-                    galleryImage.addEventListener('click', () =>
-                        this.selectImage(imageUrl),
+            this.modal = new ImageGalleryModal({
+                galleryUrl: this.galleryUrl,
+                onSelect: (image) => {
+                    this.#selectImage(
+                        image.fullSourceUrl,
+                        image.filteredUrl,
+                        image.id,
                     );
-                    gallery.appendChild(galleryImage);
-                });
-            })
-            .catch((error) => {
-                console.error('Error fetching gallery images:', error);
-                gallery.textContent = 'Error loading gallery images.';
+                },
             });
+        }
 
-        modalContent.appendChild(gallery);
-
-        const closeButton = document.createElement('button');
-        closeButton.textContent = 'Close';
-        closeButton.style.marginTop = '20px';
-        closeButton.addEventListener('click', () => this.closeModal());
-        modalContent.appendChild(closeButton);
-
-        dialog.appendChild(modalContent);
-
-        dialog.addEventListener('click', (event) => {
-            if (event.target === dialog) {
-                this.closeModal();
-            }
-        });
-        document.body.appendChild(dialog);
-        return dialog;
+        this.modal.show();
     }
 
-    selectImage(imageUrl) {
+    #selectImage(imageUrl, thumbnailUrl, id) {
         if (this.currentImageIndex !== undefined) {
-            this.data.images[this.currentImageIndex] = { url: imageUrl };
+            this.data.images[this.currentImageIndex] = {
+                url: imageUrl,
+                id: id,
+                thumbnailUrl: thumbnailUrl,
+            };
             const imgElement =
                 this.wrapper.querySelectorAll('img')[this.currentImageIndex];
             const placeholderText =
                 this.wrapper.querySelectorAll('span')[this.currentImageIndex];
 
             imgElement.src = imageUrl;
+            imgElement.dataset.thumbnailUrl = thumbnailUrl;
+            imgElement.dataset.id = id;
             imgElement.style.display = 'block';
             placeholderText.style.display = 'none';
             this.api.blocks.update(this.block.id, this.data);
@@ -247,12 +188,17 @@ export default class ImageRowTool {
     save() {
         const imagesData = [];
         this.wrapper.querySelectorAll('img').forEach((img) => {
-            if (img.src && img.style.display === 'block') {
-                imagesData.push({ url: img.src });
+            if (img.dataset.url && img.style.display === 'block') {
+                imagesData.push({
+                    url: img.dataset.url,
+                    id: img.dataset.id,
+                    thumbnailUrl: img.getAttribute('src'),
+                });
             } else {
                 imagesData.push({});
             }
         });
+
         return {
             images: imagesData,
             imagesPerRow: this.data.imagesPerRow,

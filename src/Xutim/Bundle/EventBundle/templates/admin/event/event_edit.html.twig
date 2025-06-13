@@ -1,0 +1,79 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+{% import '@XutimCore/admin/common/forms.html.twig' as forms %}
+
+{% set pageTitle = 'Edit event'|trans({}, 'admin')|capitalize %}
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">{{ pageTitle }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:PublicPageLink />
+
+    <twig:Xutim:Admin:Button
+        tag="button"
+        id="sidebar-toggle"
+        variant="nav"
+    >
+        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        Sidebar
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block languageBar %}
+    <twig:Xutim:Admin:LanguageContextBar
+        :entity="event"
+        :simpleTranslation="true"
+        class="d-flex justify-content-end align-items-center mb-2"
+    />
+{% endblock %}
+
+{% block sidebar %}
+    <twig:Xutim:Admin:Sidebar :title="">
+        <twig:block name="header">
+            <twig:Xutim:Admin:SidebarTabs>
+                <twig:Xutim:Admin:SidebarTab target="general-tab">
+                    <twig:Xutim:Admin:Button
+                        variant="tab"
+                        type="a"
+                        class="active"
+                        data-bs-toggle="tab"
+                        href="#general-tab"
+                        role="tab"
+                        aria-controls="general-tab"
+                        aria-selected="true"
+                    >
+                        General
+                    </twig:Xutim:Admin:Button>
+                </twig:Xutim:Admin:SidebarTab>
+            </twig:Xutim:Admin:SidebarTabs>
+        </twig:block>
+        <twig:block name="content">
+            <div class="tab-content">
+                <div id="general-tab" class="tab-pane active" role="tabpanel">
+                    {{
+                        include('@XutimEvent/admin/event/_event_sidebar.html.twig')
+                    }}
+                </div>
+            </div>
+        </twig:block>
+    </twig:Xutim:Admin:Sidebar>
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.title) }}
+            {{ form_row(form.location) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.submit) }}
+
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}

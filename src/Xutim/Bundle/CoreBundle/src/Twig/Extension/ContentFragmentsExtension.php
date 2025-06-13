@@ -32,27 +32,24 @@ class ContentFragmentsExtension extends AbstractExtension
             new TwigFilter('content_fragments_to_admin_html', [$this, 'toAdminHtml'], ['is_safe' => ['html']]),
             new TwigFilter('content_fragments_extract_introduction', [$this, 'toIntroductionHtml'], ['is_safe' => ['html']]),
             new TwigFilter('content_fragments_extract_paragraphs', [$this, 'paragraphsToHtml'], ['is_safe' => ['html']]),
-            new TwigFilter('content_fragments_extract_image', [$this, 'toImageHtml'], ['is_safe' => ['html']]),
+            new TwigFilter('content_fragments_extract_copyrights', [$this, 'extractCopyrights'], ['is_safe' => ['html']]),
             new TwigFilter('content_fragments_extract_timeline_elements', [$this, 'toTimelineElements'], ['is_safe' => ['html']]),
         ];
     }
 
     /**
      * @param array{id: string, type: string, data: array<string, mixed>} $fragment
+     * @param array<string, string>                                       $options
      */
-    public function fragmentToHtml(array $fragment): string
+    public function fragmentToHtml(array $fragment, array $options = []): string
     {
         $path = $this->themeFinder->getActiveThemePath();
 
-        return $this->fragmentConverter->convertFragmentToThemeHtml($fragment, $path);
+        return $this->fragmentConverter->convertFragmentToThemeHtml($fragment, $path, $options);
     }
 
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|list<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $fragments
+     * @param EditorBlock $fragments
      */
     public function toThemeHtml(array $fragments): string
     {
@@ -62,11 +59,7 @@ class ContentFragmentsExtension extends AbstractExtension
     }
 
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|list<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $fragments
+     * @param EditorBlock $fragments
      */
     public function toAdminHtml(array $fragments): string
     {
@@ -74,11 +67,7 @@ class ContentFragmentsExtension extends AbstractExtension
     }
 
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|list<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $fragments
+     * @param EditorBlock $fragments
      */
     public function toIntroductionHtml(array $fragments): string
     {
@@ -86,11 +75,7 @@ class ContentFragmentsExtension extends AbstractExtension
     }
     
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|list<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $fragments
+     * @param EditorBlock $fragments
      */
     public function paragraphsToHtml(array $fragments, int $num = 1): string
     {
@@ -98,35 +83,17 @@ class ContentFragmentsExtension extends AbstractExtension
     }
 
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|list<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $fragments
+     * @param EditorBlock $fragments
      *
-     * @return array{
-     *     id: string,
-     *     type:string,
-     *     data: array{
-     *         caption: string,
-     *         withBorder: bool,
-     *         withBackground: bool,
-     *         stretched: bool,
-     *         file: array{url: string}
-     *      }
-     *  }|array{}
+     * @return array<string, string>
      */
-    public function toImageHtml(array $fragments): array
+    public function extractCopyrights(array $fragments): array
     {
-        return $this->fragmentConverter->extractMainImage($fragments);
+        return $this->fragmentConverter->extractCopyrights($fragments);
     }
 
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|list<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $fragments
+     * @param EditorBlock $fragments
      *
      * @return list<array{
      *     header: string,

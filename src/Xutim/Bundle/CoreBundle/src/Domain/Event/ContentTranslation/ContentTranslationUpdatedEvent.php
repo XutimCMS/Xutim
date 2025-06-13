@@ -7,12 +7,12 @@ namespace Xutim\CoreBundle\Domain\Event\ContentTranslation;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Domain\DomainEvent;
-use Xutim\CoreBundle\Entity\ContentTranslation;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 
 class ContentTranslationUpdatedEvent implements DomainEvent
 {
     /**
-     * @param array{}|array{time: int, blocks: array{}|array{id: string, type: string, data: array<string, mixed>}, version: string} $content
+     * @param EditorBlock $content
     */
     public function __construct(
         public Uuid $id,
@@ -27,7 +27,7 @@ class ContentTranslationUpdatedEvent implements DomainEvent
     ) {
     }
 
-    public static function fromContentTranslation(ContentTranslation $trans): self
+    public static function fromContentTranslation(ContentTranslationInterface $trans): self
     {
         return new ContentTranslationUpdatedEvent(
             $trans->getId(),

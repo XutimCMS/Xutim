@@ -21,7 +21,7 @@ class ArrayExtension extends AbstractExtension
      * how many found items it should skip.
      * @template TKey of array-key
      * @template T
-     * @param array<TKey, T> $array
+     * @param array<TKey, T>   $array
      * @param callable(T):bool $callback
      */
     public function findIndex(array $array, callable $callback, int $hitSkip = 0): ?int

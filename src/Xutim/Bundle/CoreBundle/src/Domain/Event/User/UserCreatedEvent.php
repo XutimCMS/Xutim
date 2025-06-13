@@ -13,8 +13,8 @@ class UserCreatedEvent implements DomainEvent
     public DateTimeImmutable $createdAt;
 
     /**
-     * @param array<string>  $roles
-     * @param array<string>  $transLocales
+     * @param array<string> $roles
+     * @param array<string> $transLocales
      */
     public function __construct(
         public Uuid $id,

@@ -6,19 +6,19 @@ namespace Xutim\CoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Xutim\CoreBundle\Entity\SnippetTranslation;
+use Xutim\CoreBundle\Domain\Model\SnippetTranslationInterface;
 
 /**
- * @extends ServiceEntityRepository<SnippetTranslation>
+ * @extends ServiceEntityRepository<SnippetTranslationInterface>
  */
 class SnippetTranslationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, string $entityClass)
     {
-        parent::__construct($registry, SnippetTranslation::class);
+        parent::__construct($registry, $entityClass);
     }
 
-    public function save(SnippetTranslation $entity, bool $flush = false): void
+    public function save(SnippetTranslationInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -27,7 +27,7 @@ class SnippetTranslationRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(SnippetTranslation $entity, bool $flush = false): void
+    public function remove(SnippetTranslationInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -35,29 +35,4 @@ class SnippetTranslationRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
-    //    /**
-    //     * @return SnippetTranslation[] Returns an array of SnippetTranslation objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?SnippetTranslation
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }

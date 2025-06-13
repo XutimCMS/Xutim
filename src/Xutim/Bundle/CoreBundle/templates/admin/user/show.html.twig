@@ -1,6 +1,6 @@
-{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% extends '@XutimCore/admin/settings/settings_layout.html.twig' %}
 
-{% block pageTitle %}{{ user.name }}{% endblock %}
+{% block title %}{{ user.name }}{% endblock %}
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
         <li class="breadcrumb-item">
@@ -41,16 +41,8 @@
     </twig:Xutim:Admin:ModalDialog>
 {% endblock %}
 
-{% block body %}
-    <div class="card">
-        <div class="row g-0">
-            <div class="col d-flex flex-column">
-                <div class="card-body">
-                    {{ _self.renderDatagrid(user, events, resetPasswordSent) }}
-                </div>
-            </div>
-        </div>
-    </div>
+{% block settingsBody %}
+    {{ _self.renderDatagrid(user, events, resetPasswordSent) }}
 {% endblock %}
 
 {% block stream_success %}

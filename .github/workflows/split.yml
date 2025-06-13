@@ -1,0 +1,29 @@
+name: Split Packages
+
+env:
+    SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+jobs:
+    split:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0 # required to see full git history
+
+            - uses: symplify/monorepo-split-github-action@v3
+              env:
+                  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+              with:
+                  split_packages: |
+                      src/Xutim/Bundle/CoreBundle: https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/XutimCMS/CoreBundle.git
+                      src/Xutim/Bundle/EventBundle: https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/XutimCMS/EventBundle.git
+                  user_name: "xutim-ci"
+                  user_email: "ci@xutim.local"

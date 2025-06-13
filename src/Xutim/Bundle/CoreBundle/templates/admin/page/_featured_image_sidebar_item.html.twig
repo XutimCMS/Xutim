@@ -1,0 +1,29 @@
+<twig:Xutim:Admin:SidebarItem id="featured-image-sidebar-item">
+    <twig:block name="header">
+        {{ 'featured image'|trans({}, 'admin')|capitalize }}:
+    </twig:block>
+    <twig:block name="content">
+        {% if page.featuredImage %}
+            <a
+                href="{{ path('admin_media_edit', {id: page.featuredImage.id}) }}"
+            >
+                <img
+                    src="{{ path('file_show', {id: page.featuredImage.id, extension: 'image'}) }}"
+                    alt="Featured Image"
+                    class="avatar avatar-1"
+                />
+            </a>
+        {% endif %}
+        <div {% if page.featuredImage is null %}class="ms-auto"{% endif %}>
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                class="p-0"
+                data-turbo-frame="modal"
+                href="{{ path('admin_page_featured_image_edit', {id: page.id}) }}"
+            >
+                <twig:Xutim:Admin:Icon name="edit" />
+            </twig:Xutim:Admin:Button>
+        </div>
+    </twig:block>
+</twig:Xutim:Admin:SidebarItem>

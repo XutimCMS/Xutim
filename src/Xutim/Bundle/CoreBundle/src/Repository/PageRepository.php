@@ -7,40 +7,41 @@ namespace Xutim\CoreBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
-use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\Page;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 
 /**
- * @extends  ServiceEntityRepository<Page>
+ * @extends  ServiceEntityRepository<PageInterface>
  */
 class PageRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
+        string $entityClass,
         private readonly ContentContext $contentContext
     ) {
-        parent::__construct($registry, Page::class);
+        parent::__construct($registry, $entityClass);
     }
 
     /**
-     * @return array<string, array{page: Page, children: array}>
+     * @return array<string, array{page: PageInterface, children: array}>
      */
 
     /**
      * @return array{
      *      roots: array<string>,
-     *      pages: array<string, array{page: Page, translation: ContentTranslation,children: list<string>}>
+     *      pages: array<string, array{page: PageInterface, translation: ContentTranslationInterface,children: list<string>}>
      * }
      */
     public function hierarchyByPublished(?string $locale, bool $archived = false): array
     {
         $builder = $this->createQueryBuilder('node');
         $builder->leftJoin('node.children', 'children')
-                ->addSelect('children')
-                ->leftJoin('node.defaultTranslation', 'translation')
-                ->leftJoin('node.translations', 'trans')
-                ->orderBy('node.parent, node.position');
+            ->addSelect('children')
+            ->leftJoin('node.defaultTranslation', 'translation')
+            ->leftJoin('node.translations', 'trans')
+            ->orderBy('node.parent, node.position');
         if ($locale !== null && strlen($locale) > 0) {
             $builder
                 ->where('trans.locale = :localeParam')
@@ -52,7 +53,7 @@ class PageRepository extends ServiceEntityRepository
                 ->setParameter('archivedParam', false);
         }
 
-        /** @var array<Page> */
+        /** @var array<PageInterface> */
         $pages = $builder->getQuery()->getResult();
         $rootPagesIds = [];
         $pagesMap = [];
@@ -85,9 +86,9 @@ class PageRepository extends ServiceEntityRepository
         ];
     }
 
-    public function findRootPage(): Page
+    public function findRootPage(): PageInterface
     {
-        /** @var Page $root */
+        /** @var PageInterface $root */
         $root = $this->createQueryBuilder('page')
             ->where('page.parent IS NULL')
             ->andWhere('trans.slug = :rootSlugParam')
@@ -102,7 +103,7 @@ class PageRepository extends ServiceEntityRepository
     /**
      * Check if setting a new parent would create a loop.
      */
-    public function wouldCreateLoop(Page $page, ?Page $newParent): bool
+    public function wouldCreateLoop(PageInterface $page, ?PageInterface $newParent): bool
     {
         if ($newParent === null) {
             return false;
@@ -120,9 +121,9 @@ class PageRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<Page>
+     * @return array<PageInterface>
      */
-    public function getPathHydrated(Page $page): array
+    public function getPathHydrated(PageInterface $page): array
     {
         $path = [];
         $current = $page;
@@ -135,10 +136,10 @@ class PageRepository extends ServiceEntityRepository
         return array_reverse($path);
     }
 
-    public function getPath(Page $page, string $locale): string
+    public function getPath(PageInterface $page, string $locale): string
     {
         $pages = $this->getPathHydrated($page);
-        $path = array_map(fn (Page $page)
+        $path = array_map(fn (PageInterface $page)
             => $page->getTranslationByLocaleOrDefault($locale)->getTitle(), $pages);
 
         return implode(' / ', $path);
@@ -147,11 +148,11 @@ class PageRepository extends ServiceEntityRepository
     /**
      * @return array<string,string>
      */
-    public function findAllPaths(?Page $currentPage = null): array
+    public function findAllPaths(?PageInterface $currentPage = null): array
     {
         $locale = $this->contentContext->getLanguage();
         $builder = $this->createQueryBuilder('page');
-        /** @var array<Page> $pages */
+        /** @var array<PageInterface> $pages */
         $pages = $builder
             ->orderBy('page.parent', 'desc')
             ->addOrderBy('page.position', 'asc')
@@ -174,7 +175,7 @@ class PageRepository extends ServiceEntityRepository
     /**
      * @param array<string> $locales
      */
-    public function countTranslatedTranslations(Page $page, ?array $locales): int
+    public function countTranslatedTranslations(PageInterface $page, ?array $locales): int
     {
         $builder = $this->createQueryBuilder('page')
             ->select('COUNT(trans.id)')
@@ -197,17 +198,17 @@ class PageRepository extends ServiceEntityRepository
         return $translatedTotal;
     }
 
-    public function moveUp(Page $page, int $step = 1): void
+    public function moveUp(PageInterface $page, int $step = 1): void
     {
         $page->movePosUp($step);
     }
 
-    public function moveDown(Page $page, int $step = 1): void
+    public function moveDown(PageInterface $page, int $step = 1): void
     {
         $page->movePosDown($step);
     }
 
-    public function save(Page $entity, bool $flush = false): void
+    public function save(PageInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -216,7 +217,7 @@ class PageRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Page $entity, bool $flush = false): void
+    public function remove(PageInterface $entity, bool $flush = false): void
     {
         if ($entity->canBeDeleted() === false) {
             // We can't delete a node with children and other relations.

@@ -14,6 +14,7 @@ class LayoutLoader
     private const ARTICLE_REF = 'layouts-article';
     private const PAGE_REF = 'layouts-page';
     private const BLOCK_REF = 'layouts-block';
+    private const TAG_REF = 'layouts-tag';
 
     public function __construct(
         private readonly LayoutFinder $finder,
@@ -29,6 +30,7 @@ class LayoutLoader
         $this->layoutCache->delete(self::BLOCK_REF);
         $this->getArticleLayouts();
         $this->getPageLayouts();
+        $this->getTagLayouts();
         $this->getBlockLayouts();
     }
 
@@ -62,6 +64,17 @@ class LayoutLoader
             return null;
         }
         $path = sprintf('/layout/page/%s/layout.html.twig', $layout->path);
+
+        return $this->themeFinder->getActiveThemePath($path);
+    }
+
+    public function getTagLayoutTemplate(?string $code): ?string
+    {
+        $layout = $this->getTagLayoutByCode($code);
+        if ($layout === null) {
+            return null;
+        }
+        $path = sprintf('/layout/tag/%s/layout.html.twig', $layout->path);
 
         return $this->themeFinder->getActiveThemePath($path);
     }
@@ -102,6 +115,18 @@ class LayoutLoader
         });
     }
 
+    /**
+     * @return list<Layout>
+     */
+    public function getTagLayouts(): array
+    {
+        return $this->layoutCache->get(self::TAG_REF, function (ItemInterface $item) {
+            $item->expiresAfter(0);
+
+            return $this->finder->findTagLayouts();
+        });
+    }
+
     public function getArticleLayoutByCode(?string $code): ?Layout
     {
         return $this->getLayoutByCode($code, $this->getArticleLayouts());
@@ -115,6 +140,11 @@ class LayoutLoader
     public function getBlockLayoutByCode(string $code): ?Layout
     {
         return $this->getLayoutByCode($code, $this->getBlockLayouts());
+    }
+
+    public function getTagLayoutByCode(?string $code): ?Layout
+    {
+        return $this->getLayoutByCode($code, $this->getTagLayouts());
     }
 
     /**

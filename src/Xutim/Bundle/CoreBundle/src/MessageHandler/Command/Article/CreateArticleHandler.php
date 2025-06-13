@@ -4,55 +4,63 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\MessageHandler\Command\Article;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Xutim\CoreBundle\Domain\Data\ArticleData;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleCreatedEvent;
+use Xutim\CoreBundle\Domain\Factory\ArticleFactory;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\Event;
 use Xutim\CoreBundle\Entity\File;
 use Xutim\CoreBundle\Message\Command\Article\CreateArticleCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Repository\EventRepository;
 use Xutim\CoreBundle\Repository\FileRepository;
-use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Service\FragmentsFileExtractor;
+use Xutim\CoreBundle\Service\SearchContentBuilder;
 
 readonly class CreateArticleHandler implements CommandHandlerInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private PageRepository $pageRepository,
         private ArticleRepository $articleRepository,
         private ContentTranslationRepository $contentTransRepo,
-        private EventRepository $eventRepository,
+        private LogEventRepository $eventRepository,
         private FileRepository $fileRepository,
-        private FragmentsFileExtractor $fileExtractor
+        private FragmentsFileExtractor $fileExtractor,
+        private SearchContentBuilder $searchContentBuilder,
+        private ArticleFactory $articleFactory,
+        private LogEventFactory $logEventFactory
     ) {
     }
 
     public function __invoke(CreateArticleCommand $cmd): void
     {
-        $page = $this->pageRepository->find($cmd->pageId);
-        if ($page === null) {
-            throw new NotFoundHttpException('Page could not be found.');
+        $file = null;
+        if ($cmd->hasFeaturedImage() === true) {
+            $file = $this->fileRepository->find($cmd->featuredImageId);
         }
 
-        $article = new Article(
-            $cmd->layout,
-            $cmd->preTitle,
-            $cmd->title,
-            $cmd->subTitle,
-            $cmd->slug,
-            $cmd->content,
-            $cmd->defaultLanguage,
-            $cmd->description,
-            $page,
-            new ArrayCollection()
+        $article = $this->articleFactory->create(
+            new ArticleData(
+                $cmd->layout,
+                $cmd->preTitle,
+                $cmd->title,
+                $cmd->subTitle,
+                $cmd->slug,
+                $cmd->content,
+                $cmd->description,
+                $cmd->defaultLanguage,
+                $cmd->userIdentifier,
+                $file
+            )
         );
+
         $translation = $article->getDefaultTranslation();
+        $searchContent = $this->searchContentBuilder->build($translation);
+        $translation->changeSearchContent($searchContent);
 
         $this->articleRepository->save($article);
         $this->contentTransRepo->save($translation, true);
@@ -70,17 +78,22 @@ readonly class CreateArticleHandler implements CommandHandlerInterface
             $cmd->defaultLanguage,
             $cmd->description,
             $article->getCreatedAt(),
-            $page->getId(),
-            $article->getLayout()
+            $article->getLayout(),
+            $article->getFeaturedImage()?->getId()
         );
-        $logEntry = new Event($article->getId(), $cmd->userIdentifier, Article::class, $event);
+        $logEntry = $this->logEventFactory->create(
+            $article->getId(),
+            $cmd->userIdentifier,
+            Article::class,
+            $event
+        );
         $this->eventRepository->save($logEntry, true);
     }
 
     /**
-     * @param array{}|array{time: int, blocks: array{}|array{id: string, type: string, data: array<string, mixed>}, version: string} $content
+     * @param EditorBlock $content
      */
-    private function connectFiles(array $content, Article $article): void
+    private function connectFiles(array $content, ArticleInterface $article): void
     {
         $files = $this->fileExtractor->extractFiles($content);
         foreach ($files as $filename) {

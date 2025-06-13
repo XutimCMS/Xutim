@@ -1,9 +1,9 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-{%- import '@XutimCore/admin/common/translatable.html.twig' as translatable -%}
+{% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
 
 {% block pageTitle %}
-    {{- translatable.titleWithBadge(file) -}}
+    {{ translatable.titleWithBadge(file) }}
 {% endblock %}
 
 {% block languageBar %}
@@ -14,9 +14,63 @@
     />
 {% endblock %}
 
+{% block sidebar %}
+    <twig:Xutim:Admin:Sidebar :title="">
+        <twig:block name="header">
+            <twig:Xutim:Admin:SidebarTabs>
+                <twig:Xutim:Admin:SidebarTab target="general-tab">
+                    <twig:Xutim:Admin:Button
+                        variant="tab"
+                        type="a"
+                        class="active"
+                        data-bs-toggle="tab"
+                        href="#general-tab"
+                        role="tab"
+                        aria-controls="general-tab"
+                        aria-selected="true"
+                    >
+                        General
+                    </twig:Xutim:Admin:Button>
+                </twig:Xutim:Admin:SidebarTab>
+                <twig:Xutim:Admin:SidebarTab target="translation-reference-tab">
+                    <twig:Xutim:Admin:Button
+                        variant="tab"
+                        type="a"
+                        data-bs-toggle="tab"
+                        href="#translation-reference-tab"
+                        role="tab"
+                        aria-controls="translation-reference-tab"
+                        aria-selected="false"
+                    >
+                        Translation Reference
+                    </twig:Xutim:Admin:Button>
+                </twig:Xutim:Admin:SidebarTab>
+            </twig:Xutim:Admin:SidebarTabs>
+        </twig:block>
+        <twig:block name="content">
+            <div class="tab-content">
+                <div id="general-tab" class="tab-pane active" role="tabpanel">
+                    {{ include('@XutimCore/admin/media/_sidebar.html.twig') }}
+                </div>
+                <div
+                    id="translation-reference-tab"
+                    class="tab-pane m-4"
+                    role="tabpanel"
+                >
+                    {{
+                        include('@XutimCore/admin/media/show_translation.html.twig', {file: file, translation: file.translations.first})
+                    }}
+                </div>
+            </div>
+        </twig:block>
+    </twig:Xutim:Admin:Sidebar>
+{% endblock %}
+
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
-        {%- import '@XutimCore/admin/common/translatable.html.twig' as translatable -%}
+        {%
+            import '@XutimCore/admin/common/translatable.html.twig' as translatable
+        %}
         <li class="breadcrumb-item">
             <a href="{{ path('admin_media_list') }}">Media list</a>
         </li>
@@ -25,60 +79,42 @@
 {% endblock %}
 
 {% block pageMenu %}
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ path('homepage') }}"
-    >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-        Public page
-    </twig:Xutim:Admin:Button>
-    <twig:Xutim:Admin:Button
-        tag="a"
-        class="text-danger"
-        variant="nav"
-        data-turbo-frame="modal"
-        href="{{ path('admin_media_delete', {id: file.id}) }}"
-    >
-        <twig:Xutim:Admin:Icon name="trash" class="me-1" />
-        Delete
-    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:PublicPageLink />
 
     <twig:Xutim:Admin:Button
         tag="button"
+        id="sidebar-toggle"
         variant="nav"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#default-locale-offcanvas"
-        role="button"
-        aria-controls="offcanvasEnd"
     >
-        <twig:Xutim:Admin:Icon name="search" />
-        {{ 'show reference translation'|trans({}, 'admin') }}
+        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}
 
 {% block body %}
-    <div class="card">
+    <div class="card mb-4">
         <div class="card-body">
             <div class="row">
-                <div
-                    class="col-md-4 d-flex alignt-items-center justify-content-center"
-                >
-                    <div
-                        class="media-container d-flex justify-content-center align-items-center"
-                    >
+                <div class="col-md-4 d-flex alignt-items-center justify-content-center">
+                    <div class="media-container d-flex justify-content-center align-items-center">
                         {% if file.isImage() %}
-                            <img
-                                src="{{ path('file_show', {id: file.id, extension: file.extension}) }}"
-                                alt=""
-                                style="max-width: 300px; max-height: 300px;"
-                                class="p-1"
-                            />
+                            <button
+                                data-lightbox-url-value="{{ uploaded_asset(file.fileName) }}"
+                                data-controller="lightbox"
+                                data-action="click->lightbox#open"
+                                class="btn-link"
+                            >
+                                <img
+                                    src="{{ uploaded_asset(file.fileName)| imagine_filter('thumb_large') }}"
+                                    alt=""
+                                    style="max-width: 300px; max-height: 300px"
+                                    class="p-1"
+                                />
+                            </button>
                         {% else %}
-                            <img
-                                src="{{ asset('@XutimCore/admin/images/icons/file-card-image.svg') }}"
-                                alt=""
-                            />
+                            {%
+                                include '@XutimCore/admin/media/_image_icon.html.twig'
+                            %}
                         {% endif %}
                     </div>
                 </div>
@@ -86,24 +122,29 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div id="main-form" class="tab-pane active show">
-                                {{ form_start(form, {attr: {'data-turbo-action': 'advanced'}})
-                                }} {{ form_row(form.name) }}
+                                {{
+                                    form_start(form, {attr: {'data-turbo-action': 'advanced'}})
+                                }}
+                                {{ form_row(form.name) }}
                                 {{ form_row(form.alt) }}
                                 {{ form_row(form.submit) }}
-                                {{ form_end(form) }}
+                                {{ form_row(form._token) }}
+                                {{ form_end(form, {render_rest: false}) }}
                             </div>
                             <div id="translations" class="tab-pane p-0">
                                 <div class="table-responsive">
-                                    <table
-                                        class="table table-vcenter card-table"
-                                    >
+                                    <table class="table table-vcenter card-table">
                                         <thead>
                                             <tr>
                                                 <th>
-                                                    {{ 'name'|trans({}, 'admin') }}
+                                                    {{
+                                                        'name'|trans({}, 'admin')
+                                                    }}
                                                 </th>
                                                 <th>
-                                                    {{ 'language'|trans({}, 'admin') }}
+                                                    {{
+                                                        'language'|trans({}, 'admin')
+                                                    }}
                                                 </th>
                                             </tr>
                                         </thead>
@@ -124,6 +165,56 @@
             </div>
         </div>
     </div>
+
+    {% if file.isImage() %}
+        <div class="card">
+            <div class="card-header h3">
+                {{ 'Generated image sizes'|trans({}, 'admin') }}
+            </div>
+            <div class="card-body d-flex flex-column align-items-start p-0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{{ 'title'|trans({}, 'admin')|capitalize }}</th>
+                            <th>{{ 'sizes'|trans({}, 'admin')|capitalize }}</th>
+                            <th>
+                                {{ 'actions'|trans({}, 'admin')|capitalize }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for filterAlias, filters in xutim_core_filter_sets %}
+                            {% for filterName, filter  in filters.filters %}
+                                <tr>
+                                    <td>{{ filterAlias }}</td>
+                                    <td>
+                                        {% if filterName == 'thumbnail' %}
+                                            {{ filter.size | join('x') }}
+                                        {% elseif (filterName == 'scale') %}
+                                            {{ filter.dim | join('x') }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button
+                                            data-lightbox-url-value="{{ uploaded_asset(file.fileName)| imagine_filter(filterAlias) }}"
+                                            data-controller="lightbox"
+                                            data-action="click->lightbox#open"
+                                            class="btn-link"
+                                        >
+                                            <twig:ux:icon
+                                                name="tabler:search"
+                                                class="w-3 h-3"
+                                            />
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
     <div
         class="offcanvas offcanvas-end"
         data-bs-scroll="true"
@@ -149,7 +240,9 @@
             </twig:Xutim:Admin:Button>
         </div>
         <div class="offcanvas-body">
-            {{ include('@XutimCore/admin/media/show_translation.html.twig', {file: file, translation: file.translations.first}) }}
+            {{
+                include('@XutimCore/admin/media/show_translation.html.twig', {file: file, translation: file.translations.first})
+            }}
         </div>
     </div>
 {% endblock %}

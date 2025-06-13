@@ -40,14 +40,7 @@
         </div>
     </div>
 
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ path('homepage') }}"
-    >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-        Public page
-    </twig:Xutim:Admin:Button>
+    <twig:Xutim:Admin:PublicPageLink />
 
     <twig:Xutim:Admin:Button
         tag="a"
@@ -68,5 +61,60 @@
         {% for file in files %}
             {{ include('@XutimCore/admin/media/_row.html.twig') }}
         {% endfor %}
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+        {% set pages = files.NbPages %}
+        {% if pages > 1 %}
+            {% if files.currentPage-3 > 0 %}
+                <span class="text-black p-2 px-3 inline-block rounded-1">
+                    ...
+                </span>
+            {% endif %}
+            {% if files.currentPage-2 > 0 %}
+                <a
+                    href="{{ path('admin_media_list', {searchTerm: app.request.get('searchTerm'), page: files.currentPage-2})}}"
+                    class="text-black p-2 px-3 inline-block rounded-1"
+                >
+                    {{ files.currentPage - 2 }}
+                </a>
+            {% endif %}
+            {% if files.currentPage-1 > 0 %}
+                <a
+                    href="{{ path('admin_media_list', {searchTerm: app.request.get('searchTerm'), page: files.currentPage-1})}}"
+                    class="text-black p-2 px-3 inline-block rounded-1"
+                >
+                    {{ files.currentPage - 1 }}
+                </a>
+            {% endif %}
+            <a
+                href="{{ path('admin_media_list', {searchTerm: app.request.get('searchTerm'), page: files.currentPage})}}"
+                disabled="disabled"
+                class="bg-gray-200 text-black p-2 px-3 inline-block rounded-1"
+            >
+                {{ files.currentPage }}
+            </a>
+            {% if files.currentPage+1 <= pages %}
+                <a
+                    href="{{ path('admin_media_list', {searchTerm: app.request.get('searchTerm'), page: files.currentPage+1})}}"
+                    class="text-black p-2 px-3 inline-block rounded-1"
+                >
+                    {{ files.currentPage + 1 }}
+                </a>
+            {% endif %}
+            {% if files.currentPage+2 <= pages %}
+                <a
+                    href="{{ path('admin_media_list', {searchTerm: app.request.get('searchTerm'), page: files.currentPage+2})}}"
+                    class="text-black p-2 px-3 inline-block rounded-1"
+                >
+                    {{ files.currentPage + 2 }}
+                </a>
+            {% endif %}
+
+            {% if files.currentPage+3 <= pages %}
+                <span class="text-black p-2 px-3 inline-block rounded-1">
+                    ...
+                </span>
+            {% endif %}
+        {% endif %}
     </div>
 {% endblock %}

@@ -16,7 +16,7 @@
                     {% for trans in page.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name) %}
                         <option
                             value="{{ trans.locale }}"
-                            {% if trans.locale == translation.locale %}selected="selected"{% endif %}
+                            {% if trans.locale == translation.locale ?? null %}selected="selected"{% endif %}
                             data-url-value="{{ path('admin_page_translation_show', {id: page.id, locale: trans.locale}) }}"
                         >
                             {{ trans.locale|language_name }}

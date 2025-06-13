@@ -1,0 +1,26 @@
+<twig:Xutim:Admin:SidebarItem id="parent-sidebar-item">
+    <twig:block name="header">
+        {{ 'parent'|trans({}, 'admin')|capitalize }}:
+    </twig:block>
+    <twig:block name="content">
+        {% if page.parent != null %}
+            <a
+                href="{{ path('admin_page_list', {id: page.parent.id}) }}"
+                id="page-parent-link"
+            >
+                {{ page.parent.defaultTranslation.title|truncate(27) }}
+            </a>
+        {% endif %}
+        <div {% if page.parent is null %}class="ms-auto"{% endif %}>
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                class="p-0"
+                data-turbo-frame="modal"
+                href="{{ path('admin_page_details_edit', {id: page.id}) }}"
+            >
+                <twig:Xutim:Admin:Icon name="edit" />
+            </twig:Xutim:Admin:Button>
+        </div>
+    </twig:block>
+</twig:Xutim:Admin:SidebarItem>

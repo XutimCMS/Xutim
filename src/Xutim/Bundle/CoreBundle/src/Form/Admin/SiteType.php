@@ -45,6 +45,14 @@ class SiteType extends AbstractType implements DataMapperInterface
                     'data-controller' => 'tom-select'
                 ]
             ])
+            ->add('extendedLanguages', ChoiceType::class, [
+                'label' => new TranslatableMessage('extended content languages', [], 'admin'),
+                'choices' => $localeChoices,
+                'multiple' => true,
+                'attr' => [
+                    'data-controller' => 'tom-select'
+                ]
+            ])
             ->add('theme', ChoiceType::class, [
                 'label' => new TranslatableMessage('theme', [], 'admin'),
                 'choices' => array_combine($themes, $themes),
@@ -73,6 +81,7 @@ class SiteType extends AbstractType implements DataMapperInterface
 
         // initialize form field values
         $forms['languages']->setData($viewData->locales);
+        $forms['extendedLanguages']->setData($viewData->extendedContentLocales);
         $forms['theme']->setData($viewData->theme);
         $forms['sender']->setData($viewData->sender);
     }
@@ -83,11 +92,13 @@ class SiteType extends AbstractType implements DataMapperInterface
 
         /** @var array<string, string> $languages */
         $languages = $forms['languages']->getData();
+        /** @var array<string, string> $extendedLanguages */
+        $extendedLanguages = $forms['extendedLanguages']->getData();
         /** @var string $theme */
         $theme = $forms['theme']->getData();
         /** @var string $sender */
         $sender = $forms['sender']->getData();
 
-        $viewData = new SiteDto($languages, $theme, $sender);
+        $viewData = new SiteDto($languages, $extendedLanguages, $theme, $sender);
     }
 }

@@ -1,0 +1,107 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% import '@XutimCore/admin/common/forms.html.twig' as forms %}
+{% set title = 'edit featured image'|trans({}, 'admin')|capitalize %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header p-3">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            <div
+                data-controller="featured-image"
+                data-featured-image-url-value="{{ path('admin_json_image_list') }}"
+                class="cursor-pointer mb-3"
+            >
+                <div
+                    class="media-container-extended d-flex justify-content-center align-items-center"
+                    data-action="click->featured-image#openModal"
+                >
+                    <div
+                        class="featured-image-dropzone"
+                        data-featured-image-target="dropzone"
+                    >
+                        {% if form.featuredImage.vars.value %}
+                            <img
+                                src="{{ path('file_show', {id: form.featuredImage.vars.value, extension: 'image'}) }}"
+                                alt="Featured Image"
+                                style="max-width: auto; max-height: 300px"
+                                class="p-1"
+                            />
+                        {% else %}
+                            {{
+                                'Click to select a featured image'|trans({}, 'admin')
+                            }}
+                        {% endif %}
+                    </div>
+                    {{
+                        form_widget(form.featuredImage, {
+                            attr: {
+                                'data-featured-image-target': 'imageInput',
+                            },
+                        })
+                    }}
+                </div>
+
+                <div
+                    class="modal fade"
+                    tabindex="-1"
+                    role="dialog"
+                    data-featured-image-target="modal"
+                >
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    {{
+                                        'Select Featured Image'|trans({}, 'admin')
+                                    }}
+                                </h5>
+                                <button
+                                    type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="{{ 'Close'|trans({}, 'admin') }}"
+                                >
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div
+                                    class="row g-3"
+                                    data-featured-image-target="imageGallery"
+                                >
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal"
+                                >
+                                    {{ 'Close'|trans({}, 'admin') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{ form_row(form.submit) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#featured-image-sidebar-item">
+        <template>
+            {{
+                include('@XutimCore/admin/page/_featured_image_sidebar_item.html.twig', {page: page})
+            }}
+        </template>
+    </turbo-stream>
+{% endblock %}

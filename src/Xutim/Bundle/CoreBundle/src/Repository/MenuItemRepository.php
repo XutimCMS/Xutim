@@ -6,40 +6,43 @@ namespace Xutim\CoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Xutim\CoreBundle\Entity\MenuItem;
+use Xutim\CoreBundle\Domain\Model\MenuItemInterface;
 
 /**
- * @extends ServiceEntityRepository<MenuItem>
+ * @extends ServiceEntityRepository<MenuItemInterface>
  */
 class MenuItemRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, string $entityClass)
     {
-        parent::__construct($registry, MenuItem::class);
+        parent::__construct($registry, $entityClass);
     }
 
     /**
-     * @return array<MenuItem>
+     * @return array<MenuItemInterface>
      */
     public function findByHierarchy(): array
     {
         $builder = $this->createQueryBuilder('node');
 
-        return $builder->leftJoin('node.children', 'children')
-                ->addSelect('children')
-                ->leftJoin('node.page', 'page')
-                ->leftJoin('page.translations', 'pageTrans')
-                ->leftJoin('node.article', 'article')
-                ->leftJoin('article.translations', 'articleTrans')
-                ->orderBy('node.parent, node.position')
-                ->getQuery()
-                ->getResult();
+        /** @var array<MenuItemInterface> $items */
+        $items = $builder->leftJoin('node.children', 'children')
+            ->addSelect('children')
+            ->leftJoin('node.page', 'page')
+            ->leftJoin('page.translations', 'pageTrans')
+            ->leftJoin('node.article', 'article')
+            ->leftJoin('article.translations', 'articleTrans')
+            ->orderBy('node.parent, node.position')
+            ->getQuery()
+            ->getResult();
+
+        return $items;
     }
 
     /**
-     * @return array<MenuItem>
+     * @return array<MenuItemInterface>
      */
-    public function getPathHydrated(MenuItem $item): array
+    public function getPathHydrated(MenuItemInterface $item): array
     {
         $path = [];
         $current = $item;
@@ -52,19 +55,19 @@ class MenuItemRepository extends ServiceEntityRepository
         return array_reverse($path);
     }
 
-    public function moveUp(MenuItem $item, int $step = 1): void
+    public function moveUp(MenuItemInterface $item, int $step = 1): void
     {
         $item->movePosUp($step);
     }
 
-    public function moveDown(MenuItem $item, int $step = 1): void
+    public function moveDown(MenuItemInterface $item, int $step = 1): void
     {
         $item->movePosDown($step);
     }
 
 
 
-    public function save(MenuItem $entity, bool $flush = false): void
+    public function save(MenuItemInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -73,7 +76,7 @@ class MenuItemRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(MenuItem $entity, bool $flush = false): void
+    public function remove(MenuItemInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 

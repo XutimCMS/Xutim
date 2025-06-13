@@ -10,32 +10,39 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\Page;
 use Xutim\CoreBundle\Entity\User;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 
 #[Route('/page-list/{id?}', name: 'admin_page_list')]
 class ListPagesAction extends AbstractController
 {
     public function __construct(
-        private readonly PageRepository $pageRepository,
+        private readonly PageRepository $pageRepo,
         private readonly ContentContext $contentContext,
-        private readonly EventRepository $eventRepo,
+        private readonly LogEventRepository $eventRepo,
         private readonly SiteContext $siteContext
     ) {
     }
 
-    public function __invoke(Request $request, ?Page $page): Response
+    public function __invoke(Request $request, ?string $id): Response
     {
+        if ($id === null) {
+            $page = null;
+        } else {
+            $page = $this->pageRepo->find($id);
+            if ($page === null) {
+                throw $this->createNotFoundException('The page does not exist');
+            }
+        }
         $archived = $request->query->getBoolean('archived');
         $translated = $request->query->getBoolean('translated');
         $locale = null;
         if ($translated === true) {
             $locale = $this->contentContext->getLanguage();
         }
-        $hierarchy = $this->pageRepository->hierarchyByPublished($locale, $archived);
-        $path = $page !== null ? $this->pageRepository->getPathHydrated($page) : [];
+        $hierarchy = $this->pageRepo->hierarchyByPublished($locale, $archived);
+        $path = $page !== null ? $this->pageRepo->getPathHydrated($page) : [];
 
         if ($this->isGranted('ROLE_ADMIN') === false && $this->isGranted('ROLE_TRANSLATOR')) {
             /** @var User $user */
@@ -47,7 +54,7 @@ class ListPagesAction extends AbstractController
             $totalTranslations = count($this->siteContext->getLocales());
         }
         if ($page !== null) {
-            $translatedPages = $this->pageRepository->countTranslatedTranslations($page, $locales);
+            $translatedPages = $this->pageRepo->countTranslatedTranslations($page, $locales);
         } else {
             $translatedPages = 0;
         }

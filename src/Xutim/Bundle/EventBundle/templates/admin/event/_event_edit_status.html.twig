@@ -1,0 +1,7 @@
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#translation-status-item">
+        <template>
+            {% include "@XutimEvent/admin/event/_event_status_item.html.twig" %}
+        </template>
+    </turbo-stream>
+{% endblock %}

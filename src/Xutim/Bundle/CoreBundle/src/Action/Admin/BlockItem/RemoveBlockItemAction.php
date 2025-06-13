@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
-use Xutim\CoreBundle\Entity\BlockItem;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\CoreBundle\Service\CsrfTokenChecker;
@@ -24,8 +23,12 @@ class RemoveBlockItemAction extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request, BlockItem $blockItem): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $blockItem = $this->blockItemRepository->find($id);
+        if ($blockItem === null) {
+            throw $this->createNotFoundException('The item does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
         $blockCode = $blockItem->getBlock()->getCode();

@@ -1,9 +1,13 @@
 <turbo-stream action="update" target="file-container">
     <template>
         {% for file in object.files %}
-            {% set fileUrl = url('public_show_file', {ref: file.reference, extension: file.extension}) %}
+            {% if file.isImage() %}
+                {% set fileUrl = uploaded_asset(image.fileName)| imagine_filter('thumb_small') %}
+            {% else %}
+                {% set fileUrl = uploaded_asset(image.fileName) %}
+            {% endif %}
             {% set name = file.translationByLocaleOrAny(content_context_language()).name %}
-            {% set alt = file.translationByLocaleOrAny(content_context_language()).alt %}
+            {% set alt = file.translationByLocaleOrAny(content_context_language()).alt|default('') %}
             <twig:Xutim:Admin:SidebarItem>
                 {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
                 <div class="d-flex align-items-center justify-content-between">

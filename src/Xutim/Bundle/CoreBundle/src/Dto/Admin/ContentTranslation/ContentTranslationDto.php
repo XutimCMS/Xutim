@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Dto\Admin\ContentTranslation;
 
-use Xutim\CoreBundle\Entity\ContentTranslation;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 
 final readonly class ContentTranslationDto
 {
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
+     * @param EditorBlock $content
      */
     public function __construct(
         public string $preTitle,
@@ -26,7 +22,7 @@ final readonly class ContentTranslationDto
     ) {
     }
 
-    public static function fromTranslation(ContentTranslation $translation): self
+    public static function fromTranslation(ContentTranslationInterface $translation): self
     {
         return new self(
             $translation->getPreTitle(),

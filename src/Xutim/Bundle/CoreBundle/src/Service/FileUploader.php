@@ -6,6 +6,7 @@ namespace Xutim\CoreBundle\Service;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Exception\CannotCreateDirectoryException;
 
 readonly class FileUploader
@@ -40,6 +41,21 @@ readonly class FileUploader
         if (file_exists($path)) {
             unlink($path);
         }
+    }
+
+    public function getPathForFile(FileInterface $file): string
+    {
+        return $this->filesDirectory . $file->getFileName();
+    }
+
+    public function getFileSize(FileInterface $file): int
+    {
+        $size = filesize($this->getPathForFile($file));
+        if ($size === false) {
+            return -1;
+        }
+
+        return $size;
     }
 
     private function createTargetDir(string $path): void

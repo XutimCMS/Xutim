@@ -6,16 +6,14 @@ namespace Xutim\CoreBundle\Action\Admin\BlockItem;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Context\BlockContext;
-use Xutim\CoreBundle\Entity\Block;
-use Xutim\CoreBundle\Entity\BlockItem;
+use Xutim\CoreBundle\Domain\Factory\BlockItemFactory;
+use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\ArticleBlockItemType;
 use Xutim\CoreBundle\Form\Admin\Dto\ArticleBlockItemDto;
@@ -23,26 +21,27 @@ use Xutim\CoreBundle\Form\Admin\Dto\PageBlockItemDto;
 use Xutim\CoreBundle\Form\Admin\Dto\SimpleBlockDto;
 use Xutim\CoreBundle\Form\Admin\PageBlockItemType;
 use Xutim\CoreBundle\Form\Admin\SimpleBlockItemType;
-use Xutim\CoreBundle\Message\Command\File\UploadFileMessage;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
-use Xutim\CoreBundle\Repository\FileRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\CoreBundle\Repository\BlockRepository;
 
 class AddBlockItemAction extends AbstractController
 {
     public function __construct(
-        private readonly FileRepository $fileRepository,
         private readonly BlockItemRepository $blockItemRepository,
-        private readonly UserStorage $userStorage,
+        private readonly BlockRepository $blockRepo,
         private readonly TranslatorInterface $translator,
-        private readonly MessageBusInterface $commandBus,
-        private readonly BlockContext $blockContext
+        private readonly BlockContext $blockContext,
+        private readonly BlockItemFactory $blockItemFactory
     ) {
     }
 
     #[Route('/block/add-article/{id}', name: 'admin_block_add_article')]
-    public function addArticleAction(Request $request, Block $block): Response
+    public function addArticleAction(Request $request, string $id): Response
     {
+        $block = $this->blockRepo->find($id);
+        if ($block === null) {
+            throw $this->createNotFoundException('The block does not exist');
+        }
         $form = $this->createForm(ArticleBlockItemType::class, null, [
             'action' => $this->generateUrl('admin_block_add_article', ['id' => $block->getId()])
         ]);
@@ -51,8 +50,12 @@ class AddBlockItemAction extends AbstractController
     }
 
     #[Route('/block/add-page/{id}', name: 'admin_block_add_page')]
-    public function addPageAction(Request $request, Block $block): Response
+    public function addPageAction(Request $request, string $id): Response
     {
+        $block = $this->blockRepo->find($id);
+        if ($block === null) {
+            throw $this->createNotFoundException('The block does not exist');
+        }
         $form = $this->createForm(PageBlockItemType::class, null, [
             'action' => $this->generateUrl('admin_block_add_page', ['id' => $block->getId()])
         ]);
@@ -61,8 +64,12 @@ class AddBlockItemAction extends AbstractController
     }
 
     #[Route('/block/add-simple-item/{id}', name: 'admin_block_add_simple_item')]
-    public function addSimpleItemAction(Request $request, Block $block): Response
+    public function addSimpleItemAction(Request $request, string $id): Response
     {
+        $block = $this->blockRepo->find($id);
+        if ($block === null) {
+            throw $this->createNotFoundException('The block does not exist');
+        }
         $form = $this->createForm(SimpleBlockItemType::class, null, [
             'action' => $this->generateUrl('admin_block_add_simple_item', ['id' => $block->getId()])
         ]);
@@ -73,7 +80,7 @@ class AddBlockItemAction extends AbstractController
     /**
      * @param FormInterface<SimpleBlockDto|null>|FormInterface<PageBlockItemDto|null>|FormInterface<ArticleBlockItemDto|null> $form
      */
-    private function executeAction(Request $request, Block $block, FormInterface $form): Response
+    private function executeAction(Request $request, BlockInterface $block, FormInterface $form): Response
     {
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $form->handleRequest($request);
@@ -83,27 +90,13 @@ class AddBlockItemAction extends AbstractController
             Assert::notNull($data);
             $dto = $data->toBlockItemDto();
 
-            $file = null;
-            if ($dto->file instanceof UploadedFile) {
-                $command = new UploadFileMessage(
-                    $dto->file,
-                    $this->userStorage->getUserWithException()->getUserIdentifier(),
-                    null,
-                    null,
-                    '',
-                    '',
-                    'en',
-                );
-                $this->commandBus->dispatch($command);
-                $file = $this->fileRepository->find($command->id);
-            }
-
-            $blockItem = new BlockItem(
+            $blockItem = $this->blockItemFactory->create(
                 $block,
                 $dto->page,
                 $dto->article,
-                $file,
+                $dto->file,
                 $dto->snippet,
+                $dto->tag,
                 $dto->position,
                 $dto->link,
                 $dto->color,

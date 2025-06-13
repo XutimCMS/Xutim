@@ -1,0 +1,13 @@
+{% set bgColor = this.color.HTMLHex %}
+{% set textColor = this.color.accessibleTextColor.HTMLHex %}
+
+<span
+    {{
+        attributes.defaults({
+            class: 'badge',
+            style: 'background-color: '~bgColor~'; color: '~textColor~';'
+        })
+    }}
+>
+    {% block content %}{% endblock %}
+</span>

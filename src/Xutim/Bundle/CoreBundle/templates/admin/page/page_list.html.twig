@@ -14,7 +14,9 @@
 
 {% block pageMenu %}
     {% if selectedPage %}
-        {% set trans = selectedPage.translationByLocaleOrAny(content_context_language()) %}
+        {%
+            set trans = selectedPage.translationByLocaleOrAny(content_context_language())
+        %}
         {% if trans is not same as(null) %}
             <twig:Xutim:Admin:Button
                 tag="a"
@@ -25,16 +27,11 @@
                 History
             </twig:Xutim:Admin:Button>
 
-            <twig:Xutim:Admin:Button
-                tag="a"
-                variant="nav"
-                href="{{ path('content_translation_show', {slug: trans.slug, _locale: trans.locale}) }}"
-            >
-                <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-                Public page
-            </twig:Xutim:Admin:Button>
+            <twig:Xutim:Admin:PublicPageLink :contentTranslation="trans" />
         {% endif %}
-        {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_TRANSLATOR')) %}
+        {%
+            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_TRANSLATOR'))
+        %}
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
@@ -44,7 +41,9 @@
                 {{ 'Edit'|trans({}, 'admin') }}
             </twig:Xutim:Admin:Button>
         {% endif %}
-        {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+        {%
+            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+        %}
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
@@ -54,7 +53,9 @@
                 {{ 'New page'|trans({}, 'admin') }}
             </twig:Xutim:Admin:Button>
         {% endif %}
-        {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+        {%
+            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+        %}
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
@@ -79,15 +80,10 @@
             </twig:Xutim:Admin:Button>
         {% endif %}
     {% else %}
-        <twig:Xutim:Admin:Button
-            tag="a"
-            variant="nav"
-            href="{{ path('homepage') }}"
-        >
-            <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-            Public page
-        </twig:Xutim:Admin:Button>
-        {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+        <twig:Xutim:Admin:PublicPageLink />
+        {%
+            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+        %}
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
@@ -97,7 +93,9 @@
                 {{ 'New page'|trans({}, 'admin') }}
             </twig:Xutim:Admin:Button>
         {% endif %}
-        {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+        {%
+            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+        %}
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
@@ -153,14 +151,20 @@
                         class="tab-pane active"
                         role="tabpanel"
                     >
-                        {{ include('@XutimCore/admin/page/_page_sidebar.html.twig', {page: selectedPage, translation: translation}) }}
+                        {{
+                            include('@XutimCore/admin/page/_page_sidebar.html.twig', {page: selectedPage, translation: translation})
+                        }}
                     </div>
                     <div
                         id="translation-reference-tab"
                         class="tab-pane m-4"
                         role="tabpanel"
                     >
-                        {{ include('@XutimCore/admin/page/page_translation_show.html.twig', {page: selectedPage, translation: translation}) }}
+                        {% if translation != null %}
+                            {{
+                                include('@XutimCore/admin/page/page_translation_show.html.twig', {page: selectedPage, translation: translation})
+                            }}
+                        {% endif %}
                     </div>
                 </div>
             </twig:block>
@@ -176,7 +180,9 @@
 
 {% block pageTitle %}
     {% if selectedPage %}
-        {% set trans = selectedPage.translationByLocaleOrAny(content_context_language()) %}
+        {%
+            set trans = selectedPage.translationByLocaleOrAny(content_context_language())
+        %}
         {{ translatable.languageBadge(trans) }}
         {{ trans.title }}
     {% endif %}
@@ -197,9 +203,7 @@
 
 {% block body %}
     <div class="row">
-        <div
-            class="{% if selectedPage %}col-md-4{% else %}col-md-12{% endif %}"
-        >
+        <div class="{% if selectedPage %}col-md-4{% else %}col-md-12{% endif %}">
             <div class="card">
                 {% if hierarchy.pages is not empty %}
                     <ul class="list-unstyled list-group-flush me-2">
@@ -220,9 +224,13 @@
                 {% else %}
                     <div class="card-body">
                         <p>
-                            {{ 'There are no pages in "%locale%" translation.'|trans({'%locale%': content_context_language()|language_name}, 'admin') }}
+                            {{
+                                'There are no pages in "%locale%" translation.'|trans({'%locale%': content_context_language()|language_name}, 'admin')
+                            }}
                         </p>
-                        {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+                        {%
+                            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+                        %}
                             <p>
                                 <a href="{{ path('admin_page_new') }}">
                                     {{ 'Add a new page'|trans({}, 'admin') }}
@@ -232,8 +240,12 @@
                     </div>
                 {% endif %}
                 <div class="card-footer p-3">
-                    {% set archivedParam = app.request.query.boolean('archived', false) %}
-                    {% set translatedParam = app.request.query.boolean('translated', false) %}
+                    {%
+                        set archivedParam = app.request.query.boolean('archived', false)
+                    %}
+                    {%
+                        set translatedParam = app.request.query.boolean('translated', false)
+                    %}
                     <p>
                         {% if archivedParam is same as(false) %}
                             <twig:Xutim:Admin:Button
@@ -251,19 +263,25 @@
                                 href="{{ path('admin_page_list', {archived: false, translated: translatedParam, id: selectedPage.id.toRfc4122 ?? null}) }}"
                             >
                                 <twig:Xutim:Admin:Icon name="article" />
-                                {{ 'Show without archived pages'|trans({}, 'admin') }}
+                                {{
+                                    'Show without archived pages'|trans({}, 'admin')
+                                }}
                             </twig:Xutim:Admin:Button>
                         {% endif %}
                     </p>
                     <p class="mb-2">
-                        {% if app.request.query.boolean('translated', false) is same as(false) %}
+                        {%
+                            if app.request.query.boolean('translated', false) is same as(false)
+                        %}
                             <twig:Xutim:Admin:Button
                                 tag="a"
                                 variant="link"
                                 href="{{ path('admin_page_list', {archived: archivedParam, translated: true, id: selectedPage.id.toRfc4122 ?? null}) }}"
                             >
                                 <twig:Xutim:Admin:Icon name="language" />
-                                {{ 'Show only translated pages'|trans({}, 'admin') }}
+                                {{
+                                    'Show only translated pages'|trans({}, 'admin')
+                                }}
                             </twig:Xutim:Admin:Button>
                         {% else %}
                             <twig:Xutim:Admin:Button
@@ -272,7 +290,9 @@
                                 href="{{ path('admin_page_list', {archived: archivedParam, translated: false, id: selectedPage.id.toRfc4122 ?? null}) }}"
                             >
                                 <twig:Xutim:Admin:Icon name="article" />
-                                {{ 'Show untranslated and translated pages'|trans({}, 'admin') }}
+                                {{
+                                    'Show untranslated and translated pages'|trans({}, 'admin')
+                                }}
                             </twig:Xutim:Admin:Button>
                         {% endif %}
                     </p>
@@ -282,7 +302,9 @@
         {% if selectedPage %}
             <div class="col-md-8">
                 <div class="row">
-                    {{ include('@XutimCore/admin/page/_page_show_body.html.twig', {page: selectedPage}) }}
+                    {{
+                        include('@XutimCore/admin/page/_page_show_body.html.twig', {page: selectedPage})
+                    }}
                 </div>
             </div>
         {% endif %}

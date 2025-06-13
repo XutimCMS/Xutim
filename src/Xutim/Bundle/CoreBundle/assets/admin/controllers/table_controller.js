@@ -100,8 +100,6 @@ export default class extends Controller {
                 this.tableContainerTarget.innerHTML = tableContainer.innerHTML;
                 this.cardFooterTarget.outerHTML = cardFooterContainer.outerHTML;
 
-                // console.error(tableContainer, cardBodyContainer, cardFooterContainer);
-
                 // this.cardContainerTarget.innerHTML = response.data;
             });
     }

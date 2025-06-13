@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Xutim\CoreBundle\Entity\Page;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\PageRepository;
 
@@ -17,17 +16,21 @@ class JsonReorderPagesAction extends AbstractController
     public const MOVE_UP = '0';
     public const MOVE_DOWN = '1';
 
-    public function __construct(private readonly PageRepository $pageRepository)
+    public function __construct(private readonly PageRepository $pageRepo)
     {
     }
 
-    public function __invoke(Page $page, string $direction): Response
+    public function __invoke(string $id, string $direction): Response
     {
+        $page = $this->pageRepo->find($id);
+        if ($page === null) {
+            throw $this->createNotFoundException('The page does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         if ($direction === self::MOVE_UP) {
-            $this->pageRepository->moveUp($page);
+            $this->pageRepo->moveUp($page);
         } else {
-            $this->pageRepository->moveDown($page);
+            $this->pageRepo->moveDown($page);
         }
 
         return $this->json('OK');

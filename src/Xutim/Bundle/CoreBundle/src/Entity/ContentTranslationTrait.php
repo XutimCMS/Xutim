@@ -25,11 +25,7 @@ trait ContentTranslationTrait
     private string $slug;
 
     /**
-     * @var array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * }
+     * @var EditorBlock
      */
     #[Column(type: Types::JSON, nullable: false)]
     private array $content;
@@ -43,12 +39,17 @@ trait ContentTranslationTrait
     #[Column(type: 'boolean', nullable: false, options: ['comment' => 'True when referenced translation has changed while a translation was already published.'])]
     private bool $hasUntranslatedChange;
 
+    #[Column(type: 'text', nullable: true)]
+    private ?string $searchContent = null;
+
+    #[Column(type: 'text', nullable: true)]
+    private ?string $searchTagContent = null;
+
+    #[Column(type: 'text', nullable: true, options: ['default' => null, 'comment' => 'tsvector for fulltext search'], insertable: false, updatable: false)]
+    private ?string $searchVector = null;
+
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
+     * @param EditorBlock $content
      */
     public function change(
         string $preTitle,
@@ -100,23 +101,16 @@ trait ContentTranslationTrait
     }
 
     /**
-     * @return array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * }
-    */
+     * @return EditorBlock
+     */
     public function getContent(): array
     {
         return $this->content;
     }
 
     /**
-     * @phpstan-assert-if-true array{
-     *     time: int,
-     *     blocks: array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $this->content
+     * @phpstan-assert-if-true NonEmptyEditorBlock $this->content
+     * @phpstan-assert-if-false array{ time: int, version: string, blocks: array{}} $this->content
      */
     public function hasContent(): bool
     {
@@ -145,20 +139,13 @@ trait ContentTranslationTrait
         $this->hasUntranslatedChange = true;
     }
 
-    /**
-     * @return null|array{id: string, type: string, data: array<string, mixed>}
-     */
-    public function getMainImageBlock(): ?array
+    public function changeSearchContent(string $content): void
     {
-        if ($this->hasContent() === false) {
-            return null;
-        }
+        $this->searchContent = $content;
+    }
 
-        $blocks = $this->content['blocks'];
-        if ($blocks[array_key_first($blocks)]['type'] === 'image') {
-            return $blocks[array_key_first($blocks)];
-        }
-
-        return null;
+    public function changeSearchTagContent(string $content): void
+    {
+        $this->searchTagContent = $content;
     }
 }

@@ -14,6 +14,7 @@ class BlockExtension extends AbstractExtension
     {
         return [
             new TwigFunction('fetch_block_codes', [BlockExtensionRuntime::class, 'fetchCodes']),
+            new TwigFunction('fetch_block', [BlockExtensionRuntime::class, 'fetchBlock']),
         ];
     }
 }

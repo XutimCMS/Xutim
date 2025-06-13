@@ -25,14 +25,7 @@
             History
         </twig:Xutim:Admin:Button>
 
-        <twig:Xutim:Admin:Button
-            tag="a"
-            variant="nav"
-            href="{{ path('content_translation_show', {slug: translation.slug, _locale: translation.locale}) }}"
-        >
-            <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-            Public page
-        </twig:Xutim:Admin:Button>
+        <twig:Xutim:Admin:PublicPageLink :contentTranslation="translation" />
     {% endif %}
 
     <twig:Xutim:Admin:Button
@@ -48,7 +41,6 @@
         tag="button"
         id="sidebar-toggle"
         variant="nav"
-        href="{{ path('admin_article_edit', {id: article.id}) }}"
     >
         <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
         Sidebar
@@ -98,14 +90,18 @@
         <twig:block name="content">
             <div class="tab-content">
                 <div id="general-tab" class="tab-pane active" role="tabpanel">
-                    {{ include('@XutimCore/admin/article/_article_sidebar.html.twig') }}
+                    {{
+                        include('@XutimCore/admin/article/_article_sidebar.html.twig')
+                    }}
                 </div>
                 <div
                     id="translation-reference-tab"
                     class="tab-pane m-4"
                     role="tabpanel"
                 >
-                    {{ include('@XutimCore/admin/article/article_translation_show.html.twig', {article: article, translation: article.defaultTranslation}) }}
+                    {{
+                        include('@XutimCore/admin/article/article_translation_show.html.twig', {article: article, translation: article.defaultTranslation})
+                    }}
                 </div>
             </div>
         </twig:block>
@@ -118,13 +114,14 @@
             <div class="tab-content">
                 <div id="main-form" class="tab-pane active show p-4">
                     {{
-                        include('@XutimCore/admin/content_translation/_form.html.twig', {
-                            uploadFileUrl: path('admin_editorjs_file_upload_article', {id: article.id}),
-                            fetchFileUrl: path('admin_editorjs_file_fetch_article', {id: article.id}),
-                        })
+                        include('@XutimCore/admin/content_translation/_form.html.twig')
                     }}
-                    {% if not translation and article.translations|length > 0 and form.slug.vars.value is empty and form.vars.disabled == false %}
-                        {{ include('@XutimCore/admin/article_translation/new_translation_modal.html.twig', {article: article}) }}
+                    {%
+                        if not translation and article.translations|length > 0 and form.slug.vars.value is empty and form.vars.disabled == false
+                    %}
+                        {{
+                            include('@XutimCore/admin/article_translation/new_translation_modal.html.twig', {article: article})
+                        }}
                     {% endif %}
                 </div>
                 <div id="translations" class="tab-pane p-0">
@@ -149,7 +146,9 @@
                                     <th>{{ 'title'|trans({}, 'admin') }}</th>
                                     <th>{{ 'language'|trans({}, 'admin') }}</th>
                                     <th>
-                                        {{ 'status actions'|trans({}, 'admin') }}
+                                        {{
+                                            'status actions'|trans({}, 'admin')
+                                        }}
                                     </th>
                                     <th class="w-15 text-end">
                                         {{ 'actions'|trans({}, 'admin') }}
@@ -169,15 +168,21 @@
                                                 data-bs-toggle="popover"
                                                 data-bs-selector="#changeStatus"
                                             >
-                                                {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-                                                {{ badges.publicationStatusBadge(translation) }}
+                                                {%
+                                                    import '@XutimCore/admin/common/badges.html.twig' as badges
+                                                %}
+                                                {{
+                                                    badges.publicationStatusBadge(translation)
+                                                }}
                                             </twig:Xutim:Admin:Button>
                                         </td>
                                         <td
                                             title="Translation reference"
                                             data-controller="tooltip"
                                         >
-                                            {% if article.defaultTranslation.id == translation.id %}
+                                            {%
+                                                if article.defaultTranslation.id == translation.id
+                                            %}
                                                 <span
                                                     class="fw-bold text-green"
                                                 >
@@ -188,7 +193,7 @@
                                             {% else %}
                                                 <twig:Xutim:Admin:ModalDialog
                                                     class="btn-link d-sm-inline-block px-0 border-0"
-                                                    action="{{ path('admin_page_mark_default_translation', {id: article.id, transId: translation.id}) }}"
+                                                    action="{{ path('admin_article_mark_default_translation', {id: article.id, transId: translation.id}) }}"
                                                     confirmActionLabel="{{ 'action.mark_as_default'|trans({}, 'admin')|capitalize }}"
                                                 >
                                                     <span
@@ -205,8 +210,12 @@
                                             >
                                                 {{ translation.title }}
                                             </a>
-                                            {% if article.defaultTranslation.id == translation.id %}
-                                                ({{ 'reference for translations'|trans({}, 'admin') }})
+                                            {%
+                                                if article.defaultTranslation.id == translation.id
+                                            %}
+                                                ({{
+                                                    'reference for translations'|trans({}, 'admin')
+                                                }})
                                             {% endif %}
                                         </td>
                                         <td class="text-muted">
@@ -214,20 +223,36 @@
                                         </td>
                                         <td>
                                             <div class="btn-group">
-                                                {% if translation.status.canBeDrafted() %}
-                                                    {{ _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard') }}
+                                                {%
+                                                    if translation.status.canBeDrafted()
+                                                %}
+                                                    {{
+                                                        _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard')
+                                                    }}
                                                 {% endif %}
 
-                                                {% if translation.status.canPublish %}
-                                                    {{ _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload') }}
+                                                {%
+                                                    if translation.status.canPublish
+                                                %}
+                                                    {{
+                                                        _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload')
+                                                    }}
                                                 {% endif %}
 
-                                                {% if translation.status.canSubmitForEvaluation %}
-                                                    {{ _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert') }}
+                                                {%
+                                                    if translation.status.canSubmitForEvaluation
+                                                %}
+                                                    {{
+                                                        _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert')
+                                                    }}
                                                 {% endif %}
 
-                                                {% if translation.status.canBeArchived %}
-                                                    {{ _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived'), 'archive'|trans({}, 'admin')|capitalize, 'archive') }}
+                                                {%
+                                                    if translation.status.canBeArchived
+                                                %}
+                                                    {{
+                                                        _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived'), 'archive'|trans({}, 'admin')|capitalize, 'archive')
+                                                    }}
                                                 {% endif %}
 
                                                 <twig:Xutim:Admin:ModalDialog
@@ -259,7 +284,9 @@
                                                         />
                                                     </twig:Xutim:Admin:Button>
 
-                                                    {% if app.user.canTranslate(translation.locale) %}
+                                                    {%
+                                                        if app.user.canTranslate(translation.locale)
+                                                    %}
                                                         <a
                                                             href="{{ path('admin_content_translation_edit', {id: translation.id}) }}"
                                                             class="btn-link mt-1"

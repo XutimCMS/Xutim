@@ -1,0 +1,11 @@
+{% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+
+{% block success_stream %}
+    <turbo-stream action="replace" targets="#media-add-to-object">
+        <template>
+            {{ include('@XutimCore/admin/media/add_to_object.html.twig') }}
+        </template>
+    </turbo-stream>
+
+    {{ include('@XutimCore/admin/translation/_file_container_stream.html.twig') }}
+{% endblock %}

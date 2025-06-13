@@ -9,8 +9,8 @@ use Webmozart\Assert\Assert;
 readonly class FilterDto
 {
     /**
-     * @param int<0,max>  $page
-     * @param int<10,max> $pageLength
+     * @param int<0,max> $page
+     * @param int<1,max> $pageLength
      */
     public function __construct(
         public string $searchTerm = '',
@@ -19,7 +19,7 @@ readonly class FilterDto
         public string $orderColumn = '',
         public string $orderDirection = 'asc'
     ) {
-        Assert::inArray($pageLength, [10, 20, 50, 100]);
+        Assert::inArray($pageLength, [1, 4, 10, 12, 18, 20, 50, 100]);
         Assert::inArray($orderDirection, ['asc', 'desc']);
     }
 

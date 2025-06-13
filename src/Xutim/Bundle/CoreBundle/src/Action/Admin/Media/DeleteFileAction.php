@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\Media;
 
+use App\Entity\Core\File;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Event\File\FileDeletedEvent;
-use Xutim\CoreBundle\Entity\Event;
-use Xutim\CoreBundle\Entity\File;
+use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Form\Admin\DeleteType;
-use Xutim\CoreBundle\Repository\EventRepository;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\FileTranslationRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Security\UserStorage;
 use Xutim\CoreBundle\Service\FileUploader;
 
@@ -22,16 +22,21 @@ use Xutim\CoreBundle\Service\FileUploader;
 class DeleteFileAction extends AbstractController
 {
     public function __construct(
+        private readonly LogEventFactory $logEventFactory,
         private readonly FileRepository $fileRepo,
         private readonly FileTranslationRepository $fileTransRepo,
         private readonly UserStorage $userStorage,
-        private readonly EventRepository $eventRepo,
+        private readonly LogEventRepository $eventRepo,
         private readonly FileUploader $fileUploader,
     ) {
     }
 
-    public function __invoke(File $file, Request $request): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $file = $this->fileRepo->find($id);
+        if ($file === null) {
+            throw $this->createNotFoundException('The file does not exist');
+        }
         $this->denyAccessUnlessGranted('ROLE_EDITOR');
         $form = $this->createForm(DeleteType::class, [], [
             'action' => $this->generateUrl('admin_media_delete', ['id' => $file->getId()]),
@@ -47,7 +52,7 @@ class DeleteFileAction extends AbstractController
             $id = $file->getId();
             $userIdentifier = $this->userStorage->getUserWithException()->getUserIdentifier();
             $event = new FileDeletedEvent($id);
-            $logEntry = new Event($id, $userIdentifier, File::class, $event);
+            $logEntry = $this->logEventFactory->create($id, $userIdentifier, File::class, $event);
 
             $this->fileRepo->remove($file, true);
             $this->eventRepo->save($logEntry, true);

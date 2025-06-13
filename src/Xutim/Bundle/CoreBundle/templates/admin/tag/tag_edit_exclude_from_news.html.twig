@@ -1,0 +1,9 @@
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#exclude-from-news-item">
+        <template>
+            {%
+                include "@XutimCore/admin/tag/_exclude_from_news_item.html.twig"
+            %}
+        </template>
+    </turbo-stream>
+{% endblock %}

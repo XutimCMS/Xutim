@@ -24,10 +24,13 @@ class BlockRendererExtension extends AbstractExtension
         ];
     }
 
-    public function renderBlock(string $code): string
+    /**
+     * @param array<string, string> $options
+    */
+    public function renderBlock(string $code, array $options = []): string
     {
         $locale = $this->requestStack->getMainRequest()?->getLocale() ?? 'en';
 
-        return $this->blockContext->getBlockHtml($locale, $code);
+        return $this->blockContext->getBlockHtml($locale, $code, $options);
     }
 }

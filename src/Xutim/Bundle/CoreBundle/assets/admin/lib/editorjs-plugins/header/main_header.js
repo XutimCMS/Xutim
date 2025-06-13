@@ -83,19 +83,11 @@ export default class MainHeader {
         }, {});
     }
 
-    // validate(savedData) {
-    // const codeToValidate = savedData.code.trim();
-    //
-    // if (!codeToValidate) {
-    //     return false;
-    // }
-    //
-    // for (const block of this.config.codes) {
-    //     if (block.code === codeToValidate) {
-    //         return true;
-    //     }
-    // }
-    //
-    // return false;
-    // }
+    validate(savedData) {
+        if (!savedData.pretitle && !savedData.title && !savedData.subtitle) {
+            return false;
+        }
+
+        return true;
+    }
 }

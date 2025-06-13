@@ -27,7 +27,12 @@ readonly class LayoutConfig
          *
          * @var list<LayoutConfigItem>
          */
-        public array $config = []
+        public array $config = [],
+
+        /**
+         * Cache Time To Live (in seconds).
+         */
+        public int $cacheTtl = 604800 // 1 week
     ) {
     }
 }

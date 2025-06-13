@@ -1,0 +1,17 @@
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#article-sidebar-tags-list">
+        <template>
+            <div id="article-sidebar-tags-list">
+                {% for tag in article.tags %}
+                    <div class="mt-1">
+                        <twig:Xutim:Admin:Tag :color="tag.color">
+                            {{
+                                tag.translationByLocaleOrAny(content_context_language()).name
+                            }}
+                        </twig:Xutim:Admin:Tag>
+                    </div>
+                {% endfor %}
+            </div>
+        </template>
+    </turbo-stream>
+{% endblock %}

@@ -8,12 +8,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Traversable;
 use Xutim\CoreBundle\Config\Layout\Layout;
@@ -80,7 +83,8 @@ class PageType extends AbstractType implements DataMapperInterface
                 ],
                 'constraints' => [
                     new Length(['min' => 3]),
-                    new UniqueSlugLocale()
+                    new UniqueSlugLocale(),
+                    new Regex(['pattern' => '/^[a-z0-9]+(-[a-z0-9]+)*$/', 'message' => 'The slug should be written in kebab-case.'])
                 ]
             ])
             ->add('description', TextareaType::class, [
@@ -116,7 +120,9 @@ class PageType extends AbstractType implements DataMapperInterface
                 ],
                 'disabled' => $update,
             ])
-
+            ->add('featuredImage', HiddenType::class, [
+                'required' => false,
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => new TranslatableMessage('submit', [], 'admin')
             ])
@@ -163,12 +169,20 @@ class PageType extends AbstractType implements DataMapperInterface
         $description = $forms['description']->getData();
         /** @var string $jsonContent */
         $jsonContent = $forms['content']->getData();
-        /** @var array{}|array{time: int, blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>, version: string} $content */
+        /** @var EditorBlock $content */
         $content = json_decode($jsonContent, true, 512, JSON_THROW_ON_ERROR);
         /** @var string $language */
         $language = $forms['locale']->getData();
         /** @var string $color */
         $color = $forms['color']->getData();
+
+        /** @var string $featuredImageId */
+        $featuredImageId = $forms['featuredImage']->getData();
+        $imageUuid = null;
+        if ($featuredImageId !== null) {
+            $imageUuid = new UuidV4($featuredImageId);
+        }
+
         $viewData = new PageDto(
             $layout,
             $color,
@@ -180,7 +194,8 @@ class PageType extends AbstractType implements DataMapperInterface
             $description ?? '',
             [],
             $language,
-            $parent
+            $parent,
+            $imageUuid
         );
     }
 }

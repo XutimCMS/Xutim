@@ -10,11 +10,7 @@ use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
 final readonly class EditContentTranslationCommand
 {
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $content
+     * @param EditorBlock $content
      */
     public function __construct(
         public Uuid $translationId,

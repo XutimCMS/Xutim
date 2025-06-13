@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\User;
 
+use App\Entity\Core\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Dto\Admin\User\EditUserDto;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\EditUserType;
 use Xutim\CoreBundle\Message\Command\User\EditUserCommand;
-use Xutim\CoreBundle\Repository\EventRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\ResetPasswordRequestRepository;
+use Xutim\CoreBundle\Repository\UserRepository;
 use Xutim\CoreBundle\Security\UserStorage;
 
 #[Route('/user/edit/{id}', name: 'admin_user_edit')]
@@ -23,13 +24,18 @@ class EditUserAction extends AbstractController
     public function __construct(
         private readonly MessageBusInterface $commandBus,
         private readonly UserStorage $userStorage,
-        private readonly EventRepository $eventRepository,
-        private readonly ResetPasswordRequestRepository $resetPasswordRequestRepository
+        private readonly LogEventRepository $eventRepository,
+        private readonly ResetPasswordRequestRepository $resetPasswordRequestRepository,
+        private readonly UserRepository $userRepo
     ) {
     }
 
-    public function __invoke(Request $request, User $user): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $user = $this->userRepo->find($id);
+        if ($user === null) {
+            throw $this->createNotFoundException('The user does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
         $form = $this->createForm(
             EditUserType::class,

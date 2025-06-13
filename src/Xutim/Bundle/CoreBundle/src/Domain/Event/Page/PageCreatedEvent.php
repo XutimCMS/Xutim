@@ -11,7 +11,7 @@ use Xutim\CoreBundle\Domain\DomainEvent;
 readonly class PageCreatedEvent implements DomainEvent
 {
     /**
-     * @param array<int, string>  $locales
+     * @param array<int, string> $locales
      */
     public function __construct(
         public Uuid $id,
@@ -20,7 +20,8 @@ readonly class PageCreatedEvent implements DomainEvent
         public Uuid $defaultTranslation,
         public DateTimeImmutable $createdAt,
         public ?Uuid $parentId,
-        public ?string $layout
+        public ?string $layout,
+        public ?Uuid $featuredImageId
     ) {
     }
 }

@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\MappedSuperclass;
 use Symfony\Component\Uid\Uuid;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestTrait;
-use Xutim\CoreBundle\Repository\ResetPasswordRequestRepository;
+use Xutim\CoreBundle\Domain\Model\ResetPasswordRequestInterface as XutimResetPasswordRequestInterface;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 
-#[ORM\Entity(repositoryClass: ResetPasswordRequestRepository::class)]
-class ResetPasswordRequest implements ResetPasswordRequestInterface
+#[MappedSuperclass]
+class ResetPasswordRequest implements ResetPasswordRequestInterface, XutimResetPasswordRequestInterface
 {
     use ResetPasswordRequestTrait;
 
@@ -21,9 +23,9 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private User $user;
+    private UserInterface $user;
 
-    public function __construct(User $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
+    public function __construct(UserInterface $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
     {
         $this->id = Uuid::v4();
         $this->user = $user;
@@ -35,7 +37,7 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
         return $this->id;
     }
 
-    public function getUser(): User
+    public function getUser(): UserInterface
     {
         return $this->user;
     }

@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Service;
 
+use Symfony\Component\HttpFoundation\Exception\UnexpectedValueException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Twig\Environment;
+use Xutim\CoreBundle\Repository\FileRepository;
 
 readonly class ContentFragmentsConverter
 {
-    public function __construct(private Environment $twig)
-    {
+    public function __construct(
+        private readonly Environment $twig,
+        private readonly FileRepository $fileRepo
+    ) {
     }
 
     /**
-     * @param array{time: int, blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>, version: string}|array{} $fragments
+     * @param EditorBlock $fragments
      */
     public function convertToThemeHtml(array $fragments, string $themePath): string
     {
@@ -29,17 +34,19 @@ readonly class ContentFragmentsConverter
 
     /**
      * @param array{id: string, type: string, data: array<string, mixed>} $fragment
+     * @param array<string, string>                                       $options
      */
-    public function convertFragmentToThemeHtml(array $fragment, string $themePath): string
+    public function convertFragmentToThemeHtml(array $fragment, string $themePath, array $options = []): string
     {
         return $this->twig->render(sprintf('%s/content_fragment/content_fragment.html.twig', $themePath), [
             'fragment' => $fragment,
-            'themePath' => $themePath
+            'themePath' => $themePath,
+            'fragmentOptions' => $options
         ]);
     }
 
     /**
-     * @param array{time: int, blocks: array{}|array{id: string, type: string, data: array<string, mixed>}, version: string}|array{} $fragments
+     * @param EditorBlock $fragments
      */
     public function convertToAdminHtml(array $fragments): string
     {
@@ -53,11 +60,7 @@ readonly class ContentFragmentsConverter
     }
 
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|array<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $fragments
+     * @param EditorBlock $fragments
      */
     public function extractIntroduction(array $fragments): string
     {
@@ -65,24 +68,33 @@ readonly class ContentFragmentsConverter
             return '';
         }
 
+        $text = '';
         foreach ($fragments['blocks'] as $fragment) {
-            if ($fragment['type'] === 'paragraph') {
-                /** @var string $text */
-                $text = $fragment['data']['text'];
-
-                return $text;
+            if ($fragment['type'] === 'paragraph' || $fragment['type'] === 'quote') {
+                /** @var string $par */
+                $par = $fragment['data']['text'];
+                $text .= $par . ' ';
+                if (strlen($text) > 500) {
+                    return $text;
+                }
+            }
+            if ($fragment['type'] === 'list') {
+                foreach ($fragment['data']['items'] as $item) {
+                    /** @var string $par */
+                    $par = $item['content'];
+                    $text .= $par . ' ';
+                    if (strlen($text) > 500) {
+                        return $text;
+                    }
+                }
             }
         }
 
-        return '';
+        return $text;
     }
 
     /**
-     * @param array{}|array{
-     *     time: int,
-     *     blocks: array{}|list<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * } $fragments
+     * @param EditorBlock $fragments
      */
     public function extractParagraphs(array $fragments, int $num): string
     {
@@ -108,47 +120,48 @@ readonly class ContentFragmentsConverter
     }
 
     /**
-     * @param array{
-     *     time: int,
-     *     blocks: array{}|list<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * }|array{} $fragments
+     * @param EditorBlock $fragments
      *
-     * @return array{
-     *     id: string,
-     *     type:string,
-     *     data: array{
-     *         caption: string,
-     *         withBorder: bool,
-     *         withBackground: bool,
-     *         stretched: bool,
-     *         file: array{url: string}
-     *      }
-     *  }|array{}
+     * @return array<string, string>
      */
-    public function extractMainImage(array $fragments): array
+    public function extractCopyrights(array $fragments): array
     {
         if (count($fragments) === 0 || count($fragments['blocks']) === 0) {
             return [];
         }
 
-        $introductionText = '';
+        $copyrights = [];
         foreach ($fragments['blocks'] as $fragment) {
-            if ($fragment['type'] === 'image') {
-                /** @var array{ id: string, type:string, data: array{ caption: string, withBorder: bool, withBackground: bool, stretched: bool, file: array{url: string}}} $fragment */
-                return $fragment;
+            if ($fragment['type'] === 'xutimImage') {
+                $file = $this->fileRepo->find($fragment['data']['file']['id']);
+                if ($file === null) {
+                    throw new NotFoundHttpException('File with an id ' . $fragment['data']['file']['id'] . ' was not found');
+                }
+                if ($file->getCopyright() !== '') {
+                    $copyrights[$file->getId()->toRfc4122()] = $file->getCopyright();
+                }
+            }
+
+
+            if ($fragment['type'] === 'imageRow') {
+                foreach ($fragment['data']['images'] as $imageFragment) {
+                    $file = $this->fileRepo->find($imageFragment['id']);
+                    if ($file === null) {
+                        throw new NotFoundHttpException('File with an id ' . $imageFragment['id'] . ' was not found');
+                    }
+
+                    if ($file->getCopyright() !== '') {
+                        $copyrights[$file->getId()->toRfc4122()] = $file->getCopyright();
+                    }
+                }
             }
         }
 
-        return [];
+        return $copyrights;
     }
 
     /**
-     * @param array{
-     *     time: int,
-     *     blocks: array{}|list<array{id: string, type: string, data: array<string, mixed>}>,
-     *     version: string
-     * }|array{} $fragments
+     * @param EditorBlock $fragments
      *
      * @return list<array{
      *     header: string,
@@ -163,10 +176,17 @@ readonly class ContentFragmentsConverter
 
         $elements = [];
         for ($i = 0; $i < count($fragments['blocks']); $i = $i + 2) {
-            /** @var string $header */
-            $header = $fragments['blocks'][$i]['data']['text'];
-            /** @var string $par */
-            $par = $fragments['blocks'][$i + 1]['data']['text'];
+            if ($fragments['blocks'][$i]['type'] === 'header') {
+                $header = $fragments['blocks'][$i]['data']['text'];
+            } else {
+                $this->throwUnexpectedValueException('header', $fragments['blocks'][$i]['type']);
+            }
+
+            if ($fragments['blocks'][$i + 1]['type'] === 'paragraph') {
+                $par = $fragments['blocks'][$i + 1]['data']['text'];
+            } else {
+                $this->throwUnexpectedValueException('paragraph', $fragments['blocks'][$i]['type']);
+            }
 
             $elements[] = [
                 'header' => $header,
@@ -175,5 +195,12 @@ readonly class ContentFragmentsConverter
         }
 
         return $elements;
+    }
+
+    private function throwUnexpectedValueException(string $expected, string $given): never
+    {
+        $message = sprintf('Expected timeline element of type %s, but %s given.', $expected, $given);
+
+        throw new UnexpectedValueException($message);
     }
 }
