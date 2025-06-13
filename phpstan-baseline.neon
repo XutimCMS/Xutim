@@ -1,0 +1,103 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Property Xutim\\CoreBundle\\Entity\\Article\:\:\$defaultTranslation type mapping mismatch\: database can contain Xutim\\CoreBundle\\Domain\\Model\\ContentTranslationInterface\|null but property expects Xutim\\CoreBundle\\Domain\\Model\\ContentTranslationInterface\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Entity/Article.php
+
+		-
+			message: '#^Property Xutim\\CoreBundle\\Entity\\Page\:\:\$defaultTranslation type mapping mismatch\: database can contain Xutim\\CoreBundle\\Domain\\Model\\ContentTranslationInterface\|null but property expects Xutim\\CoreBundle\\Domain\\Model\\ContentTranslationInterface\.$#'
+			identifier: doctrine.associationType
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Entity/Page.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\ArticleBlockItemDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\ArticleBlockItemDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/ArticleBlockItemType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\CreateArticleFormData and Xutim\\CoreBundle\\Form\\Admin\\Dto\\CreateArticleFormData will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/ArticleType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\BlockDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\BlockDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/BlockType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Dto\\Admin\\ContentTranslation\\ContentTranslationDto and Xutim\\CoreBundle\\Dto\\Admin\\ContentTranslation\\ContentTranslationDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/ContentTranslationType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\MenuItemDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\MenuItemDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/MenuItemType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\PageBlockItemDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\PageBlockItemDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/PageBlockItemType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Dto\\Admin\\Page\\PageMinimalDto and Xutim\\CoreBundle\\Dto\\Admin\\Page\\PageMinimalDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/PageDetailsType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Dto\\Admin\\Page\\PageDto and Xutim\\CoreBundle\\Dto\\Admin\\Page\\PageDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/PageType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\SimpleBlockDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\SimpleBlockDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/SimpleBlockItemType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Dto\\SiteDto and Xutim\\CoreBundle\\Dto\\SiteDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/SiteType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\SnippetDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\SnippetDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/SnippetType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\TagDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\TagDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/TagType.php
+
+		-
+			message: '#^Call to an undefined static method UnitEnum\:\:tryFrom\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Infra/Doctrine/Type/AbstractEnumType.php
+
+		-
+			message: '#^Instanceof between Xutim\\EventBundle\\Form\\Admin\\EventTranslationDto and Xutim\\EventBundle\\Form\\Admin\\EventTranslationDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/EventBundle/src/Form/Admin/EventTranslationType.php
+
+		-
+			message: '#^Instanceof between Xutim\\EventBundle\\Form\\Admin\\EventDto and Xutim\\EventBundle\\Form\\Admin\\EventDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/EventBundle/src/Form/Admin/EventType.php

@@ -1,5 +1,32 @@
+includes:
+    - phpstan-baseline.neon
 parameters:
     level: max
     paths:
         - src/Xutim/Bundle/CoreBundle/src
         - src/Xutim/Bundle/EventBundle/src
+    excludePaths:
+        - src/Xutim/Bundle/CoreBundle/src/Infra/Doctrine/TreeObjectHydrator.php
+    bootstrapFiles:
+        - vendor/bin/.phpunit/phpunit/vendor/autoload.php
+    stubFiles:
+        - tests/Stubs/DataMapperInterface.stub
+    typeAliases:
+        ListBlock: 'array{ id: string, type: "list", data: array{ style: "unordered"|"ordered"|"checklist", meta: array{start: int, counterType: string}, items: array<int, array{content: string, meta:string, items: array<int, mixed>}>}}'
+        ParagraphBlock: 'array{ id: string, type: "paragraph", data: array{text: string}, tunes: array{alignment: array{alignment: "left"|"center"|"right"}}}'
+        DelimiterBlock: 'array{ id: string, type: "delimiter", data: array{} }'
+        HeaderBlock: 'array{ id: string, type: "header", data: array{text: string, level: int}, tunes: array{alignment: array{alignment: "left"|"center"|"right"}} }'
+        MainHeaderBlock: 'array{ id: string, type: "mainHeader", data: array{pretitle: string, title: string, subtitle: string} }'
+        QuoteBlock: 'array{ id: string, type: "quote", data: array{text: string, caption: string, alignment: "left"|"center"|"right"} }'
+        BlockBlock: 'array{ id: string, type: "block", data: array{code: string} }'
+        XutimImageBlock: 'array{ id: string, type: "xutimImage", data: array{file: array{url: string, id: string, thumbnailUrl: string}} }'
+        XutimFileBlock: 'array{ id: string, type: "xutimFile", data: array{file: array{url: string, id: string}} }'
+        ImageRowBlock: 'array{ id: string, type: "imageRow", data: array{images: array<int, array{url: string, id: string, thumbnailUrl: string}>} }'
+        EmbedBlock: 'array{ id: string, type: "embed", data: array{service: string, source: string, embed: string, width: int, height: int, caption: string} }'
+        PageLinkBlock: 'array{ id: string, type: "pageLink", data: array{id: string} }'
+        ArticleLinkBlock: 'array{ id: string, type: "articleLink", data: array{id: string} }'
+        XutimTagBlock: 'array{ id: string, type: "xutimTag", data: array{id: string, layout: string} }'
+        EditorBlock: 'array{}|array{ time: int, version: string, blocks: array<int, ListBlock|ParagraphBlock|DelimiterBlock|HeaderBlock|MainHeaderBlock|QuoteBlock|BlockBlock|XutimFileBlock|XutimImageBlock|ImageRowBlock|EmbedBlock|PageLinkBlock|ArticleLinkBlock|XutimTagBlock|XutimTagBlock> }'
+        NonEmptyEditorBlock: 'array{ time: int, version: string, blocks: non-empty-array<int, ListBlock|ParagraphBlock|DelimiterBlock|HeaderBlock|MainHeaderBlock|QuoteBlock|BlockBlock|XutimFileBlock|XutimImageBlock|ImageRowBlock|EmbedBlock|PageLinkBlock|ArticleLinkBlock|XutimTagBlock|XutimTagBlock> }'
+
+
