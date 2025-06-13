@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\EventBundle\Action\Admin;
 
-use App\Entity\Event\Event;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,8 +24,12 @@ class EditEventPageAction extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request, Event $event): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $event = $this->eventRepo->find($id);
+        if ($event === null) {
+            throw $this->createNotFoundException('The event does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $id = $event->getPage()?->getId();
         $form = $this->createForm(EventPageType::class, ['page' => $id], [

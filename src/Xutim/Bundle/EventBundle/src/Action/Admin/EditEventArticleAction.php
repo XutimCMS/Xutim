@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\EventBundle\Action\Admin;
 
-use App\Entity\Event\Event;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,8 +21,12 @@ class EditEventArticleAction extends AbstractController
     {
     }
 
-    public function __invoke(Request $request, Event $event): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $event = $this->eventRepo->find($id);
+        if ($event === null) {
+            throw $this->createNotFoundException('The event does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $form = $this->createForm(EventArticleType::class, ['article' => $event->getArticle()], [
             'action' => $this->generateUrl('admin_event_article_edit', ['id' => $event->getId()])

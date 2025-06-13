@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\EventBundle\Action\Admin;
 
-use App\Entity\Event\Event;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,9 +31,13 @@ class EditEventStatusAction extends AbstractController
 
     public function __invoke(
         Request $request,
-        Event $event,
+        string $id,
         PublicationStatus $status
     ): Response {
+        $event = $this->eventRepo->find($id);
+        if ($event === null) {
+            throw $this->createNotFoundException('The event does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
 

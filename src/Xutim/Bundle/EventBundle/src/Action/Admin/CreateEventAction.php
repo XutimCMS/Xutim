@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\EventBundle\Domain\Factory\EventFactory;
 use Xutim\EventBundle\Form\Admin\EventDto;
@@ -15,7 +16,7 @@ use Xutim\EventBundle\Form\Admin\EventType;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventTranslationRepository;
 
-#[Route('/event/new/{id?null}', name: 'admin_event_new', methods: ['get', 'post'])]
+#[Route('/event/new', name: 'admin_event_new', methods: ['get', 'post'])]
 class CreateEventAction extends AbstractController
 {
     public function __construct(
@@ -46,8 +47,10 @@ class CreateEventAction extends AbstractController
                 $eventDto->article,
                 $eventDto->page,
             );
+            $translation = $event->getTranslations()->first();
+            Assert::notFalse($translation);
 
-            $this->eventTransRepo->save($event->getTranslations()->first());
+            $this->eventTransRepo->save($translation);
             $this->eventRepo->save($event, true);
 
             $this->addFlash('success', 'flash.changes_made_successfully');

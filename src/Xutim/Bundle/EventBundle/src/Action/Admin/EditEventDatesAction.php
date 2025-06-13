@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\EventBundle\Action\Admin;
 
-use App\Entity\Event\Event;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,15 +20,19 @@ class EditEventDatesAction extends AbstractController
     {
     }
 
-    public function __invoke(Request $request, Event $event): Response
+    public function __invoke(Request $request, string $id): Response
     {
+        $event = $this->eventRepo->find($id);
+        if ($event === null) {
+            throw $this->createNotFoundException('The event does not exist');
+        }
         $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $form = $this->createForm(EventDatesType::class, ['startsAt' => $event->getStartsAt(), 'endsAt' => $event->getEndsAt()], [
             'action' => $this->generateUrl('admin_event_dates_edit', ['id' => $event->getId()])
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{startsAt: DateTimeImmutable, endsAt: DateTimeImmutable} $data */
+            /** @var array{startsAt: \DateTimeImmutable, endsAt: \DateTimeImmutable} $data */
             $data = $form->getData();
             $event->changeDates($data['startsAt'], $data['endsAt']);
             $this->eventRepo->save($event, true);
