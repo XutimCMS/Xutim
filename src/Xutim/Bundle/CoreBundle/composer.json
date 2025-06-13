@@ -1,5 +1,5 @@
 {
-    "name": "xutim/core-bundle",
+    "name": "xutimcms/core-bundle",
     "type": "symfony-bundle",
     "description": "The core of Xutim CMS system.",
     "keywords": [
