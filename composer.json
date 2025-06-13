@@ -98,8 +98,8 @@
         "symfony/polyfill-php74": "*",
         "symfony/polyfill-php80": "*",
         "symfony/polyfill-php81": "*",
-        "xutim/core-bundle": "self.version",
-        "xutim/event-bundle": "self.version"
+        "xutimcms/core-bundle": "self.version",
+        "xutimcms/event-bundle": "self.version"
     },
     "minimum-stability": "dev",
     "autoload": {
@@ -115,8 +115,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Xutim\\Bundle\\CoreBundle\\Tests\\": "src/Xutim/Bundle/CoreBundle/tests/",
-            "Xutim\\Bundle\\EventBundle\\Tests\\": "src/Xutim/Bundle/EventBundle/tests/"
+            "Xutim\\CoreBundle\\Tests\\": "src/Xutim/Bundle/CoreBundle/tests/",
+            "Xutim\\EventBundle\\Tests\\": "src/Xutim/Bundle/EventBundle/tests/"
         }
     },
     "config": {
