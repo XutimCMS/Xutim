@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\Block;
 
-use App\Entity\Core\Block;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Block\BlockDeletedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
+use Xutim\CoreBundle\Entity\Block;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\DeleteType;
 use Xutim\CoreBundle\Repository\BlockItemRepository;

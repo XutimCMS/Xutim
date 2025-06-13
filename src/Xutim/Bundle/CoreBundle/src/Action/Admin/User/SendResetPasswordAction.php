@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\User;
 
-use App\Entity\Core\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Message\Command\User\SendResetPasswordCommand;
 use Xutim\CoreBundle\Repository\UserRepository;
 use Xutim\CoreBundle\Service\CsrfTokenChecker;
@@ -30,7 +30,7 @@ class SendResetPasswordAction extends AbstractController
         if ($user === null) {
             throw $this->createNotFoundException('The user does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
+        $this->denyAccessUnlessGranted(UserInterface::ROLE_ADMIN);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
 
         $this->commandBus->dispatch(new SendResetPasswordCommand($user->getId()));

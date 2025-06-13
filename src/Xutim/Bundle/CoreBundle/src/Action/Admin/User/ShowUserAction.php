@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\User;
 
-use App\Entity\Core\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\ResetPasswordRequestRepository;
 use Xutim\CoreBundle\Repository\UserRepository;
@@ -28,7 +28,7 @@ class ShowUserAction extends AbstractController
         if ($user === null) {
             throw $this->createNotFoundException('The user does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
+        $this->denyAccessUnlessGranted(UserInterface::ROLE_ADMIN);
         $events = $this->eventRepository->findBy(['objectId' => $user->getId()]);
         $token = $this->resetPasswordRequestRepository->findOneBy(['user' => $user]);
 

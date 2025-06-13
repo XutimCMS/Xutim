@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\Snippet;
 
-use App\Entity\Core\Snippet;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

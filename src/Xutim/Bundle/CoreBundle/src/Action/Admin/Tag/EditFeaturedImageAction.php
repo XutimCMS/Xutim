@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\Tag;
 
-use App\Entity\Core\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleFeaturedImageUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
+use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\Dto\ImageDto;
 use Xutim\CoreBundle\Form\Admin\FeaturedImageType;

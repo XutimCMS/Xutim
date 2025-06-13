@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\User;
 
-use App\Entity\Core\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Dto\Admin\User\EditUserDto;
 use Xutim\CoreBundle\Form\Admin\EditUserType;
 use Xutim\CoreBundle\Message\Command\User\EditUserCommand;
@@ -36,7 +36,7 @@ class EditUserAction extends AbstractController
         if ($user === null) {
             throw $this->createNotFoundException('The user does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
+        $this->denyAccessUnlessGranted(UserInterface::ROLE_ADMIN);
         $form = $this->createForm(
             EditUserType::class,
             new EditUserDto(

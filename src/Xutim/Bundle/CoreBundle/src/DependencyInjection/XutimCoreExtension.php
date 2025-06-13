@@ -65,8 +65,8 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
 
         $loader->load('liip_filters.php');
 
+        /** @var array<string, mixed> $adminFilters */
         $adminFilters = $container->getParameter('xutim_core.admin_filter_sets');
-
 
         $userFilters = [];
         if (array_key_exists('filter_sets', $config) && $config['filter_sets'] !== []) {

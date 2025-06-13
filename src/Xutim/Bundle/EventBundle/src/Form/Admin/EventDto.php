@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Xutim\EventBundle\Form\Admin;
 
-use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\Page;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\EventBundle\Domain\Model\EventInterface;
 
 final readonly class EventDto
@@ -17,8 +17,8 @@ final readonly class EventDto
         public string $location,
         public string $description,
         public string $locale,
-        public ?Article $article,
-        public ?Page $page
+        public ?ArticleInterface $article,
+        public ?PageInterface $page
     ) {
     }
 

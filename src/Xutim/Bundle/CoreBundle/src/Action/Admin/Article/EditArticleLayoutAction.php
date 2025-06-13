@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\Article;
 
-use App\Entity\Core\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +12,7 @@ use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleLayoutUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
+use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\ArticleLayoutType;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;

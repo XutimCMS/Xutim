@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\Media;
 
-use App\Entity\Core\File;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Domain\Event\File\FileCopyrightUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
+use Xutim\CoreBundle\Entity\File;
 use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\FileCopyrightType;
 use Xutim\CoreBundle\Repository\FileRepository;

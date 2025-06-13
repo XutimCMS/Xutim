@@ -22,7 +22,6 @@ use Traversable;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
-use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Repository\PageRepository;
 
 /**
@@ -162,12 +161,12 @@ class EventType extends AbstractType implements DataMapperInterface
         $forms['article']->setData($viewData->article);
         $page = null;
         if ($viewData->page !== null) {
-            $page = $this->pageRepository->find($viewData->page);
+            $page = $this->pageRepository->find($viewData->page->getId());
             if ($page === null) {
                 throw new TransformationFailedException(
                     sprintf(
                         'The selected page "%s" does not exist.',
-                        $viewData->page
+                        $viewData->page->getId()
                     )
                 );
             }
@@ -191,7 +190,7 @@ class EventType extends AbstractType implements DataMapperInterface
         $description = $forms['description']->getData();
         /** @var string $locale */
         $locale = $forms['locale']->getData();
-        /** @var ?Article $article */
+        /** @var ?ArticleInterface $article */
         $article = $forms['article']->getData();
         /** @var ?string $pageId */
         $pageId = $forms['page']->getData();

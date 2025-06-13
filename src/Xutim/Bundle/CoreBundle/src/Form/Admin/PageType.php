@@ -176,7 +176,7 @@ class PageType extends AbstractType implements DataMapperInterface
         /** @var string $color */
         $color = $forms['color']->getData();
 
-        /** @var string $featuredImageId */
+        /** @var ?string $featuredImageId */
         $featuredImageId = $forms['featuredImage']->getData();
         $imageUuid = null;
         if ($featuredImageId !== null) {
