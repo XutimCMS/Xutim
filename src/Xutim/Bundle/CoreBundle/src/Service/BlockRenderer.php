@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Service;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\LocaleSwitcher;
 use Twig\Environment;
 use Xutim\CoreBundle\Config\Layout\Block\BlockLayoutChecker;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\BlockRepository;
 
@@ -17,7 +19,8 @@ class BlockRenderer
         private readonly Environment $twig,
         private readonly LayoutLoader $layoutLoader,
         private readonly BlockLayoutChecker $blockLayoutChecker,
-        private readonly LocaleSwitcher $localeSwitcher
+        private readonly LocaleSwitcher $localeSwitcher,
+        private readonly AuthorizationCheckerInterface $authChecker,
     ) {
     }
 
@@ -33,6 +36,13 @@ class BlockRenderer
         }
 
         if ($this->blockLayoutChecker->checkLayout($block) === false) {
+            if ($this->authChecker->isGranted(UserInterface::ROLE_USER) === false) {
+                return [
+                    'html' => '',
+                    'cachettl' => 1
+                ];
+            }
+
             return [
                 'html' => 'The block requirements are not met.',
                 'cachettl' => 1
