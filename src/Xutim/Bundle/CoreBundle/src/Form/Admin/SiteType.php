@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\LocaleType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,32 +23,24 @@ use Xutim\CoreBundle\Twig\ThemeFinder;
  */
 class SiteType extends AbstractType implements DataMapperInterface
 {
-    /**
-     * @param array<int, string> $locales
-     */
-    public function __construct(
-        private readonly array $locales,
-        private readonly ThemeFinder $themeFinder
-    ) {
+    public function __construct(private readonly ThemeFinder $themeFinder)
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $localeChoices = array_combine($this->locales, $this->locales);
         $themes = $this->themeFinder->findAvailableThemes();
 
         $builder
-            ->add('languages', ChoiceType::class, [
+            ->add('languages', LocaleType::class, [
                 'label' => new TranslatableMessage('content languages', [], 'admin'),
-                'choices' => $localeChoices,
                 'multiple' => true,
                 'attr' => [
                     'data-controller' => 'tom-select'
                 ]
             ])
-            ->add('extendedLanguages', ChoiceType::class, [
+            ->add('extendedLanguages', LocaleType::class, [
                 'label' => new TranslatableMessage('extended content languages', [], 'admin'),
-                'choices' => $localeChoices,
                 'multiple' => true,
                 'attr' => [
                     'data-controller' => 'tom-select'

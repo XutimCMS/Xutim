@@ -11,14 +11,6 @@ use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\MessageHandler\EventHandlerInterface;
 
 return static function (ContainerConfigurator $container): void {
-    $container->parameters()
-        ->set('xutim_locales', [
-            'ar', 'be', 'bg', 'cs', 'zh', 'da', 'de', 'et',
-            'el', 'en', 'es', 'ca', 'fr', 'fi', 'sw', 'hr',
-            'id', 'it', 'ja', 'ko', 'lv', 'lt', 'hu', 'nl',
-            'no', 'pl', 'pt', 'ro', 'ru', 'sr', 'sk', 'sl',
-            'sv', 'ta', 'uk', 'vi'
-        ]);
     $services = $container->services();
 
     $services->instanceof(CommandHandlerInterface::class)
@@ -36,7 +28,6 @@ return static function (ContainerConfigurator $container): void {
         ->defaults()
         ->autowire()
         ->autoconfigure()
-        ->bind('array $locales', '%xutim_locales%')
         ->bind('string $filesDirectory', '%kernel.project_dir%/public/media/uploads/')
         ->bind('string $publicUploadsDirectory', '/media/uploads/')
         ->bind('string $templatesDir', '%kernel.project_dir%/templates')
