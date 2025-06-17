@@ -37,6 +37,11 @@ trait PublicationStatusTrait
         return $this->status->isPublished();
     }
 
+    public function isScheduled(): bool
+    {
+        return $this->status->isScheduled();
+    }
+
     public function getPublishedAt(): ?DateTimeImmutable
     {
         return $this->publishedAt;

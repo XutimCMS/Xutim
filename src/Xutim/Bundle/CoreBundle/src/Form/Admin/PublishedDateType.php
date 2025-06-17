@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
@@ -25,7 +26,8 @@ class PublishedDateType extends AbstractType
                 'input' => 'datetime_immutable',
                 'required' => true,
                 'constraints' => [
-                    new NotNull()
+                    new NotNull(),
+                    new GreaterThan('now')
                 ]
             ])
             ->add('submit', SubmitType::class, [

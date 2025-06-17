@@ -15,39 +15,11 @@
     </twig:block>
 
     <twig:block name="content">
-        <span class="badge me-2 text-bg-{{ translation.status.colorClass }}">
-            {{ translation.status.name }}
-        </span>
-
-        {% if is_granted_translation(content_context_language()) %}
-            {%
-                from '@XutimCore/admin/article/_publication_status_sidebar_item.html.twig' import modalDialogPage
-            %}
-            <div>
-                {% if translation.status.canBeDrafted() %}
-                    {{
-                        modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard')
-                    }}
-                {% endif %}
-
-                {% if translation.status.canPublish %}
-                    {{
-                        modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload')
-                    }}
-                {% endif %}
-
-                {% if translation.status.canSubmitForEvaluation %}
-                    {{
-                        modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert')
-                    }}
-                {% endif %}
-
-                {% if translation.status.canBeArchived %}
-                    {{
-                        modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived'), 'archive'|trans({}, 'admin')|capitalize, 'archive')
-                    }}
-                {% endif %}
-            </div>
-        {% endif %}
+        {{
+            include('@XutimCore/admin/publication_status/_status_buttons.html.twig', {
+                translation: translation,
+                articleEntity: translation.article
+            })
+        }}
     </twig:block>
 </twig:Xutim:Admin:SidebarItem>

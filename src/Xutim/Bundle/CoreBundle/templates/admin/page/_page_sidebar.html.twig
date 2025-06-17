@@ -83,15 +83,32 @@
 
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="content">
-                    <twig:Xutim:Admin:ModalDialog
-                        class="btn btn-outline-danger"
-                        modalDialogColor="danger"
-                        action="{{ path('admin_content_translation_delete', {id: translation.id}) }}"
-                        confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
-                    >
-                        <twig:Xutim:Admin:Icon name="trash" />
-                        Delete
-                    </twig:Xutim:Admin:ModalDialog>
+                    <div class="btn-group">
+                        {% if translation.status.canBeArchived %}
+                            {%
+                                set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived')
+                            %}
+                            <twig:Xutim:Admin:ModalDialog
+                                class="btn btn-outline-{{ archiveStatus.colorClass}}"
+                                modalDialogColor="{{archiveStatus.colorClass}}"
+                                action="{{ path('admin_publication_status_edit', {id: translation.id, status: archiveStatus.value}) }}"
+                                confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
+                            >
+                                <twig:Xutim:Admin:Icon name="archive" />
+                                {{ 'archive'|trans({}, 'admin')|capitalize }}
+                            </twig:Xutim:Admin:ModalDialog>
+                        {% endif %}
+
+                        <twig:Xutim:Admin:ModalDialog
+                            class="btn btn-outline-danger"
+                            modalDialogColor="danger"
+                            action="{{ path('admin_content_translation_delete', {id: translation.id}) }}"
+                            confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
+                        >
+                            <twig:Xutim:Admin:Icon name="trash" />
+                            {{ 'delete'|trans({}, 'admin')|capitalize }}
+                        </twig:Xutim:Admin:ModalDialog>
+                    </div>
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
         </twig:Xutim:Admin:SidebarSection>

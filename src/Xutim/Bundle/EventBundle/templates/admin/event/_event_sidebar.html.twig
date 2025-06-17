@@ -1,16 +1,5 @@
 {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
 
-{% macro modalDialogPage(id, status, confirmActionLabel, iconName) %}
-    <twig:Xutim:Admin:ModalDialog
-        class="btn-link text-{{ status.colorClass }} p-0"
-        modalDialogColor="{{ status.colorClass }}"
-        action="{{ path('admin_event_publication_status_edit', {id: id, status: status.value}) }}"
-        confirmActionLabel="{{ confirmActionLabel }}"
-    >
-        <twig:Xutim:Admin:Icon name="{{ iconName }}" plain="true" />
-    </twig:Xutim:Admin:ModalDialog>
-{% endmacro %}
-
 <div class="mb-3">
     {% if not translation %}
         <twig:Xutim:Admin:SidebarSection>
@@ -138,72 +127,35 @@
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
 
-            {#<twig:Xutim:Admin:SidebarItem>
-                <twig:block name="header">
-                    {{ 'author'|trans({}, 'admin')|capitalize }}:
-                </twig:block>
-                <twig:block name="content">
-                    {% if lastRevision %}
-                        {{ lastRevision.userIdentifier }}
-                    {% else %}
-                        {{ 'unknown'|trans({}, 'admin') }}
-                    {% endif %}
-                </twig:block>
-            </twig:Xutim:Admin:SidebarItem>
-            #}
-
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="content">
-                    <twig:Xutim:Admin:ModalDialog
-                        class="btn btn-outline-danger"
-                        modalDialogColor="danger"
-                        action="{{ path('admin_event_delete', {id: event.id}) }}"
-                        confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
-                    >
-                        <twig:Xutim:Admin:Icon name="trash" />
-                        Delete
-                    </twig:Xutim:Admin:ModalDialog>
+                    <div class="btn-group">
+                        {% if event.status.canBeArchived %}
+                            {%
+                                set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived')
+                            %}
+                            <twig:Xutim:Admin:ModalDialog
+                                class="btn btn-outline-{{ archiveStatus.colorClass}}"
+                                modalDialogColor="{{archiveStatus.colorClass}}"
+                                action="{{ path('admin_event_publication_status_edit', {id: event.id, status: archiveStatus.value}) }}"
+                                confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
+                            >
+                                <twig:Xutim:Admin:Icon name="archive" />
+                                {{ 'archive'|trans({}, 'admin')|capitalize }}
+                            </twig:Xutim:Admin:ModalDialog>
+                        {% endif %}
+                        <twig:Xutim:Admin:ModalDialog
+                            class="btn btn-outline-danger"
+                            modalDialogColor="danger"
+                            action="{{ path('admin_event_delete', {id: event.id}) }}"
+                            confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
+                        >
+                            <twig:Xutim:Admin:Icon name="trash" />
+                            {{ 'delete'|trans({}, 'admin')|capitalize }}
+                        </twig:Xutim:Admin:ModalDialog>
+                    </div>
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
         </twig:Xutim:Admin:SidebarSection>
-
-        {#
-        <twig:Xutim:Admin:SidebarSection>
-            <div class="col-12">
-                {% if totalTranslations == 0 %}
-                    {% set translatedCompletion = 0 %}
-                {% else %}
-                    {% set translatedCompletion = (100 * translatedTranslations / totalTranslations)|round %}
-                {% endif %}
-                <div class="d-flex mb-2">
-                    <div class="subheader">
-                        {{ 'Translations completion'|trans({}, 'admin')|capitalize }}
-                    </div>
-                    <div class="ms-auto">
-                        <span
-                            class="{% if translatedCompletion == 100 %}text-green{% else %}text-blue{% endif %} d-inline-flex align-items-center lh-1"
-                        >
-                            {{ translatedCompletion }}%
-                        </span>
-                    </div>
-                </div>
-                <div class="progress progress-sm">
-                    <div
-                        class="progress-bar {% if translatedCompletion == 100 %}bg-success{% else %}bg-primary{% endif %}"
-                        style="width: {{ translatedCompletion }}%"
-                        role="progressbar"
-                        aria-valuenow="{{ translatedCompletion }}"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                        aria-label="{{ translatedCompletion }}% Complete"
-                    >
-                        <span class="visually-hidden"
-                            >{{ translatedCompletion }}% Complete</span
-                        >
-                    </div>
-                </div>
-            </div>
-        </twig:Xutim:Admin:SidebarSection>
-        #}
     {% endif %}
 </div>

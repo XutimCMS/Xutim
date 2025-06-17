@@ -8,6 +8,7 @@ enum PublicationStatus: string
 {
     case Draft = 'draft';
     case Published = 'published';
+    case Scheduled = 'scheduled';
     case Archived = 'archived';
     case Evaluation = 'evaluation';
 
@@ -17,7 +18,8 @@ enum PublicationStatus: string
             PublicationStatus::Draft => 'primary',
             PublicationStatus::Published => 'success',
             PublicationStatus::Archived => 'secondary',
-            PublicationStatus::Evaluation => 'warning'
+            PublicationStatus::Evaluation => 'warning',
+            PublicationStatus::Scheduled => 'purple'
         };
     }
 
@@ -41,8 +43,18 @@ enum PublicationStatus: string
         return $this->value !== 'draft';
     }
 
+    public function canBeScheduled(): bool
+    {
+        return $this->value !== 'scheduled';
+    }
+
     public function isPublished(): bool
     {
         return $this->value === 'published';
+    }
+
+    public function isScheduled(): bool
+    {
+        return $this->value === 'scheduled';
     }
 }

@@ -1,0 +1,54 @@
+{% macro modalDialogPage(id, status, confirmActionLabel, iconName, path) %}
+    <twig:Xutim:Admin:ModalDialog
+        class="btn-link text-{{ status.colorClass }} p-0"
+        modalDialogColor="{{ status.colorClass }}"
+        action="{{ path(path, {id: id, status: status.value}) }}"
+        confirmActionLabel="{{ confirmActionLabel }}"
+    >
+        <twig:Xutim:Admin:Icon name="{{ iconName }}" plain="true" />
+    </twig:Xutim:Admin:ModalDialog>
+{% endmacro %}
+
+<span class="badge me-2 text-bg-{{ translation.status.colorClass }}">
+    {{ translation.status.name }}
+</span>
+
+{% if is_granted_translation(content_context_language()) %}
+    {% set path = path is defined ? path : 'admin_publication_status_edit' %}
+    {%
+        from '@XutimCore/admin/publication_status/_status_buttons.html.twig' import modalDialogPage
+    %}
+    <div>
+        {% if translation.status.canBeDrafted() %}
+            {{
+                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard', path)
+            }}
+        {% endif %}
+
+        {%
+            if articleEntity is defined and articleEntity and translation.status.canBeScheduled()
+        %}
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                class="p-0 text-{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').colorClass }}"
+                data-turbo-frame="modal"
+                href="{{ path('admin_article_edit_publication_date', {id: articleEntity.id}) }}"
+            >
+                <twig:Xutim:Admin:Icon name="clock" />
+            </twig:Xutim:Admin:Button>
+        {% endif %}
+
+        {% if translation.status.canPublish %}
+            {{
+                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload', path)
+            }}
+        {% endif %}
+
+        {% if translation.status.canSubmitForEvaluation %}
+            {{
+                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert', path)
+            }}
+        {% endif %}
+    </div>
+{% endif %}

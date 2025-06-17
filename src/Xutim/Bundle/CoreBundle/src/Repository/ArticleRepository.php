@@ -10,6 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
+use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 
 /**

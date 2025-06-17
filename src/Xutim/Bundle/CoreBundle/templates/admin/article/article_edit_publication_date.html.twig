@@ -28,4 +28,15 @@
             }}
         </template>
     </turbo-stream>
+
+    <turbo-stream action="replace" targets="#translation-status-item">
+        <template>
+            {{
+                include('@XutimCore/admin/article/_publication_status_sidebar_item.html.twig', {
+                    article: article, 
+                    translation: translation
+                })
+            }}
+        </template>
+    </turbo-stream>
 {% endblock %}

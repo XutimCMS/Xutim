@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Repository;
 
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
@@ -181,6 +182,27 @@ class ContentTranslationRepository extends ServiceEntityRepository
         );
 
         $query->execute();
+    }
+
+    /**
+     * @return array<int, ContentTranslationInterface>
+     */
+    public function findReadyForPublicationArticles(): array
+    {
+        $builder = $this->createQueryBuilder('trans');
+
+        /** @var array<int, ContentTranslationInterface> */
+        $translations = $builder
+            ->innerJoin('trans.article', 'article')
+            ->where('trans.status = :status')
+            ->andWhere('article.publishedAt <= :now')
+            ->setParameter('status', PublicationStatus::Scheduled)
+            ->setParameter('now', new DateTimeImmutable())
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $translations;
     }
 
     public function save(ContentTranslationInterface $entity, bool $flush = false): void
