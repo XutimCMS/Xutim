@@ -3,6 +3,7 @@
     "description": "Modular CMS system with Symfony, Doctrine ORM, Turbo/Stimulus, and Editor.js. Includes main application and internal bundles/libraries in a monorepo structure.",
     "license": "MIT",
     "type": "project",
+    "prefer-stable": true,
     "authors": [
         {
             "name": "Tomas Jakl",
@@ -64,7 +65,8 @@
         "twig/intl-extra": "^3.20",
         "twig/string-extra": "^3.20",
         "twig/twig": "^3.20",
-        "webmozart/assert": "^1.11"
+        "webmozart/assert": "^1.11",
+        "symfony/scheduler": "7.3.*"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",
