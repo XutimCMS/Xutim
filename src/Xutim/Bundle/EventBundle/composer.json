@@ -2,6 +2,7 @@
     "name": "xutimcms/event-bundle",
     "type": "symfony-bundle",
     "description": "The bundle adds events to the Xutim CMS system.",
+    "prefer-stable": true,
     "keywords": [
         "cms",
         "xutim",

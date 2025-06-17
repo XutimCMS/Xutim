@@ -2,6 +2,7 @@
     "name": "xutimcms/core-bundle",
     "type": "symfony-bundle",
     "description": "The core of Xutim CMS system.",
+    "prefer-stable": true,
     "keywords": [
         "cms",
         "xutim"
@@ -69,7 +70,9 @@
         "twig/intl-extra": "^3.20",
         "twig/string-extra": "^3.20",
         "twig/twig": "^3.20",
-        "webmozart/assert": "^1.11"
+        "webmozart/assert": "^1.11",
+        "symfony/doctrine-messenger": "*",
+        "symfony/scheduler": "*"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",
@@ -108,19 +111,6 @@
         }
     },
     "minimum-stability": "dev",
-    "scripts": {
-        "auto-scripts": {
-            "cache:clear --no-warmup": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd",
-            "importmap:install": "symfony-cmd"
-        },
-        "post-install-cmd": [
-            "@auto-scripts"
-        ],
-        "post-update-cmd": [
-            "@auto-scripts"
-        ]
-    },
     "conflict": {
         "symfony/symfony": "*"
     },
@@ -128,6 +118,13 @@
         "symfony": {
             "allow-contrib": false,
             "require": "7.3.*"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true,
+            "symfony/flex": false,
+            "symfony/runtime": false
         }
     }
 }

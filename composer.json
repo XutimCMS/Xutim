@@ -3,7 +3,6 @@
     "description": "Modular CMS system with Symfony, Doctrine ORM, Turbo/Stimulus, and Editor.js. Includes main application and internal bundles/libraries in a monorepo structure.",
     "license": "MIT",
     "type": "project",
-    "prefer-stable": true,
     "authors": [
         {
             "name": "Tomas Jakl",
@@ -33,6 +32,7 @@
         "symfony/asset": "7.3.*",
         "symfony/asset-mapper": "7.3.*",
         "symfony/console": "7.3.*",
+        "symfony/doctrine-messenger": "*",
         "symfony/dotenv": "7.3.*",
         "symfony/flex": "^2",
         "symfony/form": "7.3.*",
@@ -44,6 +44,7 @@
         "symfony/mime": "7.3.*",
         "symfony/monolog-bundle": "^3.10",
         "symfony/runtime": "7.3.*",
+        "symfony/scheduler": "*",
         "symfony/security-bundle": "7.3.*",
         "symfony/serializer": "7.3.*",
         "symfony/stimulus-bundle": "^2.23",
@@ -65,8 +66,7 @@
         "twig/intl-extra": "^3.20",
         "twig/string-extra": "^3.20",
         "twig/twig": "^3.20",
-        "webmozart/assert": "^1.11",
-        "symfony/scheduler": "7.3.*"
+        "webmozart/assert": "^1.11"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",
@@ -104,6 +104,7 @@
         "xutimcms/event-bundle": "self.version"
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Xutim\\": "src/Xutim/",
