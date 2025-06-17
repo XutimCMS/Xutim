@@ -35,3 +35,4 @@
 ###< vincentlanglet/twig-cs-fixer ###
 
 dump_*.sql
+composer.lock
