@@ -6,6 +6,7 @@ namespace Xutim\CoreBundle\Context;
 
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Xutim\CoreBundle\Contract\Block\BlockRendererInterface;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
@@ -14,14 +15,13 @@ use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Repository\BlockRepository;
-use Xutim\CoreBundle\Service\BlockRenderer;
 
 class BlockContext
 {
     public function __construct(
         private readonly CacheInterface $blockContextCache,
         private readonly SiteContext $siteContext,
-        private readonly BlockRenderer $blockRenderer,
+        private readonly BlockRendererInterface $blockRenderer,
         private readonly BlockRepository $blockRepository
     ) {
     }
@@ -43,9 +43,9 @@ class BlockContext
             $key,
             function (ItemInterface $item) use ($blockRenderer, $locale, $code, $options) {
                 $ret = $blockRenderer->renderBlock($locale, $code, $options);
-                $item->expiresAfter($ret['cachettl']);
+                $item->expiresAfter($ret->cacheTtl);
 
-                return $ret['html'];
+                return $ret->html;
             }
         );
     }
