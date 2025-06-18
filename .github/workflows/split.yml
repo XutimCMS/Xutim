@@ -21,6 +21,10 @@ jobs:
                       split_repository: "core-bundle"
                     - local_path: "src/Xutim/Bundle/EventBundle"
                       split_repository: "event-bundle"
+                    - local_path: "src/Xutim/Bundle/RedirectBundle"
+                      split_repository: "redirect-bundle"
+                    - local_path: "src/Xutim/Component/RedirectComponent"
+                      split_repository: "redirect-component"
 
         steps:
             - uses: actions/checkout@v4

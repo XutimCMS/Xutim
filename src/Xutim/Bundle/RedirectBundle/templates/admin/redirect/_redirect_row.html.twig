@@ -1,0 +1,27 @@
+<tr id="redirect-row-{{redirect.id}}">
+    <td>
+        <a
+            href="{{ path('admin_redirect_edit', {id: redirect.id})}}"
+            data-turbo-frame="modal"
+        >
+            {{ redirect.source }}
+        </a>
+    </td>
+    <td>
+        {{ redirect.targetContentTranslation.title }}
+    </td>
+    <td>
+        {{ redirect.locale }}
+    </td>
+    <td>
+        {% if redirect.permanent %}
+            <span class="status status-danger">
+                {{ 'yes'|trans({}, 'admin') }}
+            </span>
+        {% else %}
+            <span class="status status-green">
+                {{ 'no'|trans({}, 'admin') }}
+            </span>
+        {% endif %}
+    </td>
+</tr>

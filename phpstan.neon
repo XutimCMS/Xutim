@@ -5,6 +5,8 @@ parameters:
     paths:
         - src/Xutim/Bundle/CoreBundle/src
         - src/Xutim/Bundle/EventBundle/src
+        - src/Xutim/Bundle/RedirectBundle/src
+        - src/Xutim/Component/RedirectComponent/src
     excludePaths:
         - src/Xutim/Bundle/CoreBundle/src/Infra/Doctrine/TreeObjectHydrator.php
     bootstrapFiles:

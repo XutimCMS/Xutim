@@ -1,0 +1,28 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% set pageTitle = 'Edit redirect'|trans({}, 'admin')|capitalize %}
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">{{ pageTitle }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:PublicPageLink />
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.source) }}
+            {{ form_row(form.targetContentTranslation) }}
+            {{ form_row(form.locale) }}
+            {{ form_row(form.permanent) }}
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}

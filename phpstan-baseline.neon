@@ -101,3 +101,9 @@ parameters:
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Xutim/Bundle/EventBundle/src/Form/Admin/EventType.php
+
+		-
+			message: '#^Instanceof between Xutim\\RedirectBundle\\Form\\Admin\\RedirectFormData and Xutim\\RedirectBundle\\Form\\Admin\\RedirectFormData will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/RedirectBundle/src/Form/RedirectType.php
