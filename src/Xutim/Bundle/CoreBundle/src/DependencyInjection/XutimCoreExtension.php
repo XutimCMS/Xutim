@@ -36,6 +36,7 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
         $loader->load('factories.php');
         $loader->load('forms.php');
         $loader->load('routing.php');
+        $loader->load('scheduler.php');
     }
 
     public function prepend(ContainerBuilder $container): void
