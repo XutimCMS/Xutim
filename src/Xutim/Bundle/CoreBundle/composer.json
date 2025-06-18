@@ -109,22 +109,5 @@
         "psr-4": {
             "Xutim\\CoreBundle\\Tests\\": "tests/"
         }
-    },
-    "minimum-stability": "dev",
-    "conflict": {
-        "symfony/symfony": "*"
-    },
-    "extra": {
-        "symfony": {
-            "allow-contrib": false,
-            "require": "7.3.*"
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "phpstan/extension-installer": true,
-            "symfony/flex": false,
-            "symfony/runtime": false
-        }
     }
 }
