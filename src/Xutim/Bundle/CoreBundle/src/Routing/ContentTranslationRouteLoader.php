@@ -48,8 +48,7 @@ class ContentTranslationRouteLoader extends Loader
             throw new \RuntimeException('Loader already loaded.');
         }
 
-        $mainLocales = implode('|', $this->siteContext->getLocales());
-        $contentLocales = implode('|', $this->siteContext->getAllLocales());
+        $locales = implode('|', $this->siteContext->getAllLocales());
         $routes = new RouteCollection();
         $usedSlugs = [];
         foreach (RouteSnippetRegistry::all() as $route) {
@@ -79,8 +78,8 @@ class ContentTranslationRouteLoader extends Loader
             ],
             requirements: [
                 'slug' => $slugRequirement,
-                '_locale' => $mainLocales,
-                '_content_locale' => $contentLocales,
+                '_locale' => $locales,
+                '_content_locale' => $locales,
             ],
             options: [
                 'priority' => 0,
