@@ -6,13 +6,14 @@ namespace Xutim\CoreBundle\Config\Layout\Block\Option;
 
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 
-class BlockItemOptionComposed implements BlockItemOption
+readonly class BlockItemOptionComposed implements BlockItemOption
 {
     /** @var array<BlockItemOption> */
-    private readonly array $options;
+    private array $options;
 
-    public function __construct(BlockItemOption ...$options)
-    {
+    public function __construct(
+        BlockItemOption ...$options
+    ) {
         $this->options = $options;
     }
 
@@ -25,5 +26,16 @@ class BlockItemOptionComposed implements BlockItemOption
         }
 
         return true;
+    }
+
+    public function getName(): string
+    {
+        $names = array_map(fn (BlockItemOption $opt) => $opt->getName(), $this->options);
+
+        return sprintf(
+            'Item that is a combination of %d items: %s',
+            count($this->options),
+            implode(', ', $names)
+        );
     }
 }

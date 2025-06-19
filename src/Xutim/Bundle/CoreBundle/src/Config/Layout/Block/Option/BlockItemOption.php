@@ -14,4 +14,10 @@ interface BlockItemOption extends LayoutConfigItem
      * option check.
      */
     public function canFullFill(BlockItemInterface $item): bool;
+
+    /**
+     * Returns a name that is used in an admin ui to see block
+     * requirements.
+     */
+    public function getName(): string;
 }

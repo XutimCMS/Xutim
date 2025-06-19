@@ -17,6 +17,21 @@ class BlockLayoutChecker
     public function __construct(private readonly LayoutLoader $layoutLoader)
     {
     }
+
+    /**
+     * @return list<BlockItemOption>
+     */
+    public function getLayoutConfig(BlockInterface $block): array
+    {
+        $layout = $this->layoutLoader->getBlockLayoutByCode($block->getLayout());
+        if ($layout === null) {
+            return [];
+        }
+
+        /** @var list<BlockItemOption> */
+        return $layout->config;
+    }
+
     public function checkLayout(BlockInterface $block): bool
     {
         $layout = $this->layoutLoader->getBlockLayoutByCode($block->getLayout());

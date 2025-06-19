@@ -8,42 +8,59 @@
         <twig:ux:icon name="tabler:grip-vertical" />
     </td>
     <td class="text-center">{{ badges.blockItemColorBadge(item) }}</td>
-    <td class="text-center w-6">
-        {% if item.hasArticle %}
-            <twig:ux:icon
-                name="tabler:news"
-                title="{{ 'article'|trans({}, 'admin') }}"
-                data-controller="tooltip"
-            />
-        {% endif %}
-        {% if item.hasPage %}
-            <twig:ux:icon
-                name="tabler:folder"
-                title="{{ 'page'|trans({}, 'admin') }}"
-                data-controller="tooltip"
-            />
-        {% endif %}
-        {% if item.isSimpleItem() and item.hasSnippet() %}
-            <twig:ux:icon
-                name="tabler:abc"
-                title="{{ 'snippet'|trans({}, 'admin') }}"
-                data-controller="tooltip"
-            />
-        {% endif %}
-        {% if item.isSimpleItem() and item.hasFile() %}
-            <twig:ux:icon
-                name="tabler:file"
-                title="{{ 'file'|trans({}, 'admin') }}"
-                data-controller="tooltip"
-            />
-        {% endif %}
-        {% if item.isSimpleItem() and item.hasTag() %}
-            <twig:ux:icon
-                name="tabler:tag"
-                title="{{ 'tag'|trans({}, 'admin') }}"
-                data-controller="tooltip"
-            />
-        {% endif %}
+    <td>
+        <div class="d-flex justify-content-start">
+            {% if item.hasArticle %}
+                <twig:ux:icon
+                    name="tabler:news"
+                    title="{{ 'article'|trans({}, 'admin') }}"
+                    data-controller="tooltip"
+                    class="w-4"
+                />
+            {% endif %}
+            {% if item.hasPage %}
+                <twig:ux:icon
+                    name="tabler:folder"
+                    title="{{ 'page'|trans({}, 'admin') }}"
+                    data-controller="tooltip"
+                    class="w-4"
+                />
+            {% endif %}
+            {% if item.hasSnippet() %}
+                <twig:ux:icon
+                    name="tabler:abc"
+                    title="{{ 'snippet'|trans({}, 'admin') }}"
+                    data-controller="tooltip"
+                    class="w-4"
+                />
+            {% endif %}
+            {% if item.hasFile() %}
+            {% if item.file.isImage() %}
+                <twig:ux:icon
+                    name="tabler:photo"
+                    title="{{ 'image'|trans({}, 'admin') }}"
+                    data-controller="tooltip"
+                    class="w-4"
+                />
+            {% else %}
+                <twig:ux:icon
+                    name="tabler:file"
+                    title="{{ 'file'|trans({}, 'admin') }}"
+                    data-controller="tooltip"
+                    class="w-4"
+                />
+            {% endif %}
+
+            {% endif %}
+            {% if item.hasTag() %}
+                <twig:ux:icon
+                    name="tabler:tag"
+                    title="{{ 'tag'|trans({}, 'admin') }}"
+                    data-controller="tooltip"
+                    class="w-4"
+                />
+            {% endif %}
+        </div>
     </td>
     {% if block.blockItems|filter(item => item.file) is not empty %}
         <td class="w-6">
@@ -80,39 +97,26 @@
                 {{ item.page.defaultTranslation.title }}
             </a>
         {% endif %}
-        {% if item.isSimpleItem() %}
-            {% if item.hasSnippet() %}
-                <a href="{{ path('admin_snippet_list') }}">
-                    {{ render_snippet(item.snippet.code) }}
-                </a>
-            {% endif %}
-            {% if item.hasTag() %}
-                <a href="{{ path('admin_tag_edit', {id: item.tag.id}) }}">
-                    {{ item.tag.translationByLocaleOrAny(content_context_language()).name }}
-                </a>
-            {% endif %}
-            {% if item.hasFile() %}
-                <a href="{{ path('admin_media_edit', {id: item.file.id}) }}">
-                    {{ item.file.translationByLocaleOrDefault(content_context_language()).name }}
-                </a>
-            {% endif %}
+    </td>
+    <td>
+        {% if item.link %}
+            <a href="{{ item.link }}">{{ item.link }}</a>
         {% endif %}
     </td>
     <td>
-        {% if item.hasArticle %}
-            <twig:Xutim:Admin:Icon name="article" />
-        {% endif %}
-        {% if item.hasPage %}
-            <twig:Xutim:Admin:Icon name="folder" />
+        {% if item.tag %}
+            <a href="{{ path('admin_tag_edit', {id: item.tag.id}) }}">
+                {{ item.tag.translationByLocaleOrAny(app.locale).name }}
+            </a>
         {% endif %}
     </td>
-    {% if block.blockItems|filter(item => item.link) is not empty %}
-        <td>
-            {% if item.link %}
-                <a href="{{ item.link }}">{{ item.link }}</a>
-            {% endif %}
-        </td>
-    {% endif %}
+    <td>
+        {% if item.snippet %}
+            <a href="{{ path('admin_snippet_list', {searchTerm: item.snippet.code}) }}">
+                {{ item.snippet.code }}
+            </a>
+        {% endif %}
+    </td>
     <td class="text-center">
         {% if item.hasArticle %}
             <twig:Xutim:Admin:Button

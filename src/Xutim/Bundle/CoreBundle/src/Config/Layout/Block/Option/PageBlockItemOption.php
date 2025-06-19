@@ -12,4 +12,9 @@ readonly class PageBlockItemOption implements BlockItemOption
     {
         return $item->hasPage();
     }
+
+    public function getName(): string
+    {
+        return 'page item';
+    }
 }

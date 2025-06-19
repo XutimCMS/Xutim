@@ -6,10 +6,15 @@ namespace Xutim\CoreBundle\Config\Layout\Block\Option;
 
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 
-class FileBlockItemOption implements BlockItemOption
+readonly class FileBlockItemOption implements BlockItemOption
 {
     public function canFullFill(BlockItemInterface $item): bool
     {
         return $item->hasFile() === true;
+    }
+
+    public function getName(): string
+    {
+        return 'file item';
     }
 }

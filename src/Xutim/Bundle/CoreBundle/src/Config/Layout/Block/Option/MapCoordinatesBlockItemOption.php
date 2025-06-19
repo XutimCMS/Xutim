@@ -6,10 +6,15 @@ namespace Xutim\CoreBundle\Config\Layout\Block\Option;
 
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 
-class MapCoordinatesBlockItemOption implements BlockItemOption
+readonly class MapCoordinatesBlockItemOption implements BlockItemOption
 {
     public function canFullFill(BlockItemInterface $item): bool
     {
         return $item->getCoordinates() !== null;
+    }
+
+    public function getName(): string
+    {
+        return 'map coordinates item';
     }
 }

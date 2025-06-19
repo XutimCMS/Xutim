@@ -39,6 +39,7 @@ class ShowBlockAction extends AbstractController
         return $this->render('@XutimCore/admin/block/block_show.html.twig', [
             'form' => $form,
             'block' => $block,
+            'configOptions' => $this->layoutChecker->getLayoutConfig($block),
             'layoutFulFilled' => $this->layoutChecker->checkLayout($block)
         ]);
     }

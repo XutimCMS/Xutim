@@ -12,4 +12,9 @@ readonly class SnippetBlockItemOption implements BlockItemOption
     {
         return $item->hasSnippet();
     }
+
+    public function getName(): string
+    {
+        return 'snippet item';
+    }
 }

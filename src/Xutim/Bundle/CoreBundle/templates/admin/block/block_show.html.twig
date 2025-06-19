@@ -49,14 +49,38 @@
         </div>
     </div>
 
-    {% if layoutFulFilled is same as (false) %}
-        {{
-            component('Xutim:Admin:Alert', {
-                type: 'danger',
-                message: 'The block requirements are not met.',
-            })
-        }}
-    {% endif %}
+    <div class="card mb-3">
+        <div class="card-header">
+            <h3 class="card-title">
+                {{ 'requirements'|trans({}, 'admin')|capitalize }}
+            </h3>
+        </div>
+        <div class="card-body">
+            {% if layoutFulFilled is same as (false) %}
+                {{
+                    component('Xutim:Admin:Alert', {
+                        type: 'danger',
+                        message: 'The block requirements are not met.',
+                    })
+                }}
+            {% endif %}
+            {% if configOptions is empty %}
+                {{
+                    component('Xutim:Admin:Alert', {
+                        type: 'warning',
+                        message: 'There is no requirement.'|trans({}, 'admin'),
+                    })
+                }}
+            {% endif %}
+            <ol>
+                {% for option in configOptions %}
+                    <li>
+                        {{ option.name }}
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
 
     <div class="row mt-3">
         <div class="col">
@@ -115,13 +139,10 @@
                                         {{ 'file'|trans({}, 'admin') }}
                                     </th>
                                 {% endif %}
-                                <th>{{ 'name'|trans({}, 'admin') }}</th>
-                                <th class="w-1"></th>
-                                {%
-                                    if block.blockItems|filter(item => item.link) is not empty
-                                %}
-                                    <th>{{ 'link'|trans({}, 'admin') }}</th>
-                                {% endif %}
+                                <th>{{ 'content'|trans({}, 'admin') }}</th>
+                                <th>{{ 'link'|trans({}, 'admin') }}</th>
+                                <th>{{ 'tag'|trans({}, 'admin') }}</th>
+                                <th>{{ 'snippet'|trans({}, 'admin') }}</th>
                                 <th class="w-12 text-center">
                                     {{ 'actions'|trans({}, 'admin') }}
                                 </th>

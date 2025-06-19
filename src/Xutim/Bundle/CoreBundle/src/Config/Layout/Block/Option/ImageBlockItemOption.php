@@ -6,11 +6,16 @@ namespace Xutim\CoreBundle\Config\Layout\Block\Option;
 
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 
-class ImageBlockItemOption implements BlockItemOption
+readonly class ImageBlockItemOption implements BlockItemOption
 {
     public function canFullFill(BlockItemInterface $item): bool
     {
         $file = $item->getFile();
         return $file !== null && $file->isImage() === true;
+    }
+
+    public function getName(): string
+    {
+        return 'image item';
     }
 }

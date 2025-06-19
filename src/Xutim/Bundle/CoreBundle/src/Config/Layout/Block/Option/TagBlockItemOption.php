@@ -12,4 +12,9 @@ readonly class TagBlockItemOption implements BlockItemOption
     {
         return $item->hasTag();
     }
+
+    public function getName(): string
+    {
+        return 'tag item';
+    }
 }
