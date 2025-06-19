@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="{{ app.request.locale }}">
     <head>
         {% block head %}
@@ -12,7 +12,7 @@
             <meta name="view-transition" content="same-origin" />
             <title>{% block title %}{% endblock %}</title>
 
-            {%- block css -%}{%- endblock -%}
+            {%- - - - block css -%}{%- - - - endblock -%}
 
             <link rel="preconnect" href="https://fonts.googleapis.com" />
             <link
@@ -24,9 +24,9 @@
                 href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
                 rel="stylesheet"
             />
-            {%- block javascripts -%}
-                {{ importmap('app-admin') }}
-            {%- endblock -%}
+            {%- - - - block javascripts -%}
+            {{ importmap('app-admin') }}
+            {%- - - - endblock -%}
         {% endblock head %}
     </head>
 
@@ -38,13 +38,15 @@
                     <div class="navbar navbar-light">
                         <div class="container-xl">
                             {% if block('breadcrumbHeader') is defined %}
-                                <div>
+                                <div class="m-2">
                                     {% set _bp = block('breadcrumbHeader') %}
                                     {{ _bp|raw }}
                                 </div>
                             {% endif %}
-                            <ul class="navbar-nav flex-row order-md-last">
-                                {% set pageMenuBlock = block('pageMenu') is defined ? block('pageMenu') : '' %}
+                            <ul class="navbar-nav sm:flex-row flex-col order-md-last">
+                                {%
+                                    set pageMenuBlock = block('pageMenu') is defined ? block('pageMenu') : ''
+                                %}
                                 {{ pageMenuBlock|raw }}
                             </ul>
                         </div>
@@ -55,9 +57,7 @@
 
             <div class="page-wrapper" id="main-content">
                 <div class="page-header">
-                    <div
-                        class="{{ containerClass is defined ? containerClass : 'container-xl' }}"
-                    >
+                    <div class="{{ containerClass is defined ? containerClass : 'container-xl' }}">
                         <div class="row g-2 align-items-center">
                             <div class="col">
                                 {% if block('pagePreTitle') is defined %}
@@ -80,9 +80,7 @@
                 </div>
 
                 <div class="page-body">
-                    <div
-                        class="{{ containerClass is defined ? containerClass : 'container-xl' }}"
-                    >
+                    <div class="{{ containerClass is defined ? containerClass : 'container-xl' }}">
                         <div id="flash-container">
                             {{ include('@XutimCore/admin/_flashes.html.twig') }}
                         </div>
@@ -100,13 +98,14 @@
                 data-modal-target="dynamicContent"
                 data-action="turbo:before-fetch-request->modal#showLoading"
             >
-                {{ include('@XutimCore/admin/_frameSuccessStream.html.twig', {frame: 'modal'}) }}
+                {{
+                    include('@XutimCore/admin/_frameSuccessStream.html.twig', {frame: 'modal'})
+                }}
             </turbo-frame>
             <twig:block name="loading_template">
                 <div class="card placeholder-glow">
-                    <div
-                        class="ratio ratio-21x9 card-img-top placeholder"
-                    ></div>
+                    <div class="ratio ratio-21x9 card-img-top placeholder">
+                    </div>
                     <div class="card-body">
                         <div class="placeholder col-9 mb-3"></div>
                         <div class="placeholder placeholder-xs col-10"></div>
