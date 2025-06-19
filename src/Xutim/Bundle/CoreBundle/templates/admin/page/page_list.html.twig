@@ -20,9 +20,7 @@
 
 {% block publicLink %}
     {% if selectedPage %}
-        <twig:Xutim:Admin:PublicPageLink
-            :tagTranslation="tag.translationByLocale(content_context_language())"
-        />
+        <twig:Xutim:Admin:PublicPageLink :contentTranslation="trans" />
     {% else %}
         <twig:Xutim:Admin:PublicPageLink />
     {% endif %}
