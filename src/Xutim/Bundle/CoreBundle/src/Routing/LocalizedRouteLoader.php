@@ -7,6 +7,7 @@ namespace Xutim\CoreBundle\Routing;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\SnippetRepository;
 
 class LocalizedRouteLoader extends Loader
@@ -32,6 +33,7 @@ class LocalizedRouteLoader extends Loader
 
     public function __construct(
         private readonly SnippetRepository $snippetRepo,
+        private readonly SiteContext $siteContext,
         string $snippetVersionPath,
         ?string $env = null,
     ) {
@@ -45,6 +47,7 @@ class LocalizedRouteLoader extends Loader
             throw new \RuntimeException('Loader already loaded.');
         }
 
+        $availableLocales = implode('|', $this->siteContext->getLocales());
         $routes = new RouteCollection();
 
         foreach (RouteSnippetRegistry::all() as $route) {
@@ -62,11 +65,14 @@ class LocalizedRouteLoader extends Loader
                 $routes->add($localizedRouteName, new Route(
                     path: $path,
                     defaults: array_merge(['_controller' => $route->controller], $route->defaults),
-                    requirements: $route->requirements,
+                    requirements: array_merge(
+                        $route->requirements,
+                        ['_locale' => $availableLocales]
+                    ),
                     host: $route->host,
                     options: [
-                    'priority' => 100,
-                    'resource' => $this->snippetVersionPath,
+                        'priority' => 90,
+                        'resource' => $this->snippetVersionPath,
                     ]
                 ));
             }

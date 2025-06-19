@@ -8,6 +8,7 @@ use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Xutim\CoreBundle\Action\Public\ShowContentTranslation;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\SnippetRepository;
 
 class ContentTranslationRouteLoader extends Loader
@@ -33,6 +34,7 @@ class ContentTranslationRouteLoader extends Loader
 
     public function __construct(
         private readonly SnippetRepository $snippetRepo,
+        private readonly SiteContext $siteContext,
         string $snippetVersionPath,
         ?string $env = null,
     ) {
@@ -46,6 +48,8 @@ class ContentTranslationRouteLoader extends Loader
             throw new \RuntimeException('Loader already loaded.');
         }
 
+        $mainLocales = implode('|', $this->siteContext->getLocales());
+        $contentLocales = implode('|', $this->siteContext->getExtendedContentLocales());
         $routes = new RouteCollection();
         $usedSlugs = [];
         foreach (RouteSnippetRegistry::all() as $route) {
@@ -75,8 +79,8 @@ class ContentTranslationRouteLoader extends Loader
             ],
             requirements: [
                 'slug' => $slugRequirement,
-                '_locale' => '[a-z]{2}',
-                '_content_locale' => '[a-z]{2}(-[A-Z]{2})?',
+                '_locale' => $mainLocales,
+                '_content_locale' => $contentLocales,
             ],
             options: [
                 'priority' => 0,
