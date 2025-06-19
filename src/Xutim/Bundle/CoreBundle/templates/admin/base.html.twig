@@ -2,7 +2,7 @@
 <html lang="{{ app.request.locale }}">
     <head>
         {% block head %}
-            <meta charset="{{- _charset -}}" />
+            <meta charset="{{ _charset }}" />
             <meta
                 name="viewport"
                 content="width=device-width, initial-scale=1, viewport-fit=cover"
@@ -12,7 +12,7 @@
             <meta name="view-transition" content="same-origin" />
             <title>{% block title %}{% endblock %}</title>
 
-            {%- - - - block css -%}{%- - - - endblock -%}
+            {% block css %}{% endblock %}
 
             <link rel="preconnect" href="https://fonts.googleapis.com" />
             <link
@@ -24,9 +24,9 @@
                 href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
                 rel="stylesheet"
             />
-            {%- - - - block javascripts -%}
-            {{ importmap('app-admin') }}
-            {%- - - - endblock -%}
+            {% block javascripts %}
+                {{ importmap('app-admin') }}
+            {% endblock %}
         {% endblock head %}
     </head>
 
