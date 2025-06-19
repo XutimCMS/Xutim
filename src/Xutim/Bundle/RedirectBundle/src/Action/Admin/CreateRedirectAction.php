@@ -4,35 +4,50 @@ declare(strict_types=1);
 
 namespace Xutim\RedirectBundle\Action\Admin;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Twig\Environment;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\User;
-use Xutim\RedirectBundle\Domain\Factory\CmsRedirectFactoryInterface;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
+use Xutim\CoreBundle\Service\FlashNotifier;
+use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
-use Xutim\RedirectBundle\Form\Admin\RedirectFormData;
-use Xutim\RedirectBundle\Form\Admin\RedirectType;
+use Xutim\RedirectBundle\Form\RedirectFormData;
+use Xutim\RedirectBundle\Form\RedirectType;
+use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
 
-#[Route('/admin/redirect/new', name: 'admin_redirect_new', methods: ['get', 'post'])]
-class CreateRedirectAction extends AbstractController
+class CreateRedirectAction
 {
     public function __construct(
         private readonly RedirectRepositoryInterface $repo,
-        private readonly CmsRedirectFactoryInterface $factory,
-        private readonly SiteContext $siteContext
+        private readonly RedirectFactoryInterface $factory,
+        private readonly SiteContext $siteContext,
+        private readonly Environment $twig,
+        private readonly FormFactoryInterface $formFactory,
+        private readonly UrlGeneratorInterface $router,
+        private readonly AuthorizationCheckerInterface $authChecker,
+        private readonly FlashNotifier $flashNotifier,
+        private readonly string $contentTranslationClass,
+        private readonly RedirectRouteService $redirectRouteService
     ) {
     }
 
     public function __invoke(Request $request): Response
     {
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        if ($this->authChecker->isGranted(UserInterface::ROLE_EDITOR) === false) {
+            throw new AccessDeniedException('Access denied.');
+        }
         $locales = $this->siteContext->getLocales();
         $localeChoices = array_combine($locales, $locales);
-        $form = $this->createForm(RedirectType::class, null, [
-            'action' => $this->generateUrl('admin_redirect_new'),
-            'locale_choices' => $localeChoices
+        $form = $this->formFactory->create(RedirectType::class, null, [
+            'action' => $this->router->generate('admin_redirect_new'),
+            'locale_choices' => $localeChoices,
+            'content_translation_class' => $this->contentTranslationClass
         ]);
 
         $form->handleRequest($request);
@@ -47,14 +62,25 @@ class CreateRedirectAction extends AbstractController
             );
 
             $this->repo->save($redirect, true);
+            $this->redirectRouteService->resetRedirectRoutesCache();
+            if ($request->headers->has('turbo-frame')) {
+                $stream = $this->twig
+                    ->load('@XutimRedirect/admin/redirect/redirect_new.html.twig')
+                    ->renderBlock('stream_success', ['redirect' => $redirect]);
 
-            $this->addFlash('success', 'flash.changes_made_successfully');
+                $this->flashNotifier->stream($stream);
+            }
+            $this->flashNotifier->changesSaved();
 
-            return $this->redirectToRoute('admin_redirect_list', ['searchTerm' => '']);
+            return new RedirectResponse(
+                $this->router->generate('admin_redirect_list', ['searchTerm' => ''])
+            );
         }
 
-        return $this->render('@XutimRedirect/admin/redirect/redirect_new.html.twig', [
-            'form' => $form
+        $html = $this->twig->render('@XutimRedirect/admin/redirect/redirect_new.html.twig', [
+            'form' => $form->createView()
         ]);
+
+        return new Response($html);
     }
 }

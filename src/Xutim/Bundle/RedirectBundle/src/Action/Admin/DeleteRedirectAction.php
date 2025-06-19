@@ -4,36 +4,48 @@ declare(strict_types=1);
 
 namespace Xutim\RedirectBundle\Action\Admin;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Service\CsrfTokenChecker;
+use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
+use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
 
-#[Route('/admin/redirect/delete/{id}', name: 'admin_redirect_delete')]
-class DeleteRedirectAction extends AbstractController
+class DeleteRedirectAction
 {
     public function __construct(
         private readonly CsrfTokenChecker $csrfTokenChecker,
         private readonly RedirectRepositoryInterface $repo,
+        private readonly UrlGeneratorInterface $router,
+        private readonly AuthorizationCheckerInterface $authChecker,
+        private readonly FlashNotifier $flashNotifier,
+        private readonly RedirectRouteService $redirectRouteService
     ) {
     }
 
     public function __invoke(string $id, Request $request): Response
     {
-        $redirect = $this->repo->find($id);
-        if ($redirect === null) {
-            throw $this->createNotFoundException('The redirect does not exist');
+        if ($this->authChecker->isGranted(UserInterface::ROLE_EDITOR) === false) {
+            throw new AccessDeniedException('Access denied.');
         }
-        $this->denyAccessUnlessGranted(UserInterface::ROLE_EDITOR);
+
+        $redirect = $this->repo->findById($id);
+        if ($redirect === null) {
+            throw new NotFoundHttpException('The redirect does not exist');
+        }
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
 
-        $this->repo->remove($redirect);
+        $this->repo->remove($redirect, true);
+        $this->flashNotifier->changesSaved();
 
-        $this->addFlash('success', 'flash.changes_made_successfully');
-
-        return $this->redirectToRoute('admin_redirect_list', ['searchTerm' => '']);
+        return new RedirectResponse(
+            $this->router->generate('admin_redirect_list', ['searchTerm' => ''])
+        );
     }
 }

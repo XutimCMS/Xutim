@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Xutim\RedirectBundle\Domain\Factory;
 
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\RedirectBundle\Domain\Model\CmsRedirectInterface;
+use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 
-class CmsRedirectFactory implements CmsRedirectFactoryInterface
+class RedirectFactory implements RedirectFactoryInterface
 {
     public function __construct(
         private readonly string $redirectClass,
@@ -22,8 +22,8 @@ class CmsRedirectFactory implements CmsRedirectFactoryInterface
         ContentTranslationInterface $targetContentTranslation,
         ?string $locale = null,
         bool $permanent = false,
-    ): CmsRedirectInterface {
-        /** @var CmsRedirectInterface $redirect */
+    ): RedirectInterface {
+        /** @var RedirectInterface $redirect */
         $redirect = new ($this->redirectClass)($source, $targetContentTranslation, $locale, $permanent);
 
         return $redirect;

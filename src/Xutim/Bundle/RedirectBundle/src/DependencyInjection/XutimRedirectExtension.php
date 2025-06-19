@@ -22,6 +22,7 @@ final class XutimRedirectExtension extends Extension implements PrependExtension
     {
         /** @var array{models: array<string, array{class: class-string}>} $configs */
         $configs = $this->processConfiguration($this->getConfiguration([], $container), $config);
+        $container->setParameter('redirect_routes_version_file', '%kernel.cache_dir%/redirect_routes.version');
 
         foreach ($configs['models'] as $alias => $modelConfig) {
             $container->setParameter(sprintf('xutim_redirect.model.%s.class', $alias), $modelConfig['class']);
@@ -29,10 +30,13 @@ final class XutimRedirectExtension extends Extension implements PrependExtension
 
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
 
-        $loader->load('services.php');
+        $loader->load('resolvers.php');
         $loader->load('repositories.php');
         $loader->load('factories.php');
         $loader->load('forms.php');
+        $loader->load('actions.php');
+        $loader->load('routing.php');
+        $loader->load('validators.php');
     }
 
     public function prepend(ContainerBuilder $container): void

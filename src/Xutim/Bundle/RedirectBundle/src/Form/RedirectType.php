@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xutim\RedirectBundle\Form\Admin;
+namespace Xutim\RedirectBundle\Form;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -17,8 +17,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\Regex;
 use Traversable;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\RedirectBundle\Infra\Validator\ValidRedirect;
 
 /**
  * @template-extends AbstractType<RedirectFormData>
@@ -30,21 +32,40 @@ class RedirectType extends AbstractType implements DataMapperInterface
     {
         /** @var array{locale_choices: array<string, string>} $localeChoices */
         $localeChoices = $options['locale_choices'];
+        /** @var class-string $contentTranslationClass */
+        $contentTranslationClass = $options['content_translation_class'];
         $builder
+            ->add('id', TextType::class, [
+                'label' => false,
+                'required' => false,
+                'constraints' => [
+                    new NotNull(),
+                ],
+                'disabled' => true,
+                'attr' => [
+                    'hidden' => true
+                ]
+            ])
             ->add('source', TextType::class, [
                 'label' => new TranslatableMessage('Source url', [], 'admin'),
                 'required' => true,
                 'constraints' => [
                     new NotNull(),
+                    new Regex([
+                        'pattern' => '#^/[\w\-/]*$#',
+                        'message' => 'The path must start with a "/" and contain only letters, numbers, dashes, and slashes.',
+                    ]),
                 ]
-
             ])
             ->add('targetContentTranslation', EntityType::class, [
                 'label' => new TranslatableMessage('Target content translation', [], 'admin'),
-                'class' => ContentTranslationInterface::class,
+                'class' => $contentTranslationClass,
                 'required' => true,
                 'constraints' => [
                     new NotNull()
+                ],
+                'attr' => [
+                    'data-controller' => 'tom-select',
                 ]
             ])
             ->add('locale', ChoiceType::class, [
@@ -58,6 +79,7 @@ class RedirectType extends AbstractType implements DataMapperInterface
             ->add('permanent', CheckboxType::class, [
                 'label' => new TranslatableMessage('permanent redirect', [], 'admin'),
                 'help' => 'Not recommended unless you know why',
+                'required' => false,
             ])
             ->add('submit', SubmitType::class)
             ->setDataMapper($this);
@@ -80,6 +102,7 @@ class RedirectType extends AbstractType implements DataMapperInterface
         $forms['targetContentTranslation']->setData($viewData->getTargetContentTranslation());
         $forms['locale']->setData($viewData->getLocale());
         $forms['permanent']->setData($viewData->isPermanent());
+        $forms['id']->setData($viewData->getId());
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
@@ -94,16 +117,21 @@ class RedirectType extends AbstractType implements DataMapperInterface
         $locale = $forms['locale']->getData();
         /** @var bool $permanent */
         $permanent = $forms['permanent']->getData();
+        /** @var ?string $id */
+        $id = $forms['id']->getData();
 
-        $viewData = new RedirectFormData($source, $targetContentTranslation, $locale, $permanent);
+        $viewData = new RedirectFormData($source, $targetContentTranslation, $locale, $permanent, $id);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'locale_choices' => [],
+            'content_translation_class' => '',
+            'constraints' => [new ValidRedirect()],
         ]);
 
         $resolver->setAllowedTypes('locale_choices', ['array']);
+        $resolver->setAllowedTypes('content_translation_class', ['string']);
     }
 }

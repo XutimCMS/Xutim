@@ -9,6 +9,8 @@ use Xutim\RedirectBundle\Action\Admin\EditRedirectAction;
 use Xutim\RedirectBundle\Action\Admin\ListRedirectsAction;
 
 return function (RoutingConfigurator $routes) {
+    $routes->import('.', 'xutim_redirect');
+
     $routes->add('admin_redirect_new', '/admin/redirect/new')
         ->methods(['get', 'post'])
         ->controller(CreateRedirectAction::class);

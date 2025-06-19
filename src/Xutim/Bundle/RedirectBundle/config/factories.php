@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Xutim\RedirectBundle\Domain\Factory\CmsRedirectFactory;
-use Xutim\RedirectBundle\Domain\Factory\CmsRedirectFactoryInterface;
+use Xutim\RedirectBundle\Domain\Factory\RedirectFactory;
+use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
 
-    $services->set(CmsRedirectFactory::class)
+    $services->set(RedirectFactory::class)
         ->arg('$redirectClass', '%xutim_redirect.model.redirect.class%');
 
-    $services->alias(CmsRedirectFactoryInterface::class, CmsRedirectFactory::class);
+    $services->alias(RedirectFactoryInterface::class, RedirectFactory::class);
 };

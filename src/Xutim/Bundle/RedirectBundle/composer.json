@@ -3,6 +3,7 @@
     "type": "symfony-bundle",
     "description": "Reusable Symfony bundle for managing flexible URL redirects in a CMS or web application.",
     "prefer-stable": true,
+    "minimum-stability": "dev",
     "keywords": [
         "cms",
         "xutim",
@@ -27,7 +28,7 @@
         "twig/twig": "^3.20",
         "webmozart/assert": "^1.11",
         "xutimcms/core-bundle": "dev-main",
-        "xutimcms/redirect-component": "dev-main"
+        "xutimcms/redirect-component": "dev-main@dev"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",

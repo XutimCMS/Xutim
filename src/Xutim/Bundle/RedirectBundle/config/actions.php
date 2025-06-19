@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Symfony\Component\DependencyInjection\Loader\Configurator;
+
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Twig\Environment;
+use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Service\CsrfTokenChecker;
+use Xutim\CoreBundle\Service\FlashNotifier;
+use Xutim\CoreBundle\Service\ListFilterBuilder;
+use Xutim\RedirectBundle\Action\Admin\CreateRedirectAction;
+use Xutim\RedirectBundle\Action\Admin\DeleteRedirectAction;
+use Xutim\RedirectBundle\Action\Admin\EditRedirectAction;
+use Xutim\RedirectBundle\Action\Admin\ListRedirectsAction;
+use Xutim\RedirectBundle\Action\Admin\RedirectToContentTranslationAction;
+use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
+use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
+use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
+
+return static function (ContainerConfigurator $container): void {
+    $services = $container->services();
+
+    $services->set(CreateRedirectAction::class)
+        ->arg('$repo', service(RedirectRepositoryInterface::class))
+        ->arg('$factory', service(RedirectFactoryInterface::class))
+        ->arg('$siteContext', service(SiteContext::class))
+        ->arg('$twig', service(Environment::class))
+        ->arg('$formFactory', service(FormFactoryInterface::class))
+        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
+        ->arg('$flashNotifier', service(FlashNotifier::class))
+        ->arg('$contentTranslationClass', '%xutim_core.model.content_translation.class%')
+        ->arg('$redirectRouteService', service(RedirectRouteService::class))
+        ->tag('controller.service_arguments')
+    ;
+
+    $services->set(EditRedirectAction::class)
+        ->arg('$repo', service(RedirectRepositoryInterface::class))
+        ->arg('$siteContext', service(SiteContext::class))
+        ->arg('$twig', service(Environment::class))
+        ->arg('$formFactory', service(FormFactoryInterface::class))
+        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
+        ->arg('$flashNotifier', service(FlashNotifier::class))
+        ->arg('$contentTranslationClass', '%xutim_core.model.content_translation.class%')
+        ->arg('$redirectRouteService', service(RedirectRouteService::class))
+        ->tag('controller.service_arguments')
+    ;
+
+    $services->set(ListRedirectsAction::class)
+        ->arg('$repo', service(RedirectRepositoryInterface::class))
+        ->arg('$filterBuilder', service(ListFilterBuilder::class))
+        ->arg('$twig', service(Environment::class))
+        ->tag('controller.service_arguments')
+    ;
+
+    $services->set(DeleteRedirectAction::class)
+        ->arg('$csrfTokenChecker', service(CsrfTokenChecker::class))
+        ->arg('$repo', service(RedirectRepositoryInterface::class))
+        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
+        ->arg('$flashNotifier', service(FlashNotifier::class))
+        ->arg('$redirectRouteService', service(RedirectRouteService::class))
+        ->tag('controller.service_arguments')
+    ;
+
+    $services->set(RedirectToContentTranslationAction::class)
+        ->arg('$repo', service(RedirectRepositoryInterface::class))
+        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->tag('controller.service_arguments')
+    ;
+};

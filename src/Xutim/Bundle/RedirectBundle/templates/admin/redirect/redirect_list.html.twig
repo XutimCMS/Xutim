@@ -66,6 +66,7 @@
                         }}
                     </a>
                 </th>
+                {#
                 <th>
                     <a
                         href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'locale', orderDirection: filter.reverseDirection('locale')}) }}"
@@ -76,6 +77,7 @@
                         }}
                     </a>
                 </th>
+                #}
                 <th>
                     <a
                         href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'permanent', orderDirection: filter.reverseDirection('permanent')}) }}"
@@ -85,6 +87,9 @@
                             icons.order_arrow('permanent', filter.orderColumn, filter.orderDirection)
                         }}
                     </a>
+                </th>
+                <th>
+                    {{ 'actions'|trans({}, 'admin')|capitalize }}
                 </th>
             {% endblock %}
 

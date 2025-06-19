@@ -6,20 +6,19 @@ namespace Xutim\RedirectBundle\Action\Admin;
 
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Attribute\Route;
+use Twig\Environment;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
-use Xutim\RedirectBundle\Domain\Model\CmsRedirectInterface;
+use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 
-#[Route('/admin/redirect', name: 'admin_redirect_list', methods: ['get'])]
-class ListRedirectsAction extends AbstractController
+class ListRedirectsAction
 {
     public function __construct(
         private readonly RedirectRepositoryInterface $repo,
-        private readonly ListFilterBuilder $filterBuilder
+        private readonly ListFilterBuilder $filterBuilder,
+        private readonly Environment $twig
     ) {
     }
 
@@ -37,7 +36,7 @@ class ListRedirectsAction extends AbstractController
     ): Response {
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
 
-        /** @var QueryAdapter<CmsRedirectInterface> $adapter */
+        /** @var QueryAdapter<RedirectInterface> $adapter */
         $adapter = new QueryAdapter($this->repo->queryByFilter($filter));
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
             $adapter,
@@ -45,9 +44,14 @@ class ListRedirectsAction extends AbstractController
             $filter->pageLength
         );
 
-        return $this->render('@XutimRedirect/admin/redirect/redirect_list.html.twig', [
-            'redirects' => $pager,
-            'filter' => $filter
-        ]);
+        return new Response(
+            $this->twig->render(
+                '@XutimRedirect/admin/redirect/redirect_list.html.twig',
+                [
+                    'redirects' => $pager,
+                    'filter' => $filter
+                ]
+            )
+        );
     }
 }

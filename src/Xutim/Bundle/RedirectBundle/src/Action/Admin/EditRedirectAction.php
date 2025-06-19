@@ -4,36 +4,53 @@ declare(strict_types=1);
 
 namespace Xutim\RedirectBundle\Action\Admin;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Twig\Environment;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\UserInterface;
+use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
-use Xutim\RedirectBundle\Form\Admin\RedirectFormData;
-use Xutim\RedirectBundle\Form\Admin\RedirectType;
+use Xutim\RedirectBundle\Form\RedirectFormData;
+use Xutim\RedirectBundle\Form\RedirectType;
+use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
 
-#[Route('/admin/redirect/edit/{id}/{locale? }', name: 'admin_redirect_edit', methods: ['get', 'post'])]
-class EditRedirectAction extends AbstractController
+class EditRedirectAction
 {
     public function __construct(
         private readonly RedirectRepositoryInterface $repo,
-        private readonly SiteContext $siteContext
+        private readonly SiteContext $siteContext,
+        private readonly Environment $twig,
+        private readonly FormFactoryInterface $formFactory,
+        private readonly UrlGeneratorInterface $router,
+        private readonly AuthorizationCheckerInterface $authChecker,
+        private readonly FlashNotifier $flashNotifier,
+        private readonly string $contentTranslationClass,
+        private readonly RedirectRouteService $redirectRouteService
     ) {
     }
 
     public function __invoke(Request $request, string $id): Response
     {
-        $redirect = $this->repo->find($id);
+        $redirect = $this->repo->findById($id);
         if ($redirect === null) {
-            throw $this->createNotFoundException('The redirect does not exist');
+            throw new NotFoundHttpException('The redirect does not exist');
         }
-        $this->denyAccessUnlessGranted(UserInterface::ROLE_EDITOR);
+        if ($this->authChecker->isGranted(UserInterface::ROLE_EDITOR) === false) {
+            throw new AccessDeniedException('Access denied.');
+        }
         $locales = $this->siteContext->getLocales();
         $localeChoices = array_combine($locales, $locales);
-        $form = $this->createForm(RedirectType::class, RedirectFormData::fromRedirect($redirect), [
-            'locale_choices' => $localeChoices
+        $form = $this->formFactory->create(RedirectType::class, RedirectFormData::fromRedirect($redirect), [
+            'action' => $this->router->generate('admin_redirect_edit', ['id' => $redirect->getId()]),
+            'locale_choices' => $localeChoices,
+            'content_translation_class' => $this->contentTranslationClass
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -47,15 +64,28 @@ class EditRedirectAction extends AbstractController
                 $data->isPermanent()
             );
             $this->repo->save($redirect, true);
+            $this->redirectRouteService->resetRedirectRoutesCache();
 
-            $this->addFlash('success', 'Changes were made successfully.');
+            if ($request->headers->has('turbo-frame')) {
+                $stream = $this->twig
+                    ->load('@XutimRedirect/admin/redirect/redirect_edit.html.twig')
+                    ->renderBlock('stream_success', ['redirect' => $redirect]);
 
-            return $this->redirectToRoute('admin_redirect_edit', ['id' => $redirect->getId()]);
+                $this->flashNotifier->stream($stream);
+            }
+
+            $this->flashNotifier->changesSaved();
+
+            return new RedirectResponse(
+                $this->router->generate('admin_redirect_edit', ['id' => $redirect->getId()])
+            );
         }
 
-        return $this->render('@XutimRedirect/admin/redirect/redirect_edit.html.twig', [
-            'redirect' => $redirect,
-            'form' => $form,
+        $html = $this->twig->render('@XutimRedirect/admin/redirect/redirect_edit.html.twig', [
+            'form' => $form->createView(),
+            'redirect' => $redirect
         ]);
+
+        return new Response($html);
     }
 }

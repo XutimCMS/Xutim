@@ -1,4 +1,4 @@
-{% extends '@XutimCore/admin/base.html.twig' %}
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
 
 {% set pageTitle = 'Edit redirect'|trans({}, 'admin')|capitalize %}
 {% block pageTitle %}{{ pageTitle }}{% endblock %}
@@ -16,13 +16,20 @@
 {% block body %}
     <div class="card">
         <div class="card-body">
-            {{ form_start(form) }}
-            {{ form_row(form.source) }}
-            {{ form_row(form.targetContentTranslation) }}
-            {{ form_row(form.locale) }}
-            {{ form_row(form.permanent) }}
-            {{ form_row(form._token) }}
-            {{ form_end(form, {render_rest: false}) }}
+            {{ form(form) }}
         </div>
     </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#redirect-row-{{ redirect.id }}">
+        <template>
+            {{
+                include('@XutimRedirect/admin/redirect/_redirect_row.html.twig')
+            }}
+        </template>
+    </turbo-stream>
+    <turbo-stream action="update" target="modal">
+        <template></template>
+    </turbo-stream>
 {% endblock %}

@@ -6,15 +6,20 @@ namespace Xutim\RedirectBundle\Domain\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
-use Xutim\RedirectBundle\Domain\Model\CmsRedirectInterface;
+use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 
 interface RedirectRepositoryInterface
 {
     public function queryByFilter(FilterDto $filter): QueryBuilder;
 
-    public function find(mixed $id): ?CmsRedirectInterface;
+    public function findById(mixed $id): ?RedirectInterface;
 
-    public function save(CmsRedirectInterface $entity, bool $andFlush = false): void;
+    /**
+     * @return array<int, RedirectInterface>
+    */
+    public function findAll(): array;
 
-    public function remove(CmsRedirectInterface $entity, bool $andFlush = false): void;
+    public function save(RedirectInterface $entity, bool $andFlush = false): void;
+
+    public function remove(RedirectInterface $entity, bool $andFlush = false): void;
 }
