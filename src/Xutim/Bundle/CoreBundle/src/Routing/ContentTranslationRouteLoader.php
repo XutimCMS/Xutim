@@ -49,7 +49,7 @@ class ContentTranslationRouteLoader extends Loader
         }
 
         $mainLocales = implode('|', $this->siteContext->getLocales());
-        $contentLocales = implode('|', $this->siteContext->getExtendedContentLocales());
+        $contentLocales = implode('|', $this->siteContext->getAllLocales());
         $routes = new RouteCollection();
         $usedSlugs = [];
         foreach (RouteSnippetRegistry::all() as $route) {
