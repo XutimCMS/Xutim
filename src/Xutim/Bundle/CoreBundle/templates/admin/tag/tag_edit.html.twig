@@ -10,11 +10,13 @@
     </twig:Xutim:Admin:Breadcrumbs>
 {% endblock %}
 
-{% block pageMenu %}
+{% block publicLink %}
     <twig:Xutim:Admin:PublicPageLink
         :tagTranslation="tag.translationByLocale(content_context_language())"
     />
+{% endblock %}
 
+{% block pageMenu %}
     <twig:Xutim:Admin:Button
         tag="button"
         id="sidebar-toggle"

@@ -32,7 +32,19 @@
 
     <body>
         <div class="page">
-            {{ include('@XutimCore/admin/_top_bar.html.twig') }}
+            {% if block('publicLink') is defined %}
+                {% set _publicLinkBlock = block('publicLink') %}
+            {% else %}
+                {% set _publicLinkBlock %}
+                    <twig:Xutim:Admin:PublicPageLink />
+                {% endset %}
+            {% endif %}
+
+            {%
+                include '@XutimCore/admin/_top_bar.html.twig' with {
+                    publicLinkBlock: _publicLinkBlock|raw
+                }
+            %}
             <header id="navbar-local" class="navbar-expand-md">
                 <div class="collapse navbar-collapse" id="navbar-menu">
                     <div class="navbar navbar-light">

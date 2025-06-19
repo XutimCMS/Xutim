@@ -12,11 +12,20 @@
     {% endif %}
 {% endblock %}
 
+{%
+    set trans = selectedPage.translationByLocaleOrAny(content_context_language())
+%}
+{% block publicLink %}
+    {% if selectedPage %}
+        <twig:Xutim:Admin:PublicPageLink
+            :tagTranslation="tag.translationByLocale(content_context_language())"
+        />
+    {% else %}
+        <twig:Xutim:Admin:PublicPageLink />
+    {% endif %}
+{% endblock %}
 {% block pageMenu %}
     {% if selectedPage %}
-        {%
-            set trans = selectedPage.translationByLocaleOrAny(content_context_language())
-        %}
         {% if trans is not same as(null) %}
             <twig:Xutim:Admin:Button
                 tag="a"
@@ -26,8 +35,6 @@
                 <twig:Xutim:Admin:Icon name="history" class="me-1" />
                 History
             </twig:Xutim:Admin:Button>
-
-            <twig:Xutim:Admin:PublicPageLink :contentTranslation="trans" />
         {% endif %}
         {%
             if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_TRANSLATOR'))
@@ -80,7 +87,6 @@
             </twig:Xutim:Admin:Button>
         {% endif %}
     {% else %}
-        <twig:Xutim:Admin:PublicPageLink />
         {%
             if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
         %}

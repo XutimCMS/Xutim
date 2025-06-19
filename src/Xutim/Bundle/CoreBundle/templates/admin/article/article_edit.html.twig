@@ -14,6 +14,10 @@
     <twig:Xutim:Admin:BreadcrumbsArticle :article="article" />
 {% endblock %}
 
+{% block publicLink %}
+    <twig:Xutim:Admin:PublicPageLink :contentTranslation="translation" />
+{% endblock %}
+
 {% block pageMenu %}
     {% if translation is not same as(null) %}
         <twig:Xutim:Admin:Button
@@ -24,8 +28,6 @@
             <twig:Xutim:Admin:Icon name="history" class="me-1" />
             History
         </twig:Xutim:Admin:Button>
-
-        <twig:Xutim:Admin:PublicPageLink :contentTranslation="translation" />
     {% endif %}
 
     <twig:Xutim:Admin:Button

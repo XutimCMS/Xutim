@@ -71,6 +71,10 @@
     </twig:Xutim:Admin:Sidebar>
 {% endblock %}
 
+{% block publicLink %}
+    <twig:Xutim:Admin:PublicPageLink :contentTranslation="contextTranslation" />
+{% endblock %}
+
 {% block pageMenu %}
     {% if contextTranslation is not same as(null) %}
         <twig:Xutim:Admin:Button
@@ -81,10 +85,6 @@
             <twig:Xutim:Admin:Icon name="history" class="me-1" />
             History
         </twig:Xutim:Admin:Button>
-
-        <twig:Xutim:Admin:PublicPageLink
-            :contentTranslation="contextTranslation"
-        />
     {% endif %}
 
     <twig:Xutim:Admin:Button

@@ -22,11 +22,9 @@
     {% set publicUrl = path('homepage') %}
 {% endif %}
 
-<twig:Xutim:Admin:Button
-    tag="a"
-    variant="nav"
+<a
     href="{{ publicUrl }}"
+    class="btn btn-xs btn-icon"
 >
-    <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
-    {{ 'public page'|trans({}, 'admin')|capitalize }}
-</twig:Xutim:Admin:Button>
+    <twig:ux:icon name="tabler:external-link" class="w-3" />
+</a>
