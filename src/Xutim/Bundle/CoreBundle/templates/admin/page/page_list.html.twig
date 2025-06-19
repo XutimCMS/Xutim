@@ -12,9 +12,12 @@
     {% endif %}
 {% endblock %}
 
-{%
-    set trans = selectedPage.translationByLocaleOrAny(content_context_language())
-%}
+{% if selectedPage %}
+    {%
+        set trans = selectedPage.translationByLocaleOrAny(content_context_language())
+    %}
+{% endif %}
+
 {% block publicLink %}
     {% if selectedPage %}
         <twig:Xutim:Admin:PublicPageLink
