@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 use Xutim\CoreBundle\Service\MenuBuilder;
 
-#[Route('/menu/{id?null}', name: 'admin_menu_list', methods: ['get'])]
+#[Route('/menu/{id?}', name: 'admin_menu_list', methods: ['get'])]
 class ShowMenuAction extends AbstractController
 {
     public function __construct(
