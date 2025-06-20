@@ -29,7 +29,7 @@ final class RedirectToContentTranslationAction
 
         $url = $this->router->generate('content_translation_show', [
             'slug' => $redirect->getTargetContentTranslation()->getSlug(),
-            '_locale' => $redirect->getLocale(),
+            '_locale' => $redirect->getTargetContentTranslation()->getLocale(),
         ]);
 
         return new RedirectResponse($url, $redirect->isPermanent() ? 301 : 302);
