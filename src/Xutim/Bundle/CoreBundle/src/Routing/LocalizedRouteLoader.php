@@ -67,7 +67,7 @@ class LocalizedRouteLoader extends Loader
                     defaults: array_merge(['_controller' => $route->controller], $route->defaults),
                     requirements: array_merge(
                         $route->requirements,
-                        ['_locale' => $availableLocales]
+                        ['_locale' => $trans->getLocale()]
                     ),
                     host: $route->host,
                     options: [
