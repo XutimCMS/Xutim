@@ -1,16 +1,5 @@
 {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
 
-{% macro modalDialogPage(id, status, confirmActionLabel, iconName) %}
-    <twig:Xutim:Admin:ModalDialog
-        class="btn-link text-{{ status.colorClass }} p-0"
-        modalDialogColor="{{ status.colorClass }}"
-        action="{{ path('admin_tag_publication_status_edit', {id: id, status: status.value}) }}"
-        confirmActionLabel="{{ confirmActionLabel }}"
-    >
-        <twig:Xutim:Admin:Icon name="{{ iconName }}" plain="true" />
-    </twig:Xutim:Admin:ModalDialog>
-{% endmacro %}
-
 <div class="mb-3">
     <twig:Xutim:Admin:SidebarSection>
         <twig:Xutim:Admin:SidebarItem id="media-copyright-sidebar-item">
