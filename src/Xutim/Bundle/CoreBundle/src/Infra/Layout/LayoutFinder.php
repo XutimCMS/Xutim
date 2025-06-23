@@ -88,6 +88,8 @@ class LayoutFinder
                     $layoutConfig->name,
                     $imageData,
                     $layoutConfig->config,
+                    $layoutConfig->cacheTtl,
+                    $layoutConfig->default
                 );
             } else {
                 throw new \RuntimeException(sprintf(
@@ -97,7 +99,16 @@ class LayoutFinder
             }
         }
 
-        usort($layouts, fn (Layout $l1, Layout $l2) => strcmp($l1->name, $l2->name));
+        usort($layouts, function (Layout $l1, Layout $l2) {
+            if ($l1->default === true) {
+                return -1;
+            }
+            if ($l2->default === true) {
+                return 1;
+            }
+            
+            return strcmp($l1->name, $l2->name);
+        });
 
         return $layouts;
     }
