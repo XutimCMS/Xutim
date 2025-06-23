@@ -1,7 +1,7 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-    static targets = ['dialog', 'dynamicContent', 'loadingContent'];
+    static targets = ["dialog", "dynamicContent", "loadingContent"];
 
     observer = null;
 
@@ -38,14 +38,12 @@ export default class extends Controller {
 
     open() {
         this.dialogTarget.showModal();
-        // Disable scroll
-        //document.body.classList.add('overflow-hidden');
+        document.body.classList.add("overflow-hidden");
     }
 
     close() {
         this.dialogTarget.close();
-        // Enable scroll
-        //document.body.classList.remove('overflow-hidden');
+        document.body.classList.remove("overflow-hidden");
     }
 
     clickOutside(event) {
