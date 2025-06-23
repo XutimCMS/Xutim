@@ -20,6 +20,7 @@ class BlockItemDto
         public ?SnippetInterface $snippet,
         public ?TagInterface $tag,
         public ?int $position,
+        public ?string $text,
         public ?string $link,
         public ?string $color,
         public ?string $fileDescription,

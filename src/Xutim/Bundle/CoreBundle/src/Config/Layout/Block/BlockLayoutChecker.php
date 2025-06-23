@@ -7,6 +7,8 @@ namespace Xutim\CoreBundle\Config\Layout\Block;
 use Doctrine\Common\Collections\Collection;
 use Xutim\CoreBundle\Config\Layout\Block\Option\BlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\BlockItemOptionCollection;
+use Xutim\CoreBundle\Config\Layout\Block\Option\BlockItemOptionComposed;
+use Xutim\CoreBundle\Config\Layout\Block\Option\BlockItemOptionUnion;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
@@ -30,6 +32,30 @@ class BlockLayoutChecker
 
         /** @var list<BlockItemOption> */
         return $layout->config;
+    }
+
+    /**
+     * Extracts all possible options that can be used for a given block.
+     */
+    public function extractAllowedOptions(BlockInterface $block): BlockOptionCollection
+    {
+        $config = $this->getLayoutConfig($block);
+        $options = [];
+        foreach ($config as $option) {
+            if (
+                $option instanceof BlockItemOptionCollection ||
+                $option instanceof BlockItemOptionComposed ||
+                $option instanceof BlockItemOptionUnion
+            ) {
+                foreach ($option->getDecomposedOptions() as $collectionOption) {
+                    $options[$collectionOption::class] = $collectionOption;
+                }
+                continue;
+            }
+            $options[$option::class] = $option;
+        }
+
+        return new BlockOptionCollection($options);
     }
 
     public function checkLayout(BlockInterface $block): bool

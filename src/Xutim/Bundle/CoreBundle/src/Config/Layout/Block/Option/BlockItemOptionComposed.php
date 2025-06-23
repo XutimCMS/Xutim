@@ -38,4 +38,12 @@ readonly class BlockItemOptionComposed implements BlockItemOption
             implode(', ', $names)
         );
     }
+
+    /**
+     * @return array<BlockItemOption>
+     */
+    public function getDecomposedOptions(): array
+    {
+        return $this->options;
+    }
 }

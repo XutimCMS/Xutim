@@ -13,12 +13,6 @@ parameters:
 			path: src/Entity/Page.php
 
 		-
-			message: '#^Instanceof between Xutim\CoreBundle\\Form\\Admin\\Dto\\ArticleBlockItemDto and Xutim\CoreBundle\\Form\\Admin\\Dto\\ArticleBlockItemDto will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Form/Admin/ArticleBlockItemType.php
-
-		-
 			message: '#^Instanceof between Xutim\CoreBundle\\Entity\\Page and Xutim\CoreBundle\\Entity\\Page will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -49,12 +43,6 @@ parameters:
 			path: src/Form/Admin/MenuItemType.php
 
 		-
-			message: '#^Instanceof between Xutim\CoreBundle\\Form\\Admin\\Dto\\PageBlockItemDto and Xutim\CoreBundle\\Form\\Admin\\Dto\\PageBlockItemDto will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Form/Admin/PageBlockItemType.php
-
-		-
 			message: '#^Instanceof between Xutim\CoreBundle\\Dto\\Admin\\Page\\PageMinimalDto and Xutim\CoreBundle\\Dto\\Admin\\Page\\PageMinimalDto will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -65,12 +53,6 @@ parameters:
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Form/Admin/PageType.php
-
-		-
-			message: '#^Instanceof between Xutim\CoreBundle\\Form\\Admin\\Dto\\SimpleBlockDto and Xutim\CoreBundle\\Form\\Admin\\Dto\\SimpleBlockDto will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Form/Admin/SimpleBlockItemType.php
 
 		-
 			message: '#^Instanceof between Xutim\CoreBundle\\Dto\\SiteDto and Xutim\CoreBundle\\Dto\\SiteDto will always evaluate to true\.$#'

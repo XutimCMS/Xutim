@@ -5,22 +5,16 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\BlockItem;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
+use Xutim\CoreBundle\Config\Layout\Block\BlockLayoutChecker;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Factory\BlockItemFactory;
-use Xutim\CoreBundle\Domain\Model\BlockInterface;
-use Xutim\CoreBundle\Entity\User;
-use Xutim\CoreBundle\Form\Admin\ArticleBlockItemType;
-use Xutim\CoreBundle\Form\Admin\Dto\ArticleBlockItemDto;
-use Xutim\CoreBundle\Form\Admin\Dto\PageBlockItemDto;
-use Xutim\CoreBundle\Form\Admin\Dto\SimpleBlockDto;
-use Xutim\CoreBundle\Form\Admin\PageBlockItemType;
-use Xutim\CoreBundle\Form\Admin\SimpleBlockItemType;
+use Xutim\CoreBundle\Domain\Model\UserInterface;
+use Xutim\CoreBundle\Form\Admin\BlockItemType;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\CoreBundle\Repository\BlockRepository;
 
@@ -31,78 +25,46 @@ class AddBlockItemAction extends AbstractController
         private readonly BlockRepository $blockRepo,
         private readonly TranslatorInterface $translator,
         private readonly BlockContext $blockContext,
-        private readonly BlockItemFactory $blockItemFactory
+        private readonly BlockItemFactory $blockItemFactory,
+        private readonly BlockLayoutChecker $blockLayoutChecker
     ) {
     }
 
-    #[Route('/block/add-article/{id}', name: 'admin_block_add_article')]
-    public function addArticleAction(Request $request, string $id): Response
+    #[Route('/block/add-item/{id}', name: 'admin_block_add_item')]
+    public function addItemAction(Request $request, string $id): Response
     {
         $block = $this->blockRepo->find($id);
         if ($block === null) {
             throw $this->createNotFoundException('The block does not exist');
         }
-        $form = $this->createForm(ArticleBlockItemType::class, null, [
-            'action' => $this->generateUrl('admin_block_add_article', ['id' => $block->getId()])
+
+        $this->denyAccessUnlessGranted(UserInterface::ROLE_EDITOR);
+
+        $form = $this->createForm(BlockItemType::class, null, [
+            'action' => $this->generateUrl('admin_block_add_item', ['id' => $block->getId()]),
+            'block_options' => $this->blockLayoutChecker->extractAllowedOptions($block)
         ]);
 
-        return $this->executeAction($request, $block, $form);
-    }
-
-    #[Route('/block/add-page/{id}', name: 'admin_block_add_page')]
-    public function addPageAction(Request $request, string $id): Response
-    {
-        $block = $this->blockRepo->find($id);
-        if ($block === null) {
-            throw $this->createNotFoundException('The block does not exist');
-        }
-        $form = $this->createForm(PageBlockItemType::class, null, [
-            'action' => $this->generateUrl('admin_block_add_page', ['id' => $block->getId()])
-        ]);
-
-        return $this->executeAction($request, $block, $form);
-    }
-
-    #[Route('/block/add-simple-item/{id}', name: 'admin_block_add_simple_item')]
-    public function addSimpleItemAction(Request $request, string $id): Response
-    {
-        $block = $this->blockRepo->find($id);
-        if ($block === null) {
-            throw $this->createNotFoundException('The block does not exist');
-        }
-        $form = $this->createForm(SimpleBlockItemType::class, null, [
-            'action' => $this->generateUrl('admin_block_add_simple_item', ['id' => $block->getId()])
-        ]);
-
-        return $this->executeAction($request, $block, $form);
-    }
-
-    /**
-     * @param FormInterface<SimpleBlockDto|null>|FormInterface<PageBlockItemDto|null>|FormInterface<ArticleBlockItemDto|null> $form
-     */
-    private function executeAction(Request $request, BlockInterface $block, FormInterface $form): Response
-    {
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             Assert::notNull($data);
-            $dto = $data->toBlockItemDto();
 
             $blockItem = $this->blockItemFactory->create(
                 $block,
-                $dto->page,
-                $dto->article,
-                $dto->file,
-                $dto->snippet,
-                $dto->tag,
-                $dto->position,
-                $dto->link,
-                $dto->color,
-                $dto->fileDescription,
-                $dto->coordinates?->latitude,
-                $dto->coordinates?->longitude,
+                $data->page,
+                $data->article,
+                $data->file,
+                $data->snippet,
+                $data->tag,
+                $data->position,
+                $data->text,
+                $data->link,
+                $data->color,
+                $data->fileDescription,
+                $data->coordinates?->latitude,
+                $data->coordinates?->longitude,
             );
             $this->blockItemRepository->save($blockItem, true);
             $this->blockContext->resetAllLocalesBlockTemplate($block->getCode());

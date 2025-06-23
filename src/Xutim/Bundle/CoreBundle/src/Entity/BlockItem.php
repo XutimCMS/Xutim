@@ -24,9 +24,7 @@ use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
-use Xutim\CoreBundle\Form\Admin\Dto\ArticleBlockItemDto;
-use Xutim\CoreBundle\Form\Admin\Dto\PageBlockItemDto;
-use Xutim\CoreBundle\Form\Admin\Dto\SimpleBlockDto;
+use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
 
 #[MappedSuperclass]
 class BlockItem implements BlockItemInterface
@@ -40,6 +38,9 @@ class BlockItem implements BlockItemInterface
     #[SortablePosition]
     #[Column(type: Types::INTEGER, nullable: false)]
     private int $position;
+
+    #[Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $text;
 
     #[Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $link;
@@ -88,6 +89,7 @@ class BlockItem implements BlockItemInterface
         ?FileInterface $file,
         ?SnippetInterface $snippet = null,
         ?TagInterface $tag = null,
+        ?string $text = null,
         ?string $link = null,
         ?string $colorHex = null,
         ?string $fileDescription = null,
@@ -97,17 +99,20 @@ class BlockItem implements BlockItemInterface
         $this->id = Uuid::v4();
         $this->block = $block;
         $block->addItem($this);
-        $this->page = $page;
-        $this->article = $article;
-        $this->file = $file;
-        $this->snippet = $snippet;
-        $this->tag = $tag;
+        $this->change(
+            $page,
+            $article,
+            $file,
+            $snippet,
+            $tag,
+            $text,
+            $link,
+            $colorHex,
+            $fileDescription,
+            $latitude,
+            $longitude
+        );
         $this->position = -1;
-        $this->link = $link;
-        $this->color = new Color($colorHex);
-        $this->fileDescription = $fileDescription;
-        $this->latitude = $latitude !== null ? (string)$latitude : null;
-        $this->longitude = $latitude !== null ? (string)$longitude : null;
         $this->createdAt = new DateTimeImmutable();
         $this->updatedAt = new DateTimeImmutable();
     }
@@ -118,6 +123,7 @@ class BlockItem implements BlockItemInterface
         ?FileInterface $file,
         ?SnippetInterface $snippet,
         ?TagInterface $tag,
+        ?string $text,
         ?string $link,
         ?string $colorHex,
         ?string $fileDescription,
@@ -129,6 +135,7 @@ class BlockItem implements BlockItemInterface
         $this->file = $file;
         $this->snippet = $snippet;
         $this->tag = $tag;
+        $this->text = $text;
         $this->link = $link;
         $this->color = new Color($colorHex);
         $this->fileDescription = $fileDescription;
@@ -165,6 +172,16 @@ class BlockItem implements BlockItemInterface
         return $this->file;
     }
 
+    public function getText(): ?string
+    {
+        return $this->text;
+    }
+
+    public function hasText(): bool
+    {
+        return $this->text !== null and $this->text !== '';
+    }
+
     public function getLink(): ?string
     {
         return $this->link;
@@ -175,16 +192,18 @@ class BlockItem implements BlockItemInterface
         return $this->link !== null and $this->link !== '';
     }
 
-    public function getColor(): Color
+    public function hasColor(): bool
+    {
+        return $this->color->isSet();
+    }
+
+    public function getColor(): ?Color
     {
         if ($this->color->isSet()) {
             return $this->color;
         }
-        if ($this->hasPage() && $this->page->getColor()->isSet() === true) {
-            return $this->page->getColor();
-        }
 
-        return $this->color;
+        return null;
     }
 
     public function getFileDescription(): ?string
@@ -289,17 +308,21 @@ class BlockItem implements BlockItemInterface
         return new Coordinates((float)$this->latitude, (float)$this->longitude);
     }
 
-    public function getDto(): PageBlockItemDto|ArticleBlockItemDto|SimpleBlockDto
+    public function getDto(): BlockItemDto
     {
-        if ($this->hasPage()) {
-            return new PageBlockItemDto($this->page, $this->file, $this->snippet, $this->tag, $this->position, $this->link, $this->color, $this->fileDescription, $this->getCoordinates());
-        }
-
-        if ($this->hasArticle()) {
-            return new ArticleBlockItemDto($this->article, $this->file, $this->snippet, $this->tag, $this->position, $this->link, $this->color, $this->fileDescription, $this->getCoordinates());
-        }
-
-        return new SimpleBlockDto($this->file, $this->snippet, $this->tag, $this->position, $this->link, $this->color, $this->fileDescription, $this->getCoordinates());
+        return new BlockItemDto(
+            $this->page,
+            $this->article,
+            $this->file,
+            $this->snippet,
+            $this->tag,
+            $this->position,
+            $this->text,
+            $this->link,
+            $this->color->getHex(),
+            $this->fileDescription,
+            $this->getCoordinates()
+        );
     }
 
     public function changeFile(FileInterface $file): void

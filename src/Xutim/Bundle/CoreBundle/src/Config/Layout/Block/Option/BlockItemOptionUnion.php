@@ -41,4 +41,12 @@ readonly class BlockItemOptionUnion implements BlockItemOption
             implode(', ', $names)
         );
     }
+
+    /**
+     * @return array<BlockItemOption>
+     */
+    public function getDecomposedOptions(): array
+    {
+        return $this->options;
+    }
 }

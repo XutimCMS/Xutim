@@ -7,9 +7,7 @@ namespace Xutim\CoreBundle\Domain\Model;
 use Deprecated;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\Color;
-use Xutim\CoreBundle\Form\Admin\Dto\ArticleBlockItemDto;
-use Xutim\CoreBundle\Form\Admin\Dto\PageBlockItemDto;
-use Xutim\CoreBundle\Form\Admin\Dto\SimpleBlockDto;
+use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
 
 interface BlockItemInterface
 {
@@ -19,6 +17,7 @@ interface BlockItemInterface
         ?FileInterface $file,
         ?SnippetInterface $snippet,
         ?TagInterface $tag,
+        ?string $text,
         ?string $link,
         ?string $colorHex,
         ?string $fileDescription,
@@ -34,9 +33,12 @@ interface BlockItemInterface
 
     public function hasFile(): bool;
     public function getFile(): ?FileInterface;
+    public function getText(): ?string;
+    public function hasText(): bool;
     public function getLink(): ?string;
     public function hasLink(): bool;
-    public function getColor(): Color;
+    public function hasColor(): bool;
+    public function getColor(): ?Color;
     public function getFileDescription(): ?string;
     public function getObject(): PageInterface|ArticleInterface|null;
 
@@ -67,7 +69,7 @@ interface BlockItemInterface
 
     public function getCoordinates(): ?Coordinates;
 
-    public function getDto(): PageBlockItemDto|ArticleBlockItemDto|SimpleBlockDto;
+    public function getDto(): BlockItemDto;
 
     public function changeFile(FileInterface $file): void;
 }

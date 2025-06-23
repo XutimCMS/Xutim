@@ -13,16 +13,16 @@ parameters:
 			path: src/Xutim/Bundle/CoreBundle/src/Entity/Page.php
 
 		-
-			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\ArticleBlockItemDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\ArticleBlockItemDto will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/ArticleBlockItemType.php
-
-		-
 			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\CreateArticleFormData and Xutim\\CoreBundle\\Form\\Admin\\Dto\\CreateArticleFormData will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/ArticleType.php
+
+		-
+			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\BlockItemDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\BlockItemDto will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/BlockItemType.php
 
 		-
 			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\BlockDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\BlockDto will always evaluate to true\.$#'
@@ -43,12 +43,6 @@ parameters:
 			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/MenuItemType.php
 
 		-
-			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\PageBlockItemDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\PageBlockItemDto will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/PageBlockItemType.php
-
-		-
 			message: '#^Instanceof between Xutim\\CoreBundle\\Dto\\Admin\\Page\\PageMinimalDto and Xutim\\CoreBundle\\Dto\\Admin\\Page\\PageMinimalDto will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
@@ -59,12 +53,6 @@ parameters:
 			identifier: instanceof.alwaysTrue
 			count: 1
 			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/PageType.php
-
-		-
-			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\SimpleBlockDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\SimpleBlockDto will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/SimpleBlockItemType.php
 
 		-
 			message: '#^Instanceof between Xutim\\CoreBundle\\Dto\\SiteDto and Xutim\\CoreBundle\\Dto\\SiteDto will always evaluate to true\.$#'

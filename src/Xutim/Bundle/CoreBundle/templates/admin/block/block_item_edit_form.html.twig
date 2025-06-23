@@ -3,7 +3,6 @@
 {% set title = 'Edit block item'|trans({}, 'admin') %}
 
 {% block pageTitle %}{{ title }}{% endblock %}
-{% import '@XutimCore/admin/common/forms.html.twig' as forms %}
 
 {% block body %}
     <div class="card">
@@ -11,38 +10,7 @@
             <h3>{{ title }}</h3>
         </div>
         <div class="card-body">
-            {{ form_start(form) }}
-            {% if form.page is defined %}
-                {{
-                    form_row(form.page, {attr: {'data-controller': 'tom-select'}})
-                }}
-            {% endif %}
-            {% if form.article is defined %}
-                {{
-                    form_row(form.article, {attr: {'data-controller': 'tom-select'}})
-                }}
-            {% endif %}
-            {{
-                form_row(form.snippet, {attr: {'data-controller': 'tom-select'}})
-            }}
-            {{ form_row(form.tag, {attr: {'data-controller': 'tom-select'}}) }}
-            {{ form_row(form.file) }}
-            {% include '@XutimCore/admin/form/_file_widget.html.twig' %}
-            {{ form_row(form.fileDescription) }}
-            <div class="mb-3">
-                {{ form_label(form.color) }}
-                {{
-                    forms.colorInput(form.color.vars.full_name, item.color.isSet() ? item.color.hex : '')
-                }}
-                {{ form_help(form.color) }}
-                {{ form_errors(form.color) }}
-            </div>
-            {{ form_row(form.link) }}
-            {{ form_row(form.latitude) }}
-            {{ form_row(form.longitude) }}
-            {{ form_row(form.submit) }}
-            {{ form_row(form._token) }}
-            {{ form_end(form, {render_rest: false}) }}
+            {{ include('@XutimCore/admin/block/_block_form.html.twig') }}
         </div>
     </div>
 {% endblock %}

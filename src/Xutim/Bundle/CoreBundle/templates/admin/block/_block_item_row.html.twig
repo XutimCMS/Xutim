@@ -118,37 +118,14 @@
         {% endif %}
     </td>
     <td class="text-center">
-        {% if item.hasArticle %}
-            <twig:Xutim:Admin:Button
-                tag="a"
-                variant="link"
-                data-turbo-frame="modal"
-                href="{{ path('admin_block_edit_article', {id: item.id}) }}"
-            >
-                <twig:Xutim:Admin:Icon name="edit" />
-            </twig:Xutim:Admin:Button>
-        {% endif %}
-        {% if item.hasPage %}
-            <twig:Xutim:Admin:Button
-                tag="a"
-                variant="link"
-                data-turbo-frame="modal"
-                href="{{ path('admin_block_edit_page', {id: item.id}) }}"
-            >
-                <twig:Xutim:Admin:Icon name="edit" />
-            </twig:Xutim:Admin:Button>
-        {% endif %}
-
-        {% if item.hasPage == false and item.hasArticle == false %}
-            <twig:Xutim:Admin:Button
-                tag="a"
-                variant="link"
-                data-turbo-frame="modal"
-                href="{{ path('admin_block_edit_simple_item', {id: item.id}) }}"
-            >
-                <twig:Xutim:Admin:Icon name="edit" />
-            </twig:Xutim:Admin:Button>
-        {% endif %}
+        <twig:Xutim:Admin:Button
+            tag="a"
+            variant="link"
+            data-turbo-frame="modal"
+            href="{{ path('admin_block_edit_item', {id: item.id}) }}"
+        >
+            <twig:Xutim:Admin:Icon name="edit" />
+        </twig:Xutim:Admin:Button>
 
         <twig:Xutim:Admin:ModalDialog
             class="btn-link text-danger px-0"

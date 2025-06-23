@@ -22,4 +22,18 @@ readonly class BlockItemOptionCollection implements BlockItemOption
     {
         return sprintf('collection (0 or more items) of %ss', $this->option->getName());
     }
+
+    /**
+     * @return array<BlockItemOption>
+    */
+    public function getDecomposedOptions(): array
+    {
+        if ($this->option instanceof BlockItemOptionUnion ||
+            $this->option instanceof BlockItemOptionComposed
+        ) {
+            return $this->option->getDecomposedOptions();
+        }
+
+        return [$this->option];
+    }
 }

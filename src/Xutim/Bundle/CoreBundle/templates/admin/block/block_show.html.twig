@@ -93,27 +93,7 @@
                             tag="a"
                             variant="default"
                             data-turbo-frame="modal"
-                            href="{{ path('admin_block_add_page', {id: block.id}) }}"
-                        >
-                            <twig:Xutim:Admin:Icon name="folder" />
-                            {{ 'in page'|trans({}, 'admin')|capitalize }}
-                        </twig:Xutim:Admin:Button>
-
-                        <twig:Xutim:Admin:Button
-                            tag="a"
-                            variant="default"
-                            data-turbo-frame="modal"
-                            href="{{ path('admin_block_add_article', {id: block.id}) }}"
-                        >
-                            <twig:Xutim:Admin:Icon name="article" />
-                            {{ 'article'|trans({}, 'admin')|capitalize }}
-                        </twig:Xutim:Admin:Button>
-
-                        <twig:Xutim:Admin:Button
-                            tag="a"
-                            variant="default"
-                            data-turbo-frame="modal"
-                            href="{{ path('admin_block_add_simple_item', {id: block.id}) }}"
+                            href="{{ path('admin_block_add_item', {id: block.id}) }}"
                         >
                             <twig:Xutim:Admin:Icon name="plus" />
                             {{ 'item'|trans({}, 'admin')|capitalize }}
