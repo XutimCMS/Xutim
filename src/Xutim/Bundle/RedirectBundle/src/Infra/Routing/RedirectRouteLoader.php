@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Xutim\RedirectBundle\Infra\Routing;
 
 use Symfony\Component\Config\Loader\Loader;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Xutim\RedirectBundle\Action\Admin\RedirectToContentTranslationAction;
@@ -17,7 +16,6 @@ final class RedirectRouteLoader extends Loader
 
     public function __construct(
         private RedirectRepositoryInterface $repo,
-        private UrlGeneratorInterface $router,
         private string $redirectVersionPath,
         ?string $env = null,
     ) {

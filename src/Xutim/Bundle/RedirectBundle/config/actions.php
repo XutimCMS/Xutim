@@ -64,7 +64,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$router', service(UrlGeneratorInterface::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
-        ->arg('$redirectRouteService', service(RedirectRouteService::class))
         ->tag('controller.service_arguments')
     ;
 

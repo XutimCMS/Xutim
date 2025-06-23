@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
@@ -119,6 +120,9 @@ class RedirectType extends AbstractType implements DataMapperInterface
         $permanent = $forms['permanent']->getData();
         /** @var ?string $id */
         $id = $forms['id']->getData();
+        if ($id !== null) {
+            $id = UuidV4::fromRfc4122($id);
+        }
 
         $viewData = new RedirectFormData($source, $targetContentTranslation, $locale, $permanent, $id);
     }

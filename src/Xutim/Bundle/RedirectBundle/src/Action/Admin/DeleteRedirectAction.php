@@ -15,7 +15,6 @@ use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Service\CsrfTokenChecker;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
-use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
 
 class DeleteRedirectAction
 {
@@ -24,8 +23,7 @@ class DeleteRedirectAction
         private readonly RedirectRepositoryInterface $repo,
         private readonly UrlGeneratorInterface $router,
         private readonly AuthorizationCheckerInterface $authChecker,
-        private readonly FlashNotifier $flashNotifier,
-        private readonly RedirectRouteService $redirectRouteService
+        private readonly FlashNotifier $flashNotifier
     ) {
     }
 
