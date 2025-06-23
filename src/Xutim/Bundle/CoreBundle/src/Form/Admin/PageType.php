@@ -63,7 +63,7 @@ class PageType extends AbstractType implements DataMapperInterface
                  'required' => false,
             ])
             ->add('layout', ChoiceType::class, [
-                'required' => false,
+                'required' => true,
                 'choices' => $this->layoutLoader->getPageLayouts(),
                 'choice_label' => fn (?Layout $item) => $item->name ?? '',
                 'choice_value' => fn (?Layout $item) => $item->code ?? '',
