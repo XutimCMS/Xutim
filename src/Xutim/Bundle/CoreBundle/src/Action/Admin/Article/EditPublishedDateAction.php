@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticlePublicationDateUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
@@ -21,7 +22,7 @@ use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Security\UserStorage;
 
-#[Route('/article/edit-publication-date/{id?null}', name: 'admin_article_edit_publication_date', methods: ['get', 'post'])]
+#[Route('/article/edit-publication-date/{id}', name: 'admin_article_edit_publication_date', methods: ['get', 'post'])]
 class EditPublishedDateAction extends AbstractController
 {
     public function __construct(
@@ -31,6 +32,7 @@ class EditPublishedDateAction extends AbstractController
         private readonly LogEventRepository $eventRepository,
         private readonly BlockContext $blockContext,
         private readonly MessageBusInterface $commandBus,
+        private readonly ContentContext $contentContext
     ) {
     }
 
@@ -40,7 +42,7 @@ class EditPublishedDateAction extends AbstractController
         if ($article === null) {
             throw $this->createNotFoundException('The article does not exist');
         }
-        $translation = $article->getTranslationByLocale($request->getLocale());
+        $translation = $article->getTranslationByLocale($this->contentContext->getLanguage());
         if ($translation === null) {
             throw $this->createNotFoundException('The translation of an article does not exist');
         }

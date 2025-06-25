@@ -3,36 +3,22 @@
         {{ 'publish'|trans({}, 'admin')|capitalize }}:
     </twig:block>
     <twig:block name="content">
-        {% if article.publishedAt %}
+        {% if article.publishedAt and article.publishedAt > date('now') %}
             <span
                 title="{{article.publishedAt|date('d/m/Y H:i')}}"
                 data-controller="tooltip"
             >
                 {{ article.publishedAt|time_until }}
             </span>
-        {% else %}
-            Not scheduled
-        {% endif %}
-        {%
-            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
-        %}
-            <twig:Xutim:Admin:Button
-                tag="a"
-                variant="link"
-                class="p-0"
-                data-turbo-frame="modal"
-                href="{{ path('admin_article_edit_publication_date', {id: article.id}) }}"
+        {% elseif article.publishedAt %}
+            <span
+                title="{{article.publishedAt|date('d/m/Y H:i')}}"
+                data-controller="tooltip"
             >
-                <twig:Xutim:Admin:Icon name="edit" />
-            </twig:Xutim:Admin:Button>
+                {{ article.publishedAt|time_ago }}
+            </span>
+        {% else %}
+            {{ 'Not yet published'|trans({}, 'admin') }}
         {% endif %}
-    </twig:block>
-</twig:Xutim:Admin:SidebarItem>
-<twig:Xutim:Admin:SidebarItem id="published-at-sidebar-item">
-    <twig:block name="header"> </twig:block>
-    <twig:block name="content">
-        <p class="text-sm text-muted mb-0">
-            Applies to all translations that are published.
-        </p>
     </twig:block>
 </twig:Xutim:Admin:SidebarItem>
