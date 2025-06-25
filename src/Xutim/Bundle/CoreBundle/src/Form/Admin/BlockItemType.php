@@ -269,8 +269,8 @@ class BlockItemType extends AbstractType implements DataMapperInterface
             $snippet ?? null,
             $tag ?? null,
             null,
-            $link ?? null,
             $text ?? null,
+            $link ?? null,
             $color ?? null,
             $description ?? null,
             $coords ?? null
