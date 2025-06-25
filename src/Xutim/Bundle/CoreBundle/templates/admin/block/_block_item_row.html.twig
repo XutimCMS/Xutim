@@ -99,6 +99,11 @@
         {% endif %}
     </td>
     <td>
+        {% if item.text %}
+            {{ item.text }}
+        {% endif %}
+    </td>
+    <td>
         {% if item.link %}
             <a href="{{ item.link }}">{{ item.link }}</a>
         {% endif %}
