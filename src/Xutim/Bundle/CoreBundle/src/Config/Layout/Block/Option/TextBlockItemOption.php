@@ -15,6 +15,6 @@ readonly class TextBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'tag item';
+        return 'text item';
     }
 }
