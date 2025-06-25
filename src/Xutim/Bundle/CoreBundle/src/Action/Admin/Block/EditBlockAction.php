@@ -53,7 +53,7 @@ final class EditBlockAction extends AbstractController
                 $this->userStorage->getUserWithException()->getUserIdentifier()
             ));
 
-            return $this->redirectToRoute('admin_block_list', ['searchTerm' => '']);
+            return $this->redirectToRoute('admin_block_show', ['id' => $id]);
         }
 
         return $this->render('@XutimCore/admin/block/block_form.html.twig', [
