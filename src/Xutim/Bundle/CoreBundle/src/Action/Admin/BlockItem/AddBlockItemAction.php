@@ -58,7 +58,6 @@ class AddBlockItemAction extends AbstractController
                 $data->file,
                 $data->snippet,
                 $data->tag,
-                $data->position,
                 $data->text,
                 $data->link,
                 $data->color,
