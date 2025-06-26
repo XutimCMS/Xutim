@@ -50,7 +50,7 @@ readonly class ChangeStatusHandler implements CommandHandlerInterface
             $article = $trans->getArticle();
             if ($cmd->status->isPublished()) {
                 $article->setPublishedAt(new DateTimeImmutable());
-                $trans->setPublishedAt(new DateTimeImmutable());
+                $trans->changePublishedAt(new DateTimeImmutable());
             }
         }
         $this->entityManager->flush();
