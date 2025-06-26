@@ -56,7 +56,6 @@ class EditPublishedDateAction extends AbstractController
             /** @var array{publishedAt: \DateTimeImmutable} $data */
             $data = $form->getData();
 
-
             $article->setPublishedAt($data['publishedAt']);
             $this->repo->save($article, true);
 

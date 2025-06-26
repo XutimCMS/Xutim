@@ -73,4 +73,6 @@ interface ContentTranslationInterface
     public function getCreatedAt(): DateTimeImmutable;
 
     public function getUpdatedAt(): DateTimeImmutable;
+
+    public function setPublishedAt(?DateTimeImmutable $date): void;
 }

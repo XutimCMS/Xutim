@@ -51,4 +51,9 @@ trait PublicationStatusTrait
     {
         $this->publishedAt = $publishedAt;
     }
+
+    public function setPublishedAt(?DateTimeImmutable $date): void
+    {
+        $this->setPublishedAt($date);
+    }
 }

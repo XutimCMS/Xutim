@@ -17,6 +17,13 @@
             >
                 {{ article.publishedAt|time_ago }}
             </span>
+        {% elseif translation.publishedAt %}
+            <span
+                title="{{translation.publishedAt|date('d/m/Y H:i')}}"
+                data-controller="tooltip"
+            >
+                {{ translation.publishedAt|time_ago }}
+            </span>
         {% else %}
             {{ 'Not yet published'|trans({}, 'admin') }}
         {% endif %}

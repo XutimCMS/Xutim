@@ -50,9 +50,7 @@ readonly class ChangeStatusHandler implements CommandHandlerInterface
             $article = $trans->getArticle();
             if ($cmd->status->isPublished()) {
                 $article->setPublishedAt(new DateTimeImmutable());
-            }
-            if ($cmd->status->isScheduled() === false) {
-                $article->setPublishedAt(null);
+                $trans->setPublishedAt(new DateTimeImmutable());
             }
         }
         $this->entityManager->flush();
