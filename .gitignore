@@ -3,3 +3,4 @@ vendor/
 .phpunit.result.cache
 dprint.json
 composer.lock
+.prettierrc
