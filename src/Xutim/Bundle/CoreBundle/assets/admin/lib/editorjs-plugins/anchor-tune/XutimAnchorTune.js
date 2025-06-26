@@ -86,10 +86,10 @@ export default class XutimAnchorTune {
             .then((snippets) => {
                 snippets.forEach((snippet) => {
                     const option = document.createElement('option');
-                    option.value = snippet.id;
+                    option.value = snippet.code;
                     option.textContent = snippet.code;
 
-                    if (snippet.id === this.anchor) {
+                    if (snippet.code === this.anchor) {
                         option.selected = true;
                     }
 
