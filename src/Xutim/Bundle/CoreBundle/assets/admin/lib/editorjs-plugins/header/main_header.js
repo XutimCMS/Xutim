@@ -39,6 +39,7 @@ export default class MainHeader {
         const label = document.createElement('label');
         label.textContent = $name;
         label.htmlFor = $id;
+        label.classList.add('z-0');
 
         return label;
     }

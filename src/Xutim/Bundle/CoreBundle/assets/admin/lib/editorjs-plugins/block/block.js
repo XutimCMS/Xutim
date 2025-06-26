@@ -25,6 +25,7 @@ export default class Block {
         const label = document.createElement('label');
         label.textContent = 'Select a block';
         label.htmlFor = 'codeSelect';
+        label.classList.add('z-0');
 
         // Populate the select element with options from config
         this.config.codes.forEach((code) => {
