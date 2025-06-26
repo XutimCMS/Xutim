@@ -57,6 +57,20 @@ class SnippetRepository extends ServiceEntityRepository
         return $builder;
     }
 
+    /**
+     * @return array<int, SnippetInterface>
+     */
+    public function findByType(string $type): array
+    {
+        /** @var array<int, SnippetInterface> */
+        return $this->createQueryBuilder('snippet')
+            ->where('snippet.code LIKE :code')
+            ->setParameter('code', $type . '%')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     public function findByCode(string $code): SnippetInterface
     {
         /** @var SnippetInterface */

@@ -14,6 +14,7 @@ import XutimImageTool from '../lib/editorjs-plugins/image/XutimImageTool.js';
 import XutimFileTool from '../lib/editorjs-plugins/file/XutimFileTool.js';
 import AlignmentBlockTune from '../lib/editorjs-plugins/alignment-tune/AlignmentBlockTune.js';
 import XutimTagListTool from '../lib/editorjs-plugins/tag-list/XutimTagListTool.js';
+import XutimAnchorTune from '../lib/editorjs-plugins/anchor-tune/XutimAnchorTune.js';
 //import createInternalLink from '../lib/editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
 
 export default class extends Controller {
@@ -26,6 +27,7 @@ export default class extends Controller {
         fetchImagesUrl: String,
         fetchFilesUrl: String,
         fetchFileUrl: String,
+        fetchAnchorSnippetsUrl: String,
         disableEditing: Boolean,
     };
 
@@ -47,6 +49,12 @@ export default class extends Controller {
                 alignment: {
                     class: AlignmentBlockTune,
                 },
+                xutimAnchor: {
+                    class: XutimAnchorTune,
+                    config: {
+                        snippetListUrl: this.fetchAnchorSnippetsUrlValue,
+                    },
+                },
                 // xutimInternalLink: {
                 //     class: createInternalLink('Page link', pageLinkIcon),
                 //     config: {
@@ -57,7 +65,7 @@ export default class extends Controller {
                 // },
                 paragraph: {
                     class: Paragraph,
-                    tunes: ['alignment'],
+                    tunes: ['xutimAnchor', 'alignment'],
                 },
                 header: {
                     class: Header,
@@ -66,7 +74,7 @@ export default class extends Controller {
                         levels: [2, 3, 4],
                         defaultLevel: 2,
                     },
-                    tunes: ['alignment'],
+                    tunes: ['xutimAnchor', 'alignment'],
                 },
                 mainHeader: {
                     class: MainHeader,
@@ -76,6 +84,7 @@ export default class extends Controller {
                         levels: [1, 2, 3],
                         defaultLevel: 2,
                     },
+                    tunes: ['xutimAnchor'],
                 },
                 quote: {
                     class: Quote,
@@ -84,6 +93,7 @@ export default class extends Controller {
                         quotePlaceholder: 'Enter a quote',
                         captionPlaceholder: "Quote's author",
                     },
+                    tunes: ['xutimAnchor'],
                 },
                 list: {
                     class: List,
@@ -91,9 +101,11 @@ export default class extends Controller {
                     config: {
                         defaultStyle: 'unordered',
                     },
+                    tunes: ['xutimAnchor'],
                 },
                 delimiter: {
                     class: Delimiter,
+                    tunes: ['xutimAnchor'],
                 },
                 embed: {
                     class: Embed,
@@ -106,6 +118,7 @@ export default class extends Controller {
                             twitter: true,
                         },
                     },
+                    tunes: ['xutimAnchor'],
                 },
                 xutimFile: {
                     class: XutimFileTool,
@@ -113,13 +126,14 @@ export default class extends Controller {
                         fetchFilesUrl: this.fetchFilesUrlValue,
                         fetchFileUrl: this.fetchFileUrlValue,
                     },
+                    tunes: ['xutimAnchor'],
                 },
                 xutimImage: {
                     class: XutimImageTool,
                     config: {
                         galleryUrl: this.fetchImagesUrlValue,
                     },
-                    tunes: ['alignment'],
+                    tunes: ['xutimAnchor', 'alignment'],
                 },
                 imageRow: {
                     class: ImageRowTool,
@@ -128,6 +142,7 @@ export default class extends Controller {
                         allowedImagesPerRow: [2, 3, 4, 5],
                         defaultImagesPerRow: 3,
                     },
+                    tunes: ['xutimAnchor'],
                 },
                 pageLink: {
                     class: createContentLink('Page link', pageLinkIcon),
@@ -135,6 +150,7 @@ export default class extends Controller {
                         listUrl: this.pageIdsUrlValue,
                         title: 'Select a page',
                     },
+                    tunes: ['xutimAnchor'],
                 },
                 articleLink: {
                     class: createContentLink('Article link', articleLinkIcon),
@@ -142,18 +158,21 @@ export default class extends Controller {
                         listUrl: this.articleIdsUrlValue,
                         title: 'Select an article',
                     },
+                    tunes: ['xutimAnchor'],
                 },
                 block: {
                     class: Block,
                     config: {
                         codes: this.blockCodesValue,
                     },
+                    tunes: ['xutimAnchor'],
                 },
                 xutimTag: {
                     class: XutimTagListTool,
                     config: {
                         tags: this.tagsValue,
                     },
+                    tunes: ['xutimAnchor'],
                 },
             },
             data: JSON.parse(this.contentInputTarget.value),
