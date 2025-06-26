@@ -71,6 +71,7 @@ class MenuItem implements MenuItemInterface
         $this->change($hasLink, $page, $article, $overwritePage, $snippetAnchor);
         $this->parent = $parent;
         $this->children = new ArrayCollection();
+        $this->position = -1;
     }
 
     public function change(
