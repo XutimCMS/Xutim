@@ -79,6 +79,12 @@ parameters:
 			path: src/Xutim/Bundle/CoreBundle/src/Infra/Doctrine/Type/AbstractEnumType.php
 
 		-
+			message: '#^Offset ''caption'' might not exist on array\{text\: string, caption\: string\}\|array\{text\: string, level\?\: int\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Xutim/Bundle/CoreBundle/src/Service/SearchContentBuilder.php
+
+		-
 			message: '#^Instanceof between Xutim\\EventBundle\\Form\\Admin\\EventTranslationDto and Xutim\\EventBundle\\Form\\Admin\\EventTranslationDto will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
