@@ -15,7 +15,8 @@ import XutimFileTool from '../lib/editorjs-plugins/file/XutimFileTool.js';
 import AlignmentBlockTune from '../lib/editorjs-plugins/alignment-tune/AlignmentBlockTune.js';
 import XutimTagListTool from '../lib/editorjs-plugins/tag-list/XutimTagListTool.js';
 import XutimAnchorTune from '../lib/editorjs-plugins/anchor-tune/XutimAnchorTune.js';
-//import createInternalLink from '../lib/editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
+import createInternalLink from '../lib/editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
+import { decorateInternalLinks } from '../lib/editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
 
 export default class extends Controller {
     static targets = ['editorHolder', 'contentInput'];
@@ -24,6 +25,7 @@ export default class extends Controller {
         tags: Array,
         pageIdsUrl: String,
         articleIdsUrl: String,
+        tagIdsUrl: String,
         fetchImagesUrl: String,
         fetchFilesUrl: String,
         fetchFileUrl: String,
@@ -42,6 +44,9 @@ export default class extends Controller {
         const articleLinkIcon =
             '<span><svg xmlns="http://www.w3.org/2000/svg"  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="none"  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-news"><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11" /><path d="M8 8l4 0" /><path d="M8 12l4 0" /><path d="M8 16l4 0" /></svg></span>';
 
+        const tagLinkIcon =
+            '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-tag"><path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z" /></svg>';
+
         this.#editor = new EditorJS({
             holder: this.editorHolderTarget,
             placeholder: 'Start writing or type / to choose a block',
@@ -55,14 +60,33 @@ export default class extends Controller {
                         snippetListUrl: this.fetchAnchorSnippetsUrlValue,
                     },
                 },
-                // xutimInternalLink: {
-                //     class: createInternalLink('Page link', pageLinkIcon),
-                //     config: {
-                //         listUrl: this.pageIdsUrlValue,
-                //         title: 'Select a page',
-                //     },
-                //     shortcut: 'CMD+SHIFT+K',
-                // },
+                xutimInternalPageLink: {
+                    class: createInternalLink('Page link', pageLinkIcon),
+                    config: {
+                        listUrl: this.pageIdsUrlValue,
+                        title: 'Select a page',
+                        type: 'page',
+                    },
+                    shortcut: 'CMD+SHIFT+K',
+                },
+                xutimInternalArticleLink: {
+                    class: createInternalLink('Article link', articleLinkIcon),
+                    config: {
+                        listUrl: this.articleIdsUrlValue,
+                        title: 'Select a article',
+                        type: 'article',
+                    },
+                    shortcut: 'CMD+SHIFT+L',
+                },
+                xutimInternalTagLink: {
+                    class: createInternalLink('Tag link', tagLinkIcon),
+                    config: {
+                        listUrl: this.tagIdsUrlValue,
+                        title: 'Select a tag',
+                        type: 'tag',
+                    },
+                    shortcut: 'CMD+SHIFT+J',
+                },
                 paragraph: {
                     class: Paragraph,
                     tunes: ['xutimAnchor', 'alignment'],
@@ -176,6 +200,9 @@ export default class extends Controller {
                 },
             },
             data: JSON.parse(this.contentInputTarget.value),
+            onReady: () => {
+                decorateInternalLinks(this.editorHolderTarget);
+            },
         });
     }
 
@@ -187,7 +214,7 @@ export default class extends Controller {
                 this.element.submit();
             })
             .catch((error) => {
-                console.log('Saving failed: ', error);
+                console.warn('Saving failed: ', error);
             });
     }
 }

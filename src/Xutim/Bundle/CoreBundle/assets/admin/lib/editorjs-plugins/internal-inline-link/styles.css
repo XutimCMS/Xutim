@@ -1,0 +1,33 @@
+.cdx-internal-link {
+    color: #0d6efd;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.ce-popover:has(.cdx-internal-link-select) {
+    --width: auto !important;
+}
+
+.cdx-internal-link-select {
+    padding: 6px 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 14px;
+    line-height: 1.4;
+    outline: none;
+    box-shadow: none;
+    color: #2e2e2e;
+    cursor: pointer;
+    width: auto;
+    max-width: 100%;
+    appearance: none;
+}
+
+.cdx-internal-link-select:focus {
+    border-color: #388ae5;
+    box-shadow: 0 0 0 1px #388ae5;
+}
+
+.cdx-internal-link-select:hover {
+    border-color: #ccc;
+}
