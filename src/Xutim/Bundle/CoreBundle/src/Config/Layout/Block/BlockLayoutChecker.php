@@ -35,6 +35,28 @@ class BlockLayoutChecker
     }
 
     /**
+     * @return array<class-string, BlockItemOption>
+     */
+    private function extractOptionsFromStructures(
+        BlockItemOptionCollection|BlockItemOptionComposed|BlockItemOptionUnion $option
+    ): array {
+        $options = [];
+        foreach ($option->getDecomposedOptions() as $collectionOption) {
+            if (
+                $collectionOption instanceof BlockItemOptionCollection ||
+                $collectionOption instanceof BlockItemOptionComposed ||
+                $collectionOption instanceof BlockItemOptionUnion
+            ) {
+                $options = array_merge($options, $this->extractOptionsFromStructures($collectionOption));
+                continue;
+            }
+            $options[$collectionOption::class] = $collectionOption;
+        }
+
+        return $options;
+    }
+
+    /**
      * Extracts all possible options that can be used for a given block.
      */
     public function extractAllowedOptions(BlockInterface $block): BlockOptionCollection
@@ -47,9 +69,7 @@ class BlockLayoutChecker
                 $option instanceof BlockItemOptionComposed ||
                 $option instanceof BlockItemOptionUnion
             ) {
-                foreach ($option->getDecomposedOptions() as $collectionOption) {
-                    $options[$collectionOption::class] = $collectionOption;
-                }
+                $options = array_merge($options, $this->extractOptionsFromStructures($option));
                 continue;
             }
             $options[$option::class] = $option;
