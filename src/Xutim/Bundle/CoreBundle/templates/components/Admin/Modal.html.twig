@@ -1,14 +1,14 @@
 <div {{
         attributes.defaults({
         'data-controller': 'modal',
-        'data-action': 'turbo:before-cache@window->modal#close'
+        'data-action': 'turbo:before-cache@window->modal#close '
         })
     }}>
     <dialog
         data-modal-target="dialog"
         id="pulse-dialog"
         class="shadow-lg dialog-md overflow-y-auto"
-        data-action="close->modal#close click->modal#clickOutside"
+        data-action="close->modal#close mousedown->modal#mouseDown mouseup->modal#mouseUp"
     >
         {% block content %}{% endblock %}
     </dialog>
