@@ -16,7 +16,7 @@ use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\CoreBundle\Form\Admin\MenuItemType;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 
-#[Route('/menu/new-item/{id?null}', name: 'admin_menu_item_new', methods: ['get', 'post'])]
+#[Route('/menu/new-item/{id?}', name: 'admin_menu_item_new', methods: ['get', 'post'])]
 class CreateMenuItemAction extends AbstractController
 {
     public function __construct(
