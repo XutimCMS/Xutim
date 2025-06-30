@@ -7,6 +7,7 @@ namespace Xutim\CoreBundle\Service;
 use Symfony\Component\Routing\RouterInterface;
 use Xutim\CoreBundle\Domain\Model\MenuItemInterface;
 use Xutim\CoreBundle\Domain\Model\SnippetInterface;
+use Xutim\CoreBundle\Domain\Model\TagTranslationInterface;
 use Xutim\CoreBundle\Entity\MenuItem;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 
@@ -149,7 +150,7 @@ final readonly class MenuBuilder
                 }
 
                 $translations[$trans->getLocale()] = [
-                    'name' => $trans->getTitle(),
+                    'name' => $trans instanceof TagTranslationInterface ? $trans->getName() : $trans->getTitle(),
                     'route' => $link,
                     'hasLink' => $item->hasLink()
                 ];

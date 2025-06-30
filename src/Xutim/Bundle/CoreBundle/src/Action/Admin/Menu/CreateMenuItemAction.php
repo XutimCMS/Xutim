@@ -50,7 +50,7 @@ class CreateMenuItemAction extends AbstractController
             /** @var MenuItemDto $data */
             $data = $form->getData();
 
-            $item = $this->menuItemFactory->create($parentItem, $data->hasLink, $data->page, $data->article, $data->overwritePage, $data->snippetAnchor);
+            $item = $this->menuItemFactory->create($parentItem, $data->hasLink, $data->page, $data->article, $data->tag, $data->overwritePage, $data->snippetAnchor);
             $this->repo->save($item, true);
             $this->siteContext->resetMenu();
 

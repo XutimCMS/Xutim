@@ -47,6 +47,7 @@ class EditMenuItemAction extends AbstractController
                 $data->hasLink,
                 $data->page,
                 $data->article,
+                $data->tag,
                 $data->overwritePage,
                 $data->snippetAnchor
             );

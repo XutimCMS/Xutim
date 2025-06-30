@@ -12,6 +12,7 @@ use Xutim\CoreBundle\Form\Admin\MenuItemType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\SnippetRepository;
+use Xutim\CoreBundle\Repository\TagRepository;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -24,10 +25,12 @@ return static function (ContainerConfigurator $container): void {
     $services->set(MenuItemType::class)
         ->arg('$pageRepository', service(PageRepository::class))
         ->arg('$articleRepository', service(ArticleRepository::class))
+        ->arg('$tagRepository', service(TagRepository::class))
         ->arg('$snippetRepository', service(SnippetRepository::class))
         ->arg('$contentContext', service(ContentContext::class))
         ->arg('$articleClass', '%xutim_core.model.article.class%')
         ->arg('$snippetClass', '%xutim_core.model.snippet.class%')
+        ->arg('$tagClass', '%xutim_core.model.tag.class%')
         ->tag('form.type');
 
     $services->set(BlockItemType::class)

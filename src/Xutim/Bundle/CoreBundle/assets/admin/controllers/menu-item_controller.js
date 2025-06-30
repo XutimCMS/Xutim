@@ -6,6 +6,7 @@ export default class extends Controller {
         'pageToggle',
         'articleForm',
         'pageForm',
+        'tagForm',
         'overwriteCheckbox',
         'pageOverwriteLinkForm',
         'submitButton',
@@ -18,9 +19,13 @@ export default class extends Controller {
     connect() {
         if (this.isUpdateValue) {
             if (
-                !this.articleFormTarget.getElementsByTagName('select')[0].value
+                this.articleFormTarget.getElementsByTagName('select')[0].value
             ) {
-                this.#hideArticleForm();
+                this.#showArticleForm();
+                this.#hidePageForm();
+                this.#hideTagForm();
+            }
+            if (this.pageFormTarget.getElementsByTagName('select')[0].value) {
                 if (
                     this.pageOverwriteLinkFormTarget.getElementsByTagName(
                         'select',
@@ -30,14 +35,20 @@ export default class extends Controller {
                 } else {
                     this.#hidePageOverwriteLink();
                 }
+                this.#showPageForm();
+                this.#hideArticleForm();
+                this.#hideTagForm();
             }
-            if (!this.pageFormTarget.getElementsByTagName('select')[0].value) {
+            if (this.tagFormTarget.getElementsByTagName('select')[0].value) {
+                this.#showTagForm();
                 this.#hidePageForm();
+                this.#hideArticleForm();
             }
         } else {
             this.#hidePageForm();
             this.#hidePageOverwriteLink();
             this.#hideArticleForm();
+            this.#hideTagForm();
             this.submitButtonTarget.hidden = true;
         }
     }
@@ -45,12 +56,21 @@ export default class extends Controller {
     showArticle() {
         this.#hidePageForm();
         this.#showArticleForm();
+        this.#hideTagForm();
         this.#showSubmitButton();
     }
 
     showPage() {
         this.#showPageForm();
         this.#hideArticleForm();
+        this.#hideTagForm();
+        this.#showSubmitButton();
+    }
+
+    showTag() {
+        this.#showTagForm();
+        this.#hideArticleForm();
+        this.#hidePageForm();
         this.#showSubmitButton();
     }
 
@@ -80,12 +100,20 @@ export default class extends Controller {
         this.articleFormTarget.hidden = true;
     }
 
+    #hideTagForm() {
+        this.tagFormTarget.hidden = true;
+    }
+
     #showArticleForm() {
         this.articleFormTarget.hidden = false;
     }
 
     #showPageForm() {
         this.pageFormTarget.hidden = false;
+    }
+
+    #showTagForm() {
+        this.tagFormTarget.hidden = false;
     }
 
     #showSubmitButton() {

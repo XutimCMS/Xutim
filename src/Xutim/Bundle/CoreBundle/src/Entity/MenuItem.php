@@ -22,6 +22,8 @@ use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\MenuItemInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\SnippetInterface;
+use Xutim\CoreBundle\Domain\Model\TagInterface;
+use Xutim\CoreBundle\Domain\Model\TagTranslationInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 
 #[MappedSuperclass]
@@ -40,6 +42,9 @@ class MenuItem implements MenuItemInterface
 
     #[ManyToOne]
     private ?PageInterface $page;
+
+    #[ManyToOne]
+    private ?TagInterface $tag;
 
     #[ManyToOne]
     private ?PageInterface $overwritePage;
@@ -64,11 +69,12 @@ class MenuItem implements MenuItemInterface
         bool $hasLink,
         ?PageInterface $page,
         ?ArticleInterface $article,
+        ?TagInterface $tag,
         ?PageInterface $overwritePage,
         ?SnippetInterface $snippetAnchor
     ) {
         $this->id = Uuid::v4();
-        $this->change($hasLink, $page, $article, $overwritePage, $snippetAnchor);
+        $this->change($hasLink, $page, $article, $tag, $overwritePage, $snippetAnchor);
         $this->parent = $parent;
         $this->children = new ArrayCollection();
         $this->position = -1;
@@ -78,12 +84,14 @@ class MenuItem implements MenuItemInterface
         bool $hasLink,
         ?PageInterface $page,
         ?ArticleInterface $article,
+        ?TagInterface $tag,
         ?PageInterface $overwritePage,
         ?SnippetInterface $snippetAnchor
     ): void {
         $this->hasLink = $hasLink;
         $this->page = $page;
         $this->article = $article;
+        $this->tag = $tag;
         $this->overwritePage = $overwritePage;
         $this->snippetAnchor = $snippetAnchor;
     }
@@ -108,7 +116,7 @@ class MenuItem implements MenuItemInterface
         return $this->page;
     }
 
-    public function getObject(): PageInterface|ArticleInterface
+    public function getObject(): PageInterface|ArticleInterface|TagInterface
     {
         if ($this->page === null) {
             Assert::notNull($this->article);
@@ -119,13 +127,17 @@ class MenuItem implements MenuItemInterface
         return $this->page;
     }
 
-    public function getObjectTranslation(?string $locale): ContentTranslationInterface
+    public function getObjectTranslation(?string $locale): ContentTranslationInterface|TagTranslationInterface
     {
-        if ($this->page === null) {
+        if ($this->hasPage()) {
+            return $this->getPageTranslation($locale);
+        }
+
+        if ($this->hasArticle()) {
             return $this->getArticleTranslation($locale);
         }
 
-        return $this->getPageTranslation($locale);
+        return $this->getTagTranslation($locale);
     }
 
     public function getPageTranslation(?string $locale): ContentTranslationInterface
@@ -151,6 +163,23 @@ class MenuItem implements MenuItemInterface
     public function getArticle(): ?ArticleInterface
     {
         return $this->article;
+    }
+
+    public function getTagTranslation(?string $locale): TagTranslationInterface
+    {
+        Assert::notNull($this->tag);
+
+        if ($locale === null) {
+            $trans = $this->tag->getTranslations()->first();
+            Assert::notFalse($trans);
+            return $trans;
+        }
+        return $this->tag->getTranslationByLocaleOrAny($locale);
+    }
+
+    public function getTag(): ?TagInterface
+    {
+        return $this->tag;
     }
 
     public function getPosition(): int
@@ -181,6 +210,11 @@ class MenuItem implements MenuItemInterface
     public function hasPage(): bool
     {
         return $this->page !== null;
+    }
+
+    public function hasTag(): bool
+    {
+        return $this->tag !== null;
     }
 
     /**
@@ -217,6 +251,7 @@ class MenuItem implements MenuItemInterface
             $this->hasLink,
             $this->page,
             $this->article,
+            $this->tag,
             $this->overwritePage,
             $this->snippetAnchor
         );

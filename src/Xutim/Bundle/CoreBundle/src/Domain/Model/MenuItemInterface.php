@@ -13,6 +13,7 @@ interface MenuItemInterface
         bool $hasLink,
         ?PageInterface $page,
         ?ArticleInterface $article,
+        ?TagInterface $tag,
         ?PageInterface $overwritePage,
         ?SnippetInterface $snippetAnchor
     ): void;
@@ -25,15 +26,19 @@ interface MenuItemInterface
 
     public function getPage(): ?PageInterface;
 
-    public function getObject(): PageInterface|ArticleInterface;
+    public function getObject(): PageInterface|ArticleInterface|TagInterface;
 
-    public function getObjectTranslation(?string $locale): ContentTranslationInterface;
+    public function getObjectTranslation(?string $locale): ContentTranslationInterface|TagTranslationInterface;
 
     public function getPageTranslation(?string $locale): ContentTranslationInterface;
 
     public function getArticleTranslation(?string $locale): ContentTranslationInterface;
 
     public function getArticle(): ?ArticleInterface;
+
+    public function getTag(): ?TagInterface;
+
+    public function getTagTranslation(?string $locale): TagTranslationInterface;
 
     public function getPosition(): int;
 
@@ -44,6 +49,8 @@ interface MenuItemInterface
     public function hasArticle(): bool;
 
     public function hasPage(): bool;
+
+    public function hasTag(): bool;
 
     public function ovewritesPage(): bool;
 

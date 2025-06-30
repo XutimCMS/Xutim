@@ -16,10 +16,12 @@ use Traversable;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Entity\Article;
+use Xutim\CoreBundle\Entity\Tag;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\SnippetRepository;
+use Xutim\CoreBundle\Repository\TagRepository;
 
 /**
  * @template-extends AbstractType<MenuItemDto>
@@ -31,9 +33,11 @@ class MenuItemType extends AbstractType implements DataMapperInterface
         private readonly PageRepository $pageRepository,
         private readonly ArticleRepository $articleRepository,
         private readonly SnippetRepository $snippetRepository,
+        private readonly TagRepository $tagRepository,
         private readonly ContentContext $contentContext,
         private readonly string $articleClass,
         private readonly string $snippetClass,
+        private readonly string $tagClass,
     ) {
     }
 
@@ -54,6 +58,16 @@ class MenuItemType extends AbstractType implements DataMapperInterface
                 'choice_label' => fn (Article $article): string =>
                 $article->getTranslationByLocaleOrDefault($locale)->getTitle(),
                 'label' => new TranslatableMessage('Article', [], 'admin'),
+                'required' => false,
+                'attr' => [
+                    'data-controller' => 'tom-select'
+                ]
+            ])
+            ->add('tag', EntityType::class, [
+                'class' => $this->tagClass,
+                'choice_label' => fn (Tag $tag): string =>
+                $tag->getTranslationByLocaleOrAny($locale)->getName(),
+                'label' => new TranslatableMessage('Tag', [], 'admin'),
                 'required' => false,
                 'attr' => [
                     'data-controller' => 'tom-select'
@@ -98,6 +112,7 @@ class MenuItemType extends AbstractType implements DataMapperInterface
         $forms['hasLink']->setData($viewData->hasLink);
         $forms['page']->setData($viewData->page?->getId()->toRfc4122());
         $forms['article']->setData($viewData->article);
+        $forms['tag']->setData($viewData->tag);
         $forms['pageLink']->setData($viewData->overwritePage?->getId()->toRfc4122());
         $forms['anchorSnippet']->setData($viewData->snippetAnchor);
     }
@@ -114,6 +129,10 @@ class MenuItemType extends AbstractType implements DataMapperInterface
         $articleId = $forms['article']->getData();
         $article = $articleId !== null ? $this->articleRepository->find($articleId) : null;
 
+        /** @var ?string $tagId */
+        $tagId = $forms['tag']->getData();
+        $tag = $tagId !== null ? $this->tagRepository->find($tagId) : null;
+
         /** @var ?string $overwritePageId */
         $overwritePageId = $forms['pageLink']->getData();
         $overwritePage = $overwritePageId !== null ? $this->pageRepository->find($overwritePageId) : null;
@@ -127,6 +146,6 @@ class MenuItemType extends AbstractType implements DataMapperInterface
         // @var bool $hasLink
         /* $hasLink = $forms['hasLink']->getData(); */
 
-        $viewData = new MenuItemDto(true, $page, $article, $overwritePage, $anchorSnippet);
+        $viewData = new MenuItemDto(true, $page, $article, $tag, $overwritePage, $anchorSnippet);
     }
 }

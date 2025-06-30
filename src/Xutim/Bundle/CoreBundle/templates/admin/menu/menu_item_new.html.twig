@@ -47,6 +47,19 @@
                                 {{ 'article'|trans({}, 'admin')|capitalize }}
                             </span>
                         </label>
+                        <label class="form-selectgroup-item">
+                            <input
+                                type="radio"
+                                name="menu-item-type"
+                                value="tag"
+                                class="form-selectgroup-input"
+                                data-action="click->menu-item#showTag"
+                            />
+                            <span class="form-selectgroup-label">
+                                <twig:Xutim:Admin:Icon name="tag" />
+                                {{ 'tag'|trans({}, 'admin')|capitalize }}
+                            </span>
+                        </label>
                     </div>
                 </div>
             {% endif %}
@@ -88,6 +101,10 @@
                 {{ form_row(form.article) }}
             </div>
 
+            <div data-menu-item-target="tagForm">
+                {{ form_row(form.tag) }}
+            </div>
+
             <div class="mb-3" data-menu-item-target="submitButton">
                 <twig:Xutim:Admin:Button
                     type="submit"
@@ -108,4 +125,7 @@
 
 {% block stream_success %}
     <turbo-stream action="refresh"></turbo-stream>
+    <turbo-stream action="update" target="modal">
+        <template></template>
+    </turbo-stream>
 {% endblock %}

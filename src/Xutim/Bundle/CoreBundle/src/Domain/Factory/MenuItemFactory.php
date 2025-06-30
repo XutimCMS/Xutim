@@ -8,6 +8,7 @@ use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\MenuItemInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\SnippetInterface;
+use Xutim\CoreBundle\Domain\Model\TagInterface;
 
 class MenuItemFactory
 {
@@ -23,6 +24,7 @@ class MenuItemFactory
         bool $hasLink,
         ?PageInterface $page,
         ?ArticleInterface $article,
+        ?TagInterface $tag,
         ?PageInterface $overwritePage,
         ?SnippetInterface $snippetAnchor
     ): MenuItemInterface {
@@ -32,6 +34,7 @@ class MenuItemFactory
             $hasLink,
             $page,
             $article,
+            $tag,
             $overwritePage,
             $snippetAnchor
         );
