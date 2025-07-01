@@ -118,13 +118,15 @@ class MenuItem implements MenuItemInterface
 
     public function getObject(): PageInterface|ArticleInterface|TagInterface
     {
-        if ($this->page === null) {
-            Assert::notNull($this->article);
-
+        if ($this->hasPage() === true) {
+            return $this->page;
+        }
+        if ($this->hasArticle() === true) {
             return $this->article;
         }
 
-        return $this->page;
+        Assert::notNull($this->tag, 'The menu item should have at least article, page or tag.');
+        return $this->tag;
     }
 
     public function getObjectTranslation(?string $locale): ContentTranslationInterface|TagTranslationInterface
