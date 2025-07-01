@@ -41,6 +41,7 @@ class SiteType extends AbstractType implements DataMapperInterface
             ])
             ->add('extendedLanguages', LocaleType::class, [
                 'label' => new TranslatableMessage('extended content languages', [], 'admin'),
+                'required' => false,
                 'multiple' => true,
                 'attr' => [
                     'data-controller' => 'tom-select'
