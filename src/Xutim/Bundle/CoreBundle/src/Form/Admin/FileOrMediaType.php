@@ -58,7 +58,6 @@ class FileOrMediaType extends AbstractType
             ->add('locale', ChoiceType::class, [
                 'label' => new TranslatableMessage('language', [], 'admin'),
                 'choices' => array_combine($locales, $locales),
-                'preferred_choices' => ['en', 'fr'],
             ])
             ->add('copyright', TextType::class, [
                 'label' => new TranslatableMessage('copyright', [], 'admin'),

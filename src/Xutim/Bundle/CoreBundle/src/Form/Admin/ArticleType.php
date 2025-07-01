@@ -109,20 +109,9 @@ class ArticleType extends AbstractType implements DataMapperInterface
                     'hidden' => 'hidden'
                 ],
             ])
-//            ->add('locales', ChoiceType::class, [
-//                'label' => new TranslatableMessage('locales'),
-//                'choices' => $localeChoices,
-//                'multiple' => true,
-//                'expanded' => true,
-//                'attr' => [
-//                    'data-controller' => 'tom-select'
-//                ]
-//            ])
-
             ->add('locale', ChoiceType::class, [
                 'label' => new TranslatableMessage('Translation reference', [], 'admin'),
                 'choices' => $localeChoices,
-                'preferred_choices' => ['en', 'fr'],
                 'disabled' => $update,
             ]);
         $builder
@@ -146,11 +135,7 @@ class ArticleType extends AbstractType implements DataMapperInterface
         $forms = iterator_to_array($forms);
 
         // initialize form field values
-        // $forms['title']->setData($viewData->title);
-        // $forms['slug']->setData($viewData->slug);
         $forms['content']->setData('[]');
-        // $forms['description']->setData($viewData->description);
-        // $forms['locale']->setData($viewData->locale);
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void

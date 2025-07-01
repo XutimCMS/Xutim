@@ -104,7 +104,6 @@ class EventType extends AbstractType implements DataMapperInterface
             ->add('locale', ChoiceType::class, [
                 'label' => new TranslatableMessage('Translation reference', [], 'admin'),
                 'choices' => $localeChoices,
-                'preferred_choices' => ['en', 'fr'],
                 'disabled' => $update,
             ])
 
