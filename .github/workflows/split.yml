@@ -17,14 +17,18 @@ jobs:
             fail-fast: false
             matrix:
                 package:
-                    - local_path: "src/Xutim/Bundle/CoreBundle"
-                      split_repository: "core-bundle"
-                    - local_path: "src/Xutim/Bundle/EventBundle"
-                      split_repository: "event-bundle"
-                    - local_path: "src/Xutim/Bundle/RedirectBundle"
-                      split_repository: "redirect-bundle"
-                    - local_path: "src/Xutim/Component/RedirectComponent"
-                      split_repository: "redirect-component"
+                    - local_path: 'src/Xutim/Bundle/CoreBundle'
+                      split_repository: 'core-bundle'
+                    - local_path: 'src/Xutim/Bundle/EventBundle'
+                      split_repository: 'event-bundle'
+                    - local_path: 'src/Xutim/Bundle/RedirectBundle'
+                      split_repository: 'redirect-bundle'
+                    - local_path: 'src/Xutim/Component/RedirectComponent'
+                      split_repository: 'redirect-component'
+                    - local_path: 'src/Xutim/Bundle/SecurityBundle'
+                      split_repository: 'security-bundle'
+                    - local_path: 'src/Xutim/Component/SecurityComponent'
+                      split_repository: 'security-component'
 
         steps:
             - uses: actions/checkout@v4
@@ -33,21 +37,21 @@ jobs:
 
             # no tag
             - if: "!startsWith(github.ref, 'refs/tags/')"
-              uses: "danharrin/monorepo-split-github-action@v2.3.0"
+              uses: 'danharrin/monorepo-split-github-action@v2.3.0'
               with:
-                  package_directory: "${{ matrix.package.local_path }}"
-                  repository_organization: "XutimCMS"
-                  repository_name: "${{ matrix.package.split_repository }}"
-                  user_name: "xutim-split-bot"
-                  user_email: "ci@xutim.local"
+                  package_directory: '${{ matrix.package.local_path }}'
+                  repository_organization: 'XutimCMS'
+                  repository_name: '${{ matrix.package.split_repository }}'
+                  user_name: 'xutim-split-bot'
+                  user_email: 'ci@xutim.local'
 
             # with tag
             - if: "startsWith(github.ref, 'refs/tags/')"
-              uses: "danharrin/monorepo-split-github-action@v2.3.0"
+              uses: 'danharrin/monorepo-split-github-action@v2.3.0'
               with:
                   tag: ${{ github.ref_name }}
-                  package_directory: "${{ matrix.package.local_path }}"
-                  repository_organization: "XutimCMS"
-                  repository_name: "${{ matrix.package.split_repository }}"
-                  user_name: "xutim-ci"
-                  user_email: "ci@xutim.local"
+                  package_directory: '${{ matrix.package.local_path }}'
+                  repository_organization: 'XutimCMS'
+                  repository_name: '${{ matrix.package.split_repository }}'
+                  user_name: 'xutim-ci'
+                  user_email: 'ci@xutim.local'

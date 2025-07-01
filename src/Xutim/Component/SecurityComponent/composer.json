@@ -1,0 +1,54 @@
+{
+    "name": "xutimcms/security-component",
+    "type": "library",
+    "description": "User and permission component with roles, hierarchical permissions, and locale support.",
+    "prefer-stable": true,
+    "keywords": [
+        "user",
+        "role",
+        "permission",
+        "rbac",
+        "acl",
+        "component",
+        "xutim"
+    ],
+    "homepage": "https://xutim.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomas Jakl",
+            "email": "tomasjakll@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.4",
+        "symfony/uid": "7.3.*"
+    },
+    "require-dev": {
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpstan/phpstan-webmozart-assert": "^2.0",
+        "phpunit/phpunit": "^9.6",
+        "symplify/easy-coding-standard": "^12.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Xutim\\SecurityComponent\\": "src/"
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Xutim\\SecurityComponent\\Tests\\": "tests/"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/XutimCMS/Xutim/issues",
+        "source": "https://github.com/XutimCMS/security-component"
+    }
+}
