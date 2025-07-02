@@ -1,0 +1,16 @@
+{
+    "name": "xutim/domain",
+    "description": "Domain contracts and abstractions shared across Xutim CMS components.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Xutim\\Domain\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.4"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
