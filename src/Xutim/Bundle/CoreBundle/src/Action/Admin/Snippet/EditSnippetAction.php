@@ -18,7 +18,7 @@ use Xutim\CoreBundle\Form\Admin\Dto\SnippetDto;
 use Xutim\CoreBundle\Form\Admin\SnippetType;
 use Xutim\CoreBundle\Repository\SnippetRepository;
 use Xutim\CoreBundle\Repository\SnippetTranslationRepository;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
 #[Route('/snippet/edit/{id}', name: 'admin_snippet_edit', methods: ['get', 'post'])]
 class EditSnippetAction extends AbstractController

@@ -1,5 +1,5 @@
 {
-    "name": "xutim/domain",
+    "name": "xutimcms/domain",
     "description": "Domain contracts and abstractions shared across Xutim CMS components.",
     "type": "library",
     "license": "MIT",

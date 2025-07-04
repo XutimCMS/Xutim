@@ -11,10 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Factory\MenuItemFactory;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\CoreBundle\Form\Admin\MenuItemType;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/menu/new-item/{id?}', name: 'admin_menu_item_new', methods: ['get', 'post'])]
 class CreateMenuItemAction extends AbstractController
@@ -38,7 +38,7 @@ class CreateMenuItemAction extends AbstractController
             }
         }
 
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(MenuItemType::class, null, [
             'action' => $this->generateUrl('admin_menu_item_new', $parentItem === null ? [] : [
                 'id' => $parentItem->getId()

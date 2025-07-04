@@ -13,13 +13,11 @@ use Xutim\CoreBundle\Domain\Factory\FileTranslationFactory;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Domain\Factory\MenuItemFactory;
 use Xutim\CoreBundle\Domain\Factory\PageFactory;
-use Xutim\CoreBundle\Domain\Factory\ResetPasswordRequestFactory;
 use Xutim\CoreBundle\Domain\Factory\SiteFactory;
 use Xutim\CoreBundle\Domain\Factory\SnippetFactory;
 use Xutim\CoreBundle\Domain\Factory\SnippetTranslationFactory;
 use Xutim\CoreBundle\Domain\Factory\TagFactory;
 use Xutim\CoreBundle\Domain\Factory\TagTranslationFactory;
-use Xutim\CoreBundle\Domain\Factory\UserFactory;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -43,10 +41,6 @@ return static function (ContainerConfigurator $container): void {
     $services->set(SnippetFactory::class)
         ->arg('$snippetClass', '%xutim_core.model.snippet.class%');
 
-
-    $services->set(UserFactory::class)
-        ->arg('$entityClass', '%xutim_core.model.user.class%');
-
     $services->set(BlockFactory::class)
         ->arg('$entityClass', '%xutim_core.model.block.class%');
 
@@ -55,9 +49,6 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(LogEventFactory::class)
         ->arg('$entityClass', '%xutim_core.model.log_event.class%');
-
-    $services->set(ResetPasswordRequestFactory::class)
-        ->arg('$entityClass', '%xutim_core.model.reset_password_request.class%');
 
     $services->set(MenuItemFactory::class)
         ->arg('$entityClass', '%xutim_core.model.menu_item.class%');

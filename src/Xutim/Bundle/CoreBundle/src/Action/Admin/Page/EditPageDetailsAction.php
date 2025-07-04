@@ -11,11 +11,11 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Dto\Admin\Page\PageMinimalDto;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\PageDetailsType;
 use Xutim\CoreBundle\Message\Command\Page\EditPageDetailsCommand;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/page/details-edit/{id}', name: 'admin_page_details_edit')]
 class EditPageDetailsAction extends AbstractController
@@ -33,7 +33,7 @@ class EditPageDetailsAction extends AbstractController
         if ($page === null) {
             throw $this->createNotFoundException('The page does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(PageDetailsType::class, PageMinimalDto::fromPage($page), [
             'action' => $this->generateUrl('admin_page_details_edit', ['id' => $page->getId()]),
             'page' => $page

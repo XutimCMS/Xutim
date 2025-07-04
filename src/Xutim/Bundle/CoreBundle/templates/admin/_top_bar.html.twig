@@ -16,7 +16,7 @@
         <div class="navbar-nav flex-row order-md-last">
             <div class="my-2 my-md-0 nav-item dropdown me-1">
                 <div class="button-group d-flex flex-row gap-1">
-                    {{publicLinkBlock|raw}}
+                    {{ publicLinkBlock|raw }}
                     <a
                         href="{{ path('admin_article_list', {searchTerm: ''}) }}"
                         class="btn btn-xs btn-icon"
@@ -153,7 +153,7 @@
                     </a>
                 </li>
 
-                {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+                {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
                     <li
                         class="nav-item{{ app.current_route starts with 'admin_block' ? ' active' : '' }}"
                     >
@@ -173,7 +173,7 @@
                     </li>
                 {% endif %}
 
-                {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_DEVELOPER')) %}
+                {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_DEVELOPER')) %}
                     <li
                         class="nav-item{{ app.current_route starts with 'admin_settings_' ? ' active' : '' }}"
                     >

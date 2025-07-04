@@ -14,11 +14,11 @@ use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Context\SnippetsContext;
 use Xutim\CoreBundle\Domain\Factory\SnippetFactory;
 use Xutim\CoreBundle\Domain\Factory\SnippetTranslationFactory;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\Dto\SnippetDto;
 use Xutim\CoreBundle\Form\Admin\SnippetType;
 use Xutim\CoreBundle\Repository\SnippetRepository;
 use Xutim\CoreBundle\Repository\SnippetTranslationRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 class CreateSnippetAction extends AbstractController
 {
@@ -38,7 +38,7 @@ class CreateSnippetAction extends AbstractController
     #[Route('/snippet/new', name: 'admin_snippet_new', methods: ['get', 'post'])]
     public function new(Request $request): Response
     {
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(SnippetType::class, null, [
             'action' => $this->generateUrl('admin_snippet_new')
         ]);

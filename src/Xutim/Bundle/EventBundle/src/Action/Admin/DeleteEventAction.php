@@ -8,10 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Xutim\CoreBundle\Entity\User;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventTranslationRepository;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/event/delete/{id}', name: 'admin_event_delete')]
 class DeleteEventAction extends AbstractController
@@ -29,7 +29,7 @@ class DeleteEventAction extends AbstractController
         if ($event === null) {
             throw $this->createNotFoundException('The event does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
 
         foreach ($event->getTranslations() as $trans) {

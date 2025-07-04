@@ -28,7 +28,7 @@
         "twig/twig": "^3.20",
         "webmozart/assert": "^1.11",
         "xutimcms/core-bundle": "dev-main",
-        "xutimcms/redirect-component": "dev-main@dev"
+        "xutimcms/redirect-component": "dev-main"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",

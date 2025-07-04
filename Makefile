@@ -1,6 +1,14 @@
 CONSOLE=bin/console
 
-merge:
+backup-composer: 
+	find src -type f -name 'composer.json' -exec mv {} {}.bak \;
+.PHONY: local
+
+restore-composer: 
+	find src -type f -name 'composer.json.bak' -exec sh -c 'mv "$$0" "$${0%.bak}"' {} \;
+.PHONY: local
+
+merge: restore-composer
 	vendor/bin/monorepo-builder merge
 .PHONY: merge
 

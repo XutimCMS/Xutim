@@ -15,8 +15,8 @@ use Xutim\CoreBundle\Form\Admin\DeleteType;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\FileTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Security\UserStorage;
 use Xutim\CoreBundle\Service\FileUploader;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/media/delete/{id}', name: 'admin_media_delete', methods: ['post', 'get'])]
 class DeleteFileAction extends AbstractController

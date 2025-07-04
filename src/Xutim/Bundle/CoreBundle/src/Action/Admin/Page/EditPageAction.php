@@ -16,15 +16,15 @@ use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\ContentTranslationType;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\CreateContentTranslationCommand;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserInterface;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/page/edit/{id}/{locale? }', name: 'admin_page_edit', methods: ['get', 'post'])]
 class EditPageAction extends AbstractController
@@ -64,7 +64,7 @@ class EditPageAction extends AbstractController
         }
 
         if ($this->isGranted('ROLE_ADMIN') === false && $this->isGranted('ROLE_TRANSLATOR')) {
-            /** @var User $user */
+            /** @var UserInterface $user */
             $user = $this->getUser();
             $locales = $user->getTranslationLocales();
             $totalTranslations = count($locales);

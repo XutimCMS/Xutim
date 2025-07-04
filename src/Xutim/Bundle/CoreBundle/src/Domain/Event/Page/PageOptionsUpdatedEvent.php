@@ -6,8 +6,8 @@ namespace Xutim\CoreBundle\Domain\Event\Page;
 
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Domain\DomainEvent;
 use Xutim\CoreBundle\Entity\PublicationStatus;
+use Xutim\Domain\DomainEvent;
 
 class PageOptionsUpdatedEvent implements DomainEvent
 {

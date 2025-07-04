@@ -1,0 +1,44 @@
+{% extends '@XutimSecurity/admin/security/security_base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block body %}
+    <div class="page page-center">
+        <div class="container container-tight py-4">
+            <div class="card card-md">
+                <div class="card-body">
+                    {{ form_start(requestForm) }}
+                    <h2 class="card-title text-center mb-4">
+                        Reset your password
+                    </h2>
+                    {% for flash_error in app.flashes('reset_password_error') %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ flash_error }}
+                        </div>
+                    {% endfor %}
+
+                    <p class="text-secondary mb-4">
+                        Enter your email address, and we will send you a link to
+                        reset your password.
+                    </p>
+
+                    {{ form_label(requestForm.email) }}
+                    {{ form_widget(requestForm.email) }}
+
+                    <div class="form-footer">
+                        <twig:Xutim:Admin:Button
+                            variant="primary"
+                            class="w-100"
+                            id="send-password-reset-email-button"
+                        >
+                            <twig:Xutim:Admin:Icon name="mail" />
+                            Send password reset email
+                        </twig:Xutim:Admin:Button>
+                    </div>
+
+                    {{ form_end(requestForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

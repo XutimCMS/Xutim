@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Domain\Event\Block;
 
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Domain\DomainEvent;
+use Xutim\Domain\DomainEvent;
 
 class BlockDeletedEvent implements DomainEvent
 {

@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/menu/{id}/move/{dir}', name: 'admin_menu_item_move')]
 class MoveMenuItemAction extends AbstractController
@@ -27,7 +27,7 @@ class MoveMenuItemAction extends AbstractController
         if ($item === null) {
             throw $this->createNotFoundException('The menu item does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         if ($dir === 'up') {
             $this->repo->moveUp($item);
         } elseif ($dir === 'down') {

@@ -101,7 +101,7 @@
                                 })
                         }}
                         {%
-                            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+                            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
                         %}
                             <twig:Xutim:Admin:Button
                                 variant="default"

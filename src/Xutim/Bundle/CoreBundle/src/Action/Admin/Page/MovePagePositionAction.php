@@ -8,8 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/page/{id}/move/{dir}', name: 'admin_page_move')]
 class MovePagePositionAction extends AbstractController
@@ -24,7 +24,7 @@ class MovePagePositionAction extends AbstractController
         if ($page === null) {
             throw $this->createNotFoundException('The page does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         if ($dir === 'up') {
             $this->pageRepo->moveUp($page);
         } elseif ($dir === 'down') {

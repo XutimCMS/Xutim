@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Webmozart\Assert\Assert;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\EventBundle\Domain\Factory\EventFactory;
 use Xutim\EventBundle\Form\Admin\EventDto;
 use Xutim\EventBundle\Form\Admin\EventType;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventTranslationRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/event/new', name: 'admin_event_new', methods: ['get', 'post'])]
 class CreateEventAction extends AbstractController
@@ -28,7 +28,7 @@ class CreateEventAction extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(EventType::class, null, [
             'action' => $this->generateUrl('admin_event_new')
         ]);

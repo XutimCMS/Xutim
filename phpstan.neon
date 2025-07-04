@@ -9,6 +9,7 @@ parameters:
         - src/Xutim/Bundle/SecurityBundle/src
         - src/Xutim/Component/RedirectComponent/src
         - src/Xutim/Component/SecurityComponent/src
+        - src/Xutim/Domain/src
     excludePaths:
         - src/Xutim/Bundle/CoreBundle/src/Infra/Doctrine/TreeObjectHydrator.php
     bootstrapFiles:

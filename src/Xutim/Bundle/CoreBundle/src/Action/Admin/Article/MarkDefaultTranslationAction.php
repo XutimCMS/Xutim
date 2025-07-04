@@ -11,12 +11,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleDefaultTranslationUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Security\UserStorage;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/article/{id}/mark-default-translation/{transId}', name: 'admin_article_mark_default_translation')]
 class MarkDefaultTranslationAction extends AbstractController
@@ -43,7 +43,7 @@ class MarkDefaultTranslationAction extends AbstractController
             throw $this->createNotFoundException('The content translation does not exist');
         }
 
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
         $article->setDefaultTranslation($trans);
         $this->articleRepo->save($article, true);

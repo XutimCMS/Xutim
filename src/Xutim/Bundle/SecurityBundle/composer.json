@@ -3,6 +3,7 @@
     "type": "symfony-bundle",
     "description": "Symfony bundle providing user management, role-based access control, permission voters and admin integration.",
     "prefer-stable": true,
+    "minimum-stability": "dev",
     "keywords": [
         "cms",
         "xutim",
@@ -47,9 +48,11 @@
         "twig/intl-extra": "^3.20",
         "twig/string-extra": "^3.20",
         "twig/twig": "^3.20",
+        "xutimcms/core-bundle": "dev-main",
+        "xutimcms/security-component": "dev-main",
         "webmozart/assert": "^1.11",
-        "symfony/doctrine-messenger": "*",
-        "symfony/scheduler": "*"
+        "symfony/doctrine-messenger": "^7.3",
+        "symfony/scheduler": "^7.3"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",

@@ -16,8 +16,8 @@ use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\Form\Admin\ContentTranslationType;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/content-translation/edit/{id}', name: 'admin_content_translation_edit')]
 class EditTranslationAction extends AbstractController

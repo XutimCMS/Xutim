@@ -11,9 +11,9 @@ use Twig\Environment;
 use Xutim\CoreBundle\Config\Layout\Block\BlockLayoutChecker;
 use Xutim\CoreBundle\Contract\Block\BlockRendererInterface;
 use Xutim\CoreBundle\Contract\Block\RenderedBlock;
-use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\BlockRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 final class TwigBlockRenderer implements BlockRendererInterface
 {
@@ -39,7 +39,7 @@ final class TwigBlockRenderer implements BlockRendererInterface
         }
 
         if ($this->blockLayoutChecker->checkLayout($block) === false) {
-            if ($this->authChecker->isGranted(UserInterface::ROLE_USER) === false) {
+            if ($this->authChecker->isGranted(UserRoles::ROLE_USER) === false) {
                 return new RenderedBlock('', 1);
             }
             $requirementsHtml = sprintf('The block requirements are not met for <a href="%s">%s</a>', $this->urlGenerator->generate('admin_block_show', ['id' => $block->getId()]), $code);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Validator;
 
 use Symfony\Component\Validator\Constraint;
-use Xutim\CoreBundle\Entity\User;
+use Xutim\SecurityBundle\Security\User;
 
 #[\Attribute]
 class UniqueEmail extends Constraint

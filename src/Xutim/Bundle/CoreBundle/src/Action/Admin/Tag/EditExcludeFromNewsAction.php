@@ -8,9 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\TagRepository;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/tag/exclude-from-news-toggle/{id}', name: 'admin_tag_exclude_from_news_toggle', methods: ['get', 'post'])]
 class EditExcludeFromNewsAction extends AbstractController
@@ -27,7 +27,7 @@ class EditExcludeFromNewsAction extends AbstractController
         if ($tag === null) {
             throw $this->createNotFoundException('The tag does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
 
         $tag->toggleExcludeFromNews();

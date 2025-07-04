@@ -11,12 +11,12 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Block\BlockChangedEvent;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\BlockType;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockDto;
 use Xutim\CoreBundle\Message\Event\DomainEventMessage;
 use Xutim\CoreBundle\Repository\BlockRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/block/edit/{id}', name: 'admin_block_edit', methods: ['get', 'post'])]
 final class EditBlockAction extends AbstractController
@@ -35,7 +35,7 @@ final class EditBlockAction extends AbstractController
         if ($block === null) {
             throw $this->createNotFoundException('The block does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_DEVELOPER);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_DEVELOPER);
         $form = $this->createForm(BlockType::class, BlockDto::fromBlock($block));
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

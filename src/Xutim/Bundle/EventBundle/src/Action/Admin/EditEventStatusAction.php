@@ -11,9 +11,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\EnumRequirement;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Entity\PublicationStatus;
-use Xutim\CoreBundle\Entity\User;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route(
     '/publication-status/event/edit/{id}/{status}',
@@ -38,7 +38,7 @@ class EditEventStatusAction extends AbstractController
         if ($event === null) {
             throw $this->createNotFoundException('The event does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
 
         $event->changeStatus($status);

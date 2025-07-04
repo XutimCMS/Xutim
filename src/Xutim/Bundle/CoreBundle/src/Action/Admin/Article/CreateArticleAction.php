@@ -10,12 +10,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\ArticleType;
 use Xutim\CoreBundle\Form\Admin\Dto\CreateArticleFormData;
 use Xutim\CoreBundle\Message\Command\Article\CreateArticleCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/article/new', name: 'admin_article_new', methods: ['get', 'post'])]
 class CreateArticleAction extends AbstractController
@@ -29,7 +29,7 @@ class CreateArticleAction extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(ArticleType::class);
 
         $form->get('content')->setData('[]');

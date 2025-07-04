@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Entity\BlockItem;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\CoreBundle\Repository\BlockRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/block/reorder/{id}', name: 'admin_block_reorder_item')]
 class ReorderBlockItemsAction extends AbstractController
@@ -33,7 +33,7 @@ class ReorderBlockItemsAction extends AbstractController
             throw $this->createNotFoundException('The block does not exist');
         }
 
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $startPos = $request->query->getInt('startPos');
         $endPos = $request->query->getInt('endPos');
 

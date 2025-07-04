@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Domain\Event\File;
 
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Domain\DomainEvent;
+use Xutim\Domain\DomainEvent;
 
 readonly class FileUploadedEvent implements DomainEvent
 {

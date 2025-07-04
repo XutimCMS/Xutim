@@ -15,12 +15,12 @@ use Xutim\CoreBundle\Domain\Event\Article\ArticlePublicationDateUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\PublicationStatus;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\PublishedDateType;
 use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCommand;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/article/edit-publication-date/{id}', name: 'admin_article_edit_publication_date', methods: ['get', 'post'])]
 class EditPublishedDateAction extends AbstractController
@@ -46,7 +46,7 @@ class EditPublishedDateAction extends AbstractController
         if ($translation === null) {
             throw $this->createNotFoundException('The translation of an article does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getPublishedAt()], [
             'action' => $this->generateUrl('admin_article_edit_publication_date', ['id' => $article->getId()])
         ]);

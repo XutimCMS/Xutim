@@ -9,8 +9,8 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Domain\DomainEvent;
 use Xutim\CoreBundle\Domain\Model\LogEventInterface;
+use Xutim\Domain\DomainEvent;
 
 #[MappedSuperclass]
 class LogEvent implements LogEventInterface

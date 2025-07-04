@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\EventBundle\Form\Admin\EventArticleType;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/event/edit-article/{id}', name: 'admin_event_article_edit', methods: ['get', 'post'])]
 class EditEventArticleAction extends AbstractController
@@ -27,7 +27,7 @@ class EditEventArticleAction extends AbstractController
         if ($event === null) {
             throw $this->createNotFoundException('The event does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(EventArticleType::class, ['article' => $event->getArticle()], [
             'action' => $this->generateUrl('admin_event_article_edit', ['id' => $event->getId()])
         ]);

@@ -6,13 +6,19 @@
 <li class="my-2 ms-3{{ isSelectedPage ? ' bg-yellow-lt' : '' }}">
     {% if node.children is empty %}
         <twig:Xutim:Admin:Icon name="chevron-down-left" class="text-black" />
-        {{ _self.pageLine(pages, node, page, child, loop.first, loop.last, selectedPage) }}
+        {{
+            _self.pageLine(pages, node, page, child, loop.first, loop.last, selectedPage)
+        }}
         {{ _self.subTree(pages, node, page, child, path, selectedPage) }}
     {% else %}
-        {% set detailsOpened = path|reduce((carry, sec, k) => carry is same as(true) or page.id.equals(sec.id), false) %}
+        {%
+            set detailsOpened = path|reduce((carry, sec, k) => carry is same as(true) or page.id.equals(sec.id), false)
+        %}
         <details {{ detailsOpened ? ' open="open"' : '' }} class="text-black">
             <summary class="ms-2{{ isSelectedPage ? ' fw-bold' : '' }}">
-                {{ _self.pageLine(pages, node, page, child, loop.first, loop.last, selectedPage) }}
+                {{
+                    _self.pageLine(pages, node, page, child, loop.first, loop.last, selectedPage)
+                }}
             </summary>
             {{ _self.subTree(pages, node, page, child, path, selectedPage) }}
         </details>
@@ -42,20 +48,28 @@
 {% macro pageLine(pages, node, page, child, first, last, selectedPage) %}
     {% set isSelectedPage = selectedPage and selectedPage.id.equals(page.id) %}
     {# {{ badges.publicationStatusBadge(page) }} #}
-    {% set pageTranslation = page.translationByLocaleOrDefault(content_context_language()) %}
+    {%
+        set pageTranslation = page.translationByLocaleOrDefault(content_context_language())
+    %}
 
     <span class="me-1"></span>
 
-    {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
+    {%
+        import '@XutimCore/admin/common/translatable.html.twig' as translatable
+    %}
     {{ translatable.languageBadge(pageTranslation) }}
 
     <a href="{{ path('admin_page_list', {id: page.id}) }}">
         <span class="text-black{{ isSelectedPage ? ' fw-bold' : '' }}">
-            {{ page.translationByLocaleOrDefault(content_context_language()).title }}
+            {{
+                page.translationByLocaleOrDefault(content_context_language()).title
+            }}
         </span>
     </a>
 
-    {% if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR')) %}
+    {%
+        if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
+    %}
         <div class="dropdown float-end">
             <a href="#" class="link-secondary" data-bs-toggle="dropdown">
                 <twig:Xutim:Admin:Icon name="dots" />

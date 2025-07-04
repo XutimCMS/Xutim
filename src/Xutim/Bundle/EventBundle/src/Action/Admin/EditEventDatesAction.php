@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\EventBundle\Form\Admin\EventDatesType;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/event/edit-dates/{id}', name: 'admin_event_dates_edit', methods: ['get', 'post'])]
 class EditEventDatesAction extends AbstractController
@@ -26,7 +26,7 @@ class EditEventDatesAction extends AbstractController
         if ($event === null) {
             throw $this->createNotFoundException('The event does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(EventDatesType::class, ['startsAt' => $event->getStartsAt(), 'endsAt' => $event->getEndsAt()], [
             'action' => $this->generateUrl('admin_event_dates_edit', ['id' => $event->getId()])
         ]);

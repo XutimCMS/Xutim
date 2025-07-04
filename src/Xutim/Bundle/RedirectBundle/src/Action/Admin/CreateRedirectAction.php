@@ -13,13 +13,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 use Xutim\RedirectBundle\Form\RedirectFormData;
 use Xutim\RedirectBundle\Form\RedirectType;
 use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 class CreateRedirectAction
 {
@@ -39,7 +39,7 @@ class CreateRedirectAction
 
     public function __invoke(Request $request): Response
     {
-        if ($this->authChecker->isGranted(UserInterface::ROLE_EDITOR) === false) {
+        if ($this->authChecker->isGranted(UserRoles::ROLE_EDITOR) === false) {
             throw new AccessDeniedException('Access denied.');
         }
         $locales = $this->siteContext->getLocales();

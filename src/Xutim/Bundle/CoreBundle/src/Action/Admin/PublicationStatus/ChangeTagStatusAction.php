@@ -12,11 +12,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\EnumRequirement;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Entity\PublicationStatus;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangeTagPublicationStatusCommand;
 use Xutim\CoreBundle\Repository\TagRepository;
-use Xutim\CoreBundle\Security\UserStorage;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route(
     '/publication-status/tag/edit/{id}/{status}',
@@ -43,7 +43,7 @@ class ChangeTagStatusAction extends AbstractController
         if ($tag === null) {
             throw $this->createNotFoundException('The tag does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
 
         $user = $this->userStorage->getUserWithException();

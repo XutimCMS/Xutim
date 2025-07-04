@@ -38,7 +38,7 @@
             </twig:Xutim:Admin:Button>
         {% endif %}
         {%
-            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_TRANSLATOR'))
+            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_TRANSLATOR'))
         %}
             <twig:Xutim:Admin:Button
                 tag="a"
@@ -50,7 +50,7 @@
             </twig:Xutim:Admin:Button>
         {% endif %}
         {%
-            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
         %}
             <twig:Xutim:Admin:Button
                 tag="a"
@@ -62,7 +62,7 @@
             </twig:Xutim:Admin:Button>
         {% endif %}
         {%
-            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
         %}
             <twig:Xutim:Admin:Button
                 tag="a"
@@ -89,7 +89,7 @@
         {% endif %}
     {% else %}
         {%
-            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
         %}
             <twig:Xutim:Admin:Button
                 tag="a"
@@ -101,7 +101,7 @@
             </twig:Xutim:Admin:Button>
         {% endif %}
         {%
-            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
         %}
             <twig:Xutim:Admin:Button
                 tag="a"
@@ -236,7 +236,7 @@
                             }}
                         </p>
                         {%
-                            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+                            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
                         %}
                             <p>
                                 <a href="{{ path('admin_page_new') }}">

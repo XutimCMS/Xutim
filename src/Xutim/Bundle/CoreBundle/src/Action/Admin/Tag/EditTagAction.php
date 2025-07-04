@@ -11,17 +11,16 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Entity\TagTranslation;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\Dto\TagDto;
 use Xutim\CoreBundle\Form\Admin\TagType;
 use Xutim\CoreBundle\Message\Command\Tag\EditTagCommand;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
-
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserInterface;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/tag/edit/{id}/{locale? }', name: 'admin_tag_edit', methods: ['get', 'post'])]
 class EditTagAction extends AbstractController
@@ -72,7 +71,7 @@ class EditTagAction extends AbstractController
             return $this->redirectToRoute('admin_tag_edit', ['id' => $tag->getId()]);
         }
 
-        if ($this->isGranted(User::ROLE_ADMIN) === false && $this->isGranted(User::ROLE_TRANSLATOR)) {
+        if ($this->isGranted(UserRoles::ROLE_ADMIN) === false && $this->isGranted(UserRoles::ROLE_TRANSLATOR)) {
             /** @var UserInterface $user */
             $user = $this->getUser();
             $locales = $user->getTranslationLocales();

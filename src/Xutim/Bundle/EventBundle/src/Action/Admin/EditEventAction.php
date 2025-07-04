@@ -9,15 +9,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
-use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\User;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
 use Xutim\EventBundle\Domain\Factory\EventTranslationFactory;
 use Xutim\EventBundle\Domain\Model\EventTranslationInterface;
 use Xutim\EventBundle\Form\Admin\EventTranslationDto;
 use Xutim\EventBundle\Form\Admin\EventTranslationType;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventTranslationRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
 #[Route('/event/edit/{id}/{locale? }', name: 'admin_event_edit', methods: ['get', 'post'])]
 class EditEventAction extends AbstractController
@@ -37,7 +36,7 @@ class EditEventAction extends AbstractController
         if ($event === null) {
             throw $this->createNotFoundException('The event does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $locale = $this->context->getLanguage();
         /** @var null|EventTranslationInterface $translation */
         $translation = $event->getTranslationByLocale($locale);
@@ -64,7 +63,7 @@ class EditEventAction extends AbstractController
             return $this->redirectToRoute('admin_event_edit', ['id' => $event->getId()]);
         }
 
-        // if ($this->isGranted(User::ROLE_ADMIN) === false && $this->isGranted(User::ROLE_TRANSLATOR)) {
+        // if ($this->isGranted(UserRoles::ROLE_ADMIN) === false && $this->isGranted(UserRoles::ROLE_TRANSLATOR)) {
         //     /** @var User $user */
         //     $user = $this->getUser();
         //     $locales = $user->getTranslationLocales();

@@ -119,9 +119,11 @@ class MenuItem implements MenuItemInterface
     public function getObject(): PageInterface|ArticleInterface|TagInterface
     {
         if ($this->hasPage() === true) {
+            /** @var PageInterface */
             return $this->page;
         }
         if ($this->hasArticle() === true) {
+            /** @var ArticleInterface */
             return $this->article;
         }
 

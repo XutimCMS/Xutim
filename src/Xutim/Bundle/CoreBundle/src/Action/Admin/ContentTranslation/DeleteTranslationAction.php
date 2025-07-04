@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
 use Xutim\CoreBundle\Service\ContentTranslationService;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
 #[Route('/content-translation/delete/{id}', name: 'admin_content_translation_delete')]
 class DeleteTranslationAction extends AbstractController

@@ -9,11 +9,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\FileType;
 use Xutim\CoreBundle\Message\Command\File\UploadFileMessage;
-use Xutim\CoreBundle\Security\UserStorage;
 use Xutim\CoreBundle\Service\FileService;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/media/new', name: 'admin_media_new')]
 class CreateFileAction extends AbstractController
@@ -26,7 +26,7 @@ class CreateFileAction extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(FileType::class, null, [
             'action' => $this->generateUrl('admin_media_new')
         ]);

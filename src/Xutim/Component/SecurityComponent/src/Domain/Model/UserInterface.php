@@ -22,7 +22,7 @@ interface UserInterface
     public function getTranslationLocales(): array;
 
     /**
-     * @return list<string>
+     * @return array<string>
      */
     public function getRoles(): array;
 

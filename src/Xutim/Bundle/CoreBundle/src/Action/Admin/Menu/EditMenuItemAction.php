@@ -10,10 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\CoreBundle\Form\Admin\MenuItemType;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/menu/edit/{id}', name: 'admin_menu_item_edit', methods: ['get', 'post'])]
 class EditMenuItemAction extends AbstractController
@@ -31,7 +31,7 @@ class EditMenuItemAction extends AbstractController
         if ($item === null) {
             throw $this->createNotFoundException('The menu item does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(MenuItemType::class, $item->toDto(), [
             'action' => $this->generateUrl('admin_menu_item_edit', [
                 'id' => $item->getId()

@@ -15,9 +15,7 @@ use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\ContentTranslationType;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\CreateContentTranslationCommand;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
@@ -25,8 +23,10 @@ use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserInterface;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/article/edit/{id}/{locale? }', name: 'admin_article_edit', methods: ['get', 'post'])]
 class EditArticleAction extends AbstractController
@@ -68,7 +68,7 @@ class EditArticleAction extends AbstractController
             return $this->redirectToRoute('admin_article_edit', ['id' => $article->getId()]);
         }
 
-        if ($this->isGranted(User::ROLE_ADMIN) === false && $this->isGranted(User::ROLE_TRANSLATOR)) {
+        if ($this->isGranted(UserRoles::ROLE_ADMIN) === false && $this->isGranted(UserRoles::ROLE_TRANSLATOR)) {
             /** @var UserInterface $user */
             $user = $this->getUser();
             $locales = $user->getTranslationLocales();

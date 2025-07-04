@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Context\Admin;
 
 use Symfony\Contracts\Cache\CacheInterface;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 readonly class ContentContext
 {

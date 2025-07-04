@@ -70,7 +70,7 @@
     </a>
 
     {%
-        if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+        if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
     %}
         <div class="dropdown float-end">
             <a href="#" class="link-secondary" data-bs-toggle="dropdown">

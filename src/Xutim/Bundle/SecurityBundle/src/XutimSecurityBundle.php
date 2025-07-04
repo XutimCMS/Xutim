@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * @author Tomas Jakl <tomasjakll@gmail.com>
  */
-class XutimRedirectBundle extends Bundle
+class XutimSecurityBundle extends Bundle
 {
     public function getPath(): string
     {

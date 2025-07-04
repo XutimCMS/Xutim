@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\SecurityBundle\Security\UserInterface;
 
 #[Route('/page-list/{id?}', name: 'admin_page_list')]
 class ListPagesAction extends AbstractController
@@ -45,7 +45,7 @@ class ListPagesAction extends AbstractController
         $path = $page !== null ? $this->pageRepo->getPathHydrated($page) : [];
 
         if ($this->isGranted('ROLE_ADMIN') === false && $this->isGranted('ROLE_TRANSLATOR')) {
-            /** @var User $user */
+            /** @var UserInterface $user */
             $user = $this->getUser();
             $locales = $user->getTranslationLocales();
             $totalTranslations = count($locales);

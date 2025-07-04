@@ -12,13 +12,13 @@ use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Page\PageFeaturedImageUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Page;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\Dto\ImageDto;
 use Xutim\CoreBundle\Form\Admin\FeaturedImageType;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/page/featured-image-edit/{id}', name: 'admin_page_featured_image_edit')]
 class EditFeaturedImageAction extends AbstractController
@@ -39,7 +39,7 @@ class EditFeaturedImageAction extends AbstractController
         if ($page === null) {
             throw $this->createNotFoundException('The page does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(FeaturedImageType::class, new ImageDto($page->getFeaturedImage()?->getId()), [
             'action' => $this->generateUrl('admin_page_featured_image_edit', ['id' => $page->getId()]),
         ]);

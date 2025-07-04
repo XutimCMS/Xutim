@@ -9,11 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\Dto\TagDto;
 use Xutim\CoreBundle\Form\Admin\TagType;
 use Xutim\CoreBundle\Message\Command\Tag\CreateTagCommand;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/tag/new', name: 'admin_tag_new', methods: ['get', 'post'])]
 class CreateTagAction extends AbstractController
@@ -26,7 +26,7 @@ class CreateTagAction extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(TagType::class);
 
         $form->handleRequest($request);

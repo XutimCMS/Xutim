@@ -10,9 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\BlockRepository;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/block', name: 'admin_block_list', methods: ['get'])]
 class ListBlocksAction extends AbstractController
@@ -35,7 +35,7 @@ class ListBlocksAction extends AbstractController
         #[MapQueryParameter]
         string $orderDirection = 'asc'
     ): Response {
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
             new QueryAdapter($this->blockRepo->queryByFilter($filter)),

@@ -7,11 +7,11 @@ namespace Xutim\CoreBundle\Validator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Webmozart\Assert\Assert;
-use Xutim\CoreBundle\Repository\UserRepository;
+use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
 class UniqueEmailValidator extends ConstraintValidator
 {
-    public function __construct(private readonly UserRepository $repo)
+    public function __construct(private readonly UserRepositoryInterface $repo)
     {
     }
 

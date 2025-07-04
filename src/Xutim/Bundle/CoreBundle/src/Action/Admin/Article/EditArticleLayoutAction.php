@@ -13,12 +13,12 @@ use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleLayoutUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\ArticleLayoutType;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/article/layout-edit/{id}', name: 'admin_article_layout_edit')]
 class EditArticleLayoutAction extends AbstractController
@@ -38,7 +38,7 @@ class EditArticleLayoutAction extends AbstractController
         if ($article === null) {
             throw $this->createNotFoundException('The article does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $layout = $this->layoutLoader->getArticleLayoutByCode($article->getLayout());
         $form = $this->createForm(ArticleLayoutType::class, ['layout' => $layout], [
             'action' => $this->generateUrl('admin_article_layout_edit', ['id' => $article->getId()])

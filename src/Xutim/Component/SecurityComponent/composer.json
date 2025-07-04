@@ -22,7 +22,8 @@
     ],
     "require": {
         "php": ">=8.4",
-        "symfony/uid": "7.3.*"
+        "symfony/uid": "7.3.*",
+        "xutimcms/domain": "dev-main"
     },
     "require-dev": {
         "phpstan/extension-installer": "^1.4",

@@ -8,13 +8,13 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Repository\UserRepository;
+use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
 class UserLogExtension extends AbstractExtension
 {
     public function __construct(
         private readonly LogEventRepository $eventRepository,
-        private readonly UserRepository $userRepository
+        private readonly UserRepositoryInterface $userRepository
     ) {
     }
 
@@ -33,7 +33,7 @@ class UserLogExtension extends AbstractExtension
             return 'Unknown';
         }
 
-        $user = $this->userRepository->findOneBy(['email' => $event->getUserIdentifier()]);
+        $user = $this->userRepository->findOneByEmail($event->getUserIdentifier());
         if ($user === null) {
             return $event->getUserIdentifier();
         }
@@ -48,7 +48,7 @@ class UserLogExtension extends AbstractExtension
             return 'Unknown';
         }
 
-        $user = $this->userRepository->findOneBy(['email' => $event->getUserIdentifier()]);
+        $user = $this->userRepository->findOneByEmail($event->getUserIdentifier());
         if ($user === null) {
             return $event->getUserIdentifier();
         }

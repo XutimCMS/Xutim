@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Xutim\CoreBundle\Domain\Model\UserInterface;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 class DeleteRedirectAction
 {
@@ -29,7 +29,7 @@ class DeleteRedirectAction
 
     public function __invoke(string $id, Request $request): Response
     {
-        if ($this->authChecker->isGranted(UserInterface::ROLE_EDITOR) === false) {
+        if ($this->authChecker->isGranted(UserRoles::ROLE_EDITOR) === false) {
             throw new AccessDeniedException('Access denied.');
         }
 

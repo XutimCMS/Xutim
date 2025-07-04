@@ -15,7 +15,7 @@
                 'data-editorjs-form-tag-ids-url-value': path('admin_json_tag_list'),
                 'data-editorjs-form-disable-editing-value': disableEditing is defined ? disableEditing : false,
                 'data-slug-generator-url-value': path('admin_json_content_translation_generate_slug'),
-                'data-slug-generator-enabled-value': translation == null ? 'true': 'false',
+                'data-slug-generator-enabled-value': translation == null ? 'true' : 'false',
                 'data-slug-generator-locale-value': content_context_language(),
             },
         })
@@ -42,7 +42,7 @@
             })
         }}
         {%
-            if is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_EDITOR'))
+            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
         %}
             <twig:Xutim:Admin:Button
                 variant="default"

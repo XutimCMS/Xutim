@@ -17,9 +17,9 @@ use Xutim\CoreBundle\Domain\Model\LogEventInterface;
 use Xutim\CoreBundle\Form\Admin\RevisionListType;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Repository\UserRepository;
 use Xutim\CoreBundle\Service\ContentFragmentsConverter;
 use Xutim\CoreBundle\Service\TextDiff;
+use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
 #[Route('/content-translation/revisions/{id}/{version?}/{diff?}', name: 'admin_content_translation_revisions', methods: ['GET'])]
 class ShowTranslationRevisionsAction extends AbstractController
@@ -28,7 +28,7 @@ class ShowTranslationRevisionsAction extends AbstractController
         private readonly LogEventRepository $eventRepository,
         private readonly TextDiff $textDiff,
         private readonly ContentFragmentsConverter $fragmentsConverter,
-        private readonly UserRepository $userRepository,
+        private readonly UserRepositoryInterface $userRepository,
         private readonly ContentTranslationRepository $contentTransRepo,
     ) {
     }

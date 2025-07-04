@@ -122,7 +122,7 @@
             <div class="tab-pane active show p-4">
                 {{
                     include('@XutimCore/admin/content_translation/_form.html.twig', {
-                        disableEditing: not is_granted(constant('Xutim\\CoreBundle\\Entity\\User::ROLE_DEVELOPER'))
+                        disableEditing: not is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_DEVELOPER')),
                     })
                 }}
                 {%

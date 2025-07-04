@@ -12,11 +12,11 @@ use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Domain\Event\File\FileCopyrightUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\File;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\FileCopyrightType;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/media/copyright-edit/{id}', name: 'admin_media_copyright_edit')]
 class EditCopyrightAction extends AbstractController
@@ -35,7 +35,7 @@ class EditCopyrightAction extends AbstractController
         if ($file === null) {
             throw $this->createNotFoundException('The file does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(FileCopyrightType::class, ['copyright' => $file->getCopyright()], [
             'action' => $this->generateUrl('admin_media_copyright_edit', ['id' => $file->getId()])
         ]);

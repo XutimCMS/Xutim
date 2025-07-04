@@ -17,7 +17,7 @@ use Xutim\CoreBundle\Form\Admin\FileType;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\FileTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
 #[Route('/media/edit/{id}', name: 'admin_media_edit')]
 class EditFileAction extends AbstractController

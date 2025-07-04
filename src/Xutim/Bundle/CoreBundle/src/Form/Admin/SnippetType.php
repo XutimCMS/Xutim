@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Traversable;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Form\Admin\Dto\SnippetDto;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
 /**
  * @template-extends AbstractType<SnippetDto>

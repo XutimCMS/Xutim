@@ -6,8 +6,8 @@ namespace Xutim\CoreBundle\Domain\Event\Block;
 
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Domain\DomainEvent;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
+use Xutim\Domain\DomainEvent;
 
 final readonly class BlockChangedEvent implements DomainEvent
 {

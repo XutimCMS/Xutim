@@ -13,10 +13,10 @@ use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Config\Layout\Block\BlockLayoutChecker;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Factory\BlockItemFactory;
-use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Form\Admin\BlockItemType;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\CoreBundle\Repository\BlockRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 class AddBlockItemAction extends AbstractController
 {
@@ -38,7 +38,7 @@ class AddBlockItemAction extends AbstractController
             throw $this->createNotFoundException('The block does not exist');
         }
 
-        $this->denyAccessUnlessGranted(UserInterface::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
 
         $form = $this->createForm(BlockItemType::class, null, [
             'action' => $this->generateUrl('admin_block_add_item', ['id' => $block->getId()]),

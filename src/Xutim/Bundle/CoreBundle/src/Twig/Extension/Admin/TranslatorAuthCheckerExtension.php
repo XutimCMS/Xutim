@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Twig\Extension\Admin;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
 class TranslatorAuthCheckerExtension extends AbstractExtension
 {

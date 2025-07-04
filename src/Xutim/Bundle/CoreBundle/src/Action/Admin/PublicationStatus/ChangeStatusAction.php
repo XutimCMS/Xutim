@@ -14,9 +14,9 @@ use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Security\TranslatorAuthChecker;
-use Xutim\CoreBundle\Security\UserStorage;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route(
     '/publication-status/edit/{id}/{status}',

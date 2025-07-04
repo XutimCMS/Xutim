@@ -11,12 +11,12 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Event\Block\BlockCreatedEvent;
 use Xutim\CoreBundle\Domain\Factory\BlockFactory;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\BlockType;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockDto;
 use Xutim\CoreBundle\Message\Event\DomainEventMessage;
 use Xutim\CoreBundle\Repository\BlockRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/block/new', name: 'admin_block_new', methods: ['get', 'post'])]
 class CreateBlockAction extends AbstractController
@@ -31,7 +31,7 @@ class CreateBlockAction extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $this->denyAccessUnlessGranted(User::ROLE_DEVELOPER);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_DEVELOPER);
         $form = $this->createForm(BlockType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -8,7 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Domain\Factory\ResetPasswordRequestFactory;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\CoreBundle\Repository\BlockRepository;
@@ -18,20 +17,14 @@ use Xutim\CoreBundle\Repository\FileTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\CoreBundle\Repository\ResetPasswordRequestRepository;
 use Xutim\CoreBundle\Repository\SiteRepository;
 use Xutim\CoreBundle\Repository\SnippetRepository;
 use Xutim\CoreBundle\Repository\SnippetTranslationRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Repository\TagTranslationRepository;
-use Xutim\CoreBundle\Repository\UserRepository;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
-    $services->set(UserRepository::class)
-        ->arg('$registry', service(ManagerRegistry::class))
-        ->arg('$entityClass', '%xutim_core.model.user.class%')
-        ->tag('doctrine.repository_service');
 
     $services->set(BlockRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
@@ -79,12 +72,6 @@ return static function (ContainerConfigurator $container): void {
     $services->set(SnippetRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.snippet.class%')
-        ->tag('doctrine.repository_service');
-
-    $services->set(ResetPasswordRequestRepository::class)
-        ->arg('$registry', service(ManagerRegistry::class))
-        ->arg('$entityClass', '%xutim_core.model.reset_password_request.class%')
-        ->arg('$factory', service(ResetPasswordRequestFactory::class))
         ->tag('doctrine.repository_service');
 
     $services->set(MenuItemRepository::class)

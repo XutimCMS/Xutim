@@ -7,10 +7,10 @@ namespace Xutim\CoreBundle\Tests\Unit\Validator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
-use Xutim\CoreBundle\Entity\User;
-use Xutim\CoreBundle\Repository\UserRepository;
-use Xutim\CoreBundle\Validator\UniqueUsername;
-use Xutim\CoreBundle\Validator\UniqueUsernameValidator;
+use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
+use Xutim\SecurityBundle\Security\User;
+use Xutim\SecurityBundle\Validator\UniqueUsername;
+use Xutim\SecurityBundle\Validator\UniqueUsernameValidator;
 
 /**
 *
@@ -18,11 +18,11 @@ use Xutim\CoreBundle\Validator\UniqueUsernameValidator;
 */
 class UniqueUsernameValidatorTest extends ConstraintValidatorTestCase
 {
-    private MockObject&UserRepository $repo;
+    private MockObject&UserRepositoryInterface $repo;
 
     protected function createValidator(): UniqueUsernameValidator
     {
-        $this->repo = $this->createMock(UserRepository::class);
+        $this->repo = $this->createMock(UserRepositoryInterface::class);
         return new UniqueUsernameValidator($this->repo);
     }
 

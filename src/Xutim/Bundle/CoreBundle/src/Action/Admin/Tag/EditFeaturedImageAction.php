@@ -12,13 +12,13 @@ use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleFeaturedImageUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Article;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\Dto\ImageDto;
 use Xutim\CoreBundle\Form\Admin\FeaturedImageType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/tag/edit-featured-image/{id?null}', name: 'admin_tag_featured_image_edit', methods: ['get', 'post'])]
 class EditFeaturedImageAction extends AbstractController
@@ -39,7 +39,7 @@ class EditFeaturedImageAction extends AbstractController
         if ($article === null) {
             throw $this->createNotFoundException('The article does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(FeaturedImageType::class, new ImageDto($article->getFeaturedImage()?->getId()), [
             'action' => $this->generateUrl('admin_article_featured_image_edit', ['id' => $article->getId()])
         ]);

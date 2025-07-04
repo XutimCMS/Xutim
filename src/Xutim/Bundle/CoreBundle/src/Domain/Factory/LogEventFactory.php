@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Domain\Factory;
 
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Domain\DomainEvent;
 use Xutim\CoreBundle\Domain\Model\LogEventInterface;
+use Xutim\Domain\DomainEvent;
 
 class LogEventFactory
 {

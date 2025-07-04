@@ -9,7 +9,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 use Xutim\RedirectBundle\Action\Admin\CreateRedirectAction;
@@ -20,6 +19,7 @@ use Xutim\RedirectBundle\Action\Admin\RedirectToContentTranslationAction;
 use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();

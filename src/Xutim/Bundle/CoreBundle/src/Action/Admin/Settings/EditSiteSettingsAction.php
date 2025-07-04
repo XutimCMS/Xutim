@@ -10,10 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Dto\SiteDto;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\SiteType;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\SiteRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/settings/site', name: 'admin_settings_site', methods: ['get', 'post'])]
 class EditSiteSettingsAction extends AbstractController
@@ -27,7 +27,7 @@ class EditSiteSettingsAction extends AbstractController
 
     public function __invoke(Request $request): Response
     {
-        $this->denyAccessUnlessGranted(User::ROLE_DEVELOPER);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_DEVELOPER);
         $site = $this->siteRepository->findDefaultSite();
         $form = $this->createForm(SiteType::class, $site->toDto());
         $form->handleRequest($request);

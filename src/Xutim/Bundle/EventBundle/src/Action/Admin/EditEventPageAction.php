@@ -10,10 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\EventBundle\Form\Admin\EventPageType;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/event/edit-page/{id}', name: 'admin_event_page_edit', methods: ['get', 'post'])]
 class EditEventPageAction extends AbstractController
@@ -30,7 +30,7 @@ class EditEventPageAction extends AbstractController
         if ($event === null) {
             throw $this->createNotFoundException('The event does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $id = $event->getPage()?->getId();
         $form = $this->createForm(EventPageType::class, ['page' => $id], [
             'action' => $this->generateUrl('admin_event_page_edit', ['id' => $event->getId()])

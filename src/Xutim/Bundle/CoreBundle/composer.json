@@ -73,8 +73,8 @@
         "twig/string-extra": "^3.20",
         "twig/twig": "^3.20",
         "webmozart/assert": "^1.11",
-        "symfony/doctrine-messenger": "*",
-        "symfony/scheduler": "*"
+        "symfony/doctrine-messenger": "^7.3",
+        "symfony/scheduler": "^7.3"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",

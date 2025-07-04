@@ -11,12 +11,12 @@ use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Event\Page\PageLayoutUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Page;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\PageLayoutType;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/page/layout-edit/{id}', name: 'admin_page_layout_edit')]
 class EditPageLayoutAction extends AbstractController
@@ -36,7 +36,7 @@ class EditPageLayoutAction extends AbstractController
         if ($page === null) {
             throw $this->createNotFoundException('The page does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $layout = $this->layoutLoader->getPageLayoutByCode($page->getLayout());
         $form = $this->createForm(PageLayoutType::class, ['layout' => $layout], [
             'action' => $this->generateUrl('admin_page_layout_edit', ['id' => $page->getId()]),

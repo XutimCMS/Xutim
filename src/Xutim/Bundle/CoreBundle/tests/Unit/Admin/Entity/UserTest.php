@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Tests\Unit\Admin\Entity;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Entity\User;
+use Xutim\SecurityBundle\Security\User;
 
 class UserTest extends TestCase
 {

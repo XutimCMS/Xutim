@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Domain\Event\Tag;
 
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Domain\DomainEvent;
+use Xutim\Domain\DomainEvent;
 
 final readonly class TagCreatedEvent implements DomainEvent
 {

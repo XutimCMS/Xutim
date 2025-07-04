@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Domain\Event\ContentTranslation;
 
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Domain\DomainEvent;
+use Xutim\Domain\DomainEvent;
 
 final readonly class ContentTranslationCreatedEvent implements DomainEvent
 {

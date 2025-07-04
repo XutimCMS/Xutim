@@ -9,10 +9,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
-use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Repository\TagTranslationRepository;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/tag/delete/{id}', name: 'admin_tag_delete')]
 class DeleteTagAction extends AbstractController
@@ -31,7 +31,7 @@ class DeleteTagAction extends AbstractController
             throw $this->createNotFoundException('The tag does not exist');
         }
 
-        $this->denyAccessUnlessGranted(UserInterface::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
 
         if ($tag->getArticles()->isEmpty() === false) {

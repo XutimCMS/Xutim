@@ -8,8 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Model\SnippetInterface;
-use Xutim\CoreBundle\Domain\Model\UserInterface;
 use Xutim\CoreBundle\Repository\SnippetRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/json/snippet/list/{type}', name: 'admin_json_snippet_list', methods: ['get'])]
 class JsonListSnippetsAction extends AbstractController
@@ -21,7 +21,7 @@ class JsonListSnippetsAction extends AbstractController
 
     public function __invoke(string $type): JsonResponse
     {
-        $this->denyAccessUnlessGranted(UserInterface::ROLE_USER);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_USER);
         if (in_array($type, ['anchor', 'route'], true) === false) {
             throw $this->createNotFoundException('The type does not exist');
         }

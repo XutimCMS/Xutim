@@ -11,12 +11,12 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Dto\Admin\Page\PageDto;
 use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\PageType;
 use Xutim\CoreBundle\Message\Command\Page\CreatePageCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\CoreBundle\Security\UserStorage;
+use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserStorage;
 
 #[Route('/page/new/{id?}', name: 'admin_page_new', methods: ['get', 'post'])]
 class CreatePageAction extends AbstractController
@@ -39,7 +39,7 @@ class CreatePageAction extends AbstractController
                 throw $this->createNotFoundException('The page does not exist');
             }
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(PageType::class);
         $form->get('content')->setData('[]');
         if ($page !== null) {

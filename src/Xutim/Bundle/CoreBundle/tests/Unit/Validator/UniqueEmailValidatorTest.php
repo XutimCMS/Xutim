@@ -7,10 +7,10 @@ namespace Xutim\CoreBundle\Tests\Unit\Validator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\UserRepository;
 use Xutim\CoreBundle\Validator\UniqueEmail;
 use Xutim\CoreBundle\Validator\UniqueEmailValidator;
+use Xutim\SecurityBundle\Security\User;
 
 /**
 *

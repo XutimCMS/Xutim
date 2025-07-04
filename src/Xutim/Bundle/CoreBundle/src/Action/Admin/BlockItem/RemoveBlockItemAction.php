@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
-use Xutim\CoreBundle\Service\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[Route('/block/remove-item/{id}', name: 'admin_block_remove_item')]
 class RemoveBlockItemAction extends AbstractController
@@ -29,7 +29,7 @@ class RemoveBlockItemAction extends AbstractController
         if ($blockItem === null) {
             throw $this->createNotFoundException('The item does not exist');
         }
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
         $blockCode = $blockItem->getBlock()->getCode();
         $this->blockItemRepository->remove($blockItem, true);

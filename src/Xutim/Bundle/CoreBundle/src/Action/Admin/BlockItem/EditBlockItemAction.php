@@ -11,10 +11,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xutim\CoreBundle\Config\Layout\Block\BlockLayoutChecker;
 use Xutim\CoreBundle\Context\BlockContext;
-use Xutim\CoreBundle\Entity\User;
 use Xutim\CoreBundle\Form\Admin\BlockItemType;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 class EditBlockItemAction extends AbstractController
 {
@@ -39,7 +39,7 @@ class EditBlockItemAction extends AbstractController
             'block_options' => $this->blockLayoutChecker->extractAllowedOptions($item->getBlock())
         ]);
 
-        $this->denyAccessUnlessGranted(User::ROLE_EDITOR);
+        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $block = $item->getBlock();
         $form->handleRequest($request);
 

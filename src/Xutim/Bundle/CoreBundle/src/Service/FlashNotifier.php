@@ -47,7 +47,7 @@ class FlashNotifier
         $this->flash('warning', $message);
     }
 
-    private function flash(string $type, string $message): void
+    public function flash(string $type, string $message): void
     {
         $session = $this->requestStack->getCurrentRequest()?->getSession();
         if ($session instanceof Session) {
