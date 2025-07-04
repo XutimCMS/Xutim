@@ -1,4 +1,4 @@
-{% extends '@XutimSecurity/admin/security/security_base.html.twig' %}
+{% extends '@XutimSecurity/security/security_base.html.twig' %}
 
 {% block title %}Taizé website log in{% endblock %}
 
@@ -7,23 +7,31 @@
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
                 <h1>
-                    <a href="" class="navbar-brand navbar-brand-autodark"
-                        ><img src="./static/logo.svg" alt="" height="36"
-                    /></a>
+                    <a href="" class="navbar-brand navbar-brand-autodark"><img
+                            src="./static/logo.svg"
+                            alt=""
+                            height="36"
+                        /></a>
                     <span class="fw-bold">Taizé</span> website
                 </h1>
             </div>
             <div class="card card-md">
                 <div class="card-body">
                     <h2 class="h2 text-center mb-4">
-                        {{ 'login to your account'|trans({}, 'admin')|capitalize }}
+                        {{
+                            'login to your account'|trans({}, 'admin')|capitalize
+                        }}
                     </h2>
                     {% if error %}
                         <div class="alert alert-danger">
-                            {{- error.messageKey|trans(error.messageData, 'security') -}}
+                            {{
+                                error.messageKey|trans(error.messageData, 'security')
+                            }}
                         </div>
                     {% endif %}
-                    {% for flashMessage in app.session.flashbag.get('success') %}
+                    {%
+                        for flashMessage in app.session.flashbag.get('success')
+                    %}
                         <div class="alert alert-success">
                             {{ flashMessage }}
                         </div>
@@ -42,9 +50,9 @@
                             value="{{ csrf_token('authenticate') }}"
                         />
                         <div class="mb-3">
-                            <label class="form-label"
-                                >{{ 'email address'|trans({}, 'admin')|capitalize }}</label
-                            >
+                            <label class="form-label">{{
+                                'email address'|trans({}, 'admin')|capitalize
+                            }}</label>
                             <input
                                 id="email"
                                 name="email"
@@ -66,7 +74,9 @@
                                         href="{{ path('admin_forgot_password_request') }}"
                                         id="reset-password-link"
                                     >
-                                        {{ 'I forgot password'|trans({}, 'admin')|capitalize }}
+                                        {{
+                                            'I forgot password'|trans({}, 'admin')|capitalize
+                                        }}
                                     </a>
                                 </span>
                             </label>
@@ -93,7 +103,9 @@
                                     class="form-check-input"
                                 />
                                 <span class="form-check-label">
-                                    {{ 'remember me on this device'|trans({}, 'admin')|capitalize }}
+                                    {{
+                                        'remember me on this device'|trans({}, 'admin')|capitalize
+                                    }}
                                 </span>
                             </label>
                         </div>

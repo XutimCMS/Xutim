@@ -27,7 +27,7 @@ readonly class CreateUserHandler implements CommandHandlerInterface
         private UserRepositoryInterface $userRepository,
         private LogEventRepository $eventRepository,
         private PasswordHasherFactoryInterface $passwordHasherFactory,
-        private UserFactoryInterface $UserFactory
+        private UserFactoryInterface $userFactory
     ) {
     }
 
@@ -41,7 +41,7 @@ readonly class CreateUserHandler implements CommandHandlerInterface
         $hasher = $this->passwordHasherFactory->getPasswordHasher(User::class);
         $hashedPassword = $hasher->hash($command->password);
 
-        $user = $this->UserFactory->create(
+        $user = $this->userFactory->create(
             $command->id,
             $command->email,
             $command->name,

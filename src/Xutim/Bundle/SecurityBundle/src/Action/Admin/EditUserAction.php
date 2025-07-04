@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityBundle\Action\Admin\User;
+namespace Xutim\SecurityBundle\Action\Admin;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Component\Form\FormFactoryInterface;

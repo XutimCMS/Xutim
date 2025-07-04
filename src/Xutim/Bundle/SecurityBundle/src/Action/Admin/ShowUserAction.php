@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityBundle\Action\Admin\User;
+namespace Xutim\SecurityBundle\Action\Admin;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

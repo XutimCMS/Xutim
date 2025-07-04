@@ -14,7 +14,7 @@ use Xutim\CoreBundle\Entity\TimestampableTrait;
 use Xutim\SecurityBundle\Security\UserInterface as ModelUserInterface;
 
 #[MappedSuperclass]
-class User implements ModelUserInterface, JsonSerializable
+abstract class User implements ModelUserInterface, JsonSerializable
 {
     use TimestampableTrait;
 

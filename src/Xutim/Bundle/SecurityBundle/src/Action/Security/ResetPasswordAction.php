@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityBundle\Action\Admin\Security;
+namespace Xutim\SecurityBundle\Action\Security;
 
+use Psr\Container\ContainerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +25,7 @@ use Xutim\SecurityBundle\Form\ChangePasswordFormType;
 use Xutim\SecurityBundle\Message\ChangePasswordCommand;
 use Xutim\SecurityBundle\Security\UserInterface;
 
-class ResetPasswordAction
+class ResetPasswordAction extends AbstractController
 {
     use ResetPasswordControllerTrait;
 
@@ -34,7 +36,9 @@ class ResetPasswordAction
         private readonly FormFactoryInterface $formFactory,
         private readonly UrlGeneratorInterface $router,
         private readonly FlashNotifier $flashNotifier,
+        ContainerInterface $container
     ) {
+        $this->setContainer($container);
     }
 
     /**

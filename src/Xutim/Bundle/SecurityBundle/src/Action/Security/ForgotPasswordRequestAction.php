@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityBundle\Action\Admin\Security;
+namespace Xutim\SecurityBundle\Action\Security;
 
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -29,7 +29,7 @@ class ForgotPasswordRequestAction
     public function __construct(
         private readonly MailerInterface $mailer,
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
-        private readonly UserRepositoryInterface $userRepository,
+        private readonly UserRepositoryInterface $userRepo,
         private readonly Environment $twig,
         private readonly SiteContext $siteContext,
         private readonly FormFactoryInterface $formFactory,
@@ -50,14 +50,14 @@ class ForgotPasswordRequestAction
 
         return new Response(
             $this->twig->render('@XutimSecurity/security/reset_password/request.html.twig', [
-                'requestForm' => $form
+                'requestForm' => $form->createView()
             ])
         );
     }
 
     private function processSendingPasswordResetEmail(string $emailFormData): RedirectResponse
     {
-        $user = $this->userRepository->findOneByEmail($emailFormData);
+        $user = $this->userRepo->findOneByEmail($emailFormData);
 
         // Do not reveal whether a user account was found or not.
         if ($user === null) {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityBundle\Action\Admin\Security;
+namespace Xutim\SecurityBundle\Action\Security;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;

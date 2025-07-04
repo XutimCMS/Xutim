@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -17,17 +16,17 @@ return static function (ContainerConfigurator $container): void {
     $services = $container->services();
 
     $services->set(UserLoginAuthenticator::class)
-        ->arg('$router', service(UrlGeneratorInterface::class))
-        ->arg('$userProvider', new Reference('security.user.provider.concrete.app_user_provider'))
+        ->arg('$urlGenerator', service(UrlGeneratorInterface::class))
     ;
 
     $services->set(CsrfTokenChecker::class)
-        ->arg('$router', service(CsrfTokenManagerInterface::class))
+        ->arg('$csrfTokenManager', service(CsrfTokenManagerInterface::class))
     ;
 
     $services->set(OnlineUserSubscriber::class)
         ->arg('$userStorage', service(UserStorage::class))
         ->arg('$onlineUsersCache', service(CacheInterface::class))
+
         ->tag('kernel.event_subscriber')
 
     ;

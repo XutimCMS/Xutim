@@ -46,7 +46,7 @@ readonly class SendResetPasswordHandler implements CommandHandlerInterface
             ->from(new Address($this->siteContext->getSender(), 'Taizé Website'))
             ->to($user->getEmail())
             ->subject('Your password reset request')
-            ->htmlTemplate('@XutimCore/admin/security/reset_password/email.html.twig')
+            ->htmlTemplate('@XutimSecurity/security/reset_password/email.html.twig')
             ->context([
                 'resetToken' => $resetToken,
             ]);

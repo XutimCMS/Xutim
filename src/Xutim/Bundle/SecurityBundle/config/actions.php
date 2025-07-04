@@ -19,19 +19,19 @@ use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 use Xutim\SecurityBundle\Action\Admin\CreateUserAction;
-use Xutim\SecurityBundle\Action\Admin\Security\ChangeContextLanguageAction;
-use Xutim\SecurityBundle\Action\Admin\Security\CheckEmailAction;
-use Xutim\SecurityBundle\Action\Admin\Security\ForgotPasswordRequestAction;
-use Xutim\SecurityBundle\Action\Admin\Security\LoginAction;
-use Xutim\SecurityBundle\Action\Admin\Security\LogoutAction;
-use Xutim\SecurityBundle\Action\Admin\Security\ResetPasswordAction;
-use Xutim\SecurityBundle\Action\Admin\Security\ShowProfileAction;
-use Xutim\SecurityBundle\Action\Admin\Security\UserChangePasswordAction;
-use Xutim\SecurityBundle\Action\Admin\User\DeleteUserAction;
-use Xutim\SecurityBundle\Action\Admin\User\EditUserAction;
-use Xutim\SecurityBundle\Action\Admin\User\ListUsersAction;
-use Xutim\SecurityBundle\Action\Admin\User\SendResetPasswordAction;
-use Xutim\SecurityBundle\Action\Admin\User\ShowUserAction;
+use Xutim\SecurityBundle\Action\Admin\DeleteUserAction;
+use Xutim\SecurityBundle\Action\Admin\EditUserAction;
+use Xutim\SecurityBundle\Action\Admin\ListUsersAction;
+use Xutim\SecurityBundle\Action\Admin\SendResetPasswordAction;
+use Xutim\SecurityBundle\Action\Admin\ShowUserAction;
+use Xutim\SecurityBundle\Action\Security\ChangeContextLanguageAction;
+use Xutim\SecurityBundle\Action\Security\CheckEmailAction;
+use Xutim\SecurityBundle\Action\Security\ForgotPasswordRequestAction;
+use Xutim\SecurityBundle\Action\Security\LoginAction;
+use Xutim\SecurityBundle\Action\Security\LogoutAction;
+use Xutim\SecurityBundle\Action\Security\ResetPasswordAction;
+use Xutim\SecurityBundle\Action\Security\ShowProfileAction;
+use Xutim\SecurityBundle\Action\Security\UserChangePasswordAction;
 use Xutim\SecurityBundle\Repository\ResetPasswordRequestRepository;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
@@ -49,6 +49,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$formFactory', service(FormFactoryInterface::class))
         ->arg('$router', service(UrlGeneratorInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
+        ->arg('$userStorage', service(UserStorage::class))
         ->tag('controller.service_arguments')
     ;
 
@@ -112,6 +113,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(CheckEmailAction::class)
         ->arg('$resetPasswordHelper', service(ResetPasswordHelperInterface::class))
         ->arg('$twig', service(Environment::class))
+        ->arg('$container', service('service_container'))
         ->tag('controller.service_arguments')
     ;
 
@@ -145,7 +147,9 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$formFactory', service(FormFactoryInterface::class))
         ->arg('$router', service(UrlGeneratorInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
+        ->arg('$container', service('service_container'))
         ->tag('controller.service_arguments')
+        ->public()
     ;
 
     $services->set(ShowProfileAction::class)

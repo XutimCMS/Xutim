@@ -32,11 +32,13 @@ final class XutimSecurityExtension extends Extension implements PrependExtension
         $loader->load('repositories.php');
         $loader->load('factories.php');
         $loader->load('forms.php');
-        $loader->load('actions.php');
-        $loader->load('console.php');
+        $loader->load('services.php');
         $loader->load('security.php');
         $loader->load('validators.php');
+        $loader->load('console.php');
         $loader->load('fixtures.php');
+        $loader->load('handlers.php');
+        $loader->load('actions.php');
     }
 
     public function prepend(ContainerBuilder $container): void
@@ -57,7 +59,7 @@ final class XutimSecurityExtension extends Extension implements PrependExtension
         $mapping = [];
         foreach ($config['models'] as $alias => $modelConfig) {
             $camel = str_replace(' ', '', ucwords(str_replace('_', ' ', $alias)));
-            $interface = sprintf('Xutim\\SecurityBundle\\Domain\\Model\\%sInterface', $camel);
+            $interface = sprintf('Xutim\\SecurityBundle\\Security\\%sInterface', $camel);
             $mapping[$interface] = $modelConfig['class'];
         }
 

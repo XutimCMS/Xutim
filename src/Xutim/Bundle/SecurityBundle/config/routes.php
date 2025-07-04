@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Xutim\SecurityBundle\Action\Admin\CreateUserAction;
-use Xutim\SecurityBundle\Action\Admin\Security\ChangeContextLanguageAction;
-use Xutim\SecurityBundle\Action\Admin\Security\CheckEmailAction;
-use Xutim\SecurityBundle\Action\Admin\Security\ForgotPasswordRequestAction;
-use Xutim\SecurityBundle\Action\Admin\Security\LoginAction;
-use Xutim\SecurityBundle\Action\Admin\Security\LogoutAction;
-use Xutim\SecurityBundle\Action\Admin\Security\ResetPasswordAction;
-use Xutim\SecurityBundle\Action\Admin\Security\ShowProfileAction;
-use Xutim\SecurityBundle\Action\Admin\Security\UserChangePasswordAction;
-use Xutim\SecurityBundle\Action\Admin\User\DeleteUserAction;
-use Xutim\SecurityBundle\Action\Admin\User\EditUserAction;
-use Xutim\SecurityBundle\Action\Admin\User\ListUsersAction;
-use Xutim\SecurityBundle\Action\Admin\User\SendResetPasswordAction;
-use Xutim\SecurityBundle\Action\Admin\User\ShowUserAction;
+use Xutim\SecurityBundle\Action\Admin\DeleteUserAction;
+use Xutim\SecurityBundle\Action\Admin\EditUserAction;
+use Xutim\SecurityBundle\Action\Admin\ListUsersAction;
+use Xutim\SecurityBundle\Action\Admin\SendResetPasswordAction;
+use Xutim\SecurityBundle\Action\Admin\ShowUserAction;
+use Xutim\SecurityBundle\Action\Security\ChangeContextLanguageAction;
+use Xutim\SecurityBundle\Action\Security\CheckEmailAction;
+use Xutim\SecurityBundle\Action\Security\ForgotPasswordRequestAction;
+use Xutim\SecurityBundle\Action\Security\LoginAction;
+use Xutim\SecurityBundle\Action\Security\LogoutAction;
+use Xutim\SecurityBundle\Action\Security\ResetPasswordAction;
+use Xutim\SecurityBundle\Action\Security\ShowProfileAction;
+use Xutim\SecurityBundle\Action\Security\UserChangePasswordAction;
 
 return function (RoutingConfigurator $routes) {
     $routes->add('admin_user_new', '/admin/user/new')
@@ -40,7 +40,7 @@ return function (RoutingConfigurator $routes) {
         ->controller(SendResetPasswordAction::class);
 
     $routes->add('admin_user_show', '/admin/user/{id}')
-        ->methods(['post'])
+        ->methods(['get'])
         ->controller(ShowUserAction::class);
 
     $routes->add('admin_settings_change_language_content_context', '/admin/settings/change-language-context/{locale}')
@@ -59,7 +59,7 @@ return function (RoutingConfigurator $routes) {
     $routes->add('admin_logout', '/admin/logout')
         ->controller(LogoutAction::class);
 
-    $routes->add('admin_reset_token', '/admin/reset/{token}')
+    $routes->add('admin_reset_password', '/admin/reset/{token}')
         ->methods(['post'])
         ->controller([ResetPasswordAction::class, 'reset']);
 

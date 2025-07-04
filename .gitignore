@@ -4,3 +4,5 @@ vendor/
 dprint.json
 composer.lock
 .prettierrc
+.twig-cs-fixer.cache/
+/.twig-cs-fixer.cache/

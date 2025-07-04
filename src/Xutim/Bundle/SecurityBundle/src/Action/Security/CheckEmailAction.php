@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityBundle\Action\Admin\Security;
+namespace Xutim\SecurityBundle\Action\Security;
 
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
@@ -18,6 +19,7 @@ class CheckEmailAction
     public function __construct(
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
         private readonly Environment $twig,
+        protected Container $container
     ) {
     }
 
