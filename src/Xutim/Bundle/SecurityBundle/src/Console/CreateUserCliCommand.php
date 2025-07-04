@@ -24,13 +24,12 @@ final class CreateUserCliCommand extends Command
         private readonly MessageBusInterface $commandBus,
         private readonly UserRepositoryInterface $userRepository
     ) {
-        parent::__construct();
+        parent::__construct(self::$defaultName);
     }
 
     protected function configure(): void
     {
         $this
-            ->setName(self::$defaultName)
             ->addArgument('email', InputArgument::REQUIRED, 'The email of a user.')
             ->addArgument('name', InputArgument::REQUIRED, 'The name of a user.')
             ->addArgument('password', InputArgument::REQUIRED, 'The password of a user.')
