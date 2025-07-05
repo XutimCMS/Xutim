@@ -22,7 +22,7 @@ class ShowArticleTranslationAction extends AbstractController
         if ($article === null) {
             throw $this->createNotFoundException('The article does not exist');
         }
-        return $this->render('@XutimCore/admin/article_translation/show.html.twig', [
+        return $this->render('@XutimCore/admin/article/article_translation_show.html.twig', [
             'article' => $article,
             'translation' => $article->getTranslationByLocale($locale)
         ]);

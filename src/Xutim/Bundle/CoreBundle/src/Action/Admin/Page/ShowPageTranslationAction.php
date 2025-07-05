@@ -22,7 +22,7 @@ class ShowPageTranslationAction extends AbstractController
         if ($page === null) {
             throw $this->createNotFoundException('The page does not exist');
         }
-        return $this->render('@XutimCore/admin/page_translation/show.html.twig', [
+        return $this->render('@XutimCore/admin/page/page_translation_show.html.twig', [
             'page' => $page,
             'translation' => $page->getTranslationByLocale($locale)
         ]);
