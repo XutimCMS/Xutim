@@ -6,15 +6,13 @@ namespace Xutim\RedirectBundle\Form;
 
 use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
-use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 
 final readonly class RedirectFormData
 {
     public function __construct(
         public ?string $source,
-        public ?ContentTranslationInterface $targetContentTranslation,
-        public ?string $locale,
+        public ?string $target,
         public ?bool $permanent,
         public ?Uuid $id = null
     ) {
@@ -24,8 +22,7 @@ final readonly class RedirectFormData
     {
         return new self(
             $redirect->getSource(),
-            $redirect->getTargetContentTranslation(),
-            $redirect->getLocale(),
+            $redirect->getTarget(),
             $redirect->isPermanent(),
             $redirect->getId()
         );
@@ -38,16 +35,11 @@ final readonly class RedirectFormData
         return $this->source;
     }
 
-    public function getTargetContentTranslation(): ContentTranslationInterface
+    public function getTarget(): string
     {
-        Assert::notNull($this->targetContentTranslation);
+        Assert::notNull($this->target);
 
-        return $this->targetContentTranslation;
-    }
-
-    public function getLocale(): ?string
-    {
-        return $this->locale;
+        return $this->target;
     }
 
     public function isPermanent(): bool

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Xutim\RedirectBundle\Infra\Routing;
 
 use Symfony\Component\Config\Loader\Loader;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Xutim\RedirectBundle\Action\Admin\RedirectToContentTranslationAction;
+use Xutim\RedirectBundle\Action\Admin\RedirectToTargetAction;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 
 final class RedirectRouteLoader extends Loader
@@ -29,20 +30,17 @@ final class RedirectRouteLoader extends Loader
         }
 
         $collection = new RouteCollection();
+        $collection->addResource(new FileResource($this->redirectVersionPath));
         foreach ($this->repo->findAll() as $redirect) {
             $route = new Route(
                 path: '/' . ltrim($redirect->getSource(), '/'),
                 defaults: [
-                    '_controller' => RedirectToContentTranslationAction::class,
+                    '_controller' => RedirectToTargetAction::class,
                     'redirect_id' => $redirect->getId()->toRfc4122(),
-                    '_locale' => $redirect->getLocale(),
                 ],
-                options: [
-                    'resource' => $this->redirectVersionPath,
-                ]
             );
 
-            $hash = substr(hash('sha256', $redirect->getSource() . $redirect->getTargetContentTranslation()->getId()), 0, 12);
+            $hash = substr(hash('sha256', $redirect->getSource() . $redirect->getTarget()), 0, 12);
             $collection->add('xutim_redirect_' . $hash, $route);
         }
 

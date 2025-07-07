@@ -8,8 +8,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
-use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
+use Xutim\RedirectComponent\Domain\Model\RedirectInterface;
 
 /**
  * @extends ServiceEntityRepository<RedirectInterface>
@@ -19,8 +19,7 @@ class RedirectRepository extends ServiceEntityRepository implements RedirectRepo
     public const FILTER_ORDER_COLUMN_MAP = [
         'id' => 'redirect.id',
         'source' => 'redirect.source',
-        'targetContentTranslation' => 'contentTrans.title',
-        'locale' => 'redirect.locale',
+        'target' => 'redirect.target',
         'permanent' => 'redirect.permanent',
     ];
 
@@ -36,16 +35,13 @@ class RedirectRepository extends ServiceEntityRepository implements RedirectRepo
 
     public function queryByFilter(FilterDto $filter): QueryBuilder
     {
-        $builder = $this->createQueryBuilder('redirect')
-            ->leftJoin('redirect.targetContentTranslation', 'contentTrans')
-        ;
+        $builder = $this->createQueryBuilder('redirect');
 
         if ($filter->hasSearchTerm() === true) {
             $builder
                 ->andWhere($builder->expr()->orX(
                     $builder->expr()->like('LOWER(redirect.source)', ':searchTerm'),
-                    $builder->expr()->like('LOWER(contentTrans.title)', ':searchTerm'),
-                    $builder->expr()->like('LOWER(redirect.locale)', ':searchTerm'),
+                    $builder->expr()->like('LOWER(redirect.target)', ':searchTerm'),
                 ))
                 ->setParameter('searchTerm', '%' . strtolower($filter->searchTerm) . '%');
         }

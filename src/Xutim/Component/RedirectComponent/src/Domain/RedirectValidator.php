@@ -18,9 +18,9 @@ class RedirectValidator
         $map = [];
         foreach ($redirects as $redirect) {
             $source = $redirect->getSource();
-            $target = $redirect->getTargetUrl();
+            $target = $redirect->getTarget();
 
-            if ($target === null || $target === '') {
+            if ($target === '') {
                 throw new InvalidRedirectTargetException('Target URL must not be empty.');
             }
 

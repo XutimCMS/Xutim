@@ -12,13 +12,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
-use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Service\FlashNotifier;
-use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 use Xutim\RedirectBundle\Form\RedirectFormData;
 use Xutim\RedirectBundle\Form\RedirectType;
 use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
+use Xutim\RedirectComponent\Domain\Factory\RedirectFactoryInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 
 class CreateRedirectAction
@@ -26,13 +25,11 @@ class CreateRedirectAction
     public function __construct(
         private readonly RedirectRepositoryInterface $repo,
         private readonly RedirectFactoryInterface $factory,
-        private readonly SiteContext $siteContext,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly UrlGeneratorInterface $router,
         private readonly AuthorizationCheckerInterface $authChecker,
         private readonly FlashNotifier $flashNotifier,
-        private readonly string $contentTranslationClass,
         private readonly RedirectRouteService $redirectRouteService
     ) {
     }
@@ -42,12 +39,8 @@ class CreateRedirectAction
         if ($this->authChecker->isGranted(UserRoles::ROLE_EDITOR) === false) {
             throw new AccessDeniedException('Access denied.');
         }
-        $locales = $this->siteContext->getLocales();
-        $localeChoices = array_combine($locales, $locales);
         $form = $this->formFactory->create(RedirectType::class, null, [
             'action' => $this->router->generate('admin_redirect_new'),
-            'locale_choices' => $localeChoices,
-            'content_translation_class' => $this->contentTranslationClass
         ]);
 
         $form->handleRequest($request);
@@ -56,8 +49,7 @@ class CreateRedirectAction
             $data = $form->getData();
             $redirect = $this->factory->create(
                 $data->getSource(),
-                $data->getTargetContentTranslation(),
-                $data->getLocale(),
+                $data->getTarget(),
                 $data->isPermanent(),
             );
 

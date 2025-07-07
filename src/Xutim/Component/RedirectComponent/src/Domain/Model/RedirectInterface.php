@@ -12,9 +12,7 @@ interface RedirectInterface
 
     public function getSource(): string;
 
-    public function getTargetUrl(): ?string;
-
-    public function getLocale(): ?string;
+    public function getTarget(): string;
 
     public function isPermanent(): bool;
 }

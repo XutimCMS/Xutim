@@ -12,8 +12,7 @@ abstract class Redirect implements RedirectInterface
 
     public function __construct(
         protected string $source,
-        protected ?string $targetUrl = null,
-        protected ?string $locale = null,
+        protected string $target,
         protected bool $permanent = false
     ) {
         $this->id = Uuid::v4();
@@ -29,14 +28,9 @@ abstract class Redirect implements RedirectInterface
         return $this->source;
     }
 
-    public function getTargetUrl(): ?string
+    public function getTarget(): string
     {
-        return $this->targetUrl;
-    }
-
-    public function getLocale(): ?string
-    {
-        return $this->locale;
+        return $this->target;
     }
 
     public function isPermanent(): bool

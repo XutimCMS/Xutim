@@ -13,8 +13,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
-use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Service\FlashNotifier;
+use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 use Xutim\RedirectBundle\Form\RedirectFormData;
 use Xutim\RedirectBundle\Form\RedirectType;
@@ -25,19 +25,18 @@ class EditRedirectAction
 {
     public function __construct(
         private readonly RedirectRepositoryInterface $repo,
-        private readonly SiteContext $siteContext,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly UrlGeneratorInterface $router,
         private readonly AuthorizationCheckerInterface $authChecker,
         private readonly FlashNotifier $flashNotifier,
-        private readonly string $contentTranslationClass,
         private readonly RedirectRouteService $redirectRouteService
     ) {
     }
 
     public function __invoke(Request $request, string $id): Response
     {
+        /** @var null|RedirectInterface $redirect */
         $redirect = $this->repo->findById($id);
         if ($redirect === null) {
             throw new NotFoundHttpException('The redirect does not exist');
@@ -45,12 +44,8 @@ class EditRedirectAction
         if ($this->authChecker->isGranted(UserRoles::ROLE_EDITOR) === false) {
             throw new AccessDeniedException('Access denied.');
         }
-        $locales = $this->siteContext->getLocales();
-        $localeChoices = array_combine($locales, $locales);
         $form = $this->formFactory->create(RedirectType::class, RedirectFormData::fromRedirect($redirect), [
             'action' => $this->router->generate('admin_redirect_edit', ['id' => $redirect->getId()]),
-            'locale_choices' => $localeChoices,
-            'content_translation_class' => $this->contentTranslationClass
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -59,8 +54,7 @@ class EditRedirectAction
 
             $redirect->change(
                 $data->getSource(),
-                $data->getTargetContentTranslation(),
-                $data->getLocale(),
+                $data->getTarget(),
                 $data->isPermanent()
             );
             $this->repo->save($redirect, true);

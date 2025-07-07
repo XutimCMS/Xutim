@@ -18,10 +18,9 @@ class RedirectFactory implements RedirectFactoryInterface
 
     public function create(
         string $source,
-        ?string $targetUrl,
-        ?string $locale = null,
+        string $target,
         bool $permanent = false
     ): RedirectInterface {
-        return new $this->redirectClass($source, $targetUrl, $locale, $permanent);
+        return new $this->redirectClass($source, $target, $permanent);
     }
 }

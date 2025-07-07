@@ -57,11 +57,11 @@
                 </th>
                 <th>
                     <a
-                        href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'targetContentTranslation', orderDirection: filter.reverseDirection('targetContentTranslation')}) }}"
+                        href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'target', orderDirection: filter.reverseDirection('target')}) }}"
                     >
                         {{ 'target'|trans({}, 'admin')|capitalize }}
                         {{
-                            icons.order_arrow('targetContentTranslation', filter.orderColumn, filter.orderDirection)
+                            icons.order_arrow('target', filter.orderColumn, filter.orderDirection)
                         }}
                     </a>
                 </th>

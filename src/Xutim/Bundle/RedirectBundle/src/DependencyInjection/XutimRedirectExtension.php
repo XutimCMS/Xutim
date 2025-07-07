@@ -36,7 +36,6 @@ final class XutimRedirectExtension extends Extension implements PrependExtension
 
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
 
-        $loader->load('resolvers.php');
         $loader->load('repositories.php');
         $loader->load('factories.php');
         $loader->load('forms.php');

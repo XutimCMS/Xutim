@@ -17,10 +17,10 @@ class RedirectResolver
     ) {
     }
 
-    public function resolve(RedirectInterface $redirect, ?string $locale = null): ?string
+    public function resolve(RedirectInterface $redirect): ?string
     {
         foreach ($this->resolvers as $resolver) {
-            $url = $resolver->resolveTargetUrl($redirect, $locale);
+            $url = $resolver->resolveTargetUrl($redirect);
             if ($url !== null) {
                 return $url;
             }

@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace Xutim\RedirectBundle\Infra\Validator;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 use Xutim\RedirectBundle\Form\RedirectFormData;
 
 class ValidRedirectValidator extends ConstraintValidator
 {
     public function __construct(
-        private readonly RedirectRepositoryInterface $repo,
-        private readonly UrlGeneratorInterface $router
+        private readonly RedirectRepositoryInterface $repo
     ) {
     }
 
@@ -26,7 +23,7 @@ class ValidRedirectValidator extends ConstraintValidator
         }
 
         $source = $value->getSource();
-        $target = $this->generateRoute($value->getTargetContentTranslation());
+        $target = $value->getTarget();
 
         if ($source === $target) {
             $this->context->buildViolation($constraint->messageSelf)->addViolation();
@@ -34,13 +31,12 @@ class ValidRedirectValidator extends ConstraintValidator
         }
 
         foreach ($this->repo->findAll() as $existing) {
-            dump($existing, $value);
             if ($existing->getId() === $value->getId()) {
                 continue;
             }
 
             $existingSource = $existing->getSource();
-            $existingTarget = $this->generateRoute($value->getTargetContentTranslation());
+            $existingTarget = $value->getTarget();
 
             // Loop detection
             if ($existingSource === $target && $existingTarget === $source) {
@@ -57,12 +53,5 @@ class ValidRedirectValidator extends ConstraintValidator
                 break;
             }
         }
-    }
-
-    private function generateRoute(ContentTranslationInterface $trans): string
-    {
-        return $this->router->generate('content_translation_show', [
-            'slug' => $trans->getSlug()
-        ]);
     }
 }

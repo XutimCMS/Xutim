@@ -10,8 +10,7 @@ interface RedirectFactoryInterface
 {
     public function create(
         string $source,
-        ?string $targetUrl,
-        ?string $locale = null,
+        string $target,
         bool $permanent = false
     ): RedirectInterface;
 }

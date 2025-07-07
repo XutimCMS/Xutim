@@ -7,14 +7,12 @@ namespace Xutim\RedirectBundle\Action\Admin;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\RouterInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 
-final class RedirectToContentTranslationAction
+final class RedirectToTargetAction
 {
     public function __construct(
-        private RedirectRepositoryInterface $repo,
-        private RouterInterface $router
+        private RedirectRepositoryInterface $repo
     ) {
     }
 
@@ -27,10 +25,7 @@ final class RedirectToContentTranslationAction
             throw new NotFoundHttpException();
         }
 
-        $url = $this->router->generate('content_translation_show', [
-            'slug' => $redirect->getTargetContentTranslation()->getSlug(),
-            '_locale' => $redirect->getTargetContentTranslation()->getLocale(),
-        ]);
+        $url = $redirect->getTarget();
 
         return new RedirectResponse($url, $redirect->isPermanent() ? 301 : 302);
     }

@@ -7,11 +7,8 @@ namespace Xutim\RedirectBundle\Domain\Model;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 
 #[MappedSuperclass()]
 abstract class Redirect implements RedirectInterface
@@ -23,35 +20,28 @@ abstract class Redirect implements RedirectInterface
     #[Column(type: Types::STRING)]
     protected string $source;
 
-    #[Column(type: Types::STRING, nullable: true)]
-    protected ?string $locale;
+    #[Column(type: Types::STRING)]
+    protected string $target;
 
     #[Column(type: Types::BOOLEAN)]
     protected bool $permanent;
 
-    #[ManyToOne(targetEntity: ContentTranslationInterface::class)]
-    #[JoinColumn(nullable: false)]
-    protected ContentTranslationInterface $targetContentTranslation;
-
     public function __construct(
         string $source,
-        ContentTranslationInterface $targetContentTranslation,
-        ?string $locale = null,
+        string $target,
         bool $permanent = false
     ) {
         $this->id = Uuid::v4();
-        $this->change($source, $targetContentTranslation, $locale, $permanent);
+        $this->change($source, $target, $permanent);
     }
 
     public function change(
         string $source,
-        ContentTranslationInterface $targetContentTranslation,
-        ?string $locale = null,
+        string $target,
         bool $permanent = false,
     ): void {
         $this->source = $source;
-        $this->targetContentTranslation = $targetContentTranslation;
-        $this->locale = $locale;
+        $this->target = $target;
         $this->permanent = $permanent;
     }
 
@@ -60,24 +50,14 @@ abstract class Redirect implements RedirectInterface
         return $this->id;
     }
 
-    public function getTargetUrl(): string
+    public function getTarget(): string
     {
-        return '';
+        return $this->target;
     }
 
     public function getSource(): string
     {
         return $this->source;
-    }
-
-    public function getTargetContentTranslation(): ContentTranslationInterface
-    {
-        return $this->targetContentTranslation;
-    }
-
-    public function getLocale(): ?string
-    {
-        return $this->locale;
     }
 
     public function isPermanent(): bool
