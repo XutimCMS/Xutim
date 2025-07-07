@@ -36,12 +36,17 @@ readonly class ContentFragmentsConverter
      * @param array{id: string, type: string, data: array<string, mixed>} $fragment
      * @param array<string, string>                                       $options
      */
-    public function convertFragmentToThemeHtml(array $fragment, string $themePath, array $options = []): string
-    {
+    public function convertFragmentToThemeHtml(
+        array $fragment,
+        string $themePath,
+        string $locale,
+        array $options = []
+    ): string {
         return $this->twig->render(sprintf('%s/content_fragment/content_fragment.html.twig', $themePath), [
             'fragment' => $fragment,
             'themePath' => $themePath,
-            'fragmentOptions' => $options
+            'fragmentOptions' => $options,
+            'locale' => $locale
         ]);
     }
 

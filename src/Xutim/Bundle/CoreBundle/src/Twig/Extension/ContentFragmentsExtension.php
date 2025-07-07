@@ -41,11 +41,11 @@ class ContentFragmentsExtension extends AbstractExtension
      * @param array{id: string, type: string, data: array<string, mixed>} $fragment
      * @param array<string, string>                                       $options
      */
-    public function fragmentToHtml(array $fragment, array $options = []): string
+    public function fragmentToHtml(array $fragment, string $locale, array $options = []): string
     {
         $path = $this->themeFinder->getActiveThemePath();
 
-        return $this->fragmentConverter->convertFragmentToThemeHtml($fragment, $path, $options);
+        return $this->fragmentConverter->convertFragmentToThemeHtml($fragment, $path, $locale, $options);
     }
 
     /**
