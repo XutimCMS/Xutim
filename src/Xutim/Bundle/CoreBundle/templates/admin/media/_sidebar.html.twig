@@ -52,6 +52,25 @@
             </twig:block>
         </twig:Xutim:Admin:SidebarItem>
 
+        <twig:Xutim:Admin:SidebarItem>
+            <twig:block name="content">
+                <twig:Xutim:Admin:Button
+                    class="btn-link clipboard-input d-flex justify-content-start"
+                    variant="default"
+                    data-controller="clipboard"
+                    data-clipboard-text="{{ uploaded_asset(file.id) }}"
+                    data-bs-toggle="popover"
+                    data-bs-container="body"
+                    data-bs-placement="top"
+                    data-bs-content="{{ 'message.copied'|trans|capitalize }}!"
+                >
+                    {{
+                        'copy link to the original file'|trans({}, 'admin')|capitalize
+                    }}
+                </twig:Xutim:Admin:Button>
+            </twig:block>
+        </twig:Xutim:Admin:SidebarItem>
+
         {% if imageInfo %}
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="header">
