@@ -14,14 +14,16 @@ use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticlePublicationDateUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Article;
+use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\CoreBundle\Form\Admin\PublishedDateType;
+use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCommand;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/article/edit-publication-date/{id}', name: 'admin_article_edit_publication_date', methods: ['get', 'post'])]
-class EditPublishedDateAction extends AbstractController
+#[Route('/article/edit-scheduled-publication-date/{id}', name: 'admin_article_edit_scheduled_publication_date', methods: ['get', 'post'])]
+class EditScheduledPublishedDateAction extends AbstractController
 {
     public function __construct(
         private readonly LogEventFactory $logEventFactory,
@@ -46,8 +48,8 @@ class EditPublishedDateAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getPublishedAt()], [
-            'action' => $this->generateUrl('admin_article_edit_publication_date', ['id' => $article->getId()]),
-            'future_date_only' => false
+            'action' => $this->generateUrl('admin_article_edit_scheduled_publication_date', ['id' => $article->getId()]),
+            'future_date_only' => true
         ]);
 
         $form->handleRequest($request);
@@ -66,6 +68,13 @@ class EditPublishedDateAction extends AbstractController
                 $event
             );
 
+            $user = $this->userStorage->getUserWithException();
+            $command = new ChangePublicationStatusCommand(
+                $translation->getId(),
+                PublicationStatus::Scheduled,
+                $user->getUserIdentifier()
+            );
+            $this->commandBus->dispatch($command);
             $this->eventRepository->save($logEntry, true);
 
             $this->blockContext->resetBlocksBelongsToArticle($article);

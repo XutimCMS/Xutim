@@ -64,6 +64,8 @@ interface ContentTranslationInterface
 
     public function isPublished(): bool;
 
+    public function isScheduled(): bool;
+
     public function getPublishedAt(): ?DateTimeImmutable;
 
     public function changePublishedAt(?DateTimeImmutable $publishedAt): void;

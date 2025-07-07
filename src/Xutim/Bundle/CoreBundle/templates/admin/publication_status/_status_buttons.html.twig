@@ -34,7 +34,7 @@
                 variant="link"
                 class="p-0 text-{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').colorClass }}"
                 data-turbo-frame="modal"
-                href="{{ path('admin_article_edit_publication_date', {id: articleEntity.id}) }}"
+                href="{{ path('admin_article_edit_scheduled_publication_date', {id: articleEntity.id}) }}"
             >
                 <twig:Xutim:Admin:Icon name="clock" />
             </twig:Xutim:Admin:Button>
