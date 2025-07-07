@@ -80,6 +80,17 @@
                 }}
             </a>
         </th>
+        <th>
+            <a
+                class=""
+                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'publishedAt', orderDirection: filter.reverseDirection('publishedAt')}) }}"
+            >
+                {{ 'published at'|trans({}, 'admin') }}
+                {{
+                    icons.order_arrow('published', filter.orderColumn, filter.orderDirection)
+                }}
+            </a>
+        </th>
     {% endblock %}
 
     {% block body %}
@@ -134,6 +145,13 @@
                 </td>
                 <td>
                     {{ article.updatedAt|time_ago() }}
+                </td>
+                <td>
+                    {% if article.publishedAt %}
+                        {{ article.publishedAt|time_ago() }}
+                    {% else %}
+                        -
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
