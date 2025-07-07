@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Routing;
 
 use Symfony\Component\Config\Loader\Loader;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Xutim\CoreBundle\Context\SiteContext;
@@ -49,6 +50,7 @@ class LocalizedRouteLoader extends Loader
 
         $availableLocales = implode('|', $this->siteContext->getLocales());
         $routes = new RouteCollection();
+        $routes->addResource(new FileResource($this->snippetVersionPath));
 
         foreach (RouteSnippetRegistry::all() as $route) {
             $snippet = $this->snippetRepo->findByCode($route->snippetKey);
@@ -72,7 +74,6 @@ class LocalizedRouteLoader extends Loader
                     host: $route->host,
                     options: [
                         'priority' => 90,
-                        'resource' => $this->snippetVersionPath,
                     ]
                 ));
             }

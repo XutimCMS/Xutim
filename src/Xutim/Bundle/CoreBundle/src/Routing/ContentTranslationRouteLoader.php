@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Routing;
 
 use Symfony\Component\Config\Loader\Loader;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Xutim\CoreBundle\Action\Public\ShowContentTranslation;
@@ -50,6 +51,7 @@ class ContentTranslationRouteLoader extends Loader
 
         $locales = implode('|', $this->siteContext->getAllLocales());
         $routes = new RouteCollection();
+        $routes->addResource(new FileResource($this->snippetVersionPath));
         $usedSlugs = [];
         foreach (RouteSnippetRegistry::all() as $route) {
             $snippet = $this->snippetRepo->findByCode($route->snippetKey);
@@ -83,7 +85,6 @@ class ContentTranslationRouteLoader extends Loader
             ],
             options: [
                 'priority' => 0,
-                'resource' => $this->snippetVersionPath,
             ]
         );
 

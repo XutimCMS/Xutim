@@ -23,6 +23,12 @@ final class XutimRedirectExtension extends Extension implements PrependExtension
         /** @var array{models: array<string, array{class: class-string}>} $configs */
         $configs = $this->processConfiguration($this->getConfiguration([], $container), $config);
         $container->setParameter('redirect_routes_version_file', '%kernel.cache_dir%/redirect_routes.version');
+        /** @var string $versionFile*/
+        $versionFile = $container->getParameterBag()->resolveValue('%kernel.cache_dir%/redirect_routes.version');
+
+        if (!file_exists($versionFile)) {
+            file_put_contents($versionFile, microtime());
+        }
 
         foreach ($configs['models'] as $alias => $modelConfig) {
             $container->setParameter(sprintf('xutim_redirect.model.%s.class', $alias), $modelConfig['class']);
