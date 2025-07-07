@@ -72,6 +72,14 @@ class SiteContext
     /**
      * @return array<string>
      */
+    public function getMainLocales(): array
+    {
+        return $this->getDefaultSite()->locales;
+    }
+
+    /**
+     * @return array<string>
+     */
     public function getAllLocales(): array
     {
         return array_unique(

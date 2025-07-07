@@ -42,7 +42,9 @@ class ArticleType extends AbstractType implements DataMapperInterface
     {
         $update = array_key_exists('data', $options) === true;
 
-        $locales = $this->siteContext->getLocales();
+        $mainLocales = $this->siteContext->getMainLocales();
+        $preferredLocaleChoices = array_combine($mainLocales, $mainLocales);
+        $locales = $this->siteContext->getAllLocales();
         $localeChoices = array_combine($locales, $locales);
         $builder
             ->add('featuredImage', HiddenType::class, [
@@ -112,6 +114,7 @@ class ArticleType extends AbstractType implements DataMapperInterface
             ->add('locale', ChoiceType::class, [
                 'label' => new TranslatableMessage('Translation reference', [], 'admin'),
                 'choices' => $localeChoices,
+                'preferred_choices' => $preferredLocaleChoices,
                 'disabled' => $update,
             ]);
         $builder

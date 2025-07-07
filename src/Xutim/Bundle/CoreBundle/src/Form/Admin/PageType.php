@@ -44,6 +44,9 @@ class PageType extends AbstractType implements DataMapperInterface
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $update = array_key_exists('data', $options) === true;
+
+        $mainLocales = $this->siteContext->getMainLocales();
+        $preferredLocaleChoices = array_combine($mainLocales, $mainLocales);
         $locales = $this->siteContext->getLocales();
         $localeChoices = array_combine($locales, $locales);
 
@@ -104,6 +107,7 @@ class PageType extends AbstractType implements DataMapperInterface
             ->add('locale', ChoiceType::class, [
                 'label' => new TranslatableMessage('Translation reference', [], 'admin'),
                 'choices' => $localeChoices,
+                'preferred_choices' => $preferredLocaleChoices,
                 'disabled' => $update,
             ])
             ->add('parent', ChoiceType::class, [
