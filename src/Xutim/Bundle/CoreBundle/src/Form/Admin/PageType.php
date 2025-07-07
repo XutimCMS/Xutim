@@ -93,6 +93,7 @@ class PageType extends AbstractType implements DataMapperInterface
             ->add('description', TextareaType::class, [
                 'label' => new TranslatableMessage('description', [], 'admin'),
                 'required' => false,
+                'help' => new TranslatableMessage('The description appears in search engine results and when the page is shared on social media. Summarize the article in 1–2 sentences (max. 160 characters).', [], 'admin')
             ])
             ->add('content', TextareaType::class, [
                 'label' => new TranslatableMessage('content', [], 'admin'),
