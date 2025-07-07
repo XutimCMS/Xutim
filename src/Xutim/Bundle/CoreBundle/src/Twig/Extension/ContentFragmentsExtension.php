@@ -51,19 +51,19 @@ class ContentFragmentsExtension extends AbstractExtension
     /**
      * @param EditorBlock $fragments
      */
-    public function toThemeHtml(array $fragments): string
+    public function toThemeHtml(array $fragments, string $locale): string
     {
         $path = $this->themeFinder->getActiveThemePath();
 
-        return $this->fragmentConverter->convertToThemeHtml($fragments, $path);
+        return $this->fragmentConverter->convertToThemeHtml($fragments, $path, $locale);
     }
 
     /**
      * @param EditorBlock $fragments
      */
-    public function toAdminHtml(array $fragments): string
+    public function toAdminHtml(array $fragments, string $locale): string
     {
-        return $this->fragmentConverter->convertToAdminHtml($fragments);
+        return $this->fragmentConverter->convertToAdminHtml($fragments, $locale);
     }
 
     /**

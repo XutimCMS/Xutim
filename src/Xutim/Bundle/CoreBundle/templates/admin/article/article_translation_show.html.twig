@@ -5,18 +5,21 @@
                 <label
                     for="article_translation_language_default"
                     class="form-label required"
-                    >{{ 'language'|trans({}, 'admin') }}</label
-                >
+                >{{ 'language'|trans({}, 'admin') }}</label>
                 <select
                     data-action="change->reload-frame#reloadFrame"
                     class="form-select"
                     name="article_translation_language_default"
                     id="article_translation_language_default"
                 >
-                    {% for trans in article.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name) %}
+                    {%
+                        for trans in article.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name)
+                    %}
                         <option
                             value="{{ trans.locale }}"
-                            {% if trans.locale == translation.locale %}selected="selected"{% endif %}
+                            {% if trans.locale == translation.locale %}
+                                selected="selected"
+                            {% endif %}
                             data-url-value="{{ path('admin_article_translation_show', {id: article.id, locale: trans.locale}) }}"
                         >
                             {{ trans.locale|language_name }}
@@ -62,8 +65,7 @@
                 <label
                     for="article_translation_description_default"
                     class="form-label"
-                    >{{ 'description'|trans({}, 'admin') }}</label
-                >
+                >{{ 'description'|trans({}, 'admin') }}</label>
                 <textarea
                     id="article_translation_description_default"
                     disabled="disabled"
@@ -81,7 +83,9 @@
                 </label>
             </div>
 
-            {{- translation.content|content_fragments_to_admin_html() -}}
+            {{
+                translation.content|content_fragments_to_admin_html(content_context_language())
+            }}
         </form>
     </div>
 </turbo-frame>

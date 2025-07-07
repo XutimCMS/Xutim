@@ -5,18 +5,21 @@
                 <label
                     for="page_translation_language_default"
                     class="form-label required"
-                    >{{ 'language'|trans({}, 'admin') }}</label
-                >
+                >{{ 'language'|trans({}, 'admin') }}</label>
                 <select
                     data-action="change->reload-frame#reloadFrame"
                     class="form-select"
                     name="page_translation_language_default"
                     id="page_translation_language_default"
                 >
-                    {% for trans in page.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name) %}
+                    {%
+                        for trans in page.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name)
+                    %}
                         <option
                             value="{{ trans.locale }}"
-                            {% if trans.locale == translation.locale ?? null %}selected="selected"{% endif %}
+                            {% if trans.locale == translation.locale ?? null %}
+                                selected="selected"
+                            {% endif %}
                             data-url-value="{{ path('admin_page_translation_show', {id: page.id, locale: trans.locale}) }}"
                         >
                             {{ trans.locale|language_name }}
@@ -62,8 +65,7 @@
                 <label
                     for="page_translation_description_default"
                     class="form-label"
-                    >{{ 'description'|trans({}, 'admin') }}</label
-                >
+                >{{ 'description'|trans({}, 'admin') }}</label>
                 <textarea
                     id="page_translation_description_default"
                     disabled="disabled"
@@ -73,10 +75,13 @@
                 </textarea>
             </div>
             <div class="mb-3">
-                <label for="page_translation_content_default" class="form-label"
-                    >{{ 'content'|trans({}, 'admin') }}</label
-                >
-                {{- translation.content|content_fragments_to_admin_html() -}}
+                <label
+                    for="page_translation_content_default"
+                    class="form-label"
+                >{{ 'content'|trans({}, 'admin') }}</label>
+                {{
+                    translation.content|content_fragments_to_admin_html(content_context_language())
+                }}
             </div>
         </form>
     </div>

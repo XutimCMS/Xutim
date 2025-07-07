@@ -20,7 +20,7 @@ readonly class ContentFragmentsConverter
     /**
      * @param EditorBlock $fragments
      */
-    public function convertToThemeHtml(array $fragments, string $themePath): string
+    public function convertToThemeHtml(array $fragments, string $themePath, string $locale): string
     {
         if (count($fragments) === 0 || count($fragments['blocks']) === 0) {
             return '';
@@ -28,7 +28,8 @@ readonly class ContentFragmentsConverter
 
         return $this->twig->render(sprintf('%s/content_fragment/content.html.twig', $themePath), [
             'fragments' => $fragments,
-            'themePath' => $themePath
+            'themePath' => $themePath,
+            'locale' => $locale
         ]);
     }
 
@@ -53,14 +54,15 @@ readonly class ContentFragmentsConverter
     /**
      * @param EditorBlock $fragments
      */
-    public function convertToAdminHtml(array $fragments): string
+    public function convertToAdminHtml(array $fragments, string $locale): string
     {
         if (count($fragments) === 0 || count($fragments['blocks']) === 0) {
             return '';
         }
 
         return $this->twig->render('@XutimCore/admin/content_fragment/content.html.twig', [
-            'fragments' => $fragments
+            'fragments' => $fragments,
+            'locale' => $locale
         ]);
     }
 
