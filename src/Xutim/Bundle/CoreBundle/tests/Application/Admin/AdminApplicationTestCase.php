@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Tests\Application\Admin;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Xutim\CoreBundle\DataFixtures\LoadUserFixture;
+use Xutim\SecurityBundle\DataFixtures\LoadUserFixture;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
 class AdminApplicationTestCase extends WebTestCase

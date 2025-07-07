@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\BlockContext;
@@ -29,7 +28,6 @@ class EditPublishedDateAction extends AbstractController
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
         private readonly BlockContext $blockContext,
-        private readonly MessageBusInterface $commandBus,
         private readonly ContentContext $contentContext
     ) {
     }
