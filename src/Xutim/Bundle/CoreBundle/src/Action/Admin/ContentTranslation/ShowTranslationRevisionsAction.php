@@ -39,6 +39,7 @@ class ShowTranslationRevisionsAction extends AbstractController
         if ($translation === null) {
             throw $this->createNotFoundException('The content translation does not exist');
         }
+        $locale = $request->getLocale();
         $events = $this->eventRepository->findByTranslation($translation);
         $eventsId = array_map(fn (LogEventInterface $e) => $e->getId()->toRfc4122(), $events);
 
@@ -46,7 +47,7 @@ class ShowTranslationRevisionsAction extends AbstractController
         $form->handleRequest($request);
 
         if (!$form->isSubmitted() || !$form->isValid()) {
-            return $this->handleFormNotSubmitted($events, $translation, $form);
+            return $this->handleFormNotSubmitted($events, $translation, $form, $locale);
         }
 
         $revisionsId = $form->getData();
@@ -61,7 +62,7 @@ class ShowTranslationRevisionsAction extends AbstractController
             throw new \Exception('Revisions do not exist.');
         }
 
-        return $this->renderRevisions($event, $previousEvent, $translation, $events, $form);
+        return $this->renderRevisions($event, $previousEvent, $translation, $events, $form, $locale);
     }
 
     /**
@@ -71,7 +72,8 @@ class ShowTranslationRevisionsAction extends AbstractController
     private function handleFormNotSubmitted(
         array $events,
         ContentTranslationInterface $translation,
-        FormInterface $form
+        FormInterface $form,
+        string $locale
     ): Response {
         if (count($events) < 2) {
             return $this->render(
@@ -86,7 +88,7 @@ class ShowTranslationRevisionsAction extends AbstractController
         $previousEvent = array_slice($events, -2, 1)[0];
         $event = end($events);
 
-        return $this->renderRevisions($event, $previousEvent, $translation, $events, $form);
+        return $this->renderRevisions($event, $previousEvent, $translation, $events, $form, $locale);
     }
 
     private function getEventById(string $eventId): ?LogEventInterface
@@ -104,7 +106,8 @@ class ShowTranslationRevisionsAction extends AbstractController
         LogEventInterface $previousEvent,
         ContentTranslationInterface $translation,
         array $events,
-        FormInterface $form
+        FormInterface $form,
+        string $locale
     ): Response {
         /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent $domainEvent */
         $domainEvent = $event->getEvent();
@@ -116,8 +119,8 @@ class ShowTranslationRevisionsAction extends AbstractController
             $previousDomainEvent->title
         );
         $bodyDiff = $this->textDiff->generateHTMLDiff(
-            $this->fragmentsConverter->convertToAdminHtml($domainEvent->content),
-            $this->fragmentsConverter->convertToAdminHtml($previousDomainEvent->content)
+            $this->fragmentsConverter->convertToAdminHtml($domainEvent->content, $locale),
+            $this->fragmentsConverter->convertToAdminHtml($previousDomainEvent->content, $locale)
         );
         $descriptionDiff = $this->textDiff->generateHTMLDiff(
             $domainEvent->description,
