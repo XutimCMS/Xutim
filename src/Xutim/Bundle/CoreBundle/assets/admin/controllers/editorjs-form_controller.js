@@ -15,6 +15,7 @@ import XutimFileTool from '../lib/editorjs-plugins/file/XutimFileTool.js';
 import AlignmentBlockTune from '../lib/editorjs-plugins/alignment-tune/AlignmentBlockTune.js';
 import XutimTagListTool from '../lib/editorjs-plugins/tag-list/XutimTagListTool.js';
 import XutimAnchorTune from '../lib/editorjs-plugins/anchor-tune/XutimAnchorTune.js';
+import XutimFootnoteInline from '../lib/editorjs-plugins/footnotes-tune/XutimFootnoteInline.js';
 import createInternalLink from '../lib/editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
 import { decorateInternalLinks } from '../lib/editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
 
@@ -60,6 +61,9 @@ export default class extends Controller {
                         snippetListUrl: this.fetchAnchorSnippetsUrlValue,
                     },
                 },
+                xutimFootnote: {
+                    class: XutimFootnoteInline,
+                },
                 xutimInternalPageLink: {
                     class: createInternalLink('Page link', pageLinkIcon),
                     config: {
@@ -90,6 +94,15 @@ export default class extends Controller {
                 paragraph: {
                     class: Paragraph,
                     tunes: ['xutimAnchor', 'alignment'],
+                    inlineToolbar: [
+                        'link',
+                        'bold',
+                        'italic',
+                        'xutimFootnote',
+                        'xutimInternalPageLink',
+                        'xutimInternalArticleLink',
+                        'xutimInternalTagLink',
+                    ],
                 },
                 header: {
                     class: Header,
@@ -210,6 +223,7 @@ export default class extends Controller {
         this.#editor
             .save()
             .then((outputData) => {
+                console.log(JSON.stringify(outputData, null, 2));
                 this.contentInputTarget.value = JSON.stringify(outputData);
                 this.element.submit();
             })

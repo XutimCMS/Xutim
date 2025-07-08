@@ -34,9 +34,7 @@ export default function createContentLink(title, icon) {
         }
 
         applyInternalLink(range, id) {
-            if (!id || range.collapsed) {
-                return;
-            }
+            if (!id || range.collapsed) return;
 
             const existing = this.api.selection.findParentTag('SPAN');
 
@@ -46,23 +44,21 @@ export default function createContentLink(title, icon) {
                 existing.dataset.internalLinkId &&
                 existing.dataset.internalLinkType === this.config.type
             ) {
-                // Just update the data attribute and class
                 existing.dataset.internalLinkId = id;
                 existing.classList.add('cdx-internal-link');
                 return;
             }
 
-            // Otherwise create a new one
             const span = document.createElement('span');
             span.dataset.internalLinkId = id;
             span.dataset.internalLinkType = this.config.type;
             span.classList.add('cdx-internal-link');
-            span.textContent = range.toString();
 
-            range.deleteContents();
+            const contents = range.extractContents();
+            span.appendChild(contents);
             range.insertNode(span);
 
-            // Reset cursor after insert
+            // Move cursor after inserted span
             const selection = window.getSelection();
             selection.removeAllRanges();
             const newRange = document.createRange();
@@ -127,7 +123,6 @@ export default function createContentLink(title, icon) {
                 .then((res) => res.json())
                 .then((data) => {
                     const entries = Object.entries(data);
-                    console.log(entries);
                     entries.sort((a, b) => a[1].localeCompare(b[1]));
 
                     entries.forEach(([id, label]) => {

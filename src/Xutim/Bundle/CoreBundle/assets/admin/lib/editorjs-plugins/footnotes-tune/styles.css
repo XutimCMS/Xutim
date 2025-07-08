@@ -1,0 +1,65 @@
+sup[data-footnote] {
+    background-color: #fff8c4;
+    padding: 0 2px;
+    border-bottom: 1px dotted #888;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+dialog#xutim-footnote-dialog {
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90vw;
+    font-family: inherit;
+}
+
+.xutim-footnote-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.xutim-footnote-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.xutim-footnote-form menu {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0;
+}
+
+.xutim-footnote-form button {
+    font: inherit;
+    padding: 6px 14px;
+    border: 1px solid #dcdcdc;
+    background: #f5f5f5;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.xutim-footnote-form button:hover {
+    background: #eaeaea;
+}
+
+.xutim-footnote-form button[value='default'] {
+    background: #388ae5;
+    border-color: #388ae5;
+    color: #fff;
+}
+
+.xutim-footnote-form button[value='default']:hover {
+    background: #2978cc;
+}
