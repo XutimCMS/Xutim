@@ -17,7 +17,7 @@ parameters:
     stubFiles:
         - tests/Stubs/DataMapperInterface.stub
     typeAliases:
-        XutimAnchorTune: 'array{xutimAnchor: array{anchor: string}}'
+        XutimAnchorTune: 'array{xutimAnchor: array{anchor: string, type: "snippet"|"footnote"}}'
         AlignmentTune: 'array{alignment: array{alignment: "left"|"center"|"right"}}'
         CombinedTunes: 'array{xutimAnchor: array{anchor: string}, alignment: array{alignment: "left"|"center"|"right"}}'
 
