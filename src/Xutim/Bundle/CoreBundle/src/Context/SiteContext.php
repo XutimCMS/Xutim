@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Context;
 
-use Symfony\Component\Intl\Languages;
 use Symfony\Contracts\Cache\CacheInterface;
 use Xutim\CoreBundle\Dto\SiteDto;
 use Xutim\CoreBundle\Repository\SiteRepository;
@@ -67,10 +66,7 @@ class SiteContext
      */
     public function getLocales(): array
     {
-        $locales = $this->getDefaultSite()->locales;
-        usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
-
-        return $locales;
+        return $this->getDefaultSite()->locales;
     }
 
     /**
@@ -78,10 +74,7 @@ class SiteContext
      */
     public function getMainLocales(): array
     {
-        $locales = $this->getDefaultSite()->locales;
-        usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
-
-        return $locales;
+        return $this->getDefaultSite()->locales;
     }
 
     /**
@@ -89,15 +82,12 @@ class SiteContext
      */
     public function getAllLocales(): array
     {
-        $locales = array_unique(
+        return array_unique(
             array_merge(
                 $this->getDefaultSite()->locales,
                 $this->getDefaultSite()->extendedContentLocales
             )
         );
-        usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
-
-        return $locales;
     }
 
     /**
@@ -105,10 +95,7 @@ class SiteContext
      */
     public function getExtendedContentLocales(): array
     {
-        $locales = $this->getDefaultSite()->extendedContentLocales;
-        usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
-
-        return $locales;
+        return $this->getDefaultSite()->extendedContentLocales;
     }
 
     /**
