@@ -9,10 +9,12 @@ use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Intl\Languages;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints\Length;
@@ -47,8 +49,8 @@ class PageType extends AbstractType implements DataMapperInterface
 
         $mainLocales = $this->siteContext->getMainLocales();
         $preferredLocaleChoices = array_combine($mainLocales, $mainLocales);
-        $locales = $this->siteContext->getLocales();
-        $localeChoices = array_combine($locales, $locales);
+        $locales = $this->siteContext->getAllLocales();
+        $localeChoices = array_combine(array_map(fn ($locale) => Languages::getName($locale), $locales), $locales);
 
         $builder
             ->add('preTitle', TextType::class, [
@@ -105,10 +107,11 @@ class PageType extends AbstractType implements DataMapperInterface
                     'hidden' => 'hidden'
                 ],
             ])
-            ->add('locale', ChoiceType::class, [
+            ->add('locale', LanguageType::class, [
                 'label' => new TranslatableMessage('Translation reference', [], 'admin'),
                 'choices' => $localeChoices,
                 'preferred_choices' => $preferredLocaleChoices,
+                'choice_loader' => null,
                 'disabled' => $update,
             ])
             ->add('parent', ChoiceType::class, [

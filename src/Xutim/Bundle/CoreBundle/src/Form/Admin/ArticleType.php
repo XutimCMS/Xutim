@@ -9,9 +9,11 @@ use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Intl\Languages;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints\Length;
@@ -45,7 +47,7 @@ class ArticleType extends AbstractType implements DataMapperInterface
         $mainLocales = $this->siteContext->getMainLocales();
         $preferredLocaleChoices = array_combine($mainLocales, $mainLocales);
         $locales = $this->siteContext->getAllLocales();
-        $localeChoices = array_combine($locales, $locales);
+        $localeChoices = array_combine(array_map(fn ($locale) => Languages::getName($locale), $locales), $locales);
         $builder
             ->add('featuredImage', HiddenType::class, [
                 'required' => false,
@@ -106,10 +108,11 @@ class ArticleType extends AbstractType implements DataMapperInterface
                     'hidden' => 'hidden'
                 ],
             ])
-            ->add('locale', ChoiceType::class, [
+            ->add('locale', LanguageType::class, [
                 'label' => new TranslatableMessage('Translation reference', [], 'admin'),
                 'choices' => $localeChoices,
                 'preferred_choices' => $preferredLocaleChoices,
+                'choice_loader' => null,
                 'disabled' => $update,
             ]);
         $builder

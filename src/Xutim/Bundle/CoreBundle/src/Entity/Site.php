@@ -7,6 +7,7 @@ namespace Xutim\CoreBundle\Entity;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\MappedSuperclass;
+use Symfony\Component\Intl\Languages;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Domain\Model\SiteInterface;
 use Xutim\CoreBundle\Dto\SiteDto;
@@ -47,6 +48,8 @@ class Site implements SiteInterface
      */
     public function change(array $locales, array $extendedContentLocales, string $theme, string $sender): void
     {
+        usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
+        usort($extendedContentLocales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
         $this->locales = $locales;
         $this->extendedContentLocales = $extendedContentLocales;
         $this->theme = $theme;
