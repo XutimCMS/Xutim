@@ -13,7 +13,6 @@ class RouteGuesserExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('guess_route', [RouteGuesserExtensionRuntime::class, 'guessRoute']),
             new TwigFunction('switch_locale_route', [RouteGuesserExtensionRuntime::class, 'switchLocaleRoute']),
         ];
     }

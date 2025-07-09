@@ -21,36 +21,6 @@ class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
     ) {
     }
 
-    public function guessRoute(): string
-    {
-        $request = $this->reqStack->getMainRequest();
-        if ($request === null) {
-            return '';
-        }
-
-        $currentRouteName = $request->attributes->getString('_route');
-        $slug = $request->attributes->getString('slug');
-        if ($currentRouteName === 'content_translation_show' && $slug !== '') {
-            $content = $this->repo->findOneBy(['slug' => $slug]);
-            if ($content !== null) {
-                if ($content->hasPage()) {
-                    return $this->router->generate('admin_page_list', ['id' => $content->getPage()->getId()]);
-                }
-                if ($content->hasArticle()) {
-                    return $this->router->generate('admin_article_show', ['id' => $content->getArticle()->getId()]);
-                }
-            }
-        }
-        if ($currentRouteName === 'tag_translation_show' && $slug !== '') {
-            $content = $this->tagRepo->findOneBy(['slug' => $slug]);
-            if ($content !== null) {
-                return $this->router->generate('admin_tag_show', ['id' => $content->getTag()->getId()]);
-            }
-        }
-
-        return $this->router->generate('admin_homepage');
-    }
-
     public function switchLocaleRoute(string $locale): string
     {
         $request = $this->reqStack->getMainRequest();
