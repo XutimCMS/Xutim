@@ -69,7 +69,7 @@ class ContentTranslation implements ContentTranslationInterface
         $this->page = $page;
         $this->article = $article;
         $this->visits = 0;
-        Assert::false($page === null && $article === null, 'Content translation needs either page or article.');
+        Assert::false($page === null && $article === null, 'A content translation requires either a page or an article.');
     }
 
     public function __toString(): string
