@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Xutim\CoreBundle\Repository\ArticleRepository;
+use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
 
@@ -19,6 +20,7 @@ class InternalLinkExtension extends AbstractExtension
         private readonly PageRepository $pageRepo,
         private readonly ArticleRepository $articleRepo,
         private readonly TagRepository $tagRepo,
+        private readonly FileRepository $fileRepo,
     ) {
     }
     public function getFilters(): array
@@ -62,6 +64,14 @@ class InternalLinkExtension extends AbstractExtension
                 $trans = $tag?->getTranslationByLocale($locale);
                 if ($trans !== null) {
                     $href = $this->router->generate('tag_translation_show', ['slug' => $trans->getSlug()]);
+                }
+            }
+
+            if ($type === 'file') {
+                $file = $this->fileRepo->find($id);
+                $trans = $file?->getTranslationByLocale($locale);
+                if ($trans !== null) {
+                    $href = $this->router->generate('file_show', ['id' => $file->getId(), 'extension' => $file->getExtension()]);
                 }
             }
 
