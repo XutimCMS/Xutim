@@ -128,6 +128,24 @@ class FileRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, FileInterface>
+     */
+    public function findAllNonImages(): array
+    {
+        $builder = $this->createQueryBuilder('file');
+
+        /** @var array<int, FileInterface> $files */
+        $files = $builder
+            ->andWhere($builder->expr()->notIn('LOWER(file.extension)', ':imageExtensions'))
+            ->setParameter('imageExtensions', File::ALLOWED_IMAGE_EXTENSIONS)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $files;
+    }
+
+    /**
      * @return array<array{reference: string, extension: string, id: Uuid, alt: string}>
      */
     public function findAllReferences(): array
