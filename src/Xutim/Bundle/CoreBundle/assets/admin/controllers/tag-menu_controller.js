@@ -3,12 +3,44 @@ import { renderStreamMessage } from '@hotwired/turbo';
 
 export default class extends Controller {
     static values = {
-        articleId: String,
         csrfToken: String,
     };
-    submitChange(event) {
-        const url = event.target.dataset.updateUrl;
 
+    static targets = ['item', 'search'];
+
+    connect() {
+        this.element
+            .querySelector('.dropdown-menu')
+            ?.addEventListener('click', (e) => e.stopPropagation());
+
+        const button = this.element.querySelector(
+            '[data-bs-toggle="dropdown"]',
+        );
+        if (!button) return;
+
+        this.observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (
+                    mutation.attributeName === 'aria-expanded' &&
+                    button.getAttribute('aria-expanded') === 'true'
+                ) {
+                    setTimeout(() => this.searchTarget?.focus(), 10);
+                }
+            });
+        });
+
+        this.observer.observe(button, { attributes: true });
+    }
+
+    disconnect() {
+        this.observer?.disconnect();
+    }
+
+    submitChange(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const url = event.target.dataset.updateUrl;
         fetch(url, {
             method: 'POST',
             headers: {
@@ -19,16 +51,25 @@ export default class extends Controller {
             body: '{}',
         })
             .then((response) => {
-                if (!response.ok) {
+                if (!response.ok)
                     throw new Error('Network response was not ok');
-                }
                 return response.text();
             })
-            .then((html) => {
-                renderStreamMessage(html); // renders turbo-stream response from server
-            })
-            .catch((error) => {
-                console.error('Turbo update failed:', error);
-            });
+            .then(renderStreamMessage)
+            .catch((error) => console.error('Turbo update failed:', error));
+    }
+
+    filter(event) {
+        const query = event.target.value.toLowerCase();
+
+        this.itemTargets.forEach((el) => {
+            const name = el.dataset.name || '';
+            console.log(name.includes(query));
+            if (name.includes(query)) {
+                el.classList.remove('d-none');
+            } else {
+                el.classList.add('d-none');
+            }
+        });
     }
 }
