@@ -80,7 +80,6 @@ class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
                 break;
         }
         foreach (RouteSnippetRegistry::all() as $route) {
-            dump($route->routeName, $currentRouteName, $currentLocale);
             if ($currentRouteName === sprintf('xutim_%s.%s', $route->routeName, $currentLocale)) {
                 $redirectRouteName = sprintf('xutim_%s.%s', $route->routeName, $locale);
 
