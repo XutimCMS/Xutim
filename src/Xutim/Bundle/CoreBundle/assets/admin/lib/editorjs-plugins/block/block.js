@@ -27,6 +27,12 @@ export default class Block {
         label.htmlFor = 'codeSelect';
         label.classList.add('z-0');
 
+        const link = document.createElement('a');
+        link.href = '#';
+        link.target = '_blank';
+        link.style.display = 'none';
+        link.classList.add('d-block', 'mt-2');
+
         // Populate the select element with options from config
         this.config.codes.forEach((code) => {
             const option = document.createElement('option');
@@ -35,20 +41,54 @@ export default class Block {
             select.appendChild(option);
         });
 
+        select.setAttribute('data-controller', 'tom-select');
         // Set the value to previously selected if available
         if (this.data.code) {
-            // Ensure the value exists in options to avoid issues
-            const optionExists = this.config.codes.some(
-                (code) => code.code === this.data.code,
-            );
-            if (optionExists) {
-                select.value = this.data.code;
-            }
+            select.value = this.data.code;
+            const selectedText = select.options[select.selectedIndex].text;
+
+            select.tomselect?.destroy();
+            select.removeAttribute('data-controller');
+
+            select.value = this.data.code;
+            link.href = `//${this.data.code}`;
+            link.textContent = `🧱 Block ${selectedText}`;
+            link.style.display = 'inline';
+            select.style.display = 'none';
+            label.style.display = 'none';
         }
+
+        select.addEventListener('change', (event) => {
+            const selectedCode = event.target.value;
+            const selectedText =
+                event.target.options[event.target.selectedIndex].text;
+            this.data.code = selectedCode;
+
+            if (selectedCode) {
+                select.tomselect?.destroy();
+                select.removeAttribute('data-controller');
+                select.value = selectedCode;
+                link.href = `//${selectedCode}`;
+                link.textContent = `🧱 Block: ${selectedText}`;
+                link.style.display = 'inline';
+                select.style.display = 'none';
+                label.style.display = 'none';
+            }
+        });
+
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            select.style.display = 'block';
+            label.style.display = 'block';
+            link.style.display = 'none';
+
+            select.setAttribute('data-controller', 'tom-select');
+        });
 
         // Append the select element to the wrapper
         wrapper.appendChild(select);
         wrapper.appendChild(label);
+        wrapper.appendChild(link);
 
         // Save the selected value
         select.addEventListener('change', (event) => {

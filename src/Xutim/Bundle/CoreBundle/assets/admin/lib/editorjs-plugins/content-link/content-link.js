@@ -48,10 +48,18 @@ export default function createContentLink(title, icon) {
                         select.appendChild(option);
                     });
 
+                    select.setAttribute('data-controller', 'tom-select');
+
+                    select.value = this.data.id;
+                    const selectedText =
+                        select.options[select.selectedIndex].text;
+
                     if (this.data.id) {
+                        select.tomselect?.destroy();
+                        select.removeAttribute('data-controller');
                         select.value = this.data.id;
                         link.href = `//${this.data.id}`;
-                        link.textContent = `🔗 Go to ${select.options[select.selectedIndex].text}`;
+                        link.textContent = `🔗 Go to ${selectedText}`;
                         link.style.display = 'inline';
                         select.style.display = 'none';
                         label.style.display = 'none';
@@ -63,11 +71,16 @@ export default function createContentLink(title, icon) {
 
             select.addEventListener('change', (event) => {
                 const selectedId = event.target.value;
+                const selectedText =
+                    event.target.options[event.target.selectedIndex].text;
                 this.data.id = selectedId;
 
                 if (selectedId) {
+                    select.tomselect?.destroy();
+                    select.removeAttribute('data-controller');
+                    select.value = selectedId;
                     link.href = `//${selectedId}`;
-                    link.textContent = `🔗 Go to ${event.target.options[event.target.selectedIndex].text}`;
+                    link.textContent = `🔗 Go to ${selectedText}`;
                     link.style.display = 'inline';
                     select.style.display = 'none';
                     label.style.display = 'none';
@@ -79,6 +92,8 @@ export default function createContentLink(title, icon) {
                 select.style.display = 'block';
                 label.style.display = 'block';
                 link.style.display = 'none';
+
+                select.setAttribute('data-controller', 'tom-select');
             });
 
             wrapper.appendChild(select);
