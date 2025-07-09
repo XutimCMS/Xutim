@@ -29,6 +29,7 @@ export default class extends Controller {
         tagIdsUrl: String,
         fetchImagesUrl: String,
         fetchFilesUrl: String,
+        fetchAllFilesUrl: String,
         fetchFileUrl: String,
         fetchAnchorSnippetsUrl: String,
         disableEditing: Boolean,
@@ -47,6 +48,8 @@ export default class extends Controller {
 
         const tagLinkIcon =
             '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-tag"><path d="M7.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3z" /></svg>';
+
+        const fileLinkIcon = `<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-file"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /></svg>`;
 
         this.#editor = new EditorJS({
             holder: this.editorHolderTarget,
@@ -69,7 +72,6 @@ export default class extends Controller {
                     config: {
                         listUrl: this.pageIdsUrlValue,
                         title: 'Select a page',
-                        type: 'page',
                     },
                     shortcut: 'CMD+SHIFT+K',
                 },
@@ -78,7 +80,6 @@ export default class extends Controller {
                     config: {
                         listUrl: this.articleIdsUrlValue,
                         title: 'Select a article',
-                        type: 'article',
                     },
                     shortcut: 'CMD+SHIFT+L',
                 },
@@ -87,9 +88,16 @@ export default class extends Controller {
                     config: {
                         listUrl: this.tagIdsUrlValue,
                         title: 'Select a tag',
-                        type: 'tag',
                     },
                     shortcut: 'CMD+SHIFT+J',
+                },
+                xutimInternalFileLink: {
+                    class: createInternalLink('File link', fileLinkIcon),
+                    config: {
+                        listUrl: this.fetchAllFilesUrlValue,
+                        title: 'Select a file',
+                    },
+                    shortcut: 'CMD+SHIFT+H',
                 },
                 paragraph: {
                     class: Paragraph,
@@ -102,6 +110,7 @@ export default class extends Controller {
                         'xutimInternalPageLink',
                         'xutimInternalArticleLink',
                         'xutimInternalTagLink',
+                        'xutimInternalFileLink',
                     ],
                 },
                 header: {
