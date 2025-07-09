@@ -13,7 +13,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Twig\Environment;
-use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Service\FlashNotifier;
@@ -24,7 +23,6 @@ use Xutim\SecurityBundle\Action\Admin\EditUserAction;
 use Xutim\SecurityBundle\Action\Admin\ListUsersAction;
 use Xutim\SecurityBundle\Action\Admin\SendResetPasswordAction;
 use Xutim\SecurityBundle\Action\Admin\ShowUserAction;
-use Xutim\SecurityBundle\Action\Security\ChangeContextLanguageAction;
 use Xutim\SecurityBundle\Action\Security\CheckEmailAction;
 use Xutim\SecurityBundle\Action\Security\ForgotPasswordRequestAction;
 use Xutim\SecurityBundle\Action\Security\LoginAction;
@@ -35,7 +33,6 @@ use Xutim\SecurityBundle\Action\Security\UserChangePasswordAction;
 use Xutim\SecurityBundle\Repository\ResetPasswordRequestRepository;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
-use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 
 return static function (ContainerConfigurator $container): void {
@@ -100,13 +97,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$userRepo', service(UserRepositoryInterface::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$twig', service(Environment::class))
-        ->tag('controller.service_arguments')
-    ;
-
-    $services->set(ChangeContextLanguageAction::class)
-        ->arg('$contentContext', service(ContentContext::class))
-        ->arg('$router', service(UrlGeneratorInterface::class))
-        ->arg('$transAuthChecker', service(TranslatorAuthChecker::class))
         ->tag('controller.service_arguments')
     ;
 

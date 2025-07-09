@@ -9,7 +9,6 @@ use Xutim\SecurityBundle\Action\Admin\EditUserAction;
 use Xutim\SecurityBundle\Action\Admin\ListUsersAction;
 use Xutim\SecurityBundle\Action\Admin\SendResetPasswordAction;
 use Xutim\SecurityBundle\Action\Admin\ShowUserAction;
-use Xutim\SecurityBundle\Action\Security\ChangeContextLanguageAction;
 use Xutim\SecurityBundle\Action\Security\CheckEmailAction;
 use Xutim\SecurityBundle\Action\Security\ForgotPasswordRequestAction;
 use Xutim\SecurityBundle\Action\Security\LoginAction;
@@ -42,10 +41,6 @@ return function (RoutingConfigurator $routes) {
     $routes->add('admin_user_show', '/admin/user/{id}')
         ->methods(['get'])
         ->controller(ShowUserAction::class);
-
-    $routes->add('admin_settings_change_language_content_context', '/admin/settings/change-language-context/{locale}')
-        ->methods(['get'])
-        ->controller(ChangeContextLanguageAction::class);
 
     $routes->add('admin_check_email', '/admin/reset-password/check-email')
         ->controller(CheckEmailAction::class);
