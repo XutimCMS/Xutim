@@ -88,6 +88,11 @@ class MenuItem implements MenuItemInterface
         ?PageInterface $overwritePage,
         ?SnippetInterface $snippetAnchor
     ): void {
+        Assert::count(
+            array_filter([$page, $article, $tag], static fn ($value) => $value !== null),
+            1,
+            'Exactly one of $page, $article or $tag must be set.'
+        );
         $this->hasLink = $hasLink;
         $this->page = $page;
         $this->article = $article;
@@ -127,7 +132,10 @@ class MenuItem implements MenuItemInterface
             return $this->article;
         }
 
-        Assert::notNull($this->tag, 'The menu item should have at least article, page or tag.');
+        Assert::notNull(
+            $this->tag,
+            'Exactly one of $page, $article or $tag must be set.'
+        );
         return $this->tag;
     }
 
