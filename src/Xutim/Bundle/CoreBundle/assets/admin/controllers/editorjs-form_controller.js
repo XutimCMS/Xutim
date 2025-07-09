@@ -223,7 +223,6 @@ export default class extends Controller {
         this.#editor
             .save()
             .then((outputData) => {
-                console.log(JSON.stringify(outputData, null, 2));
                 this.contentInputTarget.value = JSON.stringify(outputData);
                 this.element.submit();
             })

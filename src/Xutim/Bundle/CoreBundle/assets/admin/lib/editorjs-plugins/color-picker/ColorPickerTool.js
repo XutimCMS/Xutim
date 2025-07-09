@@ -94,38 +94,6 @@ export default class ColorTune {
         return this.currentBlockData;
     }
 
-    // applyColor(color) {
-    //     console.log(this.currentBlockIndex);
-    //     console.log(this.currentBlockHolder);
-    //     console.log(color);
-    //     if (this.currentBlockIndex === null || !this.currentBlockHolder) return;
-    //     console.log(color);
-    //
-    //     this.currentBlockHolder.style.color = color;
-    //
-    //     // *** Improved data updating ***
-    //     const block = this.api.blocks.getBlockByIndex(this.currentBlockIndex);
-    //     if (block) {
-    //         // Check if block exists
-    //         const data = { ...block.data, color }; // Create a new object with the color
-    //         this.api.blocks.update(this.currentBlockIndex, data);
-    //     }
-    // }
-    // render() {
-    //     this.wrapper = document.createElement('div');
-    //     this.wrapper.classList.add('color-tune-wrapper');
-    //
-    //     this.allowedColors.forEach((color) => {
-    //         const colorButton = document.createElement('div');
-    //         colorButton.style.backgroundColor = color;
-    //         colorButton.classList.add('color-button');
-    //         colorButton.addEventListener('click', () => this.applyColor(color));
-    //         this.wrapper.appendChild(colorButton);
-    //     });
-    //
-    //     return this.wrapper;
-    // }
-
     onBlockSelected(index) {
         // Receive the block *index*
         this.currentBlockIndex = index;

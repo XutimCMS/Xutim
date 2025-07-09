@@ -64,7 +64,6 @@ export default class extends Controller {
 
         this.itemTargets.forEach((el) => {
             const name = el.dataset.name || '';
-            console.log(name.includes(query));
             if (name.includes(query)) {
                 el.classList.remove('d-none');
             } else {
