@@ -30,7 +30,7 @@ class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
 
         $currentRouteName = $request->attributes->getString('_route');
         $slug = $request->attributes->getString('slug');
-        if ($currentRouteName !== '' && $currentRouteName === 'content_translation_show' && $slug !== '') {
+        if ($currentRouteName === 'content_translation_show' && $slug !== '') {
             $content = $this->repo->findOneBy(['slug' => $slug]);
             if ($content !== null) {
                 if ($content->hasPage()) {
@@ -39,6 +39,12 @@ class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
                 if ($content->hasArticle()) {
                     return $this->router->generate('admin_article_show', ['id' => $content->getArticle()->getId()]);
                 }
+            }
+        }
+        if ($currentRouteName === 'tag_translation_show' && $slug !== '') {
+            $content = $this->tagRepo->findOneBy(['slug' => $slug]);
+            if ($content !== null) {
+                return $this->router->generate('admin_tag_show', ['id' => $content->getTag()->getId()]);
             }
         }
 
