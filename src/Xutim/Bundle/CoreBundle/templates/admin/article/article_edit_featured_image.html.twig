@@ -26,18 +26,29 @@
                         class="featured-image-dropzone"
                         data-featured-image-target="dropzone"
                     >
-                        {% if form.featuredImage.vars.value %}
-                            <img
-                                src="{{ path('file_show', {id: form.featuredImage.vars.value, extension: 'image'}) }}"
-                                alt="Featured Image"
-                                style="max-width: auto; max-height: 300px"
-                                class="p-1"
-                            />
-                        {% else %}
-                            {{
-                                'Click to select a featured image'|trans({}, 'admin')
-                            }}
-                        {% endif %}
+                        <div data-featured-image-target="imageWrapper">
+                            {% if form.featuredImage.vars.value %}
+                                <img
+                                    src="{{ path('file_show', {id: form.featuredImage.vars.value, extension: 'image'}) }}"
+                                    alt="Featured Image"
+                                    style="max-width: auto; max-height: 300px"
+                                    class="p-1"
+                                />
+                            {% else %}
+                                {{
+                                    'Click to select a featured image'|trans({}, 'admin')
+                                }}
+                            {% endif %}
+                        </div>
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-danger position-absolute top-0 end-0 mt-4 me-5 {{ form.featuredImage.vars.value ? '' : 'd-none' }}"
+                            data-featured-image-target="removeButton"
+                            data-action="featured-image#removeImage"
+                            aria-label="Remove featured image"
+                        >
+                            &times;
+                        </button>
                     </div>
                     {{
                         form_widget(form.featuredImage, {
