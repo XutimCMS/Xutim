@@ -55,6 +55,7 @@ class Tag implements TagInterface
     
     /** @var Collection<int, ArticleInterface> */
     #[ManyToMany(targetEntity: ArticleInterface::class, mappedBy: 'tags')]
+    #[OrderBy(['publishedAt' => 'DESC'])]
     private Collection $articles;
 
     public function __construct(Color $color, ?FileInterface $featuredImage, ?string $layout)

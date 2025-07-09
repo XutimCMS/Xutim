@@ -109,7 +109,7 @@ class ArticleRepository extends ServiceEntityRepository
             );
         } else {
             $builder
-                ->orderBy('article.updatedAt', 'desc')
+                ->orderBy('article.publishedAt', 'desc')
                 ->addOrderBy('article.id', 'asc')
             ;
         }
