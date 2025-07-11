@@ -61,10 +61,10 @@ parameters:
 			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/SiteType.php
 
 		-
-			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\SnippetDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\SnippetDto will always evaluate to true\.$#'
+			message: '#^Instanceof between Xutim\\SnippetBundle\\Form\\SnippetFormData and Xutim\\SnippetBundle\\Form\\SnippetFormData will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
-			path: src/Xutim/Bundle/CoreBundle/src/Form/Admin/SnippetType.php
+			path: src/Xutim/Bundle/SnippetBundle/src/Form/SnippetType.php
 
 		-
 			message: '#^Instanceof between Xutim\\CoreBundle\\Form\\Admin\\Dto\\TagDto and Xutim\\CoreBundle\\Form\\Admin\\Dto\\TagDto will always evaluate to true\.$#'

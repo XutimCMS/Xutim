@@ -9,7 +9,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\TagTranslationRepository;
-use Xutim\CoreBundle\Routing\RouteSnippetRegistry;
+use Xutim\SnippetBundle\Routing\RouteSnippetRegistry;
 
 class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
 {

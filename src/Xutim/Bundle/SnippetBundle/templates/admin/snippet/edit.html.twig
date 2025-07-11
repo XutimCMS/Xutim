@@ -1,0 +1,21 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% set title = 'Edit snippet'|trans({}, 'admin') %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            {{ include('@XutimSnippet/admin/snippet/_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="refresh"></turbo-stream>
+{% endblock %}

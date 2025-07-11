@@ -14,8 +14,6 @@ use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Domain\Factory\MenuItemFactory;
 use Xutim\CoreBundle\Domain\Factory\PageFactory;
 use Xutim\CoreBundle\Domain\Factory\SiteFactory;
-use Xutim\CoreBundle\Domain\Factory\SnippetFactory;
-use Xutim\CoreBundle\Domain\Factory\SnippetTranslationFactory;
 use Xutim\CoreBundle\Domain\Factory\TagFactory;
 use Xutim\CoreBundle\Domain\Factory\TagTranslationFactory;
 
@@ -37,9 +35,6 @@ return static function (ContainerConfigurator $container): void {
     $services->set(PageFactory::class)
         ->arg('$pageClass', '%xutim_core.model.page.class%')
         ->arg('$contentTranslationClass', '%xutim_core.model.content_translation.class%');
-
-    $services->set(SnippetFactory::class)
-        ->arg('$snippetClass', '%xutim_core.model.snippet.class%');
 
     $services->set(BlockFactory::class)
         ->arg('$entityClass', '%xutim_core.model.block.class%');
@@ -64,7 +59,4 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(TagTranslationFactory::class)
         ->arg('$entityClass', '%xutim_core.model.tag_translation.class%');
-
-    $services->set(SnippetTranslationFactory::class)
-        ->arg('$entityClass', '%xutim_core.model.snippet_translation.class%');
 };

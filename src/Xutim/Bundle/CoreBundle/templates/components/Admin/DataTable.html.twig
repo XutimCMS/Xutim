@@ -1,4 +1,8 @@
-<turbo-frame id="{{ this.frameId }}-list" data-turbo-action="advance">
+<turbo-frame
+    {{ attributes.defaults({}) }}
+    id="{{ this.frameId }}-list"
+    data-turbo-action="advance"
+>
     <div class="card mb-3">
         <div class="card-body border-bottom py-3" data-table-target="cardBody">
             <div class="d-flex">
@@ -10,29 +14,24 @@
                                 href="#"
                                 class="btn btn-sm dropdown-toggle"
                                 data-bs-toggle="dropdown"
-                                >{{ filter.pageLength }}</a
-                            >
+                            >{{ filter.pageLength }}</a>
                             <div class="dropdown-menu">
                                 <a
                                     class="dropdown-item"
                                     href="{{ path(app.current_route, {...app.request.query.all(), pageLength: 10}) }}"
-                                    >10</a
-                                >
+                                >10</a>
                                 <a
                                     class="dropdown-item"
                                     href="{{ path(app.current_route, {...app.request.query.all(), pageLength: 20}) }}"
-                                    >20</a
-                                >
+                                >20</a>
                                 <a
                                     class="dropdown-item"
                                     href="{{ path(app.current_route, {...app.request.query.all(), pageLength: 50}) }}"
-                                    >50</a
-                                >
+                                >50</a>
                                 <a
                                     class="dropdown-item"
                                     href="{{ path(app.current_route, {...app.request.query.all(), pageLength: 100}) }}"
-                                    >100</a
-                                >
+                                >100</a>
                             </div>
                         </div>
                     </div>

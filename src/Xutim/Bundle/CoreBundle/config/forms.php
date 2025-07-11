@@ -11,8 +11,8 @@ use Xutim\CoreBundle\Form\Admin\FileOrMediaType;
 use Xutim\CoreBundle\Form\Admin\MenuItemType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\CoreBundle\Repository\SnippetRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\SnippetBundle\Domain\Repository\SnippetRepositoryInterface;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -26,17 +26,17 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$pageRepository', service(PageRepository::class))
         ->arg('$articleRepository', service(ArticleRepository::class))
         ->arg('$tagRepository', service(TagRepository::class))
-        ->arg('$snippetRepository', service(SnippetRepository::class))
+        ->arg('$snippetRepository', service(SnippetRepositoryInterface::class))
         ->arg('$contentContext', service(ContentContext::class))
         ->arg('$articleClass', '%xutim_core.model.article.class%')
-        ->arg('$snippetClass', '%xutim_core.model.snippet.class%')
+        ->arg('$snippetClass', '%xutim_snippet.model.snippet.class%')
         ->arg('$tagClass', '%xutim_core.model.tag.class%')
         ->tag('form.type');
 
     $services->set(BlockItemType::class)
         ->arg('$articleClass', '%xutim_core.model.article.class%')
         ->arg('$fileClass', '%xutim_core.model.file.class%')
-        ->arg('$snippetClass', '%xutim_core.model.snippet.class%')
+        ->arg('$snippetClass', '%xutim_snippet.model.snippet.class%')
         ->arg('$tagClass', '%xutim_core.model.tag.class%')
         ->arg('$pageRepository', service(PageRepository::class))
         ->tag('form.type');

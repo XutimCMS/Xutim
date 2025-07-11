@@ -1,8 +1,0 @@
-{{ form_start(form) }}
-
-{{ form_row(form.code) }}
-{% for locale in site_context.locales %}
-    {{ form_row(form[locale]) }}
-{% endfor %}
-
-{{ form_end(form) }}

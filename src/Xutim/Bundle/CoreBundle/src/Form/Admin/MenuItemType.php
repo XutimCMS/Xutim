@@ -14,14 +14,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Traversable;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\Tag;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\CoreBundle\Repository\SnippetRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
+use Xutim\SnippetBundle\Domain\Repository\SnippetRepositoryInterface;
 
 /**
  * @template-extends AbstractType<MenuItemDto>
@@ -32,7 +32,7 @@ class MenuItemType extends AbstractType implements DataMapperInterface
     public function __construct(
         private readonly PageRepository $pageRepository,
         private readonly ArticleRepository $articleRepository,
-        private readonly SnippetRepository $snippetRepository,
+        private readonly SnippetRepositoryInterface $snippetRepository,
         private readonly TagRepository $tagRepository,
         private readonly ContentContext $contentContext,
         private readonly string $articleClass,
@@ -139,7 +139,7 @@ class MenuItemType extends AbstractType implements DataMapperInterface
 
         /** @var ?string $anchorId */
         $anchorId = $forms['anchorSnippet']->getData();
-        $anchorSnippet = $anchorId !== null ? $this->snippetRepository->find($anchorId) : null;
+        $anchorSnippet = $anchorId !== null ? $this->snippetRepository->findById($anchorId) : null;
 
 
         // We don't use it at the moment.

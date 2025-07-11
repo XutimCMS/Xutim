@@ -6,10 +6,10 @@ namespace Xutim\CoreBundle\Service;
 
 use Symfony\Component\Routing\RouterInterface;
 use Xutim\CoreBundle\Domain\Model\MenuItemInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagTranslationInterface;
 use Xutim\CoreBundle\Entity\MenuItem;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 final readonly class MenuBuilder
 {

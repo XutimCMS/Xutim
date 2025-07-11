@@ -1,0 +1,75 @@
+{
+    "name": "xutimcms/snippet-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony bundle providing snippet and snippet translation entities, forms, repositories, and templates for localized CMS content.",
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "keywords": [
+        "cms",
+        "xutim",
+        "symfony",
+        "snippet",
+        "bundle"
+    ],
+    "homepage": "https://xutim.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomas Jakl",
+            "email": "tomasjakll@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.4",
+        "babdev/pagerfanta-bundle": "^4.5",
+        "doctrine/doctrine-bundle": "^2.13",
+        "doctrine/orm": "^3.3",
+        "pagerfanta/doctrine-orm-adapter": "^4.7",
+        "symfony/form": "7.3.*",
+        "symfony/framework-bundle": "7.3.*",
+        "symfony/uid": "7.3.*",
+        "symfony/ux-icons": "^2.23",
+        "symfony/ux-twig-component": "^2.17",
+        "symfony/validator": "7.3.*",
+        "twig/extra-bundle": "^3.20",
+        "twig/string-extra": "^3.20",
+        "twig/twig": "^3.20",
+        "xutimcms/core-bundle": "dev-main",
+        "webmozart/assert": "^1.11"
+    },
+    "require-dev": {
+        "dama/doctrine-test-bundle": "^8.2",
+        "doctrine/doctrine-fixtures-bundle": "^4.0",
+        "friendsoftwig/twigcs": "^6.5",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "phpstan/phpstan-webmozart-assert": "^2.0",
+        "phpunit/phpunit": "^9.6",
+        "symfony/browser-kit": "7.3.*",
+        "symfony/debug-bundle": "7.3.*",
+        "symfony/maker-bundle": "^1.62",
+        "symfony/phpunit-bridge": "7.3.*",
+        "symfony/stopwatch": "7.3.*",
+        "symfony/web-profiler-bundle": "7.3.*",
+        "symplify/easy-coding-standard": "^12.5",
+        "vincentlanglet/twig-cs-fixer": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Xutim\\SnippetBundle\\": "src/"
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Xutim\\SnippetBundle\\Tests\\": "tests/"
+        }
+    }
+}

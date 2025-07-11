@@ -12,9 +12,9 @@ use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Repository\BlockRepository;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 class BlockContext
 {

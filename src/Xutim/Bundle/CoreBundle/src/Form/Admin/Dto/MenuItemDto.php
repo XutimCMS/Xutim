@@ -6,8 +6,8 @@ namespace Xutim\CoreBundle\Form\Admin\Dto;
 
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 final readonly class MenuItemDto
 {

@@ -1,0 +1,10 @@
+{{ form_start(form) }}
+
+{{ form_row(form.code) }}
+{{ form_row(form.description) }}
+{{ form_row(form.category) }}
+{% for locale in site_context.locales %}
+    {{ form_row(form[locale]) }}
+{% endfor %}
+
+{{ form_end(form) }}

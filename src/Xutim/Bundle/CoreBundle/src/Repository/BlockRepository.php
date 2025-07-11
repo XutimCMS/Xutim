@@ -12,9 +12,9 @@ use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 /**
  * @extends ServiceEntityRepository<BlockInterface>

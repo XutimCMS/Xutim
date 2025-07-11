@@ -36,7 +36,6 @@ return static function (ContainerConfigurator $container): void {
         ->bind('string $pageLayoutRelativeDir', 'layout/page')
         ->bind('string $blockLayoutRelativeDir', 'layout/block')
         ->bind('string $tagLayoutRelativeDir', 'layout/tag')
-        ->bind('string $snippetVersionPath', '%snippet_routes_version_file%')
     ;
 
     $services->load('Xutim\\CoreBundle\\', '../src/')

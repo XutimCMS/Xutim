@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Service;
 
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Repository\BlockRepository;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 readonly class SearchContentBuilder
 {

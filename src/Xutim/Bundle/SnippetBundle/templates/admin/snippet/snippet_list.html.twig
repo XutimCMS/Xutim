@@ -1,0 +1,76 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}{{ 'snippets'|trans({}, 'admin')|capitalize }}{%
+    endblock
+%}
+
+{% block languageBar %}
+    <twig:Xutim:Admin:LanguageContextBar
+        class="d-flex justify-content-end align-items-center mb-2"
+    />
+{% endblock %}
+
+{% block pageMenu %}
+    {%
+        if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
+    %}
+        <twig:Xutim:Admin:Button
+            tag="a"
+            variant="nav"
+            data-turbo-frame="modal"
+            href="{{ path('admin_snippet_new') }}"
+        >
+            <twig:Xutim:Admin:Icon name="text" />
+            {{ 'New snippet'|trans({}, 'admin') }}
+        </twig:Xutim:Admin:Button>
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">Snippets</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block body %}
+    {%
+        component 'Xutim:Admin:DataTable' with {
+            frameId: 'snippet-list',
+            pager: snippets,
+            filter: filter,
+            'data-controller': 'snippet-editor',
+            'data-snippet-editor-url-value': path('admin_json_snippet_translate'),
+
+        }
+    %}
+    {% block header %}
+        {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+        <th>
+            <a
+                class=""
+                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'code', orderDirection: filter.reverseDirection('code')}) }}"
+            >
+                {{ 'code'|trans({}, 'admin') }}
+                {{
+                    icons.order_arrow('code', filter.orderColumn, filter.orderDirection)
+                }}
+            </a>
+        </th>
+        <th>
+            {{ 'description'|trans({}, 'admin') }}
+        </th>
+        {% for locale in site_context.locales %}
+            <th>{{ locale|upper }}</th>
+        {% endfor %}
+    {% endblock %}
+
+    {% block body %}
+        {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+        {% for snippet in snippets %}
+            {{
+                include('@XutimSnippet/admin/snippet/_snippet_row.html.twig', {snippet: snippet})
+            }}
+        {% endfor %}
+    {% endblock %}
+    {% endcomponent %}
+{% endblock %}

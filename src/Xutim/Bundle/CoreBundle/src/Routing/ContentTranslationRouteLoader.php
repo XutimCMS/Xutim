@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Routing;
 
+use LogicException;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Xutim\CoreBundle\Action\Public\ShowContentTranslation;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Repository\SnippetRepository;
+use Xutim\SnippetBundle\Domain\Repository\SnippetRepositoryInterface;
+use Xutim\SnippetBundle\Routing\RouteSnippetRegistry;
 
 class ContentTranslationRouteLoader extends Loader
 {
@@ -34,7 +36,7 @@ class ContentTranslationRouteLoader extends Loader
     private readonly string $snippetVersionPath;
 
     public function __construct(
-        private readonly SnippetRepository $snippetRepo,
+        private readonly SnippetRepositoryInterface $snippetRepo,
         private readonly SiteContext $siteContext,
         string $snippetVersionPath,
         ?string $env = null,
@@ -55,7 +57,9 @@ class ContentTranslationRouteLoader extends Loader
         $usedSlugs = [];
         foreach (RouteSnippetRegistry::all() as $route) {
             $snippet = $this->snippetRepo->findByCode($route->snippetKey);
-
+            if ($snippet === null) {
+                throw new LogicException('RouteSnippetRegistry contains an invalid snippet code.');
+            }
 
             foreach ($snippet->getTranslations() as $trans) {
                 if (trim($trans->getContent()) === '') {

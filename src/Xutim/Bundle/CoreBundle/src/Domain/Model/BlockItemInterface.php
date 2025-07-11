@@ -8,6 +8,7 @@ use Deprecated;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 interface BlockItemInterface
 {

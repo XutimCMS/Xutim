@@ -6,6 +6,7 @@ namespace Xutim\CoreBundle\Domain\Model;
 
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 interface MenuItemInterface
 {

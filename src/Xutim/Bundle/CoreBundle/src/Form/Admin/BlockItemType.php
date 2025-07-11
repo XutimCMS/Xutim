@@ -32,10 +32,10 @@ use Xutim\CoreBundle\Config\Layout\Block\Option\TextBlockItemOption;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\Coordinates;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 /**
  * @template-extends AbstractType<BlockItemDto>

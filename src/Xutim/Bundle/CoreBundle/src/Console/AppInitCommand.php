@@ -10,11 +10,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Domain\Factory\SnippetFactory;
 use Xutim\CoreBundle\Entity\Site;
 use Xutim\CoreBundle\Repository\SiteRepository;
-use Xutim\CoreBundle\Repository\SnippetRepository;
-use Xutim\CoreBundle\Routing\RouteSnippetRegistry;
+use Xutim\SnippetBundle\Domain\Factory\SnippetFactoryInterface;
+use Xutim\SnippetBundle\Domain\Model\SnippetCategory;
+use Xutim\SnippetBundle\Domain\Repository\SnippetRepositoryInterface;
+use Xutim\SnippetBundle\Routing\RouteSnippetRegistry;
 
 /**
  * @author Tomas Jakl <tomasjakll@gmail.com>
@@ -28,8 +29,8 @@ class AppInitCommand extends Command
     public function __construct(
         private readonly SiteRepository $siteRepository,
         private readonly SiteContext $siteContext,
-        private readonly SnippetRepository $snippetRepo,
-        private readonly SnippetFactory $snippetFactory
+        private readonly SnippetRepositoryInterface $snippetRepo,
+        private readonly SnippetFactoryInterface $snippetFactory
     ) {
         parent::__construct();
     }
@@ -46,9 +47,9 @@ class AppInitCommand extends Command
         }
 
         foreach (RouteSnippetRegistry::all() as $route) {
-            $snippet = $this->snippetRepo->findOneBy(['code' => $route->snippetKey]);
+            $snippet = $this->snippetRepo->findByCode($route->snippetKey);
             if ($snippet === null) {
-                $snippet = $this->snippetFactory->create($route->snippetKey);
+                $snippet = $this->snippetFactory->create($route->snippetKey, '', SnippetCategory::Route);
                 $this->snippetRepo->save($snippet, true);
             }
         }

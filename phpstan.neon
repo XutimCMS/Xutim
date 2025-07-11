@@ -7,6 +7,7 @@ parameters:
         - src/Xutim/Bundle/EventBundle/src
         - src/Xutim/Bundle/RedirectBundle/src
         - src/Xutim/Bundle/SecurityBundle/src
+        - src/Xutim/Bundle/SnippetBundle/src
         - src/Xutim/Component/RedirectComponent/src
         - src/Xutim/Component/SecurityComponent/src
         - src/Xutim/Domain/src

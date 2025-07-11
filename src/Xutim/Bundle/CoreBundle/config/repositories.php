@@ -18,8 +18,6 @@ use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\SiteRepository;
-use Xutim\CoreBundle\Repository\SnippetRepository;
-use Xutim\CoreBundle\Repository\SnippetTranslationRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Repository\TagTranslationRepository;
 
@@ -34,11 +32,6 @@ return static function (ContainerConfigurator $container): void {
     $services->set(BlockItemRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.block_item.class%')
-        ->tag('doctrine.repository_service');
-
-    $services->set(SnippetTranslationRepository::class)
-        ->arg('$registry', service(ManagerRegistry::class))
-        ->arg('$entityClass', '%xutim_core.model.snippet_translation.class%')
         ->tag('doctrine.repository_service');
 
     $services->set(TagRepository::class)
@@ -67,11 +60,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.page.class%')
         ->arg('$contentContext', service(ContentContext::class))
-        ->tag('doctrine.repository_service');
-
-    $services->set(SnippetRepository::class)
-        ->arg('$registry', service(ManagerRegistry::class))
-        ->arg('$entityClass', '%xutim_core.model.snippet.class%')
         ->tag('doctrine.repository_service');
 
     $services->set(MenuItemRepository::class)

@@ -1,0 +1,37 @@
+{%
+    set translation = snippet.translationByLocaleOrAny(content_context_language())
+%}
+<tr data-controller="translation-row">
+    <td>
+        <twig:Xutim:Admin:Button
+            tag="a"
+            variant="link"
+            href="{{ path('admin_snippet_edit', {id: snippet.id}) }}"
+            data-turbo-frame="modal"
+        >
+            {{ snippet.code }}
+        </twig:Xutim:Admin:Button>
+    </td>
+
+    <td>
+        {{ snippet.description }}
+    </td>
+
+    {% for locale in site_context.locales %}
+        {% set trans = snippet.translationByLocale(locale) %}
+        <td>
+            <form>
+                <textarea
+                    rows="2"
+                    type="text"
+                    data-snippet-editor-target="input"
+                    data-action="blur->snippet-editor#save"
+                    data-snippet-id="{{ snippet.id }}"
+                    data-locale="{{ locale }}"
+                    data-token="{{ csrf_token('translate_snippet_' ~ snippet.id ~ '_' ~ locale) }}"
+                    class="p-2 form-control form-control-sm"
+                >{{ trans.content ?? '' }}</textarea>
+            </form>
+        </td>
+    {% endfor %}
+</tr>

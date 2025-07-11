@@ -22,9 +22,9 @@ use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\Coordinates;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 #[MappedSuperclass]
 class BlockItem implements BlockItemInterface

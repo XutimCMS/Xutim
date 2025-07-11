@@ -69,7 +69,8 @@
         "twig/intl-extra": "^3.20",
         "twig/string-extra": "^3.20",
         "twig/twig": "^3.20",
-        "webmozart/assert": "^1.11"
+        "webmozart/assert": "^1.11",
+        "xutimcms/snippet-component": "dev-main"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",
@@ -102,7 +103,8 @@
         "xutimcms/redirect-bundle": "self.version",
         "xutimcms/redirect-component": "self.version",
         "xutimcms/security-bundle": "self.version",
-        "xutimcms/security-component": "self.version"
+        "xutimcms/security-component": "self.version",
+        "xutimcms/snippet-bundle": "self.version"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -115,13 +117,15 @@
             "Xutim\\RedirectBundle\\": "src/Xutim/Bundle/RedirectBundle/src/",
             "Xutim\\RedirectComponent\\": "src/Xutim/Component/RedirectComponent/src/",
             "Xutim\\SecurityBundle\\": "src/Xutim/Bundle/SecurityBundle/src/",
-            "Xutim\\SecurityComponent\\": "src/Xutim/Component/SecurityComponent/src/"
+            "Xutim\\SecurityComponent\\": "src/Xutim/Component/SecurityComponent/src/",
+            "Xutim\\SnippetBundle\\": "src/Xutim/Bundle/SnippetBundle/src/"
         },
         "exclude-from-classmap": [
             "src/Xutim/Bundle/CoreBundle/Tests/",
             "src/Xutim/Bundle/EventBundle/Tests/",
             "src/Xutim/Bundle/RedirectBundle/Tests/",
             "src/Xutim/Bundle/SecurityBundle/Tests/",
+            "src/Xutim/Bundle/SnippetBundle/Tests/",
             "src/Xutim/Component/RedirectComponent/Tests/",
             "src/Xutim/Component/SecurityComponent/Tests/"
         ]
@@ -133,7 +137,8 @@
             "Xutim\\RedirectBundle\\Tests\\": "src/Xutim/Bundle/RedirectBundle/tests/",
             "Xutim\\RedirectComponent\\Tests\\": "src/Xutim/Component/RedirectComponent/tests/",
             "Xutim\\SecurityBundle\\Tests\\": "src/Xutim/Bundle/SecurityBundle/tests/",
-            "Xutim\\SecurityComponent\\Tests\\": "src/Xutim/Component/SecurityComponent/tests/"
+            "Xutim\\SecurityComponent\\Tests\\": "src/Xutim/Component/SecurityComponent/tests/",
+            "Xutim\\SnippetBundle\\Tests\\": "src/Xutim/Bundle/SnippetBundle/tests/"
         }
     },
     "config": {

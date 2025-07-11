@@ -9,8 +9,8 @@ use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 class BlockItemFactory
 {

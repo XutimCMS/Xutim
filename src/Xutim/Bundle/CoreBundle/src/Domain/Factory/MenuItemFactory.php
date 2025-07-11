@@ -7,8 +7,8 @@ namespace Xutim\CoreBundle\Domain\Factory;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\MenuItemInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 class MenuItemFactory
 {

@@ -29,9 +29,9 @@ import TomSelect from './controllers/tom-select_controller.js';
 import Tooltip from './controllers/tooltip_controller.js';
 import TranslationRow from './controllers/translation-row_controller.js';
 import Sidebar from './controllers/sidebar_controller.js';
+import SnippetEditor from './controllers/snippet-editor_controller.js';
 
 app.register('sidebar', Sidebar);
-
 app.register('article-preview', ArticlePreview);
 app.register('auto-submit', AutoSubmit);
 app.register('clipboard', Clipboard);
@@ -54,3 +54,4 @@ app.register('tag-menu', TagMenu);
 app.register('tom-select', TomSelect);
 app.register('tooltip', Tooltip);
 app.register('translation-row', TranslationRow);
+app.register('snippet-editor', SnippetEditor);

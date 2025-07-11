@@ -21,10 +21,10 @@ use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\MenuItemInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\SnippetInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Domain\Model\TagTranslationInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
+use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 #[MappedSuperclass]
 class MenuItem implements MenuItemInterface
