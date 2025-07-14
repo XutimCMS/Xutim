@@ -22,7 +22,7 @@ return function (RoutingConfigurator $routes) {
     $routes->add('admin_snippet_edit', '/admin/snippet/edit/{id}/{locale? }') ->methods(['get', 'post'])
         ->controller(EditSnippetAction::class);
 
-    $routes->add('admin_json_snippet_list', '/json/snippet/list/{type}')
+    $routes->add('admin_json_snippet_list', '/admin/json/snippet/list/{type}')
         ->methods(['get'])
         ->controller(JsonListSnippetsAction::class);
 

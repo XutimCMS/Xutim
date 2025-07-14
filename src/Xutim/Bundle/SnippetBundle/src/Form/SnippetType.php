@@ -54,6 +54,7 @@ class SnippetType extends AbstractType implements DataMapperInterface
             ])
             ->add('description', TextareaType::class, [
                 'label' => new TranslatableMessage('description', [], 'admin'),
+                'required' => false,
                 'disabled' => $options['can_edit'] === false,
             ])
             ->add('category', EnumType::class, [
@@ -119,7 +120,7 @@ class SnippetType extends AbstractType implements DataMapperInterface
         $code = $forms['code']->getData();
 
         /** @var string $description */
-        $description = $forms['description']->getData();
+        $description = $forms['description']->getData() ?? '';
 
         /** @var SnippetCategory $category */
         $category = $forms['category']->getData();

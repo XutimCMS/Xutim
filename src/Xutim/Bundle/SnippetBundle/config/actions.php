@@ -19,6 +19,7 @@ use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SnippetBundle\Action\CreateSnippetAction;
 use Xutim\SnippetBundle\Action\DeleteSnippetAction;
 use Xutim\SnippetBundle\Action\EditSnippetAction;
+use Xutim\SnippetBundle\Action\JsonListSnippetsAction;
 use Xutim\SnippetBundle\Action\ListSnippetsAction;
 use Xutim\SnippetBundle\Action\TranslateSnippetAction;
 use Xutim\SnippetBundle\Context\SnippetsContext;
@@ -95,6 +96,11 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$transAuthChecker', service(TranslatorAuthChecker::class))
         ->arg('$csrfTokenChecker', service(CsrfTokenChecker::class))
         ->arg('$snippetVersionPath', '%snippet_routes_version_file%')
+        ->tag('controller.service_arguments')
+    ;
+
+    $services->set(JsonListSnippetsAction::class)
+        ->arg('$repo', service(SnippetRepositoryInterface::class))
         ->tag('controller.service_arguments')
     ;
 };
