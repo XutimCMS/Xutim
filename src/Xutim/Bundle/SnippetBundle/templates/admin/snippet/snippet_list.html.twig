@@ -45,6 +45,12 @@
     %}
     {% block header %}
         {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+
+        {%
+            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_ADMIN'))
+        %}
+            <th class="w-1 text-right">A</th>
+        {% endif %}
         <th>
             <a
                 class=""
@@ -53,6 +59,17 @@
                 {{ 'code'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('code', filter.orderColumn, filter.orderDirection)
+                }}
+            </a>
+        </th>
+        <th>
+            <a
+                class=""
+                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'category', orderDirection: filter.reverseDirection('category')}) }}"
+            >
+                {{ 'category'|trans({}, 'admin') }}
+                {{
+                    icons.order_arrow('category', filter.orderColumn, filter.orderDirection)
                 }}
             </a>
         </th>

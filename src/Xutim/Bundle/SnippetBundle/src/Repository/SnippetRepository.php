@@ -20,6 +20,7 @@ class SnippetRepository extends ServiceEntityRepository implements SnippetReposi
     public const FILTER_ORDER_COLUMN_MAP = [
         'id' => 'snippet.id',
         'code' => 'snippet.code',
+        'category' => 'snippet.category',
         'content' => 'translation.content'
     ];
 
@@ -38,6 +39,7 @@ class SnippetRepository extends ServiceEntityRepository implements SnippetReposi
                 ->andWhere($builder->expr()->orX(
                     $builder->expr()->like('LOWER(translation.content)', ':searchTerm'),
                     $builder->expr()->like('LOWER(snippet.code)', ':searchTerm'),
+                    $builder->expr()->like('LOWER(snippet.category)', ':searchTerm'),
                 ))
                 ->setParameter('searchTerm', '%' . strtolower($filter->searchTerm) . '%');
         }
@@ -53,24 +55,11 @@ class SnippetRepository extends ServiceEntityRepository implements SnippetReposi
                 $filter->getOrderDir()
             );
         } else {
-            $builder->orderBy('snippet.code', 'desc');
+            $builder->orderBy('snippet.category', 'desc');
+            $builder->addOrderBy('snippet.code', 'asc');
         }
 
         return $builder;
-    }
-
-    /**
-     * @return array<int, SnippetInterface>
-     */
-    public function findByType(string $type): array
-    {
-        /** @var array<int, SnippetInterface> */
-        return $this->createQueryBuilder('snippet')
-            ->where('snippet.code LIKE :code')
-            ->setParameter('code', $type . '%')
-            ->getQuery()
-            ->getResult()
-        ;
     }
 
     /**

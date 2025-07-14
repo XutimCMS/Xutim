@@ -14,4 +14,9 @@ enum SnippetCategory: string
     {
         return in_array($value, array_column(SnippetCategory::cases(), 'value'), true);
     }
+
+    public function isRoute(): bool
+    {
+        return $this === SnippetCategory::Route;
+    }
 }

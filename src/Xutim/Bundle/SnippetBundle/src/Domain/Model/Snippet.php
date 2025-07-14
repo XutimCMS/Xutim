@@ -75,7 +75,7 @@ class Snippet implements SnippetInterface
 
     public function isRouteType(): bool
     {
-        return str_starts_with('route-', $this->code);
+        return $this->category->isRoute();
     }
 
     public function getCategory(): SnippetCategory
