@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityComponent\Domain\Event;
+namespace Xutim\SecurityBundle\Domain\Event;
 
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 use Xutim\Domain\DomainEvent;
 
-class UserCreatedEvent implements DomainEvent
+class UserUpdatedEvent implements DomainEvent
 {
     public DateTimeImmutable $createdAt;
 
@@ -18,11 +18,9 @@ class UserCreatedEvent implements DomainEvent
      */
     public function __construct(
         public Uuid $id,
-        public string $email,
-        public string $password,
+        public string $name,
         public array $roles,
-        public array $transLocales,
-        public string $avatar
+        public array $transLocales
     ) {
         $this->createdAt = new DateTimeImmutable();
     }

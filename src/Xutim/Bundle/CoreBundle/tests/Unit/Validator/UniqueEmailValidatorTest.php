@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Xutim\CoreBundle\Repository\UserRepository;
 use Xutim\CoreBundle\Validator\UniqueEmail;
 use Xutim\CoreBundle\Validator\UniqueEmailValidator;
-use Xutim\SecurityBundle\Security\User;
+use Xutim\SecurityBundle\Domain\Model\User;
 
 /**
 *

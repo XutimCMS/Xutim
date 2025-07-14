@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
-use Xutim\SecurityBundle\Security\UserInterface;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<UserInterface>

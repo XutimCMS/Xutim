@@ -15,9 +15,9 @@ use Xutim\RedirectBundle\Action\Admin\DeleteRedirectAction;
 use Xutim\RedirectBundle\Action\Admin\EditRedirectAction;
 use Xutim\RedirectBundle\Action\Admin\ListRedirectsAction;
 use Xutim\RedirectBundle\Action\Admin\RedirectToTargetAction;
+use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
-use Xutim\RedirectComponent\Domain\Factory\RedirectFactoryInterface;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
 
 return static function (ContainerConfigurator $container): void {

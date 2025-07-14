@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Xutim\SecurityBundle\Factory;
 
-use Xutim\SecurityBundle\Security\UserInterface;
-use Xutim\SecurityComponent\Domain\Model\ResetPasswordRequestInterface;
+use Xutim\SecurityBundle\Domain\Model\ResetPasswordRequestInterface;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 class ResetPasswordRequestFactory
 {

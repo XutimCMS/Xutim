@@ -12,9 +12,9 @@ return ECSConfig::configure()
     ->withPaths([
         __DIR__ . '/src/Xutim/Bundle/CoreBundle/src',
         __DIR__ . '/src/Xutim/Bundle/EventBundle/src',
-        __DIR__ . '/src/Xutim/Component/RedirectComponent/src',
         __DIR__ . '/src/Xutim/Component/SecurityComponent/src',
         __DIR__ . '/src/Xutim/Bundle/RedirectBundle/src',
+        __DIR__ . '/src/Xutim/Bundle/SnippetBundle/src',
         __DIR__ . '/src/Xutim/Bundle/UserBundle/src',
         __DIR__ . '/src/Xutim/Bundle/CoreBundle/tests',
         __DIR__ . '/src/Xutim/Bundle/EventBundle/tests',

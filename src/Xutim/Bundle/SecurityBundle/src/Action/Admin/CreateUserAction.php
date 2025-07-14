@@ -16,11 +16,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Twig\Environment;
 use Xutim\CoreBundle\Service\FlashNotifier;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Form\CreateUserFormData;
 use Xutim\SecurityBundle\Form\CreateUserType;
 use Xutim\SecurityBundle\Message\CreateUserCommand;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
-use Xutim\SecurityBundle\Security\UserInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 

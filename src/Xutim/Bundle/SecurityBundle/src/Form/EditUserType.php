@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Traversable;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\SecurityBundle\Security\User;
+use Xutim\SecurityBundle\Domain\Model\User;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Validator\UniqueUsername;
 

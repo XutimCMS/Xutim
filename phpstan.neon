@@ -8,8 +8,6 @@ parameters:
         - src/Xutim/Bundle/RedirectBundle/src
         - src/Xutim/Bundle/SecurityBundle/src
         - src/Xutim/Bundle/SnippetBundle/src
-        - src/Xutim/Component/RedirectComponent/src
-        - src/Xutim/Component/SecurityComponent/src
         - src/Xutim/Domain/src
     excludePaths:
         - src/Xutim/Bundle/CoreBundle/src/Infra/Doctrine/TreeObjectHydrator.php

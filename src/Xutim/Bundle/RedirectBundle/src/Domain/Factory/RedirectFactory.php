@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Xutim\RedirectComponent\Domain\Factory;
+namespace Xutim\RedirectBundle\Domain\Factory;
 
-use Xutim\RedirectComponent\Domain\Model\RedirectInterface;
+use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 
 class RedirectFactory implements RedirectFactoryInterface
 {

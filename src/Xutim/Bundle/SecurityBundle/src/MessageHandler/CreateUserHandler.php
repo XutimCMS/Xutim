@@ -7,15 +7,15 @@ namespace Xutim\SecurityBundle\MessageHandler;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Jdenticon\Identicon;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
+use Xutim\BundleComponent\Domain\Event\UserCreatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\SecurityBundle\Domain\Factory\UserFactoryInterface;
+use Xutim\SecurityBundle\Domain\Model\User;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Message\CreateUserCommand;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
-use Xutim\SecurityBundle\Security\User;
-use Xutim\SecurityBundle\Security\UserInterface;
-use Xutim\SecurityComponent\Domain\Event\UserCreatedEvent;
-use Xutim\SecurityComponent\Domain\Factory\UserFactoryInterface;
 
 readonly class CreateUserHandler implements CommandHandlerInterface
 {

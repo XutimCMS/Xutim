@@ -6,7 +6,7 @@ namespace Xutim\SecurityBundle\Service;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Xutim\SecurityBundle\Security\UserInterface;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 /**
  * @author Tomas Jakl <tomasjakll@gmail.com>

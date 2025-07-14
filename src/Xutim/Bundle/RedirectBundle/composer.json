@@ -27,8 +27,7 @@
         "symfony/framework-bundle": "7.3.*",
         "twig/twig": "^3.20",
         "webmozart/assert": "^1.11",
-        "xutimcms/core-bundle": "dev-main",
-        "xutimcms/redirect-component": "dev-main"
+        "xutimcms/core-bundle": "dev-main"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",

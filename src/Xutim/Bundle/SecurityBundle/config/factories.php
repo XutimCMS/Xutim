@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Xutim\SecurityBundle\Domain\Factory\ResetPasswordRequestFactoryInterface;
+use Xutim\SecurityBundle\Domain\Factory\UserFactoryInterface;
 use Xutim\SecurityBundle\Factory\ResetPasswordRequestFactory;
 use Xutim\SecurityBundle\Factory\UserFactory;
-use Xutim\SecurityComponent\Domain\Factory\ResetPasswordRequestFactoryInterface;
-use Xutim\SecurityComponent\Domain\Factory\UserFactoryInterface;
 
 return function (ContainerConfigurator $configurator) {
     $services = $configurator->services();

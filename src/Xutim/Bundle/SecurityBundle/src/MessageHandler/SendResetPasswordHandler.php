@@ -14,9 +14,9 @@ use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Message\SendResetPasswordCommand;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
-use Xutim\SecurityBundle\Security\UserInterface;
 
 readonly class SendResetPasswordHandler implements CommandHandlerInterface
 {

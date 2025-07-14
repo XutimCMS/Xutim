@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace Xutim\RedirectBundle\Domain\Model;
 
-use Xutim\RedirectComponent\Domain\Model\RedirectInterface as ModelRedirectInterface;
+use Symfony\Component\Uid\Uuid;
 
-interface RedirectInterface extends ModelRedirectInterface
+interface RedirectInterface
 {
     public function change(
         string $source,
         string $target,
         bool $permanent = false,
     ): void;
+
+    public function getId(): Uuid;
+
+    public function getTarget(): string;
+
+    public function getSource(): string;
+
+    public function isPermanent(): bool;
 }

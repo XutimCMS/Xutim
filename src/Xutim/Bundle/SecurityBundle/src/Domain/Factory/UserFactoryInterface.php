@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityComponent\Domain\Factory;
+namespace Xutim\SecurityBundle\Domain\Factory;
 
 use Symfony\Component\Uid\Uuid;
-use Xutim\SecurityBundle\Security\UserInterface;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 interface UserFactoryInterface
 {

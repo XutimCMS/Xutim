@@ -22,7 +22,7 @@ use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCo
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\SecurityBundle\Security\UserInterface;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 

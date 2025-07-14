@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityBundle\Security;
+namespace Xutim\SecurityBundle\Domain\Model;
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping\Column;
@@ -11,10 +11,10 @@ use Doctrine\ORM\Mapping\MappedSuperclass;
 use JsonSerializable;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\TimestampableTrait;
-use Xutim\SecurityBundle\Security\UserInterface as ModelUserInterface;
+use Xutim\SecurityBundle\Security\UserRoles;
 
 #[MappedSuperclass]
-abstract class User implements ModelUserInterface, JsonSerializable
+abstract class User implements UserInterface, JsonSerializable
 {
     use TimestampableTrait;
 

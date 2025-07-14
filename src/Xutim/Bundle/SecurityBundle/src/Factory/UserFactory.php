@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Xutim\SecurityBundle\Factory;
 
 use Symfony\Component\Uid\Uuid;
-use Xutim\SecurityBundle\Security\UserInterface;
-use Xutim\SecurityComponent\Domain\Factory\UserFactoryInterface;
+use Xutim\SecurityBundle\Domain\Factory\UserFactoryInterface;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 class UserFactory implements UserFactoryInterface
 {

@@ -12,6 +12,7 @@ use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\SecurityBundle\Domain\Factory\UserFactoryInterface;
 use Xutim\SecurityBundle\Message\ChangePasswordCommand;
 use Xutim\SecurityBundle\Message\CreateUserCommand;
 use Xutim\SecurityBundle\Message\DeleteUserCommand;
@@ -23,7 +24,6 @@ use Xutim\SecurityBundle\MessageHandler\EditUserHandler;
 use Xutim\SecurityBundle\MessageHandler\SendResetPasswordHandler;
 use Xutim\SecurityBundle\MessageHandler\UserDeleteHandler;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
-use Xutim\SecurityComponent\Domain\Factory\UserFactoryInterface;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();

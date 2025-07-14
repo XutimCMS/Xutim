@@ -18,12 +18,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Service\FlashNotifier;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Form\EditUserFormData;
 use Xutim\SecurityBundle\Form\EditUserType;
 use Xutim\SecurityBundle\Message\EditUserCommand;
 use Xutim\SecurityBundle\Repository\ResetPasswordRequestRepository;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
-use Xutim\SecurityBundle\Security\UserInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityComponent\Domain\Event;
+namespace Xutim\SecurityBundle\Domain\Event;
 
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;

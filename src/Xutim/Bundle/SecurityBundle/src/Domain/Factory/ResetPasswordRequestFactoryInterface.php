@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityComponent\Domain\Factory;
+namespace Xutim\SecurityBundle\Domain\Factory;
 
-use Xutim\SecurityComponent\Domain\Model\ResetPasswordRequestInterface;
-use Xutim\SecurityComponent\Domain\Model\UserInterface;
+use Xutim\SecurityBundle\Domain\Model\ResetPasswordRequestInterface;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 interface ResetPasswordRequestFactoryInterface
 {

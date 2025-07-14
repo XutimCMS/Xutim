@@ -74,7 +74,8 @@
         "twig/twig": "^3.20",
         "webmozart/assert": "^1.11",
         "symfony/doctrine-messenger": "^7.3",
-        "symfony/scheduler": "^7.3"
+        "symfony/scheduler": "^7.3",
+        "xutimcms/domain": "dev-main"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",

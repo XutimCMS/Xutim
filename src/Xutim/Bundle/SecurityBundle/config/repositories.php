@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Xutim\SecurityBundle\Domain\Factory\ResetPasswordRequestFactoryInterface;
 use Xutim\SecurityBundle\Repository\ResetPasswordRequestRepository;
 use Xutim\SecurityBundle\Repository\UserRepository;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
-use Xutim\SecurityComponent\Domain\Factory\ResetPasswordRequestFactoryInterface;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();

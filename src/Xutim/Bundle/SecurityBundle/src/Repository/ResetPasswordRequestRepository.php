@@ -10,13 +10,12 @@ use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface as Mod
 use SymfonyCasts\Bundle\ResetPassword\Persistence\Repository\ResetPasswordRequestRepositoryTrait;
 use SymfonyCasts\Bundle\ResetPassword\Persistence\ResetPasswordRequestRepositoryInterface;
 use Xutim\CoreBundle\Exception\LogicException;
+use Xutim\SecurityBundle\Domain\Model\ResetPasswordRequestInterface;
+use Xutim\SecurityBundle\Domain\Model\User;
 use Xutim\SecurityBundle\Factory\ResetPasswordRequestFactory;
-use Xutim\SecurityBundle\Security\ResetPasswordRequest;
-use Xutim\SecurityBundle\Security\User;
-use Xutim\SecurityComponent\Domain\Model\ResetPasswordRequestInterface;
 
 /**
- * @extends ServiceEntityRepository<ResetPasswordRequest>
+ * @extends ServiceEntityRepository<ResetPasswordRequestInterface>
  */
 class ResetPasswordRequestRepository extends ServiceEntityRepository implements ResetPasswordRequestRepositoryInterface
 {

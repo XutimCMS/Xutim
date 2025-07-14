@@ -7,8 +7,8 @@ namespace Xutim\CoreBundle\Tests\Unit\Validator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
+use Xutim\SecurityBundle\Domain\Model\User;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
-use Xutim\SecurityBundle\Security\User;
 use Xutim\SecurityBundle\Validator\UniqueUsername;
 use Xutim\SecurityBundle\Validator\UniqueUsernameValidator;
 

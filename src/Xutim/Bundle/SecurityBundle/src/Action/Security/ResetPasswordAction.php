@@ -21,9 +21,9 @@ use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Service\FlashNotifier;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Form\ChangePasswordFormType;
 use Xutim\SecurityBundle\Message\ChangePasswordCommand;
-use Xutim\SecurityBundle\Security\UserInterface;
 
 class ResetPasswordAction extends AbstractController
 {

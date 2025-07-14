@@ -49,7 +49,7 @@
         "twig/string-extra": "^3.20",
         "twig/twig": "^3.20",
         "xutimcms/core-bundle": "dev-main",
-        "xutimcms/security-component": "dev-main",
+        "xutimcms/domain": "dev-main",
         "webmozart/assert": "^1.11",
         "symfony/doctrine-messenger": "^7.3",
         "symfony/scheduler": "^7.3"

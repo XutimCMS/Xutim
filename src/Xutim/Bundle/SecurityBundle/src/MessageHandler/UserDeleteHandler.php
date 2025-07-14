@@ -9,11 +9,11 @@ use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Exception\InvalidArgumentException;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\SecurityBundle\Domain\Event\UserDeletedEvent;
+use Xutim\SecurityBundle\Domain\Model\User;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Message\DeleteUserCommand;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
-use Xutim\SecurityBundle\Security\User;
-use Xutim\SecurityBundle\Security\UserInterface;
-use Xutim\SecurityComponent\Domain\Event\UserDeletedEvent;
 
 class UserDeleteHandler implements CommandHandlerInterface
 {

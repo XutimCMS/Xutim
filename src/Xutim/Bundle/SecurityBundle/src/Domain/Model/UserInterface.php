@@ -2,15 +2,39 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityBundle\Security;
+namespace Xutim\SecurityBundle\Domain\Model;
 
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface as SymfonyUserInterface;
 use Symfony\Component\Uid\Uuid;
-use Xutim\SecurityComponent\Domain\Model\UserInterface as ModelUserInterface;
 
-interface UserInterface extends PasswordAuthenticatedUserInterface, SymfonyUserInterface, ModelUserInterface
+interface UserInterface extends SymfonyUserInterface, PasswordAuthenticatedUserInterface
 {
+    public function getId(): Uuid;
+
+    public function getName(): string;
+
+    public function getEmail(): string;
+
+    public function getAvatar(): string;
+
+    /**
+     * @return list<string>
+     */
+    public function getTranslationLocales(): array;
+
+    /**
+     * @return array<string>
+     */
+    public function getRoles(): array;
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): void;
+
+    public function changePassword(string $password): void;
+
     /**
      * @param array<string> $roles
      * @param list<string>  $transLocales

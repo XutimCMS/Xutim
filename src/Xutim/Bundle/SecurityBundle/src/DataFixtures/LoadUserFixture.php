@@ -7,8 +7,8 @@ namespace Xutim\SecurityBundle\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Uid\Uuid;
+use Xutim\SecurityBundle\Domain\Factory\UserFactoryInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
-use Xutim\SecurityComponent\Domain\Factory\UserFactoryInterface;
 
 class LoadUserFixture extends Fixture
 {

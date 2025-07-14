@@ -62,7 +62,7 @@ final class XutimSecurityExtension extends Extension implements PrependExtension
         $mapping = [];
         foreach ($config['models'] as $alias => $modelConfig) {
             $camel = str_replace(' ', '', ucwords(str_replace('_', ' ', $alias)));
-            $interface = sprintf('Xutim\\SecurityBundle\\Security\\%sInterface', $camel);
+            $interface = sprintf('Xutim\\SecurityBundle\\Domain\\Model\\%sInterface', $camel);
             $mapping[$interface] = $modelConfig['class'];
         }
 

@@ -6,7 +6,7 @@ namespace Xutim\RedirectBundle\Domain\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
-use Xutim\RedirectComponent\Domain\Model\RedirectInterface;
+use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 
 interface RedirectRepositoryInterface
 {

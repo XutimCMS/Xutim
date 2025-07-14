@@ -8,8 +8,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
+use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
-use Xutim\RedirectComponent\Domain\Model\RedirectInterface;
 
 /**
  * @extends ServiceEntityRepository<RedirectInterface>

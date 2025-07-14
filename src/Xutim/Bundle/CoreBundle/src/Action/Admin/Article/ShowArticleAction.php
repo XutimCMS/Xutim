@@ -12,7 +12,7 @@ use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
-use Xutim\SecurityBundle\Security\UserInterface;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 #[Route('/article/{id<[^/]+>}', name: 'admin_article_show', methods: ['get'])]
 class ShowArticleAction extends AbstractController

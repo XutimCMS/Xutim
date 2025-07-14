@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Xutim\SecurityComponent\Domain\Model;
+namespace Xutim\SecurityBundle\Domain\Model;
 
 use Symfony\Component\Uid\Uuid;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface as BaseResetPasswordRequestInterface;
