@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Symfony\Component\Routing\RouterInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 use Xutim\RedirectBundle\Infra\Routing\RedirectRouteLoader;
 use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
@@ -22,5 +23,7 @@ return static function (ContainerConfigurator $container): void {
     $services
         ->set(RedirectRouteService::class)
         ->arg('$redirectVersionPath', '%redirect_routes_version_file%')
+        ->arg('$cacheDir', '%kernel.cache_dir%')
+        ->arg('$router', service(RouterInterface::class))
     ;
 };
