@@ -56,8 +56,8 @@ class RedirectType extends AbstractType implements DataMapperInterface
                 'constraints' => [
                     new NotNull(),
                     new Regex([
-                        'pattern' => '~^/[\w\-/.#]*$~',
-                        'message' => 'The path must start with a "/" and may contain letters, numbers, dashes, underscores, slashes, dots, and hashes.',
+                        'pattern' => '~^(https://[\w\-\.]+(\:[0-9]+)?(/[\w\-./#?%=&]*)?|/[\w\-/.#]*)$~i',
+                        'message' => 'The path must start with a "/" or "https://" and may contain letters, numbers, dashes, underscores, slashes, dots, and hashes.',
                     ]),
                 ],
             ])
