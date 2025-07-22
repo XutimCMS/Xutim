@@ -7,6 +7,7 @@ export const app = startStimulusApp();
 // app.register('some_controller_name', SomeImportedController);
 
 import ArticlePreview from './controllers/article-preview_controller.js';
+import AutoExpand from './controllers/auto-expand_controller.js';
 import AutoSubmit from './controllers/auto-submit_controller.js';
 import Clipboard from './controllers/clipboard_controller.js';
 import DateTime from './controllers/date-time_controller.js';
@@ -33,6 +34,7 @@ import SnippetEditor from './controllers/snippet-editor_controller.js';
 
 app.register('sidebar', Sidebar);
 app.register('article-preview', ArticlePreview);
+app.register('auto-expand', AutoExpand);
 app.register('auto-submit', AutoSubmit);
 app.register('clipboard', Clipboard);
 app.register('datetime', DateTime);
