@@ -72,6 +72,7 @@ export default class extends Controller {
                     config: {
                         listUrl: this.pageIdsUrlValue,
                         title: 'Select a page',
+                        type: 'page',
                     },
                     shortcut: 'CMD+SHIFT+K',
                 },
@@ -80,6 +81,7 @@ export default class extends Controller {
                     config: {
                         listUrl: this.articleIdsUrlValue,
                         title: 'Select a article',
+                        type: 'article',
                     },
                     shortcut: 'CMD+SHIFT+L',
                 },
@@ -88,6 +90,7 @@ export default class extends Controller {
                     config: {
                         listUrl: this.tagIdsUrlValue,
                         title: 'Select a tag',
+                        type: 'tag',
                     },
                     shortcut: 'CMD+SHIFT+J',
                 },
