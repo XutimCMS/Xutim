@@ -45,25 +45,25 @@ class InternalLinkExtension extends AbstractExtension
             $href = null;
             if ($type === 'page') {
                 $page = $pageRepo->find($id);
-                $trans = $page?->getTranslationByLocale($locale);
+                $trans = $page?->getTranslationByLocaleOrDefault($locale);
                 if ($trans !== null) {
-                    $href = $this->router->generate('content_translation_show', ['slug' => $trans->getSlug()]);
+                    $href = $this->router->generate('content_translation_show', ['slug' => $trans->getSlug(), '_content_locale' => $trans->getLocale()]);
                 }
             }
 
             if ($type === 'article') {
                 $article = $articleRepo->find($id);
-                $trans = $article?->getTranslationByLocale($locale);
+                $trans = $article?->getTranslationByLocaleOrDefault($locale);
                 if ($trans !== null) {
-                    $href = $this->router->generate('content_translation_show', ['slug' => $trans->getSlug()]);
+                    $href = $this->router->generate('content_translation_show', ['slug' => $trans->getSlug(), '_content_locale' => $trans->getLocale()]);
                 }
             }
 
             if ($type === 'tag') {
                 $tag = $tagRepo->find($id);
-                $trans = $tag?->getTranslationByLocale($locale);
+                $trans = $tag?->getTranslationByLocaleOrDefault($locale);
                 if ($trans !== null) {
-                    $href = $this->router->generate('tag_translation_show', ['slug' => $trans->getSlug()]);
+                    $href = $this->router->generate('tag_translation_show', ['slug' => $trans->getSlug(), '_content_locale' => $trans->getLocale()]);
                 }
             }
 
