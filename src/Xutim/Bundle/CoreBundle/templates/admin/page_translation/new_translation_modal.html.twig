@@ -26,18 +26,22 @@
                             stroke="none"
                             d="M0 0h24v24H0z"
                             fill="none"
-                        ></path>
+                        >
+                        </path>
                         <path d="M12 9v2m0 4v.01"></path>
-                        <path
-                            d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"
-                        ></path>
+                        <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75">
+                        </path>
                     </svg>
                     <h3 class="text-start">
-                        {{ 'This page does not exist in %language%. Do you want to copy content from another language?'|trans({'%language%': content_context_language()|language_name}, 'admin') }}
+                        {{
+                            'This page does not exist in %language%. Do you want to copy content from another language?'|trans({'%language%': content_context_language()|language_name}, 'admin')
+                        }}
                     </h3>
                     <div class="mb-3">
                         <label class="form-label text-start" for="form_locale">
-                            {{ 'choose language'|trans({}, 'admin')|capitalize }}
+                            {{
+                                'choose language'|trans({}, 'admin')|capitalize
+                            }}
                         </label>
                         <select
                             name="form[locale]"
@@ -45,10 +49,18 @@
                             class="form-select"
                             data-plain-modal-target="localeSelect"
                         >
-                            {% for trans in page.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name) %}
+                            {%
+                                set defaultTrans = page.getDefaultTranslation()
+                            %}
+                            {%
+                                for trans in page.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name)
+                            %}
                                 <option
                                     value="{{ trans.locale }}"
                                     data-url-value="{{ path('admin_page_edit', {id: page.id, locale: trans.locale}) }}"
+                                    {% if trans.id == defaultTrans.id %}
+                                        selected="selected"
+                                    {% endif %}
                                 >
                                     {{ trans.locale|language_name }}
                                 </option>
@@ -69,7 +81,9 @@
                                     aria-label="close"
                                     data-action="click->plain-modal#dismissModal"
                                 >
-                                    {{ 'action.close'|trans({}, 'admin')|capitalize }}
+                                    {{
+                                        'action.close'|trans({}, 'admin')|capitalize
+                                    }}
                                 </twig:Xutim:Admin:Button>
                             </div>
                             <div class="col">
@@ -87,7 +101,9 @@
                                     data-action="click->plain-modal#getResponse"
                                     data-bs-dismiss="modal"
                                 >
-                                    {{ 'action.copy'|trans({}, 'admin')|capitalize }}
+                                    {{
+                                        'action.copy'|trans({}, 'admin')|capitalize
+                                    }}
                                 </twig:Xutim:Admin:Button>
                             </div>
                         </div>
