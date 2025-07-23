@@ -103,7 +103,6 @@ return static function (ContainerConfigurator $container): void {
     $services->set(CheckEmailAction::class)
         ->arg('$resetPasswordHelper', service(ResetPasswordHelperInterface::class))
         ->arg('$twig', service(Environment::class))
-        ->arg('$container', service('service_container'))
         ->tag('controller.service_arguments')
     ;
 
@@ -137,9 +136,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$formFactory', service(FormFactoryInterface::class))
         ->arg('$router', service(UrlGeneratorInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
-        ->arg('$container', service('service_container'))
         ->tag('controller.service_arguments')
-        ->public()
     ;
 
     $services->set(ShowProfileAction::class)

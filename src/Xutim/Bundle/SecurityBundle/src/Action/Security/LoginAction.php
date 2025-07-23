@@ -6,13 +6,11 @@ namespace Xutim\SecurityBundle\Action\Security;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Twig\Environment;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route(path: '/login', name: 'admin_login')]
 class LoginAction
 {
     public function __construct(

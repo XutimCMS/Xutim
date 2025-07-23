@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\SecurityBundle\Action\Security;
 
-use Psr\Container\ContainerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,10 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Twig\Environment;
@@ -25,41 +21,39 @@ use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Form\ChangePasswordFormType;
 use Xutim\SecurityBundle\Message\ChangePasswordCommand;
 
-class ResetPasswordAction extends AbstractController
+class ResetPasswordAction
 {
-    use ResetPasswordControllerTrait;
-
     public function __construct(
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
         private readonly MessageBusInterface $commandBus,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
         private readonly UrlGeneratorInterface $router,
-        private readonly FlashNotifier $flashNotifier,
-        ContainerInterface $container
+        private readonly FlashNotifier $flashNotifier
     ) {
-        $this->setContainer($container);
     }
 
     /**
      * Validates and process the reset URL that the user clicked in their email.
      */
-    #[Route('/reset/{token}', name: 'admin_reset_password')]
     public function reset(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
         TranslatorInterface $translator,
         ?string $token = null
     ): Response {
+        $session = $request->getSession();
+
         if ($token !== null && strlen($token) > 0) {
             // We store the token in session and remove it from the URL, to avoid the URL being
             // loaded in a browser and potentially leaking the token to 3rd party JavaScript.
-            $this->storeTokenInSession($token);
-
+            $session->set('ResetPasswordPublicToken', $token);
+            
             return new RedirectResponse($this->router->generate('admin_reset_password'));
         }
 
-        $token = $this->getTokenFromSession();
+        /** @var null|string $token */
+        $token = $session->get('ResetPasswordPublicToken');
 
         if (null === $token) {
             throw new NotFoundHttpException('No reset password token found in the URL or in the session.');
@@ -101,7 +95,9 @@ class ResetPasswordAction extends AbstractController
             $this->commandBus->dispatch(new ChangePasswordCommand($user->getId(), $encodedPassword));
 
             // The session is cleaned up after the password has been changed.
-            $this->cleanSessionAfterReset();
+            $session->remove('ResetPasswordPublicToken');
+            $session->remove('ResetPasswordCheckEmail');
+            $session->remove('ResetPasswordToken');
 
             $this->flashNotifier->flash('success', 'The password was changed. You can now login with the new password.');
 

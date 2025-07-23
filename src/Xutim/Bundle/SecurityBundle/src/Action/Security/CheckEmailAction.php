@@ -4,33 +4,29 @@ declare(strict_types=1);
 
 namespace Xutim\SecurityBundle\Action\Security;
 
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Twig\Environment;
 
-#[Route('/reset-password/check-email', name: 'admin_check_email')]
 class CheckEmailAction
 {
-    use ResetPasswordControllerTrait;
-
     public function __construct(
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
         private readonly Environment $twig,
-        protected Container $container
     ) {
     }
 
     /**
      * Confirmation page after a user has requested a password reset.
      */
-    public function __invoke(): Response
+    public function __invoke(Request $request): Response
     {
         // Generate a fake token if the user does not exist or someone hit this page directly.
         // This prevents exposing whether or not a user was found with the given email address or not
-        if (null === ($resetToken = $this->getTokenObjectFromSession())) {
+        $session = $request->getSession();
+        $resetToken = $session->get('ResetPasswordToken');
+        if (null === $resetToken) {
             $resetToken = $this->resetPasswordHelper->generateFakeResetToken();
         }
 

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\SecurityBundle\Action\Security;
 
-use Symfony\Component\Routing\Attribute\Route;
-
-#[Route(path: '/logout', name: 'admin_logout')]
 class LogoutAction
 {
     public function __invoke(): void
