@@ -46,7 +46,7 @@ class TagType extends AbstractType implements DataMapperInterface
         $existingTrans = $options['existing_translation'];
         $update = $existingTrans !== null;
 
-        $locales = $this->siteContext->getLocales();
+        $locales = $this->siteContext->getAllLocales();
         $localeChoices = array_combine($locales, $locales);
         $builder
             ->add('featuredImage', HiddenType::class, [
@@ -78,7 +78,7 @@ class TagType extends AbstractType implements DataMapperInterface
                 ]
             ])
             ->add('locale', ChoiceType::class, [
-                'label' => new TranslatableMessage('Translation reference', [], 'admin'),
+                'label' => new TranslatableMessage('Language', [], 'admin'),
                 'choices' => $localeChoices,
                 'disabled' => $update,
             ])
