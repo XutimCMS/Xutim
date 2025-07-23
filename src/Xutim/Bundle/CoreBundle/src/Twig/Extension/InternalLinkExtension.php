@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Twig\Extension;
 
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -21,6 +22,7 @@ class InternalLinkExtension extends AbstractExtension
         private readonly ArticleRepository $articleRepo,
         private readonly TagRepository $tagRepo,
         private readonly FileRepository $fileRepo,
+        private readonly RequestStack $requestStack
     ) {
     }
     public function getFilters(): array
@@ -36,8 +38,9 @@ class InternalLinkExtension extends AbstractExtension
         $pageRepo = $this->pageRepo;
         $articleRepo = $this->articleRepo;
         $tagRepo = $this->tagRepo;
+        $requestLocale = $this->requestStack->getMainRequest()?->getLocale() ?? '';
 
-        $crawler->filter('span[data-internal-link-id][data-internal-link-type]')->each(function (Crawler $node) use ($locale, $pageRepo, $articleRepo, $tagRepo) {
+        $crawler->filter('span[data-internal-link-id][data-internal-link-type]')->each(function (Crawler $node) use ($locale, $pageRepo, $articleRepo, $tagRepo, $requestLocale) {
             $id = $node->attr('data-internal-link-id');
             $type = $node->attr('data-internal-link-type');
             $text = $node->text();
@@ -47,7 +50,11 @@ class InternalLinkExtension extends AbstractExtension
                 $page = $pageRepo->find($id);
                 $trans = $page?->getTranslationByLocaleOrDefault($locale);
                 if ($trans !== null) {
-                    $href = $this->router->generate('content_translation_show', ['slug' => $trans->getSlug(), '_content_locale' => $trans->getLocale()]);
+                    $params = ['slug' => $trans->getSlug()];
+                    if ($requestLocale !== $trans->getLocale()) {
+                        $params['_content_locale'] = $trans->getLocale();
+                    }
+                    $href = $this->router->generate('content_translation_show', $params);
                 }
             }
 
@@ -55,15 +62,23 @@ class InternalLinkExtension extends AbstractExtension
                 $article = $articleRepo->find($id);
                 $trans = $article?->getTranslationByLocaleOrDefault($locale);
                 if ($trans !== null) {
-                    $href = $this->router->generate('content_translation_show', ['slug' => $trans->getSlug(), '_content_locale' => $trans->getLocale()]);
+                    $params = ['slug' => $trans->getSlug()];
+                    if ($requestLocale !== $trans->getLocale()) {
+                        $params['_content_locale'] = $trans->getLocale();
+                    }
+                    $href = $this->router->generate('content_translation_show', $params);
                 }
             }
 
             if ($type === 'tag') {
                 $tag = $tagRepo->find($id);
-                $trans = $tag?->getTranslationByLocaleOrDefault($locale);
+                $trans = $tag?->getTranslationByLocaleOrAny($locale);
                 if ($trans !== null) {
-                    $href = $this->router->generate('tag_translation_show', ['slug' => $trans->getSlug(), '_content_locale' => $trans->getLocale()]);
+                    $params = ['slug' => $trans->getSlug()];
+                    if ($requestLocale !== $trans->getLocale()) {
+                        $params['_content_locale'] = $trans->getLocale();
+                    }
+                    $href = $this->router->generate('tag_translation_show', $params);
                 }
             }
 
