@@ -23,6 +23,7 @@ class ArticleRepository extends ServiceEntityRepository
         'title' => 'translation.title',
         'slug' => 'translation.slug',
         'tags' => 'tagTranslation.name',
+        'updatedAt' => 'article.updatedAt',
         'publishedAt' => 'article.publishedAt'
     ];
 
