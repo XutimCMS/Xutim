@@ -55,7 +55,7 @@ return function (RoutingConfigurator $routes) {
         ->controller(LogoutAction::class);
 
     $routes->add('admin_reset_password', '/admin/reset/{token}')
-        ->methods(['get'])
+        ->methods(['get', 'post'])
         ->defaults(['token' => null])
         ->controller([ResetPasswordAction::class, 'reset']);
 
