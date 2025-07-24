@@ -53,7 +53,7 @@ final class TwigBlockRenderer implements BlockRendererInterface
 
         return new RenderedBlock($this->localeSwitcher->runWithLocale(
             $locale,
-            fn () => $this->twig->render($path, [ 'block' => $block, 'blockOptions' => $options ])
+            fn () => $this->twig->render($path, [ 'block' => $block, 'locale' => $locale, 'blockOptions' => $options ])
         ), $layout === null ? 0 : 1);
     }
 }
