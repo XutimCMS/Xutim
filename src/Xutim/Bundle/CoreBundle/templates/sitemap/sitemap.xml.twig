@@ -5,7 +5,7 @@
 >
     {% for item in items %}
         <url>
-            <loc>{{ item.loc }}</loc>
+            <loc>{{ item.loc|e('html') }}</loc>
             {% if item.lastmod %}
                 <lastmod>{{ item.lastmod|date('Y-m-d') }}</lastmod>
             {% endif %}
@@ -16,7 +16,7 @@
                 <xhtml:link
                     rel="alternate"
                     hreflang="{{ alt.locale }}"
-                    href="{{ alt.url }}"
+                    href="{{ alt.url|e('html') }}"
                 />
             {% endfor %}
         </url>
