@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Sitemap;
 
+use DateTimeImmutable;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\TagTranslationInterface;
+use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Entity\Page;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\CoreBundle\Routing\ContentTranslationRouteGenerator;
 use Xutim\SnippetBundle\Repository\SnippetRepository;
 use Xutim\SnippetBundle\Routing\RouteSnippetRegistry;
 
@@ -23,8 +31,10 @@ readonly class SitemapGenerator
         private TagRepository $tagRepo,
         private SnippetRepository $snippetRepo,
         private SiteContext $siteContext,
+        private ContentTranslationRouteGenerator $transRouteGenerator,
         private Environment $twig,
-        private string $sitemapFile
+        private string $sitemapFile,
+        private string $appHost
     ) {
     }
 
@@ -48,6 +58,7 @@ readonly class SitemapGenerator
     * @return list<array{
     *     loc: string,
     *     lastmod: ?string,
+    *     changefreq: string,
     *     alternates: list<array{locale: string, url: string}>
     * }>
     */
@@ -57,7 +68,7 @@ readonly class SitemapGenerator
         $items = [];
 
         foreach ($locales as $locale) {
-            $loc = $this->router->generate('homepage', ['_locale' => $locale], RouterInterface::ABSOLUTE_URL);
+            $loc = $this->getAbsoluteUrl($this->router->generate('homepage', ['_locale' => $locale]));
 
             $alternates = [];
             foreach ($locales as $altLocale) {
@@ -66,13 +77,14 @@ readonly class SitemapGenerator
                 }
                 $alternates[] = [
                     'locale' => $altLocale,
-                    'url' => $this->router->generate('homepage', ['_locale' => $altLocale], RouterInterface::ABSOLUTE_URL),
+                    'url' => $this->getAbsoluteUrl($this->router->generate('homepage', ['_locale' => $altLocale])),
                 ];
             }
 
             $items[] = [
                 'loc' => $loc,
                 'lastmod' => null,
+                'changefreq' => 'daily',
                 'alternates' => $alternates,
             ];
         }
@@ -87,7 +99,7 @@ readonly class SitemapGenerator
                 }
 
                 $routeName = sprintf('xutim_%s.%s', $route->routeName, $locale);
-                $snippetsByLocale[$locale] = $this->router->generate($routeName, [], RouterInterface::ABSOLUTE_URL);
+                $snippetsByLocale[$locale] = $this->getAbsoluteUrl($this->router->generate($routeName));
             }
 
             foreach ($snippetsByLocale as $locale => $loc) {
@@ -107,6 +119,7 @@ readonly class SitemapGenerator
                 $items[] = [
                     'loc' => $loc,
                     'lastmod' => null,
+                    'changefreq' => 'daily',
                     'alternates' => $alternates,
                 ];
             }
@@ -115,6 +128,13 @@ readonly class SitemapGenerator
         return $items;
     }
 
+    /**
+     * @return list<array{
+     *     loc: string,
+     *     lastmod: DateTimeImmutable,
+     *     alternates: array<array{locale: string, url: string}>
+     * }>
+     */
     private function getPages(): array
     {
         $items = [];
@@ -125,12 +145,11 @@ readonly class SitemapGenerator
 
             foreach ($translations as $trans) {
                 $items[] = [
-                    'loc' => $this->router->generate('content_translation_show', [
-                        'slug' => $trans->getSlug(),
-                        '_locale' => $trans->getLocale(),
-                    ], RouterInterface::ABSOLUTE_URL),
+                    'loc' => $this->getAbsoluteUrl(
+                        $this->transRouteGenerator->generatePath($trans, null)
+                    ),
                     'lastmod' => $trans->getUpdatedAt(),
-                    'alternates' => $this->buildAlternates($translations, 'page_show'),
+                    'alternates' => $this->buildContentTransAlternates($translations->toArray()),
                 ];
             }
         }
@@ -138,21 +157,27 @@ readonly class SitemapGenerator
         return $items;
     }
 
+    /**
+     * @return list<array{
+     *     loc: string,
+     *     lastmod: DateTimeImmutable,
+     *     alternates: array<array{locale: string, url: string}>
+     * }>
+     */
     private function getArticles(): array
     {
         $items = [];
 
-        foreach ($this->articleRepo->findAllOnline() as $article) {
-            $translations = array_filter($article->getTranslations(), fn ($t) => $t->isOnline());
+        foreach ($this->articleRepo->findAll() as $article) {
+            $translations = $article->getPublishedTranslations();
 
             foreach ($translations as $trans) {
                 $items[] = [
-                    'loc' => $this->router->generate('article_show', [
-                        'slug' => $trans->getSlug(),
-                        '_locale' => $trans->getLocale(),
-                    ], RouterInterface::ABSOLUTE_URL),
+                    'loc' => $this->getAbsoluteUrl(
+                        $this->transRouteGenerator->generatePath($trans, null)
+                    ),
                     'lastmod' => $trans->getUpdatedAt(),
-                    'alternates' => $this->buildAlternates($translations, 'article_show'),
+                    'alternates' => $this->buildContentTransAlternates($translations->toArray()),
                 ];
             }
         }
@@ -160,36 +185,112 @@ readonly class SitemapGenerator
         return $items;
     }
 
+    /**
+     * @return list<array{
+     *     loc: string,
+     *     lastmod: null,
+     *     alternates: array<array{locale: string, url: string}>
+     * }>
+     */
     private function getTags(): array
     {
         $items = [];
 
-        foreach ($this->tagRepo->findAllVisible() as $tag) {
-            $translations = array_filter($tag->getTranslations(), fn ($t) => $t->isOnline());
+        foreach ($this->tagRepo->findAllPublished() as $tag) {
+            $translations = $tag->getTranslations()->filter(
+                fn ($trans) => in_array(
+                    $trans->getLocale(),
+                    $this->siteContext->getMainLocales(),
+                    true
+                )
+            );
 
             foreach ($translations as $trans) {
                 $items[] = [
-                    'loc' => $this->router->generate('tag_show', [
-                        'slug' => $trans->getSlug(),
-                        '_locale' => $trans->getLocale(),
-                    ], RouterInterface::ABSOLUTE_URL),
+                    'loc' => $this->getAbsoluteUrl(
+                        $this->router->generate('tag_translation_show', [
+                            'slug' => $trans->getSlug(),
+                            '_locale' => $trans->getLocale(),
+                        ])
+                    ),
                     'lastmod' => null,
-                    'alternates' => $this->buildAlternates($translations, 'tag_show'),
+                    'alternates' => $this->buildTagAlternates($translations->toArray()),
                 ];
+
+                $filter = new FilterDto('', 1, 12);
+                /** @var QueryAdapter<ArticleInterface> $adapter */
+                $adapter = new QueryAdapter($this->articleRepo->queryPublishedByTagAndFilter($filter, $tag, $trans->getLocale()));
+                $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
+                    $adapter,
+                    $filter->page,
+                    $filter->pageLength
+                );
+                $totalPages = $pager->getNbPages();
+                for ($page = 2; $page <= $totalPages; $page++) {
+                    $url = $this->getAbsoluteUrl(
+                        $this->router->generate('tag_translation_show', [
+                            '_locale' => $trans->getLocale(),
+                            'slug' => $trans->getSlug(),
+                            'page' => $page,
+                        ])
+                    );
+
+                    $items[] = [
+                        'loc' => $url,
+                        'lastmod' => null,
+                        'alternates' => [],
+                    ];
+                }
             }
         }
+
 
         return $items;
     }
 
-    private function buildAlternates(array $translations, string $routeName): array
+    /**
+     * @param array<TagTranslationInterface> $translations
+     *
+     * @return array<array{locale: string, url: string}>
+     */
+    private function buildTagAlternates(array $translations): array
     {
+        if (count($translations) <= 1) {
+            return [];
+        }
         return array_map(fn ($trans) => [
             'locale' => $trans->getLocale(),
-            'url' => $this->router->generate($routeName, [
-                'slug' => $trans->getSlug(),
-                '_locale' => $trans->getLocale(),
-            ], RouterInterface::ABSOLUTE_URL),
+            'url' => $this->getAbsoluteUrl(
+                $this->router->generate('tag_translation_show', [
+                    '_locale' => $trans->getLocale(),
+                    'slug' => $trans->getSlug(),
+                ])
+            )
         ], $translations);
+    }
+    /**
+     * @param array<ContentTranslationInterface> $translations
+     *
+     * @return array<array{locale: string, url: string}>
+     */
+    private function buildContentTransAlternates(array $translations): array
+    {
+        if (count($translations) <= 1) {
+            return [];
+        }
+        return array_map(fn ($trans) => [
+            'locale' => $trans->getLocale(),
+            'url' => $this->getAbsoluteUrl(
+                $this->transRouteGenerator->generatePath(
+                    $trans,
+                    null
+                )
+            ),
+        ], $translations);
+    }
+
+    private function getAbsoluteUrl(string $url): string
+    {
+        return sprintf('https://%s%s', $this->appHost, $url);
     }
 }
