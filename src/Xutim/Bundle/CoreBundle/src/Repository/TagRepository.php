@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
+use Xutim\CoreBundle\Entity\PublicationStatus;
 
 /**
  * @extends ServiceEntityRepository<TagInterface>
@@ -99,5 +100,19 @@ class TagRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
 
         return $translatedTotal;
+    }
+
+    /**
+     * @return array<TagInterface>
+     */
+    public function findAllPublished(): array
+    {
+        /** @var array<TagInterface> */
+        return $this->createQueryBuilder('tag')
+            ->where('tag.status = :status')
+            ->setParameter('status', PublicationStatus::Published)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

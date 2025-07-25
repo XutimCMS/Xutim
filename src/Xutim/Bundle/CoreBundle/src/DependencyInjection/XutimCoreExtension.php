@@ -10,6 +10,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Xutim\CoreBundle\Message\Command\Article\PublishScheduledArticlesCommand;
+use Xutim\CoreBundle\Message\Command\GenerateSitemapCommand;
 use Xutim\SecurityBundle\Message\SendResetPasswordCommand;
 
 /**
@@ -124,6 +125,7 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
         $messagesToRoute = [
             PublishScheduledArticlesCommand::class,
             SendResetPasswordCommand::class,
+            GenerateSitemapCommand::class
         ];
 
         $routing = [];

@@ -29,6 +29,7 @@ return static function (ContainerConfigurator $container): void {
         ->autowire()
         ->autoconfigure()
         ->bind('string $filesDirectory', '%kernel.project_dir%/public/media/uploads/')
+        ->bind('string $sitemapFile', '%kernel.project_dir%/public/sitemap.xml')
         ->bind('string $publicUploadsDirectory', '/media/uploads/')
         ->bind('string $templatesDir', '%kernel.project_dir%/templates')
         ->bind('string $themesRelativeDir', 'themes')
@@ -36,6 +37,7 @@ return static function (ContainerConfigurator $container): void {
         ->bind('string $pageLayoutRelativeDir', 'layout/page')
         ->bind('string $blockLayoutRelativeDir', 'layout/block')
         ->bind('string $tagLayoutRelativeDir', 'layout/tag')
+        ->bind('string $defaultLocale', '%kernel.default_locale%')
     ;
 
     $services->load('Xutim\\CoreBundle\\', '../src/')
