@@ -5,13 +5,17 @@
         {%
             for locale in site_context.locales|filter(locale => app.user.canTranslate(locale))
         %}
+            {{ dump(showExtendedLanguages == true ? 'true' : 'false') }}
+            sldkfjdslf
             {{
                 macro.renderLocale(locale, this.entity, this.simpleTranslation)
             }}
         {% endfor %}
     </div>
 
-    {% if site_context.extendedContentLocales is not empty %}
+    {%
+        if site_context.extendedContentLocales is not empty and showExtendedLanguages is same as(true)
+    %}
         <div class="d-flex justify-content-end align-items-center mb-2">
             {%
                 for locale in site_context.extendedContentLocales|filter(locale => app.user.canTranslate(locale))

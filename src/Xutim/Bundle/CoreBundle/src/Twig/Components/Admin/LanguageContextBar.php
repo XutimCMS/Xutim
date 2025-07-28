@@ -15,4 +15,6 @@ final class LanguageContextBar
     * Can either be translated or untranslated.
     */
     public bool $simpleTranslation = false;
+
+    public bool $showExtendedLanguages = true;
 }

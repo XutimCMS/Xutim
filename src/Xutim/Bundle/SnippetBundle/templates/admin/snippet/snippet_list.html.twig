@@ -4,12 +4,6 @@
     endblock
 %}
 
-{% block languageBar %}
-    <twig:Xutim:Admin:LanguageContextBar
-        class="d-flex justify-content-end align-items-center mb-2"
-    />
-{% endblock %}
-
 {% block pageMenu %}
     {%
         if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
@@ -73,7 +67,7 @@
                 }}
             </a>
         </th>
-        <th>
+        <th class="w-1">
             {{ 'description'|trans({}, 'admin') }}
         </th>
         {% for locale in site_context.locales %}
