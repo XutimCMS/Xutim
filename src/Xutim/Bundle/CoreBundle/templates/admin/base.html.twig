@@ -40,11 +40,12 @@
                 {% endset %}
             {% endif %}
 
-            {%
-                include '@XutimCore/admin/_top_bar.html.twig' with {
-                    publicLinkBlock: _publicLinkBlock|raw
-                }
-            %}
+            {{
+                include('@XutimCore/admin/_top_bar.html.twig', {
+                    publicLinkBlock: _publicLinkBlock|raw,
+                },
+            )
+            }}
             <header id="navbar-local" class="navbar-expand-md">
                 <div class="collapse navbar-collapse" id="navbar-menu">
                     <div class="navbar navbar-light">
@@ -70,8 +71,8 @@
             <div class="page-wrapper" id="main-content">
                 <div class="page-header">
                     <div class="{{ containerClass is defined ? containerClass : 'container-xl' }}">
-                        <div class="row g-2 align-items-center">
-                            <div class="col">
+                        <div class="d-flex flex-sm-row flex-column flex-wrap">
+                            <div class="me-2">
                                 {% if block('pagePreTitle') is defined %}
                                     {% set _pph = block('pagePreTitle') %}
                                     <div class="page-pretitle">{{ _pph }}</div>
@@ -83,7 +84,7 @@
                             </div>
                             {% if block('languageBar') is defined %}
                                 {% set langBarBlock = block('languageBar') %}
-                                <div class="col-auto ms-auto">
+                                <div class="flex-grow-1 mt-sm-n4">
                                     {{ langBarBlock|raw }}
                                 </div>
                             {% endif %}
