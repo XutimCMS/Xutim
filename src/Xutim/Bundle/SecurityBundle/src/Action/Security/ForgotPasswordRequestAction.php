@@ -11,11 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Form\ResetPasswordRequestFormType;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
@@ -28,7 +28,7 @@ class ForgotPasswordRequestAction
         private readonly Environment $twig,
         private readonly SiteContext $siteContext,
         private readonly FormFactoryInterface $formFactory,
-        private readonly AdminUrlGenerator $router,
+        private readonly UrlGeneratorInterface $router,
     ) {
     }
 

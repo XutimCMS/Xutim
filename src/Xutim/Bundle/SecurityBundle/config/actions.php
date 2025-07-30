@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -113,14 +114,14 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$twig', service(Environment::class))
         ->arg('$siteContext', service(SiteContext::class))
         ->arg('$formFactory', service(FormFactoryInterface::class))
-        ->arg('$router', service(AdminUrlGenerator::class))
+        ->arg('$router', service(UrlGeneratorInterface::class))
         ->tag('controller.service_arguments')
     ;
 
     $services->set(LoginAction::class)
         ->arg('$authenticationUtils', service(AuthenticationUtils::class))
         ->arg('$userStorage', service(UserStorage::class))
-        ->arg('$router', service(AdminUrlGenerator::class))
+        ->arg('$router', service(UrlGeneratorInterface::class))
         ->arg('$twig', service(Environment::class))
         ->tag('controller.service_arguments')
     ;
@@ -134,7 +135,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$commandBus', service(MessageBusInterface::class))
         ->arg('$twig', service(Environment::class))
         ->arg('$formFactory', service(FormFactoryInterface::class))
-        ->arg('$router', service(AdminUrlGenerator::class))
+        ->arg('$router', service(UrlGeneratorInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->tag('controller.service_arguments')
     ;

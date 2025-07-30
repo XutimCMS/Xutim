@@ -71,8 +71,8 @@
             <div class="page-wrapper" id="main-content">
                 <div class="page-header">
                     <div class="{{ containerClass is defined ? containerClass : 'container-xl' }}">
-                        <div class="d-flex flex-sm-row flex-column flex-wrap">
-                            <div class="me-2">
+                        <div class="row row-cols-1 row-cols-md-2">
+                            <div class="col">
                                 {% if block('pagePreTitle') is defined %}
                                     {% set _pph = block('pagePreTitle') %}
                                     <div class="page-pretitle">{{ _pph }}</div>
@@ -84,7 +84,7 @@
                             </div>
                             {% if block('languageBar') is defined %}
                                 {% set langBarBlock = block('languageBar') %}
-                                <div class="flex-grow-1 mt-sm-n4">
+                                <div class="col">
                                     {{ langBarBlock|raw }}
                                 </div>
                             {% endif %}
