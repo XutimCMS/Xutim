@@ -28,7 +28,7 @@ class EditBlockItemAction extends AbstractController
     ) {
     }
 
-    public function invoke(Request $request, string $id): Response
+    public function __invoke(Request $request, string $id): Response
     {
         $item = $this->blockItemRepository->find($id);
         if ($item === null) {
