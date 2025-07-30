@@ -55,7 +55,7 @@ class ShowTagTranslation extends AbstractController
             'articles' => $pager,
             'translation' => $translation,
             'tagTranslations' => $tag->getTranslations(),
-            'color' => $tag->getColor(),
+            'color' => $tag->getColor()->getHex(),
             'layout' => $this->layoutLoader->getTagLayoutTemplate($tag->getLayout()),
             'locale' => $translation->getLocale(),
             'title' => $translation->getName(),
