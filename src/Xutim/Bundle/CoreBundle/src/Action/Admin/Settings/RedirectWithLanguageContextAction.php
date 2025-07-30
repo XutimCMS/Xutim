@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin\Settings;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,7 @@ use Xutim\CoreBundle\Repository\TagTranslationRepository;
 use Xutim\CoreBundle\Routing\RefererRouteResolver;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
-class RedirectWithLanguageContextAction
+class RedirectWithLanguageContextAction extends AbstractController
 {
     public function __construct(
         private readonly ContentContext $contentContext,
@@ -26,8 +27,9 @@ class RedirectWithLanguageContextAction
     ) {
     }
 
-    public function __invoke(Request $request, string $locale): Response
+    public function __invoke(Request $request): Response
     {
+        $locale = $this->contentContext->getLocale();
         $this->transAuthChecker->denyUnlessCanTranslate($locale);
         $url = $this->router->generate('admin_homepage');
         $match = $this->resolver->resolve($request);
@@ -39,19 +41,16 @@ class RedirectWithLanguageContextAction
         $route = $match['_route'];
         $slug = $match['slug'] ?? null;
 
-        $this->contentContext->changeLanguage($locale);
-
-
         if ($route === 'content_translation_show') {
             $translation = $this->contentTransRepo->findOneBy(['slug' => $slug]);
             if ($translation !== null) {
                 $id = $translation->getObject()->getId();
                 if ($translation->hasPage()) {
-                    $url = $this->router->generate('admin_page_edit', ['id' => $id]);
+                    $url = $this->router->generate('admin_page_edit', ['id' => $id, '_content_locale' => $locale ]);
                 }
 
                 if ($translation->hasArticle()) {
-                    $url = $this->router->generate('admin_article_edit', ['id' => $id]);
+                    $url = $this->router->generate('admin_article_edit', ['id' => $id, '_content_locale' => $locale]);
                 }
             }
         }
@@ -59,7 +58,7 @@ class RedirectWithLanguageContextAction
         if ($route === 'tag_translation_show') {
             $translation = $this->tagTransRepo->findOneBy(['slug' => $slug]);
             if ($translation !== null) {
-                $url = $this->router->generate('admin_tag_edit', ['id' => $translation->getTag()->getId()]);
+                $url = $this->router->generate('admin_tag_edit', ['id' => $translation->getTag()->getId(), '_content_locale' => $locale]);
             }
         }
 

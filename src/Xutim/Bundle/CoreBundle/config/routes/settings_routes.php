@@ -21,7 +21,7 @@ return function (RoutingConfigurator $routes) {
     ;
 
     $routes
-        ->add('admin_settings_redirect_with_language_context', '/settings/redirect-with-language-context/{locale}')
+        ->add('admin_settings_redirect_with_language_context', '/admin/{_content_locale}/settings/redirect-with-language-context')
         ->methods(['get'])
         ->controller(RedirectWithLanguageContextAction::class)
     ;
