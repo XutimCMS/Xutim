@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Event\Page\PageLayoutUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Page;
@@ -15,10 +14,10 @@ use Xutim\CoreBundle\Form\Admin\PageLayoutType;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/page/layout-edit/{id}', name: 'admin_page_layout_edit')]
 class EditPageLayoutAction extends AbstractController
 {
     public function __construct(
@@ -26,7 +25,8 @@ class EditPageLayoutAction extends AbstractController
         private readonly PageRepository $pageRepo,
         private readonly LayoutLoader $layoutLoader,
         private readonly UserStorage $userStorage,
-        private readonly LogEventRepository $eventRepository
+        private readonly LogEventRepository $eventRepository,
+        private readonly AdminUrlGenerator $router
     ) {
     }
 
@@ -39,7 +39,7 @@ class EditPageLayoutAction extends AbstractController
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $layout = $this->layoutLoader->getPageLayoutByCode($page->getLayout());
         $form = $this->createForm(PageLayoutType::class, ['layout' => $layout], [
-            'action' => $this->generateUrl('admin_page_layout_edit', ['id' => $page->getId()]),
+            'action' => $this->router->generate('admin_page_layout_edit', ['id' => $page->getId()]),
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -67,7 +67,7 @@ class EditPageLayoutAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
 
-            $fallbackUrl = $this->generateUrl('admin_page_edit', [
+            $fallbackUrl = $this->router->generate('admin_page_edit', [
                 'id' => $page->getId()
             ]);
 

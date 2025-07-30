@@ -6,7 +6,6 @@ namespace Xutim\CoreBundle\Action\Public;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Service\FileUploader;
 
@@ -18,7 +17,6 @@ class ShowFileAction extends AbstractController
     ) {
     }
 
-    #[Route('/file/show/{id}.{extension}', name: 'file_show', methods: ['get'])]
     public function __invoke(string $id): Response
     {
         $file = $this->fileRepo->find($id);

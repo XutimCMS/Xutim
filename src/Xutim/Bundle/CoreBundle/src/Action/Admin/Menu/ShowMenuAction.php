@@ -6,11 +6,9 @@ namespace Xutim\CoreBundle\Action\Admin\Menu;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 use Xutim\CoreBundle\Service\MenuBuilder;
 
-#[Route('/menu/{id?}', name: 'admin_menu_list', methods: ['get'])]
 class ShowMenuAction extends AbstractController
 {
     public function __construct(

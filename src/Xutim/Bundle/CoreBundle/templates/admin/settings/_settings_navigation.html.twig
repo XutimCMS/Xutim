@@ -4,7 +4,7 @@
     </h4>
     <div class="list-group list-group-transparent">
         <a
-            href="{{ path('admin_settings_site') }}"
+            href="{{ admin_path('admin_settings_site') }}"
             class="list-group-item list-group-item-action {% if app.current_route == 'admin_settings_site' %}active{% endif %}"
         >
             {{ 'Site'|trans({}, 'admin')|capitalize }}
@@ -12,7 +12,7 @@
 
         <a
             class="list-group-item list-group-item-action {% if app.current_route starts with 'admin_user' %}active{% endif %}"
-            href="{{ path('admin_user_list', {searchTerm: ''}) }}"
+            href="{{ admin_path('admin_user_list', {searchTerm: ''}) }}"
         >
             <span class="nav-link-icon d-md-none d-lg-inline-block">
                 <twig:Xutim:Admin:Icon name="users" />
@@ -22,7 +22,7 @@
             </span>
         </a>
         <a
-            href="{{ path('admin_menu_list') }}"
+            href="{{ admin_path('admin_menu_list') }}"
             class="list-group-item list-group-item-action {% if app.current_route starts with 'admin_menu' %}active{% endif %}"
         >
             {{ 'Menu'|trans({}, 'admin')|capitalize }}

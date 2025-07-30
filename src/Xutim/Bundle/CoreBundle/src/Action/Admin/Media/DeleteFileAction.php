@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Media;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Event\File\FileDeletedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\File;
@@ -15,10 +15,10 @@ use Xutim\CoreBundle\Form\Admin\DeleteType;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\FileTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FileUploader;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/media/delete/{id}', name: 'admin_media_delete', methods: ['post', 'get'])]
 class DeleteFileAction extends AbstractController
 {
     public function __construct(
@@ -28,6 +28,7 @@ class DeleteFileAction extends AbstractController
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepo,
         private readonly FileUploader $fileUploader,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -39,7 +40,7 @@ class DeleteFileAction extends AbstractController
         }
         $this->denyAccessUnlessGranted('ROLE_EDITOR');
         $form = $this->createForm(DeleteType::class, [], [
-            'action' => $this->generateUrl('admin_media_delete', ['id' => $file->getId()]),
+            'action' => $this->router->generate('admin_media_delete', ['id' => $file->getId()]),
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -58,7 +59,7 @@ class DeleteFileAction extends AbstractController
             $this->eventRepo->save($logEntry, true);
             $this->fileUploader->deleteFile($fileName);
 
-            return $this->redirectToRoute('admin_media_list');
+            return new RedirectResponse($this->router->generate('admin_media_list'));
         }
 
         return $this->render('@XutimCore/admin/media/delete.html.twig', [

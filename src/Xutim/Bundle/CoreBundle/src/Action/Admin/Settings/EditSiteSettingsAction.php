@@ -5,23 +5,24 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Settings;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Dto\SiteDto;
 use Xutim\CoreBundle\Form\Admin\SiteType;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\SiteRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/settings/site', name: 'admin_settings_site', methods: ['get', 'post'])]
 class EditSiteSettingsAction extends AbstractController
 {
     public function __construct(
         private readonly SiteContext $siteContext,
         private readonly SiteRepository $siteRepository,
-        private readonly LayoutLoader $layoutLoader
+        private readonly LayoutLoader $layoutLoader,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -41,7 +42,7 @@ class EditSiteSettingsAction extends AbstractController
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 
-            return $this->redirectToRoute('admin_settings_site');
+            return new RedirectResponse($this->router->generate('admin_settings_site'));
         }
 
         return $this->render('@XutimCore/admin/settings/site.html.twig', [

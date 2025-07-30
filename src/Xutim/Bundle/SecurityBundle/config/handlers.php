@@ -7,11 +7,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Domain\Factory\UserFactoryInterface;
 use Xutim\SecurityBundle\Message\ChangePasswordCommand;
 use Xutim\SecurityBundle\Message\CreateUserCommand;
@@ -65,7 +65,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$resetPasswordHelper', service(ResetPasswordHelperInterface::class))
         ->arg('$mailer', service(MailerInterface::class))
         ->arg('$logger', service(LoggerInterface::class))
-        ->arg('$urlGenerator', service(UrlGeneratorInterface::class))
+        ->arg('$urlGenerator', service(AdminUrlGenerator::class))
         ->arg('$siteContext', service(SiteContext::class))
         ->tag('messenger.message_handler', [
             'handles' => SendResetPasswordCommand::class,

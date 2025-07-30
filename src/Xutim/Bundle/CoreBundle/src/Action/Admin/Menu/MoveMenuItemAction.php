@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Menu;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/menu/{id}/move/{dir}', name: 'admin_menu_item_move')]
 class MoveMenuItemAction extends AbstractController
 {
     public function __construct(
         private readonly MenuItemRepository $repo,
-        private readonly SiteContext $siteContext
+        private readonly SiteContext $siteContext,
+        private readonly AdminUrlGenerator $router
     ) {
     }
 
@@ -39,11 +40,11 @@ class MoveMenuItemAction extends AbstractController
         $this->siteContext->resetMenu();
 
         if ($item->getParent() === null) {
-            return $this->redirectToRoute('admin_menu_list');
+            return new RedirectResponse($this->router->generate('admin_menu_list'));
         }
 
-        return $this->redirectToRoute('admin_menu_list', [
+        return new RedirectResponse($this->router->generate('admin_menu_list', [
             'id' => $item->getParent()->getId()
-        ]);
+        ]));
     }
 }

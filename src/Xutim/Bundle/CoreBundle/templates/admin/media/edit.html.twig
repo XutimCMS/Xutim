@@ -72,7 +72,7 @@
             import '@XutimCore/admin/common/translatable.html.twig' as translatable
         %}
         <li class="breadcrumb-item">
-            <a href="{{ path('admin_media_list') }}">Media list</a>
+            <a href="{{ admin_path('admin_media_list') }}">Media list</a>
         </li>
         <li class="breadcrumb-item">{{ translatable.toString(file) }}</li>
     </twig:Xutim:Admin:Breadcrumbs>
@@ -103,16 +103,16 @@
                                 class="btn-link"
                             >
                                 <img
-                                    src="{{ uploaded_asset(file.fileName)| imagine_filter('thumb_large') }}"
+                                    src="{{ uploaded_asset(file.fileName)|imagine_filter('thumb_large') }}"
                                     alt=""
                                     style="max-width: 300px; max-height: 300px"
                                     class="p-1"
                                 />
                             </button>
                         {% else %}
-                            {%
-                                include '@XutimCore/admin/media/_image_icon.html.twig'
-                            %}
+                            {{
+                                include('@XutimCore/admin/media/_image_icon.html.twig',
+                            ) }}
                         {% endif %}
                     </div>
                 </div>
@@ -182,19 +182,19 @@
                     </thead>
                     <tbody>
                         {% for filterAlias, filters in xutim_core_filter_sets %}
-                            {% for filterName, filter  in filters.filters %}
+                            {% for filterName, filter in filters.filters %}
                                 <tr>
                                     <td>{{ filterAlias }}</td>
                                     <td>
                                         {% if filterName == 'thumbnail' %}
-                                            {{ filter.size | join('x') }}
+                                            {{ filter.size|join('x') }}
                                         {% elseif (filterName == 'scale') %}
-                                            {{ filter.dim | join('x') }}
+                                            {{ filter.dim|join('x') }}
                                         {% endif %}
                                     </td>
                                     <td>
                                         <button
-                                            data-lightbox-url-value="{{ uploaded_asset(file.fileName)| imagine_filter(filterAlias) }}"
+                                            data-lightbox-url-value="{{ uploaded_asset(file.fileName)|imagine_filter(filterAlias) }}"
                                             data-controller="lightbox"
                                             data-action="click->lightbox#open"
                                             class="btn-link"

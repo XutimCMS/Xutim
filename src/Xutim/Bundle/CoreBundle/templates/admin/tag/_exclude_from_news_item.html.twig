@@ -16,7 +16,7 @@
             <twig:Xutim:Admin:ModalDialog
                 class="btn-link"
                 modalDialogColor="secondary"
-                action="{{ path('admin_tag_exclude_from_news_toggle', {id: tag.id}) }}"
+                action="{{ admin_path('admin_tag_exclude_from_news_toggle', {id: tag.id}) }}"
                 confirmActionLabel="{{ 'include in news'|trans({}, 'admin')|capitalize }}"
             >
                 <twig:ux:icon
@@ -28,7 +28,7 @@
             <twig:Xutim:Admin:ModalDialog
                 class="btn-link"
                 modalDialogColor="secondary"
-                action="{{ path('admin_tag_exclude_from_news_toggle', {id: tag.id}) }}"
+                action="{{ admin_path('admin_tag_exclude_from_news_toggle', {id: tag.id}) }}"
                 confirmActionLabel="{{ 'exclude form news'|trans({}, 'admin')|capitalize }}"
             >
                 <twig:ux:icon

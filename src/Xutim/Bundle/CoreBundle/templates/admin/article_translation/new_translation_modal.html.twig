@@ -57,7 +57,7 @@
                             %}
                                 <option
                                     value="{{ trans.locale }}"
-                                    data-url-value="{{ path('admin_article_edit', {id: article.id, locale: trans.locale}) }}"
+                                    data-url-value="{{ admin_path('admin_article_edit', {id: article.id, locale: trans.locale}) }}"
                                     {% if trans.id == defaultTrans.id %}
                                         selected="selected"
                                     {% endif %}

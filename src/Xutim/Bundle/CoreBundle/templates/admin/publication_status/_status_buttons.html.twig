@@ -2,7 +2,7 @@
     <twig:Xutim:Admin:ModalDialog
         class="btn-link text-{{ status.colorClass }} p-0"
         modalDialogColor="{{ status.colorClass }}"
-        action="{{ path(url, {id: id, status: status.value}) }}"
+        action="{{ admin_path(url, {id: id, status: status.value}) }}"
         confirmActionLabel="{{ confirmActionLabel }}"
     >
         <twig:Xutim:Admin:Icon name="{{ iconName }}" plain="true" />
@@ -34,7 +34,7 @@
                 variant="link"
                 class="p-0 text-{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').colorClass }}"
                 data-turbo-frame="modal"
-                href="{{ path('admin_article_edit_scheduled_publication_date', {id: articleEntity.id}) }}"
+                href="{{ admin_path('admin_article_edit_scheduled_publication_date', {id: articleEntity.id}) }}"
             >
                 <twig:Xutim:Admin:Icon name="clock" />
             </twig:Xutim:Admin:Button>

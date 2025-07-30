@@ -14,7 +14,7 @@
                 class="border-0 position-relative"
             >
                 <iframe
-                    src="{{ path('admin_page_frame_show', {id: page.id}) }}"
+                    src="{{ admin_path('admin_page_frame_show', {id: page.id}) }}"
                     sandbox="allow-scripts allow-same-origin"
                     class="w-100 bg-white"
                     data-article-preview-target="frame"
@@ -26,7 +26,7 @@
             {#
                     <div
                         data-controller="article-preview"
-                        data-article-preview-url-value="{{ path('admin_page_frame_show', {id: page.id}) }}"
+                        data-article-preview-url-value="{{ admin_path('admin_page_frame_show', {id: page.id}) }}"
                     >
                         <div
                             id="preview-container"

@@ -6,7 +6,7 @@
     <twig:Xutim:Admin:Button
         tag="a"
         variant="nav"
-        href="{{ path('admin_tag_new') }}"
+        href="{{ admin_path('admin_tag_new') }}"
     >
         <twig:Xutim:Admin:Icon name="tag" class="me-1" />
         {{ 'New tag'|trans({}, 'admin') }}
@@ -53,7 +53,7 @@
         <th>
             <a
                 class=""
-                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
+                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
             >
                 {{ 'name'|trans({}, 'admin') }}
                 {{
@@ -95,7 +95,7 @@
                         variant="link"
                         data-turbo-frame="_top"
                         aria-label="{{ 'show'|trans({}, 'admin') }}"
-                        href="{{ path('admin_tag_edit', {id: tag.id}) }}"
+                        href="{{ admin_path('admin_tag_edit', {id: tag.id}) }}"
                     >
                         <twig:Xutim:Admin:Tag :color="tagColor">
                             {{ translation.name }}

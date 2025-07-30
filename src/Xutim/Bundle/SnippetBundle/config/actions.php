@@ -6,12 +6,12 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
@@ -44,7 +44,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$twig', service(Environment::class))
         ->arg('$formFactory', service(FormFactoryInterface::class))
-        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->arg('$snippetVersionPath', '%snippet_routes_version_file%')
         ->tag('controller.service_arguments')
@@ -62,7 +62,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$twig', service(Environment::class))
         ->arg('$formFactory', service(FormFactoryInterface::class))
-        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->arg('$entityManager', service(EntityManagerInterface::class))
         ->arg('$snippetVersionPath', '%snippet_routes_version_file%')
@@ -81,7 +81,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$repo', service(SnippetRepositoryInterface::class))
         ->arg('$transRepo', service(SnippetTranslationRepositoryInterface::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
-        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->tag('controller.service_arguments')
     ;

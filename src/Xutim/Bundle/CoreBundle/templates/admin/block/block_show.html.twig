@@ -7,7 +7,7 @@
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
         <li class="breadcrumb-item">
-            <a href="{{ path('admin_block_list') }}">Blocks</a>
+            <a href="{{ admin_path('admin_block_list') }}">Blocks</a>
         </li>
         <li class="breadcrumb-item">{{ block.name }}</li>
     </twig:Xutim:Admin:Breadcrumbs>
@@ -20,7 +20,7 @@
             class="text-danger"
             variant="nav"
             data-turbo-frame="modal"
-            href="{{ path('admin_block_delete', {id: block.id}) }}"
+            href="{{ admin_path('admin_block_delete', {id: block.id}) }}"
         >
             <twig:Xutim:Admin:Icon name="trash" class="me-1" />
             Delete
@@ -28,7 +28,7 @@
         <twig:Xutim:Admin:Button
             tag="a"
             variant="nav"
-            href="{{ path('admin_block_edit', {id: block.id}) }}"
+            href="{{ admin_path('admin_block_edit', {id: block.id}) }}"
         >
             <twig:Xutim:Admin:Icon name="edit" class="me-1" />
             {{ 'Edit'|trans({}, 'admin') }}
@@ -93,7 +93,7 @@
                             tag="a"
                             variant="default"
                             data-turbo-frame="modal"
-                            href="{{ path('admin_block_add_item', {id: block.id}) }}"
+                            href="{{ admin_path('admin_block_add_item', {id: block.id}) }}"
                         >
                             <twig:Xutim:Admin:Icon name="plus" />
                             {{ 'item'|trans({}, 'admin')|capitalize }}
@@ -130,7 +130,7 @@
                         </thead>
                         <tbody
                             data-controller="sortable"
-                            data-sortable-reorder-url-value="{{ path('admin_block_reorder_item', {id: block.id}) }}"
+                            data-sortable-reorder-url-value="{{ admin_path('admin_block_reorder_item', {id: block.id}) }}"
                             id="block-item-list-table-body"
                         >
                             {% for item in block.blockItems %}

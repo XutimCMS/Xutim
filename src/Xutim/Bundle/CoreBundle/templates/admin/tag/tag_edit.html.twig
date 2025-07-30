@@ -77,7 +77,7 @@
                         attr: {
                             id: form.vars.id,
                             'data-controller': 'slug-generator',
-                            'data-slug-generator-url-value': path('admin_json_tag_generate_slug'),
+                            'data-slug-generator-url-value': admin_path('admin_json_tag_generate_slug'),
                             'data-slug-generator-enabled-value': 'true',
                         },
                     })
@@ -142,7 +142,7 @@
                     {{ form_label(form.featuredImage) }}
                     <div
                         data-controller="featured-image"
-                        data-featured-image-url-value="{{ path('admin_json_image_list') }}"
+                        data-featured-image-url-value="{{ admin_path('admin_json_image_list') }}"
                         class="cursor-pointer mb-3"
                     >
                         <div

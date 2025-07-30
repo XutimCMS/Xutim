@@ -5,13 +5,17 @@
 
     {% if init == true %}
         <li class="breadcrumb-item active" aria-current="page">
-            {{ page.translationByLocaleOrDefault(content_context_language()).title }}
+            {{
+                page.translationByLocaleOrDefault(content_context_language()).title
+            }}
         </li>
     {% else %}
         {% set params = {id: page.id, locale: content_context_language()} %}
         <li class="breadcrumb-item">
-            <a href="{{ path('admin_page_list', params) }}">
-                {{ page.translationByLocaleOrDefault(content_context_language()).title }}
+            <a href="{{ admin_path('admin_page_list', params) }}">
+                {{
+                    page.translationByLocaleOrDefault(content_context_language()).title
+                }}
             </a>
         </li>
     {% endif %}
@@ -19,9 +23,11 @@
 
 <ol class="breadcrumb breadcrumb-arrows" aria-label="breadcrumbs">
     <li class="breadcrumb-item">
-        <a href="{{ path('admin_page_list') }}">
+        <a href="{{ admin_path('admin_page_list') }}">
             <twig:Xutim:Admin:Icon name="home" />
         </a>
     </li>
-    {{ _self.parentBreadcrumb(page, allLinks is defined and allLinks is same as(true) ? false : true) }}
+    {{
+        _self.parentBreadcrumb(page, allLinks is defined and allLinks is same as(true) ? false : true)
+    }}
 </ol>

@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleLayoutUpdatedEvent;
@@ -17,10 +16,10 @@ use Xutim\CoreBundle\Form\Admin\ArticleLayoutType;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/article/layout-edit/{id}', name: 'admin_article_layout_edit')]
 class EditArticleLayoutAction extends AbstractController
 {
     public function __construct(
@@ -28,7 +27,8 @@ class EditArticleLayoutAction extends AbstractController
         private readonly ArticleRepository $articleRepository,
         private readonly LayoutLoader $layoutLoader,
         private readonly UserStorage $userStorage,
-        private readonly LogEventRepository $eventRepository
+        private readonly LogEventRepository $eventRepository,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -41,7 +41,7 @@ class EditArticleLayoutAction extends AbstractController
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $layout = $this->layoutLoader->getArticleLayoutByCode($article->getLayout());
         $form = $this->createForm(ArticleLayoutType::class, ['layout' => $layout], [
-            'action' => $this->generateUrl('admin_article_layout_edit', ['id' => $article->getId()])
+            'action' => $this->router->generate('admin_article_layout_edit', ['id' => $article->getId()])
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -70,7 +70,7 @@ class EditArticleLayoutAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
 
-            $fallbackUrl = $this->generateUrl('admin_article_edit', [
+            $fallbackUrl = $this->router->generate('admin_article_edit', [
                 'id' => $article->getId()
             ]);
 

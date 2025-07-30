@@ -6,10 +6,8 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 
-#[Route('/article/by-slug/{slug}', name: 'admin_article_show_by_slug')]
 class ShowArticleBySlugAction extends AbstractController
 {
     public function __invoke(string $slug, ContentTranslationRepository $repo): Response

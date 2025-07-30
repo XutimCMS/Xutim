@@ -33,7 +33,7 @@
         <twig:Xutim:Admin:Button
             tag="a"
             variant="nav"
-            href="{{ path('admin_content_translation_revisions', {id: translation.id}) }}"
+            href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
         >
             <twig:Xutim:Admin:Icon name="history" class="me-1" />
             History
@@ -43,7 +43,7 @@
     <twig:Xutim:Admin:Button
         tag="a"
         variant="nav"
-        href="{{ path('admin_page_list', {id: page.id}) }}"
+        href="{{ admin_path('admin_page_list', {id: page.id}) }}"
     >
         <twig:Xutim:Admin:Icon name="search" class="me-1" />
         Show

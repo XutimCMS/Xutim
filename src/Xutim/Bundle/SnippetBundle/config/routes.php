@@ -19,7 +19,8 @@ return function (RoutingConfigurator $routes) {
         ->methods(['post'])
         ->controller(DeleteSnippetAction::class);
 
-    $routes->add('admin_snippet_edit', '/admin/snippet/edit/{id}/{locale? }') ->methods(['get', 'post'])
+    $routes->add('admin_snippet_edit', '/admin/snippet/edit/{id}/{locale? }')
+        ->methods(['get', 'post'])
         ->controller(EditSnippetAction::class);
 
     $routes->add('admin_json_snippet_list', '/admin/json/snippet/list/{type}')

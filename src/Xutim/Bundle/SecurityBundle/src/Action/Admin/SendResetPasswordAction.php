@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Xutim\CoreBundle\Service\FlashNotifier;
@@ -18,7 +17,6 @@ use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/reset-password/send-token/{id}', name: 'admin_reset_password_send_token', methods: ['post'])]
 class SendResetPasswordAction
 {
     public function __construct(

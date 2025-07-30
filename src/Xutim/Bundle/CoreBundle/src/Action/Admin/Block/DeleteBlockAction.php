@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Block;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Block\BlockDeletedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
@@ -16,10 +16,10 @@ use Xutim\CoreBundle\Form\Admin\DeleteType;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\CoreBundle\Repository\BlockRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/block/delete/{id}', name: 'admin_block_delete', methods: ['post', 'get'])]
 class DeleteBlockAction extends AbstractController
 {
     public function __construct(
@@ -28,7 +28,8 @@ class DeleteBlockAction extends AbstractController
         private readonly BlockItemRepository $blockItemRepo,
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepo,
-        private readonly BlockContext $blockContext
+        private readonly BlockContext $blockContext,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -40,7 +41,7 @@ class DeleteBlockAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_DEVELOPER);
         $form = $this->createForm(DeleteType::class, [], [
-            'action' => $this->generateUrl('admin_block_delete', ['id' => $block->getId()]),
+            'action' => $this->router->generate('admin_block_delete', ['id' => $block->getId()]),
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -57,7 +58,7 @@ class DeleteBlockAction extends AbstractController
             $this->eventRepo->save($logEntry, true);
             $this->blockContext->resetAllLocalesBlockTemplate($block->getCode());
 
-            return $this->redirectToRoute('admin_block_list', ['searchTerm' => '']);
+            return new RedirectResponse($this->router->generate('admin_block_list', ['searchTerm' => '']));
         }
 
         return $this->render('@XutimCore/admin/block/block_delete.html.twig', [

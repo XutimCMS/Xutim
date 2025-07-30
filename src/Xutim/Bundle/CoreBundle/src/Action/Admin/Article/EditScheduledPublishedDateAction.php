@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticlePublicationDateUpdatedEvent;
@@ -19,10 +18,10 @@ use Xutim\CoreBundle\Form\Admin\PublishedDateType;
 use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCommand;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/article/edit-scheduled-publication-date/{id}', name: 'admin_article_edit_scheduled_publication_date', methods: ['get', 'post'])]
 class EditScheduledPublishedDateAction extends AbstractController
 {
     public function __construct(
@@ -32,7 +31,8 @@ class EditScheduledPublishedDateAction extends AbstractController
         private readonly LogEventRepository $eventRepository,
         private readonly BlockContext $blockContext,
         private readonly MessageBusInterface $commandBus,
-        private readonly ContentContext $contentContext
+        private readonly ContentContext $contentContext,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -48,7 +48,7 @@ class EditScheduledPublishedDateAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getPublishedAt()], [
-            'action' => $this->generateUrl('admin_article_edit_scheduled_publication_date', ['id' => $article->getId()]),
+            'action' => $this->router->generate('admin_article_edit_scheduled_publication_date', ['id' => $article->getId()]),
             'future_date_only' => true
         ]);
 
@@ -90,7 +90,7 @@ class EditScheduledPublishedDateAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
             
-            $fallbackUrl = $this->generateUrl('admin_article_edit', [
+            $fallbackUrl = $this->router->generate('admin_article_edit', [
                 'id' => $article->getId()
             ]);
 

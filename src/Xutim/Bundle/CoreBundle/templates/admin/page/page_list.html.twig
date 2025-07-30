@@ -31,7 +31,7 @@
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
-                href="{{ path('admin_content_translation_revisions', {id: trans.id}) }}"
+                href="{{ admin_path('admin_content_translation_revisions', {id: trans.id}) }}"
             >
                 <twig:Xutim:Admin:Icon name="history" class="me-1" />
                 History
@@ -43,7 +43,7 @@
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
-                href="{{ path('admin_page_edit', {id: selectedPage.id}) }}"
+                href="{{ admin_path('admin_page_edit', {id: selectedPage.id}) }}"
             >
                 <twig:Xutim:Admin:Icon name="edit" class="me-1" />
                 {{ 'Edit'|trans({}, 'admin') }}
@@ -55,7 +55,7 @@
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
-                href="{{ path('admin_page_new', {id: selectedPage.id}) }}"
+                href="{{ admin_path('admin_page_new', {id: selectedPage.id}) }}"
             >
                 <twig:Xutim:Admin:Icon name="folder" class="me-1" />
                 {{ 'New page'|trans({}, 'admin') }}
@@ -67,7 +67,7 @@
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
-                href="{{ path('admin_article_new', {id: selectedPage.id}) }}"
+                href="{{ admin_path('admin_article_new', {id: selectedPage.id}) }}"
             >
                 <twig:Xutim:Admin:Icon name="article" class="me-1" />
                 {{ 'New article'|trans({}, 'admin') }}
@@ -94,7 +94,7 @@
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
-                href="{{ path('admin_page_new') }}"
+                href="{{ admin_path('admin_page_new') }}"
             >
                 <twig:Xutim:Admin:Icon name="folder" class="me-1" />
                 {{ 'New page'|trans({}, 'admin') }}
@@ -106,7 +106,7 @@
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
-                href="{{ path('admin_article_new') }}"
+                href="{{ admin_path('admin_article_new') }}"
             >
                 <twig:Xutim:Admin:Icon name="article" class="me-1" />
                 {{ 'New article'|trans({}, 'admin') }}
@@ -239,7 +239,7 @@
                             if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
                         %}
                             <p>
-                                <a href="{{ path('admin_page_new') }}">
+                                <a href="{{ admin_path('admin_page_new') }}">
                                     {{ 'Add a new page'|trans({}, 'admin') }}
                                 </a>
                             </p>
@@ -258,7 +258,7 @@
                             <twig:Xutim:Admin:Button
                                 tag="a"
                                 variant="link"
-                                href="{{ path('admin_page_list', {archived: true, translated: translatedParam, id: selectedPage.id.toRfc4122 ?? null}) }}"
+                                href="{{ admin_path('admin_page_list', {archived: true, translated: translatedParam, id: selectedPage.id.toRfc4122 ?? null}) }}"
                             >
                                 <twig:Xutim:Admin:Icon name="archive" />
                                 {{ 'Show archived pages'|trans({}, 'admin') }}
@@ -267,7 +267,7 @@
                             <twig:Xutim:Admin:Button
                                 tag="a"
                                 variant="link"
-                                href="{{ path('admin_page_list', {archived: false, translated: translatedParam, id: selectedPage.id.toRfc4122 ?? null}) }}"
+                                href="{{ admin_path('admin_page_list', {archived: false, translated: translatedParam, id: selectedPage.id.toRfc4122 ?? null}) }}"
                             >
                                 <twig:Xutim:Admin:Icon name="article" />
                                 {{
@@ -283,7 +283,7 @@
                             <twig:Xutim:Admin:Button
                                 tag="a"
                                 variant="link"
-                                href="{{ path('admin_page_list', {archived: archivedParam, translated: true, id: selectedPage.id.toRfc4122 ?? null}) }}"
+                                href="{{ admin_path('admin_page_list', {archived: archivedParam, translated: true, id: selectedPage.id.toRfc4122 ?? null}) }}"
                             >
                                 <twig:Xutim:Admin:Icon name="language" />
                                 {{
@@ -294,7 +294,7 @@
                             <twig:Xutim:Admin:Button
                                 tag="a"
                                 variant="link"
-                                href="{{ path('admin_page_list', {archived: archivedParam, translated: false, id: selectedPage.id.toRfc4122 ?? null}) }}"
+                                href="{{ admin_path('admin_page_list', {archived: archivedParam, translated: false, id: selectedPage.id.toRfc4122 ?? null}) }}"
                             >
                                 <twig:Xutim:Admin:Icon name="article" />
                                 {{

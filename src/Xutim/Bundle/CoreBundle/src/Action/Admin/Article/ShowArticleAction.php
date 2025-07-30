@@ -6,7 +6,6 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\ArticleRepository;
@@ -14,7 +13,6 @@ use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
-#[Route('/article/{id<[^/]+>}', name: 'admin_article_show', methods: ['get'])]
 class ShowArticleAction extends AbstractController
 {
     public function __construct(

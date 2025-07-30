@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
@@ -21,7 +20,6 @@ use Xutim\CoreBundle\Service\ContentFragmentsConverter;
 use Xutim\CoreBundle\Service\TextDiff;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
-#[Route('/content-translation/revisions/{id}/{version?}/{diff?}', name: 'admin_content_translation_revisions', methods: ['GET'])]
 class ShowTranslationRevisionsAction extends AbstractController
 {
     public function __construct(

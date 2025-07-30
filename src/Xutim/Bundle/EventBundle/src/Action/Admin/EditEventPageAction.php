@@ -8,19 +8,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\EventBundle\Form\Admin\EventPageType;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/event/edit-page/{id}', name: 'admin_event_page_edit', methods: ['get', 'post'])]
 class EditEventPageAction extends AbstractController
 {
     public function __construct(
         private readonly EventRepository $eventRepo,
         private readonly PageRepository $pageRepo,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -33,7 +33,7 @@ class EditEventPageAction extends AbstractController
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $id = $event->getPage()?->getId();
         $form = $this->createForm(EventPageType::class, ['page' => $id], [
-            'action' => $this->generateUrl('admin_event_page_edit', ['id' => $event->getId()])
+            'action' => $this->router->generate('admin_event_page_edit', ['id' => $event->getId()])
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

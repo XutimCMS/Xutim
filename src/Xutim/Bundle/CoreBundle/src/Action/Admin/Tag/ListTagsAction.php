@@ -9,12 +9,10 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 
-#[Route('/tag', name: 'admin_tag_list', methods: ['get'])]
 class ListTagsAction extends AbstractController
 {
     public function __construct(

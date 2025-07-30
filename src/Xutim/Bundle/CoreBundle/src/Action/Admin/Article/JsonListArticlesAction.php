@@ -6,10 +6,8 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 
-#[Route('/json/article/list', name: 'admin_json_article_list', methods: ['get'])]
 class JsonListArticlesAction extends AbstractController
 {
     public function __construct(

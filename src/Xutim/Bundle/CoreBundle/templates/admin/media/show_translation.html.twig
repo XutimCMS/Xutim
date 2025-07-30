@@ -22,7 +22,7 @@
                             {% if trans.locale == translation.locale %}
                                 selected="selected"
                             {% endif %}
-                            data-url-value="{{ path('admin_media_translation_show', {id: trans.id, locale: trans.locale}) }}"
+                            data-url-value="{{ admin_path('admin_media_translation_show', {id: trans.id, locale: trans.locale}) }}"
                         >
                             {{ trans.locale|language_name }}
                         </option>

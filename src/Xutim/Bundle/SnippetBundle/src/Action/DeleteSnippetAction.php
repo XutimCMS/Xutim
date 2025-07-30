@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
 use Xutim\SecurityBundle\Security\UserRoles;
@@ -24,7 +24,7 @@ class DeleteSnippetAction
         private readonly SnippetRepositoryInterface $repo,
         private readonly SnippetTranslationRepositoryInterface $transRepo,
         private readonly AuthorizationCheckerInterface $authChecker,
-        private readonly UrlGeneratorInterface $router,
+        private readonly AdminUrlGenerator $router,
         private readonly FlashNotifier $flashNotifier,
     ) {
     }

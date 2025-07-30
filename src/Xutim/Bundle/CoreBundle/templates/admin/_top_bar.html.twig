@@ -18,7 +18,7 @@
                 <div class="button-group d-flex flex-row gap-1">
                     {{ publicLinkBlock|raw }}
                     <a
-                        href="{{ path('admin_article_list', {searchTerm: ''}) }}"
+                        href="{{ admin_path('admin_article_list', {searchTerm: ''}) }}"
                         class="btn btn-xs btn-icon"
                     >
                         <twig:ux:icon name="tabler:search" class="w-3"/>
@@ -47,13 +47,13 @@
                     class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
                 >
                     <a
-                        href="{{ path('admin_user_profile') }}"
+                        href="{{ admin_path('admin_user_profile') }}"
                         class="dropdown-item"
                     >
                         Profile
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a href="{{ path('admin_logout') }}" class="dropdown-item">
+                    <a href="{{ admin_path('admin_logout') }}" class="dropdown-item">
                         <span class="me-2">
                             <twig:Xutim:Admin:Icon name="logout" />
                         </span>
@@ -68,7 +68,7 @@
                 <li
                     class="nav-item{{ app.current_route == 'admin_homepage' ? ' active' : '' }}"
                 >
-                    <a class="nav-link" href="{{ path('admin_homepage') }}">
+                    <a class="nav-link" href="{{ admin_path('admin_homepage') }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <twig:Xutim:Admin:Icon name="home" />
                         </span>
@@ -80,7 +80,7 @@
                 <li
                     class="nav-item{{ app.current_route starts with 'admin_page' ? ' active' : '' }}"
                 >
-                    <a class="nav-link" href="{{ path('admin_page_list') }}">
+                    <a class="nav-link" href="{{ admin_path('admin_page_list') }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <twig:Xutim:Admin:Icon name="folder" />
                         </span>
@@ -94,7 +94,7 @@
                 >
                     <a
                         class="nav-link"
-                        href="{{ path('admin_article_list', {searchTerm: ''}) }}"
+                        href="{{ admin_path('admin_article_list', {searchTerm: ''}) }}"
                     >
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <twig:Xutim:Admin:Icon name="article" />
@@ -110,7 +110,7 @@
                 >
                     <a
                         class="nav-link"
-                        href="{{ path('admin_tag_list', {searchTerm: ''}) }}"
+                        href="{{ admin_path('admin_tag_list', {searchTerm: ''}) }}"
                     >
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <twig:Xutim:Admin:Icon name="tag" />
@@ -126,7 +126,7 @@
                 >
                     <a
                         class="nav-link"
-                        href="{{ path('admin_snippet_list', {searchTerm: ''}) }}"
+                        href="{{ admin_path('admin_snippet_list', {searchTerm: ''}) }}"
                     >
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <twig:Xutim:Admin:Icon name="text" />
@@ -142,7 +142,7 @@
                 >
                     <a
                         class="nav-link"
-                        href="{{ path('admin_media_list', {searchTerm: ''}) }}"
+                        href="{{ admin_path('admin_media_list', {searchTerm: ''}) }}"
                     >
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <twig:Xutim:Admin:Icon name="photo" />
@@ -159,7 +159,7 @@
                     >
                         <a
                             class="nav-link"
-                            href="{{ path('admin_block_list', {searchTerm: ''}) }}"
+                            href="{{ admin_path('admin_block_list', {searchTerm: ''}) }}"
                         >
                             <span
                                 class="nav-link-icon d-md-none d-lg-inline-block"
@@ -179,7 +179,7 @@
                     >
                         <a
                             class="nav-link"
-                            href="{{ path('admin_settings_site') }}"
+                            href="{{ admin_path('admin_settings_site') }}"
                         >
                             <span
                                 class="nav-link-icon d-md-none d-lg-inline-block"

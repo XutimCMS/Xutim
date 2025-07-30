@@ -9,14 +9,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Twig\Environment;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\SecurityBundle\Form\UserChangePasswordType;
 use Xutim\SecurityBundle\Message\ChangePasswordCommand;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/profile/change-password', name: 'admin_user_change_password')]
 class UserChangePasswordAction
 {
     public function __construct(

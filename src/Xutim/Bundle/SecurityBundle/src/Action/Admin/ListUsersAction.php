@@ -8,7 +8,6 @@ use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Twig\Environment;
@@ -16,7 +15,6 @@ use Xutim\CoreBundle\Service\ListFilterBuilder;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/user', name: 'admin_user_list')]
 class ListUsersAction
 {
     public function __construct(

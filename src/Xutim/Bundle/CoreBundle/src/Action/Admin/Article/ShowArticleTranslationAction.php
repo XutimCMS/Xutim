@@ -6,10 +6,8 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 
-#[Route('/article/{id}/show-translation/{locale}', name: 'admin_article_translation_show')]
 class ShowArticleTranslationAction extends AbstractController
 {
     public function __construct(private readonly ArticleRepository $articleRepo)

@@ -6,21 +6,22 @@ namespace Xutim\CoreBundle\Action\Admin\Media;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Form\Admin\FileType;
 use Xutim\CoreBundle\Message\Command\File\UploadFileMessage;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FileService;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/media/new', name: 'admin_media_new')]
 class CreateFileAction extends AbstractController
 {
     public function __construct(
         private readonly UserStorage $userStorage,
-        private readonly FileService $fileService
+        private readonly FileService $fileService,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -28,7 +29,7 @@ class CreateFileAction extends AbstractController
     {
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(FileType::class, null, [
-            'action' => $this->generateUrl('admin_media_new')
+            'action' => $this->router->generate('admin_media_new')
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -55,7 +56,7 @@ class CreateFileAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
 
-            return $this->redirectToRoute('admin_media_list', [], Response::HTTP_SEE_OTHER);
+            return new RedirectResponse($this->router->generate('admin_media_list'), Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('@XutimCore/admin/media/new.html.twig', [

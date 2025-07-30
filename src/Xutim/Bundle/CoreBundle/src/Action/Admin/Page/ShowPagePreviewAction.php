@@ -6,13 +6,11 @@ namespace Xutim\CoreBundle\Action\Admin\Page;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
-#[Route('/page-frame/{id<[^/]+>}', name: 'admin_page_frame_show', methods: ['get'])]
 class ShowPagePreviewAction extends AbstractController
 {
     public function __construct(

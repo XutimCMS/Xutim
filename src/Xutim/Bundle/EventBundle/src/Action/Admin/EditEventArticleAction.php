@@ -7,18 +7,19 @@ namespace Xutim\EventBundle\Action\Admin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Entity\Article;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\EventBundle\Form\Admin\EventArticleType;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/event/edit-article/{id}', name: 'admin_event_article_edit', methods: ['get', 'post'])]
 class EditEventArticleAction extends AbstractController
 {
-    public function __construct(private readonly EventRepository $eventRepo)
-    {
+    public function __construct(
+        private readonly EventRepository $eventRepo,
+        private readonly AdminUrlGenerator $router
+    ) {
     }
 
     public function __invoke(Request $request, string $id): Response
@@ -29,7 +30,7 @@ class EditEventArticleAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(EventArticleType::class, ['article' => $event->getArticle()], [
-            'action' => $this->generateUrl('admin_event_article_edit', ['id' => $event->getId()])
+            'action' => $this->router->generate('admin_event_article_edit', ['id' => $event->getId()])
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -47,7 +48,7 @@ class EditEventArticleAction extends AbstractController
                 ]);
                 $this->addFlash('stream', $stream);
             }
-            $fallbackUrl = $this->generateUrl('admin_event_edit', ['id' => $event->getId()]);
+            $fallbackUrl = $this->router->generate('admin_event_edit', ['id' => $event->getId()]);
 
             return $this->redirect($request->headers->get('referer', $fallbackUrl));
         }

@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Media;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Service\FileUploader;
 
@@ -20,7 +19,6 @@ class JsonShowFileAction extends AbstractController
     ) {
     }
 
-    #[Route('/json/file/show/{id}', name: 'admin_json_file_show', methods: ['get'])]
     public function __invoke(Request $request, string $id): Response
     {
         $file = $this->fileRepo->find($id);

@@ -6,9 +6,9 @@ namespace Xutim\SecurityBundle\Action\Security;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Twig\Environment;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Service\UserStorage;
 
 class LoginAction
@@ -16,7 +16,7 @@ class LoginAction
     public function __construct(
         private readonly AuthenticationUtils $authenticationUtils,
         private readonly UserStorage $userStorage,
-        private readonly UrlGeneratorInterface $router,
+        private readonly AdminUrlGenerator $router,
         private readonly Environment $twig
     ) {
     }

@@ -10,12 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 
-#[Route('/article', name: 'admin_article_list', methods: ['get'])]
 class ListArticlesAction extends AbstractController
 {
     public function __construct(

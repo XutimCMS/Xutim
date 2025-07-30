@@ -9,11 +9,11 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Message\SendResetPasswordCommand;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
@@ -28,7 +28,7 @@ readonly class SendResetPasswordHandler implements CommandHandlerInterface
         private ResetPasswordHelperInterface $resetPasswordHelper,
         private MailerInterface $mailer,
         private LoggerInterface $logger,
-        private UrlGeneratorInterface $urlGenerator,
+        private AdminUrlGenerator $urlGenerator,
         private SiteContext $siteContext
     ) {
     }

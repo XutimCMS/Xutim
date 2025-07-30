@@ -9,12 +9,10 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 use Xutim\EventBundle\Domain\Model\EventInterface;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 
-#[Route('/event', name: 'admin_event_list', methods: ['get'])]
 class ListEventsAction extends AbstractController
 {
     public function __construct(

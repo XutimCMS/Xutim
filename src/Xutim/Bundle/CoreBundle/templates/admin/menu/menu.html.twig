@@ -9,7 +9,7 @@
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
         <li class="breadcrumb-item">
-            <a href="{{ path('admin_settings_site') }}">
+            <a href="{{ admin_path('admin_settings_site') }}">
                 {{ 'settings'|trans({}, 'admin')|capitalize }}
             </a>
         </li>
@@ -48,7 +48,9 @@
                             if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
                         %}
                             <p>
-                                <a href="{{ path('admin_menu_item_new') }}">
+                                <a
+                                    href="{{ admin_path('admin_menu_item_new') }}"
+                                >
                                     {{
                                         'Add a new menu item'|trans({}, 'admin')
                                     }}
@@ -67,7 +69,7 @@
                         tag="a"
                         variant="link"
                         data-turbo-frame="modal"
-                        href="{{ path('admin_menu_item_new') }}"
+                        href="{{ admin_path('admin_menu_item_new') }}"
                     >
                         <twig:Xutim:Admin:Icon name="plus" />
                         {{ 'Add a new menu item'|trans({}, 'admin') }}

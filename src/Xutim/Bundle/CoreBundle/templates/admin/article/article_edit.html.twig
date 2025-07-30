@@ -23,7 +23,7 @@
         <twig:Xutim:Admin:Button
             tag="a"
             variant="nav"
-            href="{{ path('admin_content_translation_revisions', {id: translation.id}) }}"
+            href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
         >
             <twig:Xutim:Admin:Icon name="history" class="me-1" />
             History
@@ -33,7 +33,7 @@
     <twig:Xutim:Admin:Button
         tag="a"
         variant="nav"
-        href="{{ path('admin_article_show', {id: article.id}) }}"
+        href="{{ admin_path('admin_article_show', {id: article.id}) }}"
     >
         <twig:Xutim:Admin:Icon name="search" class="me-1" />
         Show
@@ -195,7 +195,7 @@
                                             {% else %}
                                                 <twig:Xutim:Admin:ModalDialog
                                                     class="btn-link d-sm-inline-block px-0 border-0"
-                                                    action="{{ path('admin_article_mark_default_translation', {id: article.id, transId: translation.id}) }}"
+                                                    action="{{ admin_path('admin_article_mark_default_translation', {id: article.id, transId: translation.id}) }}"
                                                     confirmActionLabel="{{ 'action.mark_as_default'|trans({}, 'admin')|capitalize }}"
                                                 >
                                                     <span
@@ -206,7 +206,7 @@
                                         </td>
                                         <td class="text-muted">
                                             <a
-                                                href="{{ path('admin_content_translation_edit', {id: translation.id}) }}"
+                                                href="{{ admin_path('admin_content_translation_edit', {id: translation.id}) }}"
                                                 class="btn-link"
                                                 aria-label="{{ 'edit'|trans({}, 'admin') }}"
                                             >
@@ -260,7 +260,7 @@
                                                 <twig:Xutim:Admin:ModalDialog
                                                     class="btn-link text-danger p-0"
                                                     modalDialogColor="danger"
-                                                    action="{{ path('admin_publication_status_edit', {id: translation.id, status: 'archived'}) }}"
+                                                    action="{{ admin_path('admin_publication_status_edit', {id: translation.id, status: 'archived'}) }}"
                                                     confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
                                                 >
                                                     <twig:Xutim:Admin:Icon
@@ -290,7 +290,7 @@
                                                         if app.user.canTranslate(translation.locale)
                                                     %}
                                                         <a
-                                                            href="{{ path('admin_content_translation_edit', {id: translation.id}) }}"
+                                                            href="{{ admin_path('admin_content_translation_edit', {id: translation.id}) }}"
                                                             class="btn-link mt-1"
                                                             aria-label="{{ 'edit'|trans({}, 'admin') }}"
                                                         >
@@ -300,7 +300,7 @@
                                                         </a>
 
                                                         <a
-                                                            href="{{ path('admin_content_translation_revisions', {id: translation.id}) }}"
+                                                            href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
                                                             class="btn-link mt-1"
                                                             aria-label="{{ 'revisions'|trans({}, 'admin') }}"
                                                         >
@@ -327,7 +327,7 @@
     <twig:Xutim:Admin:ModalDialog
         class="btn-link text-{{ status.colorClass }} p-0"
         modalDialogColor="{{ status.colorClass }}"
-        action="{{ path('admin_publication_status_edit', {id: id, status: status.value}) }}"
+        action="{{ admin_path('admin_publication_status_edit', {id: id, status: status.value}) }}"
         confirmActionLabel="{{ confirmActionLabel }}"
     >
         <twig:Xutim:Admin:Icon name="{{ iconName }}" plain="true" />

@@ -7,10 +7,8 @@ namespace Xutim\CoreBundle\Action\Admin\Tag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\TagTranslationRepository;
 
-#[Route('/json/tag/generate-slug', name: 'admin_json_tag_generate_slug', methods: ['get'])]
 class JsonGenerateSlugAction extends AbstractController
 {
     public function __construct(private readonly TagTranslationRepository $tagTransRepo)

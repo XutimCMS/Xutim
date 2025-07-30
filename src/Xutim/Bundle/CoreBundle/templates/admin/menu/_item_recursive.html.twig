@@ -61,7 +61,7 @@
     {% else %}
         <twig:Xutim:Admin:Icon name="tag" class="me-2" />
     {% endif %}
-    <a href="{{ path('admin_menu_list', {id: item.id}) }}">
+    <a href="{{ admin_path('admin_menu_list', {id: item.id}) }}">
         <span class="text-black{{ isSelectedItem ? ' fw-bold' : '' }}">
             {{
                 translation.title is defined ? translation.title : translation.name
@@ -88,7 +88,7 @@
                     <twig:Xutim:Admin:Button
                         tag="a"
                         variant="dropdown"
-                        href="{{ path(showUrl, {id: item.object.id}) }}"
+                        href="{{ admin_path(showUrl, {id: item.object.id}) }}"
                     >
                         <twig:Xutim:Admin:Icon name="search" class="me-2" />
                         {{ 'show'|trans|capitalize }}
@@ -98,7 +98,7 @@
                     tag="a"
                     variant="dropdown"
                     data-turbo-frame="modal"
-                    href="{{ path('admin_menu_item_edit', {id: item.id}) }}"
+                    href="{{ admin_path('admin_menu_item_edit', {id: item.id}) }}"
                 >
                     <twig:Xutim:Admin:Icon name="edit" class="me-2" />
                     {{ 'edit'|trans|capitalize }}
@@ -107,7 +107,7 @@
                     tag="a"
                     variant="dropdown"
                     data-turbo-frame="modal"
-                    href="{{ path('admin_menu_item_delete', {id: item.id}) }}"
+                    href="{{ admin_path('admin_menu_item_delete', {id: item.id}) }}"
                 >
                     <twig:Xutim:Admin:Icon name="trash" class="me-2" />
                     {{ 'delete'|trans|capitalize }}
@@ -119,7 +119,7 @@
                     tag="a"
                     variant="dropdown"
                     data-turbo-frame="modal"
-                    href="{{ path('admin_menu_item_new', {id: item.id}) }}"
+                    href="{{ admin_path('admin_menu_item_new', {id: item.id}) }}"
                 >
                     <twig:Xutim:Admin:Icon name="plus" />
                     {{ 'New menu item'|trans({}, 'admin') }}
@@ -131,7 +131,7 @@
                     {% if first is not same as(true) %}
                         <a
                             class="dropdown-item"
-                            href="{{ path('admin_menu_item_move', {id: item.id, dir: 'up'}) }}"
+                            href="{{ admin_path('admin_menu_item_move', {id: item.id, dir: 'up'}) }}"
                         >
                             <twig:Xutim:Admin:Icon
                                 name="arrow-up"
@@ -144,7 +144,7 @@
                     {% if last is not same as(true) %}
                         <a
                             class="dropdown-item"
-                            href="{{ path('admin_menu_item_move', {id: item.id, dir: 'down'}) }}"
+                            href="{{ admin_path('admin_menu_item_move', {id: item.id, dir: 'down'}) }}"
                         >
                             <twig:Xutim:Admin:Icon
                                 name="arrow-down"

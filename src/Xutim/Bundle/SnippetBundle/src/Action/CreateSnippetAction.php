@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SnippetBundle\Context\SnippetsContext;
@@ -39,7 +39,7 @@ class CreateSnippetAction
         private readonly AuthorizationCheckerInterface $authChecker,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
-        private readonly UrlGeneratorInterface $router,
+        private readonly AdminUrlGenerator $router,
         private readonly FlashNotifier $flashNotifier,
         private readonly string $snippetVersionPath,
     ) {

@@ -18,9 +18,9 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_snippet_index') }}">back to list</a>
+    <a href="{{ admin_path('app_snippet_index') }}">back to list</a>
 
-    <a href="{{ path('app_snippet_edit', {id: snippet.id}) }}">edit</a>
+    <a href="{{ admin_path('app_snippet_edit', {id: snippet.id}) }}">edit</a>
 
     {{ include('@XutimSnippet/admin/snippet/_delete_form.html.twig') }}
 {% endblock %}

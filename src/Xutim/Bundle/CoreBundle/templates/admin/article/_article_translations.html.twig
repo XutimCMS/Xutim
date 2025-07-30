@@ -3,9 +3,9 @@
 <div class="card mb-3">
     <div class="card-header">
         <h3 class="card-title">
-            <twig:Xutim:Admin:Icon
-                name="language"
-            />{{ 'all translations'|trans({}, 'admin')|capitalize }}
+            <twig:Xutim:Admin:Icon name="language" />{{
+                'all translations'|trans({}, 'admin')|capitalize
+            }}
         </h3>
     </div>
     <div class="table-responsive">
@@ -49,14 +49,16 @@
                             title="Translation reference"
                             data-controller="tooltip"
                         >
-                            {% if article.defaultTranslation.id == translation.id %}
+                            {%
+                                if article.defaultTranslation.id == translation.id
+                            %}
                                 <span class="fw-bold text-green">
                                     <twig:Xutim:Admin:Icon name="language" />
                                 </span>
                             {% else %}
                                 <twig:Xutim:Admin:ModalDialog
                                     class="btn-link d-sm-inline-block px-0 border-0"
-                                    action="{{ path('admin_page_mark_default_translation', {id: article.id, transId: translation.id}) }}"
+                                    action="{{ admin_path('admin_page_mark_default_translation', {id: article.id, transId: translation.id}) }}"
                                     confirmActionLabel="{{ 'action.mark_as_default'|trans({}, 'admin')|capitalize }}"
                                 >
                                     <span
@@ -67,17 +69,19 @@
                         </td>
                         <td class="text-muted">
                             {{ translation.title }}
-                            {% if article.defaultTranslation.id == translation.id %}
-                                ({{ 'reference for translations'|trans({}, 'admin') }})
+                            {%
+                                if article.defaultTranslation.id == translation.id
+                            %}
+                                ({{
+                                    'reference for translations'|trans({}, 'admin')
+                                }})
                             {% endif %}
                         </td>
                         <td class="text-muted">
                             {{ translation.locale|locale_name }}
                         </td>
                         <td>
-                            <div
-                                class="d-flex justify-content-end align-items-center"
-                            >
+                            <div class="d-flex justify-content-end align-items-center">
                                 <a
                                     href="{{ path('content_translation_show', {_locale: translation.locale, slug: translation.slug}) }}"
                                     class="btn-link me-2 {% if not translation.status.isPublished() %}disabled{% endif %}"
@@ -89,9 +93,11 @@
                                     />
                                 </a>
 
-                                {% if app.user.canTranslate(translation.locale) %}
+                                {%
+                                    if app.user.canTranslate(translation.locale)
+                                %}
                                     <a
-                                        href="{{ path('admin_content_translation_revisions', {id: translation.id}) }}"
+                                        href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
                                         class="btn-link"
                                         aria-label="{{ 'revisions'|trans({}, 'admin') }}"
                                     >

@@ -9,7 +9,7 @@
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
         <li class="breadcrumb-item">
-            <a href="{{ path('admin_block_list') }}">Blocks</a>
+            <a href="{{ admin_path('admin_block_list') }}">Blocks</a>
         </li>
         <li class="breadcrumb-item">New block</li>
     </twig:Xutim:Admin:Breadcrumbs>
@@ -20,7 +20,7 @@
         <twig:Xutim:Admin:Button
             tag="a"
             variant="nav"
-            href="{{ path('admin_block_show', {id: block.id}) }}"
+            href="{{ admin_path('admin_block_show', {id: block.id}) }}"
         >
             <twig:Xutim:Admin:Icon name="search" class="me-1" />
             {{ 'Show'|trans({}, 'admin') }}

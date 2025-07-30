@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Tag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleFeaturedImageUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
@@ -17,10 +16,10 @@ use Xutim\CoreBundle\Form\Admin\FeaturedImageType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/tag/edit-featured-image/{id?null}', name: 'admin_tag_featured_image_edit', methods: ['get', 'post'])]
 class EditFeaturedImageAction extends AbstractController
 {
     public function __construct(
@@ -29,7 +28,8 @@ class EditFeaturedImageAction extends AbstractController
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
         private readonly FileRepository $fileRepo,
-        private readonly BlockContext $blockContext
+        private readonly BlockContext $blockContext,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -41,7 +41,7 @@ class EditFeaturedImageAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(FeaturedImageType::class, new ImageDto($article->getFeaturedImage()?->getId()), [
-            'action' => $this->generateUrl('admin_article_featured_image_edit', ['id' => $article->getId()])
+            'action' => $this->router->generate('admin_article_featured_image_edit', ['id' => $article->getId()])
         ]);
 
         $form->handleRequest($request);
@@ -73,7 +73,7 @@ class EditFeaturedImageAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
 
-            $fallbackUrl = $this->generateUrl('admin_article_edit', [
+            $fallbackUrl = $this->router->generate('admin_article_edit', [
                 'id' => $article->getId()
             ]);
 

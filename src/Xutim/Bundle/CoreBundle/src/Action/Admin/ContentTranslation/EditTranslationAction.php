@@ -9,17 +9,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
 use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\Form\Admin\ContentTranslationType;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/content-translation/edit/{id}', name: 'admin_content_translation_edit')]
 class EditTranslationAction extends AbstractController
 {
     public function __construct(
@@ -27,6 +26,7 @@ class EditTranslationAction extends AbstractController
         private readonly UserStorage $userStorage,
         private readonly ContentTranslationRepository $contentTransRepo,
         private readonly TranslatorAuthChecker $transAuthChecker,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -92,11 +92,11 @@ class EditTranslationAction extends AbstractController
     private function redirectTranslationResponse(ContentTranslationInterface $translation): RedirectResponse
     {
         if ($translation->hasArticle()) {
-            return $this->redirectToRoute('admin_article_show', ['id' => $translation->getArticle()->getId()]);
+            return new RedirectResponse($this->router->generate('admin_article_show', ['id' => $translation->getArticle()->getId()]));
         }
 
         if ($translation->hasPage()) {
-            return $this->redirectToRoute('admin_page_list', ['id' => $translation->getPage()->getId()]);
+            return new RedirectResponse($this->router->generate('admin_page_list', ['id' => $translation->getPage()->getId()]));
         }
 
         throw new LogicException('Content translation should have either article or page.');

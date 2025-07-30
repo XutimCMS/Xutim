@@ -10,16 +10,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\SecurityBundle\Message\DeleteUserCommand;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/user/delete/{id}', name: 'admin_user_delete', methods: ['post'])]
 class DeleteUserAction
 {
     public function __construct(
@@ -27,7 +25,7 @@ class DeleteUserAction
         private readonly CsrfTokenChecker $csrfTokenChecker,
         private readonly UserRepositoryInterface $userRepo,
         private readonly AuthorizationCheckerInterface $authChecker,
-        private readonly UrlGeneratorInterface $router,
+        private readonly AdminUrlGenerator $router,
         private readonly FlashNotifier $flashNotifier,
     ) {
     }

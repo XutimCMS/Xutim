@@ -6,7 +6,6 @@ namespace Xutim\CoreBundle\Action\Admin;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Repository\ArticleRepository;
@@ -15,7 +14,6 @@ use Xutim\SecurityBundle\Domain\Model\UserInterface;
 /**
  * @method UserInterface getUser()
  */
-#[Route('/', name: 'admin_homepage')]
 class AdminHomepageAction extends AbstractController
 {
     public function __construct(

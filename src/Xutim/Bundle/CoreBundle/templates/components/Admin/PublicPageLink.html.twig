@@ -1,20 +1,20 @@
 {% if this.hasTagTranslation() %}
     {%
-        set publicUrl = path('tag_translation_show', {slug: tagTranslation.slug, _locale: tagTranslation.locale })
+        set publicUrl = path('tag_translation_show', {slug: tagTranslation.slug, _locale: tagTranslation.locale})
     %}
 {% elseif this.hasContentTranslation() %}
     {% if is_extended_locale(this.contentTranslation.locale) %}
         {%
             set publicUrl = path('content_translation_show', {
                 slug: this.contentTranslation.slug,
-                _content_locale: this.contentTranslation.locale
+                _content_locale: this.contentTranslation.locale,
             })
         %}
     {% else %}
         {%
             set publicUrl = path('content_translation_show', {
                 slug: this.contentTranslation.slug,
-                _locale: this.contentTranslation.locale
+                _locale: this.contentTranslation.locale,
             })
         %}
     {% endif %}

@@ -5,25 +5,26 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Menu;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Factory\MenuItemFactory;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\CoreBundle\Form\Admin\MenuItemType;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/menu/new-item/{id?}', name: 'admin_menu_item_new', methods: ['get', 'post'])]
 class CreateMenuItemAction extends AbstractController
 {
     public function __construct(
         private readonly MenuItemRepository $repo,
         private readonly TranslatorInterface $translator,
         private readonly SiteContext $siteContext,
-        private readonly MenuItemFactory $menuItemFactory
+        private readonly MenuItemFactory $menuItemFactory,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -40,7 +41,7 @@ class CreateMenuItemAction extends AbstractController
 
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(MenuItemType::class, null, [
-            'action' => $this->generateUrl('admin_menu_item_new', $parentItem === null ? [] : [
+            'action' => $this->router->generate('admin_menu_item_new', $parentItem === null ? [] : [
                 'id' => $parentItem->getId()
             ])
         ]);
@@ -62,7 +63,9 @@ class CreateMenuItemAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
 
-            return $this->redirectToRoute('admin_menu_list', ['id' => $item->getId()], Response::HTTP_SEE_OTHER);
+            $url = $this->router->generate('admin_menu_list', ['id' => $item->getId()]);
+
+            return new RedirectResponse($url, Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('@XutimCore/admin/menu/menu_item_new.html.twig', [

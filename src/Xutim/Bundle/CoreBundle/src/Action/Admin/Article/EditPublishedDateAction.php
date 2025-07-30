@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticlePublicationDateUpdatedEvent;
@@ -16,10 +15,10 @@ use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Form\Admin\PublishedDateType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/article/edit-publication-date/{id}', name: 'admin_article_edit_publication_date', methods: ['get', 'post'])]
 class EditPublishedDateAction extends AbstractController
 {
     public function __construct(
@@ -28,7 +27,8 @@ class EditPublishedDateAction extends AbstractController
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
         private readonly BlockContext $blockContext,
-        private readonly ContentContext $contentContext
+        private readonly ContentContext $contentContext,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -44,7 +44,7 @@ class EditPublishedDateAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getPublishedAt()], [
-            'action' => $this->generateUrl('admin_article_edit_publication_date', ['id' => $article->getId()]),
+            'action' => $this->router->generate('admin_article_edit_publication_date', ['id' => $article->getId()]),
             'future_date_only' => false
         ]);
 
@@ -79,7 +79,7 @@ class EditPublishedDateAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
             
-            $fallbackUrl = $this->generateUrl('admin_article_edit', [
+            $fallbackUrl = $this->router->generate('admin_article_edit', [
                 'id' => $article->getId()
             ]);
 

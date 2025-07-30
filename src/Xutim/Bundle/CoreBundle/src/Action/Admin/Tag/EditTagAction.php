@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Tag;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Entity\TagTranslation;
@@ -17,12 +17,12 @@ use Xutim\CoreBundle\Form\Admin\TagType;
 use Xutim\CoreBundle\Message\Command\Tag\EditTagCommand;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/tag/edit/{id}/{locale? }', name: 'admin_tag_edit', methods: ['get', 'post'])]
 class EditTagAction extends AbstractController
 {
     public function __construct(
@@ -32,7 +32,8 @@ class EditTagAction extends AbstractController
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepo,
         private readonly TagRepository $tagRepo,
-        private readonly SiteContext $siteContext
+        private readonly SiteContext $siteContext,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -68,7 +69,7 @@ class EditTagAction extends AbstractController
 
             $this->addFlash('success', 'Changes were made successfully.');
 
-            return $this->redirectToRoute('admin_tag_edit', ['id' => $tag->getId()]);
+            return new RedirectResponse($this->router->generate('admin_tag_edit', ['id' => $tag->getId()]));
         }
 
         if ($this->isGranted(UserRoles::ROLE_ADMIN) === false && $this->isGranted(UserRoles::ROLE_TRANSLATOR)) {

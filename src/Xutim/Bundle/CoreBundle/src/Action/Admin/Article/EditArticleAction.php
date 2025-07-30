@@ -6,11 +6,11 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
@@ -23,12 +23,12 @@ use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/article/edit/{id}/{locale? }', name: 'admin_article_edit', methods: ['get', 'post'])]
 class EditArticleAction extends AbstractController
 {
     public function __construct(
@@ -41,6 +41,7 @@ class EditArticleAction extends AbstractController
         private readonly TranslatorAuthChecker $transAuthChecker,
         private readonly LogEventRepository $eventRepo,
         private readonly TagRepository $tagRepo,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -65,7 +66,7 @@ class EditArticleAction extends AbstractController
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 
-            return $this->redirectToRoute('admin_article_edit', ['id' => $article->getId()]);
+            return new RedirectResponse($this->router->generate('admin_article_edit', ['id' => $article->getId()]));
         }
 
         if ($this->isGranted(UserRoles::ROLE_ADMIN) === false && $this->isGranted(UserRoles::ROLE_TRANSLATOR)) {

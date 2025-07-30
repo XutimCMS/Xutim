@@ -8,7 +8,7 @@
     <twig:Xutim:Admin:Button
         tag="a"
         variant="nav"
-        href="{{ path('admin_article_new') }}"
+        href="{{ admin_path('admin_article_new') }}"
     >
         <twig:Xutim:Admin:Icon name="article" />
         {{ 'New article'|trans({}, 'admin') }}
@@ -47,7 +47,7 @@
         <th>
             <a
                 class=""
-                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'title', orderDirection: filter.reverseDirection('title')}) }}"
+                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'title', orderDirection: filter.reverseDirection('title'), _content_locale: content_context_language()}) }}"
             >
                 {{ 'title'|trans({}, 'admin') }}
                 {{
@@ -58,7 +58,7 @@
         <th>
             <a
                 class=""
-                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'tags', orderDirection: filter.reverseDirection('tags')}) }}"
+                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'tags', orderDirection: filter.reverseDirection('tags'), _content_locale: content_context_language()}) }}"
             >
                 {{ 'tags'|trans({}, 'admin') }}
                 {{
@@ -72,7 +72,7 @@
         <th>
             <a
                 class=""
-                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'updatedAt', orderDirection: filter.reverseDirection('updatedAt')}) }}"
+                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'updatedAt', orderDirection: filter.reverseDirection('updatedAt'), _content_locale: content_context_language()}) }}"
             >
                 {{ 'updated at'|trans({}, 'admin') }}
                 {{
@@ -83,7 +83,7 @@
         <th>
             <a
                 class=""
-                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'publishedAt', orderDirection: filter.reverseDirection('publishedAt')}) }}"
+                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'publishedAt', orderDirection: filter.reverseDirection('publishedAt'), _content_locale: content_context_language()}) }}"
             >
                 {{ 'published at'|trans({}, 'admin') }}
                 {{
@@ -105,7 +105,7 @@
                     <twig:Xutim:Admin:Button
                         tag="a"
                         variant="link"
-                        href="{{ path('admin_article_show', {id: article.id}) }}"
+                        href="{{ admin_path('admin_article_show', {id: article.id, _content_locale: content_context.language}) }}"
                         data-turbo-frame="_top"
                         class="mt-1"
                         aria-label="{{ 'show'|trans({}, 'admin') }}"

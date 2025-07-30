@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Media;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Factory\FileTranslationFactory;
@@ -17,9 +16,9 @@ use Xutim\CoreBundle\Form\Admin\FileType;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\FileTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
-#[Route('/media/edit/{id}', name: 'admin_media_edit')]
 class EditFileAction extends AbstractController
 {
     public function __construct(
@@ -31,6 +30,7 @@ class EditFileAction extends AbstractController
         private readonly BlockContext $blockContext,
         private readonly FileTranslationFactory $fileTranslationFactory,
         private readonly FileInfoService $imageInfoService,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -67,7 +67,7 @@ class EditFileAction extends AbstractController
             $this->addFlash('success', 'Changes were made successfully.');
             $this->fileTranslationRepository->save($translation, true);
             /** @var string $referer */
-            $referer = $request->headers->get('referer', $this->generateUrl('admin_media_list'));
+            $referer = $request->headers->get('referer', $this->router->generate('admin_media_list'));
 
             return $this->redirect($referer);
         }

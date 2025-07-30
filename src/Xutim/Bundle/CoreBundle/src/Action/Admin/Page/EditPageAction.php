@@ -6,11 +6,11 @@ namespace Xutim\CoreBundle\Action\Admin\Page;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
@@ -22,11 +22,11 @@ use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCo
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/page/edit/{id}/{locale? }', name: 'admin_page_edit', methods: ['get', 'post'])]
 class EditPageAction extends AbstractController
 {
     public function __construct(
@@ -37,7 +37,8 @@ class EditPageAction extends AbstractController
         private readonly MessageBusInterface $commandBus,
         private readonly ContentContext $contentContext,
         private readonly TranslatorAuthChecker $transAuthChecker,
-        private readonly LogEventRepository $eventRepo
+        private readonly LogEventRepository $eventRepo,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -60,7 +61,7 @@ class EditPageAction extends AbstractController
             $command = $this->createTranslationCommand($translation, $data, $page);
             $this->commandBus->dispatch($command);
 
-            return $this->redirectToRoute('admin_page_edit', ['id' => $page->getId()]);
+            return new RedirectResponse($this->router->generate('admin_page_edit', ['id' => $page->getId()]));
         }
 
         if ($this->isGranted('ROLE_ADMIN') === false && $this->isGranted('ROLE_TRANSLATOR')) {

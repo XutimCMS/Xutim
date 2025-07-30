@@ -11,11 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 use Twig\Environment;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Form\ChangePasswordFormType;
@@ -28,7 +28,7 @@ class ResetPasswordAction
         private readonly MessageBusInterface $commandBus,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
-        private readonly UrlGeneratorInterface $router,
+        private readonly AdminUrlGenerator $router,
         private readonly FlashNotifier $flashNotifier
     ) {
     }

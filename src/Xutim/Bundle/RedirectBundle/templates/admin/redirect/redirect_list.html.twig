@@ -9,7 +9,7 @@
         tag="a"
         variant="nav"
         data-turbo-frame="modal"
-        href="{{ path('admin_redirect_new') }}"
+        href="{{ admin_path('admin_redirect_new') }}"
     >
         <twig:ux:icon name="tabler:directions" class="w-4" />
         {{ 'add a new redirect'|trans({}, 'admin')|capitalize }}
@@ -19,7 +19,7 @@
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
         <li class="breadcrumb-item">
-            <a href="{{ path('admin_settings_site') }}">
+            <a href="{{ admin_path('admin_settings_site') }}">
                 {{ 'settings'|trans({}, 'admin')|capitalize }}
             </a>
         </li>
@@ -47,7 +47,7 @@
                 {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
                 <th>
                     <a
-                        href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'source', orderDirection: filter.reverseDirection('source')}) }}"
+                        href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'source', orderDirection: filter.reverseDirection('source')}) }}"
                     >
                         {{ 'source'|trans({}, 'admin')|capitalize }}
                         {{
@@ -57,7 +57,7 @@
                 </th>
                 <th>
                     <a
-                        href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'target', orderDirection: filter.reverseDirection('target')}) }}"
+                        href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'target', orderDirection: filter.reverseDirection('target')}) }}"
                     >
                         {{ 'target'|trans({}, 'admin')|capitalize }}
                         {{
@@ -68,7 +68,7 @@
                 {#
                 <th>
                     <a
-                        href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'locale', orderDirection: filter.reverseDirection('locale')}) }}"
+                        href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'locale', orderDirection: filter.reverseDirection('locale')}) }}"
                     >
                         {{ 'locale'|trans({}, 'admin')|capitalize }}
                         {{
@@ -79,7 +79,7 @@
                 #}
                 <th>
                     <a
-                        href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'permanent', orderDirection: filter.reverseDirection('permanent')}) }}"
+                        href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'permanent', orderDirection: filter.reverseDirection('permanent')}) }}"
                     >
                         {{ 'permanent'|trans({}, 'admin')|capitalize }}
                         {{

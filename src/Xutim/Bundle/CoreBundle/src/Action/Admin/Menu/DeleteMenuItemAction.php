@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Menu;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Form\Admin\DeleteType;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/menu/delete-item/{id}', name: 'admin_menu_item_delete', methods: ['get', 'post'])]
 class DeleteMenuItemAction extends AbstractController
 {
     public function __construct(
         private readonly MenuItemRepository $repo,
         private readonly TranslatorInterface $translator,
-        private readonly SiteContext $siteContext
+        private readonly SiteContext $siteContext,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -32,7 +33,7 @@ class DeleteMenuItemAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(DeleteType::class, null, [
-            'action' => $this->generateUrl('admin_menu_item_delete', ['id' => $item->getId()])
+            'action' => $this->router->generate('admin_menu_item_delete', ['id' => $item->getId()])
         ]);
 
         $form->handleRequest($request);
@@ -48,7 +49,9 @@ class DeleteMenuItemAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
 
-            return $this->redirectToRoute('admin_menu_list', ['id' => $item->getParent()?->getId()], Response::HTTP_SEE_OTHER);
+            $url = $this->router->generate('admin_menu_list', ['id' => $item->getParent()?->getId()]);
+
+            return new RedirectResponse($url, Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('@XutimCore/admin/menu/menu_item_delete.html.twig', [

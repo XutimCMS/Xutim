@@ -80,7 +80,7 @@
         <twig:Xutim:Admin:Button
             tag="a"
             variant="nav"
-            href="{{ path('admin_content_translation_revisions', {id: contextTranslation.id}) }}"
+            href="{{ admin_path('admin_content_translation_revisions', {id: contextTranslation.id}) }}"
         >
             <twig:Xutim:Admin:Icon name="history" class="me-1" />
             History
@@ -90,7 +90,7 @@
     <twig:Xutim:Admin:Button
         tag="a"
         variant="nav"
-        href="{{ path('admin_article_edit', {id: article.id}) }}"
+        href="{{ admin_path('admin_article_edit', {id: article.id}) }}"
     >
         <twig:Xutim:Admin:Icon name="edit" class="me-1" />
         Edit
@@ -100,7 +100,7 @@
         tag="button"
         id="sidebar-toggle"
         variant="nav"
-        href="{{ path('admin_article_edit', {id: article.id}) }}"
+        href="{{ admin_path('admin_article_edit', {id: article.id}) }}"
     >
         <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
         Sidebar
@@ -118,7 +118,7 @@
             style="width: 100%"
         >
             <iframe
-                src="{{ path('admin_article_frame_show', {id: article.id}) }}"
+                src="{{ admin_path('admin_article_frame_show', {id: article.id}) }}"
                 sandbox="allow-scripts allow-same-origin"
                 class="w-100 bg-white d-block"
                 data-article-preview-target="frame"

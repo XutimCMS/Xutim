@@ -42,7 +42,7 @@
         <div class="card-footer">
             {{ form_start(form, {attr: {class: 'd-flex align-items-center'}}) }}
             <a
-                href="{{ path('admin_menu_list', {id: item.parent ? item.parent.id : null}) }}"
+                href="{{ admin_path('admin_menu_list', {id: item.parent ? item.parent.id : null}) }}"
                 class="text-sm font-medium me-auto"
             >
                 {{ 'Back to list'|trans({}, 'admin') }}

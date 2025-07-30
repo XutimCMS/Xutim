@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Media;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Domain\Event\File\FileCopyrightUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
@@ -15,17 +14,18 @@ use Xutim\CoreBundle\Entity\File;
 use Xutim\CoreBundle\Form\Admin\FileCopyrightType;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/media/copyright-edit/{id}', name: 'admin_media_copyright_edit')]
 class EditCopyrightAction extends AbstractController
 {
     public function __construct(
         private readonly LogEventFactory $logEventFactory,
         private readonly FileRepository $fileRepo,
         private readonly UserStorage $userStorage,
-        private readonly LogEventRepository $eventRepository
+        private readonly LogEventRepository $eventRepository,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -37,7 +37,7 @@ class EditCopyrightAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(FileCopyrightType::class, ['copyright' => $file->getCopyright()], [
-            'action' => $this->generateUrl('admin_media_copyright_edit', ['id' => $file->getId()])
+            'action' => $this->router->generate('admin_media_copyright_edit', ['id' => $file->getId()])
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -66,7 +66,7 @@ class EditCopyrightAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
 
-            $fallbackUrl = $this->generateUrl('admin_media_edit', [
+            $fallbackUrl = $this->router->generate('admin_media_edit', [
                 'id' => $file->getId()
             ]);
 

@@ -10,12 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 
-#[Route('/media', name: 'admin_media_list')]
 class ListFilesAction extends AbstractController
 {
     public function __construct(

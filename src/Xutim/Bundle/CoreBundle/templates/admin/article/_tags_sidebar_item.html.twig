@@ -59,7 +59,7 @@
                                    type="checkbox"
                                    value="{{ tag.id }}"
                                    data-action="tag-menu#submitChange"
-                                   data-update-url="{{ path('admin_article_toggle_tag', {id: article.id, tagId: tag.id}) }}"
+                                   data-update-url="{{ admin_path('admin_article_toggle_tag', {id: article.id, tagId: tag.id}) }}"
                                    {{ article.hasTag(tag) ? 'checked' : '' }} >
                             <span class="badge badge-3 tag-status badge-dot"
                                   style="background-color: {{ tag.color.HTMLHex }}"></span>

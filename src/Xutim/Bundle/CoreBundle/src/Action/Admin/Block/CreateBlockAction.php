@@ -5,27 +5,28 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Block;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Domain\Event\Block\BlockCreatedEvent;
 use Xutim\CoreBundle\Domain\Factory\BlockFactory;
 use Xutim\CoreBundle\Form\Admin\BlockType;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockDto;
 use Xutim\CoreBundle\Message\Event\DomainEventMessage;
 use Xutim\CoreBundle\Repository\BlockRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/block/new', name: 'admin_block_new', methods: ['get', 'post'])]
 class CreateBlockAction extends AbstractController
 {
     public function __construct(
         private readonly BlockRepository $blockRepository,
         private readonly UserStorage $userStorage,
         private readonly MessageBusInterface $eventBus,
-        private readonly BlockFactory $blockFactory
+        private readonly BlockFactory $blockFactory,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -48,7 +49,7 @@ class CreateBlockAction extends AbstractController
                 $this->userStorage->getUserWithException()->getUserIdentifier()
             ));
 
-            return $this->redirectToRoute('admin_block_list', ['searchTerm' => '']);
+            return new RedirectResponse($this->router->generate('admin_block_list', ['searchTerm' => '']));
         }
 
         return $this->render('@XutimCore/admin/block/block_form.html.twig', [

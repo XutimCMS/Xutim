@@ -9,7 +9,6 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
@@ -18,7 +17,6 @@ use Xutim\CoreBundle\Repository\TagTranslationRepository;
 
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
-#[Route('/{_locale}/tag/{slug<[a-zA-Z0-9\-]+>}/{page<\d+>?1}', priority: -10, name: 'tag_translation_show')]
 class ShowTagTranslation extends AbstractController
 {
     public function __construct(

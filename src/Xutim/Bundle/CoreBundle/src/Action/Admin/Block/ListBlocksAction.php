@@ -9,12 +9,10 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\BlockRepository;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/block', name: 'admin_block_list', methods: ['get'])]
 class ListBlocksAction extends AbstractController
 {
     public function __construct(

@@ -14,7 +14,7 @@
                 <twig:block name="content">
                     <twig:Xutim:Admin:Button
                         variant="primary"
-                        href="{{ path('admin_page_edit', {id: page.id}) }}"
+                        href="{{ admin_path('admin_page_edit', {id: page.id}) }}"
                         tag="a"
                     >
                         {{ 'Add the translation'|trans({}, 'admin') }}
@@ -25,16 +25,16 @@
     {% endif %}
     {% if translation %}
         <twig:Xutim:Admin:SidebarSection>
-            {%
-                include "@XutimCore/admin/page/_publication_status_sidebar_item.html.twig"
-            %}
+            {{
+                include('@XutimCore/admin/page/_publication_status_sidebar_item.html.twig',
+            ) }}
 
             {%
                 if translation is defined and translation is not same as(null) and translation.untranslatedChange()
             %}
                 <twig:Xutim:Admin:SidebarItem>
                     <a
-                        href="{{ path('admin_content_translation_revisions', {id: translation.id}) }}"
+                        href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
                         class="fw-bold"
                     >
                         {{
@@ -74,7 +74,7 @@
                 </twig:block>
                 <twig:block name="content">
                     <a
-                        href="{{ path('admin_content_translation_revisions', {id: translation.id}) }}"
+                        href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
                     >
                         {{ revisionsCount }}
                     </a>
@@ -89,9 +89,9 @@
                                 set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived')
                             %}
                             <twig:Xutim:Admin:ModalDialog
-                                class="btn btn-outline-{{ archiveStatus.colorClass}}"
-                                modalDialogColor="{{archiveStatus.colorClass}}"
-                                action="{{ path('admin_publication_status_edit', {id: translation.id, status: archiveStatus.value}) }}"
+                                class="btn btn-outline-{{ archiveStatus.colorClass }}"
+                                modalDialogColor="{{ archiveStatus.colorClass }}"
+                                action="{{ admin_path('admin_publication_status_edit', {id: translation.id, status: archiveStatus.value}) }}"
                                 confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
                             >
                                 <twig:Xutim:Admin:Icon name="archive" />
@@ -102,7 +102,7 @@
                         <twig:Xutim:Admin:ModalDialog
                             class="btn btn-outline-danger"
                             modalDialogColor="danger"
-                            action="{{ path('admin_content_translation_delete', {id: translation.id}) }}"
+                            action="{{ admin_path('admin_content_translation_delete', {id: translation.id}) }}"
                             confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
                         >
                             <twig:Xutim:Admin:Icon name="trash" />

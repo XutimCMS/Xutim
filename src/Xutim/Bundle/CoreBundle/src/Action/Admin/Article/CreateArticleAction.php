@@ -5,25 +5,26 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Article;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Entity\ContentTranslation;
 use Xutim\CoreBundle\Form\Admin\ArticleType;
 use Xutim\CoreBundle\Form\Admin\Dto\CreateArticleFormData;
 use Xutim\CoreBundle\Message\Command\Article\CreateArticleCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/article/new', name: 'admin_article_new', methods: ['get', 'post'])]
 class CreateArticleAction extends AbstractController
 {
     public function __construct(
         private readonly MessageBusInterface $commandBus,
         private readonly UserStorage $userStorage,
-        private readonly ContentTranslationRepository $contentTransRepo
+        private readonly ContentTranslationRepository $contentTransRepo,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -48,7 +49,7 @@ class CreateArticleAction extends AbstractController
             $trans = $this->contentTransRepo->findOneBy(['slug' => $data->getSlug(), 'locale' => $data->getLocale()]);
             $article = $trans->getArticle();
 
-            return $this->redirectToRoute('admin_article_show', ['id' => $article->getId()]);
+            return new RedirectResponse($this->router->generate('admin_article_show', ['id' => $article->getId()]));
         }
 
         return $this->render('@XutimCore/admin/article/article_new.html.twig', [

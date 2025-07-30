@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Xutim\EventBundle\Action\Admin;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Webmozart\Assert\Assert;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\EventBundle\Domain\Factory\EventFactory;
 use Xutim\EventBundle\Form\Admin\EventDto;
 use Xutim\EventBundle\Form\Admin\EventType;
@@ -16,13 +17,13 @@ use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventTranslationRepository;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/event/new', name: 'admin_event_new', methods: ['get', 'post'])]
 class CreateEventAction extends AbstractController
 {
     public function __construct(
         private readonly EventRepository $eventRepo,
         private readonly EventTranslationRepository $eventTransRepo,
-        private readonly EventFactory $eventFactory
+        private readonly EventFactory $eventFactory,
+        private readonly AdminUrlGenerator $router
     ) {
     }
 
@@ -30,7 +31,7 @@ class CreateEventAction extends AbstractController
     {
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(EventType::class, null, [
-            'action' => $this->generateUrl('admin_event_new')
+            'action' => $this->router->generate('admin_event_new')
         ]);
 
         $form->handleRequest($request);
@@ -55,7 +56,9 @@ class CreateEventAction extends AbstractController
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 
-            return $this->redirectToRoute('admin_event_list', ['searchTerm' => '']);
+            $url = $this->router->generate('admin_event_list', ['searchTerm' => '']);
+
+            return new RedirectResponse($url);
         }
 
         return $this->render('@XutimEvent/admin/event/event_new.html.twig', [

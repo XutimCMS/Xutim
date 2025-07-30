@@ -7,14 +7,12 @@ namespace Xutim\CoreBundle\Action\Admin\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
-#[Route('/page-list/{id?}', name: 'admin_page_list')]
 class ListPagesAction extends AbstractController
 {
     public function __construct(

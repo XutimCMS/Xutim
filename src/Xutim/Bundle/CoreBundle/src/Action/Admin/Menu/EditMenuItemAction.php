@@ -5,23 +5,24 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Menu;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\CoreBundle\Form\Admin\MenuItemType;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/menu/edit/{id}', name: 'admin_menu_item_edit', methods: ['get', 'post'])]
 class EditMenuItemAction extends AbstractController
 {
     public function __construct(
         private readonly MenuItemRepository $repo,
         private readonly TranslatorInterface $translator,
-        private readonly SiteContext $siteContext
+        private readonly SiteContext $siteContext,
+        private readonly AdminUrlGenerator $router
     ) {
     }
 
@@ -33,7 +34,7 @@ class EditMenuItemAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $form = $this->createForm(MenuItemType::class, $item->toDto(), [
-            'action' => $this->generateUrl('admin_menu_item_edit', [
+            'action' => $this->router->generate('admin_menu_item_edit', [
                 'id' => $item->getId()
             ])
         ]);
@@ -62,7 +63,7 @@ class EditMenuItemAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
 
-            return $this->redirectToRoute('admin_menu_list', ['id' => $item->getId()], Response::HTTP_SEE_OTHER);
+            return new RedirectResponse($this->router->generate('admin_menu_list', ['id' => $item->getId()]), Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('@XutimCore/admin/menu/menu_item_new.html.twig', [

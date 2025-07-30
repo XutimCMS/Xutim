@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Settings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
@@ -15,7 +14,6 @@ use Xutim\CoreBundle\Repository\TagTranslationRepository;
 use Xutim\CoreBundle\Routing\RefererRouteResolver;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
-#[Route('/settings/redirect-with-language-context/{locale}', name: 'admin_settings_redirect_with_language_context', methods: ['get'])]
 class RedirectWithLanguageContextAction
 {
     public function __construct(

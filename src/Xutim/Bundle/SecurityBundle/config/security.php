@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\EventSubscriber\OnlineUserSubscriber;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
 use Xutim\SecurityBundle\Security\UserLoginAuthenticator;
@@ -16,7 +16,7 @@ return static function (ContainerConfigurator $container): void {
     $services = $container->services();
 
     $services->set(UserLoginAuthenticator::class)
-        ->arg('$urlGenerator', service(UrlGeneratorInterface::class))
+        ->arg('$urlGenerator', service(AdminUrlGenerator::class))
     ;
 
     $services->set(CsrfTokenChecker::class)

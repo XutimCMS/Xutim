@@ -6,14 +6,12 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
-#[Route('/article-frame/{id<[^/]+>}', name: 'admin_article_frame_show', methods: ['get'])]
 class ShowArticlePreviewAction extends AbstractController
 {
     public function __construct(

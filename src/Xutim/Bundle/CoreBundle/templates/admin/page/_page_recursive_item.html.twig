@@ -59,7 +59,7 @@
     %}
     {{ translatable.languageBadge(pageTranslation) }}
 
-    <a href="{{ path('admin_page_list', {id: page.id}) }}">
+    <a href="{{ admin_path('admin_page_list', {id: page.id}) }}">
         <span class="text-black{{ isSelectedPage ? ' fw-bold' : '' }}">
             {{
                 page.translationByLocaleOrDefault(content_context_language()).title
@@ -77,7 +77,7 @@
             <div class="dropdown-menu dropdown-menu-end">
                 <a
                     class="dropdown-item"
-                    href="{{ path('admin_page_edit', {id: page.id}) }}"
+                    href="{{ admin_path('admin_page_edit', {id: page.id}) }}"
                 >
                     <twig:Xutim:Admin:Icon name="edit" class="me-2" />
                     {{ 'edit'|trans|capitalize }}
@@ -87,7 +87,7 @@
 
                 <a
                     class="dropdown-item"
-                    href="{{ path('admin_page_new', {id: page.id}) }}"
+                    href="{{ admin_path('admin_page_new', {id: page.id}) }}"
                 >
                     <twig:Xutim:Admin:Icon name="folder" class="me-2" />
                     {{ 'New page'|trans({}, 'admin') }}
@@ -95,7 +95,7 @@
 
                 <a
                     class="dropdown-item"
-                    href="{{ path('admin_article_new', {id: page.id}) }}"
+                    href="{{ admin_path('admin_article_new', {id: page.id}) }}"
                 >
                     <twig:Xutim:Admin:Icon name="article" class="me-2" />
                     {{ 'New article'|trans({}, 'admin') }}
@@ -107,7 +107,7 @@
                     {% if first is not same as(true) %}
                         <a
                             class="dropdown-item"
-                            href="{{ path('admin_page_move', {id: page.id, dir: 'up'}) }}"
+                            href="{{ admin_path('admin_page_move', {id: page.id, dir: 'up'}) }}"
                         >
                             <twig:Xutim:Admin:Icon
                                 name="arrow-up"
@@ -120,7 +120,7 @@
                     {% if last is not same as(true) %}
                         <a
                             class="dropdown-item"
-                            href="{{ path('admin_page_move', {id: page.id, dir: 'down'}) }}"
+                            href="{{ admin_path('admin_page_move', {id: page.id, dir: 'down'}) }}"
                         >
                             <twig:Xutim:Admin:Icon
                                 name="arrow-down"

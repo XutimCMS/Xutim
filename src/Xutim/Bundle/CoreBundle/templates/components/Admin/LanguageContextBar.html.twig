@@ -37,8 +37,12 @@
 </div>
 
 {% macro renderLocale(locale, entity, simpleTranslation) %}
+    {%
+        set routeParams = app.request.attributes.get('_route_params')|merge({_content_locale: locale})
+    %}
+    {% set fullParams = routeParams|merge(app.request.query.all()) %}
     <a
-        href="{{ path('admin_settings_change_language_content_context', {locale: locale}) }}"
+        href="{{ path(app.request.attributes.get('_route'), fullParams) }}"
         data-turbo-prefetch="false"
     >
         {% set isActive = locale == content_context_language() %}

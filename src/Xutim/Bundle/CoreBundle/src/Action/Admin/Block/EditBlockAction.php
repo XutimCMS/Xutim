@@ -5,27 +5,28 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Block;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Block\BlockChangedEvent;
 use Xutim\CoreBundle\Form\Admin\BlockType;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockDto;
 use Xutim\CoreBundle\Message\Event\DomainEventMessage;
 use Xutim\CoreBundle\Repository\BlockRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/block/edit/{id}', name: 'admin_block_edit', methods: ['get', 'post'])]
 final class EditBlockAction extends AbstractController
 {
     public function __construct(
         private readonly BlockRepository $blockRepo,
         private readonly UserStorage $userStorage,
         private readonly MessageBusInterface $eventBus,
-        private readonly BlockContext $blockContext
+        private readonly BlockContext $blockContext,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -53,7 +54,7 @@ final class EditBlockAction extends AbstractController
                 $this->userStorage->getUserWithException()->getUserIdentifier()
             ));
 
-            return $this->redirectToRoute('admin_block_show', ['id' => $id]);
+            return new RedirectResponse($this->router->generate('admin_block_show', ['id' => $id]));
         }
 
         return $this->render('@XutimCore/admin/block/block_form.html.twig', [

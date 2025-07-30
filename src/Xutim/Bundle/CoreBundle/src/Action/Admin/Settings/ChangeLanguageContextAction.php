@@ -7,12 +7,10 @@ namespace Xutim\CoreBundle\Action\Admin\Settings;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
-#[Route('/settings/change-language-context/{locale}', name: 'admin_settings_change_language_content_context', methods: ['get'])]
 class ChangeLanguageContextAction
 {
     public function __construct(

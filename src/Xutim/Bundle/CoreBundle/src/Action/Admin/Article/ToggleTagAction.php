@@ -8,15 +8,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\UX\Turbo\TurboBundle;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\SearchContentBuilder;
 
-#[Route('/article/toggle-tag/{id}/{tagId}', name: 'admin_article_toggle_tag', methods: ['get', 'post'])]
 class ToggleTagAction extends AbstractController
 {
     public const string TOKEN_NAME = 'toggle-tag';
@@ -26,6 +25,7 @@ class ToggleTagAction extends AbstractController
         private readonly TagRepository $tagRepo,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
         private readonly SearchContentBuilder $searchContentBuilder,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -66,7 +66,7 @@ class ToggleTagAction extends AbstractController
             ]);
         }
 
-        $fallbackUrl = $this->generateUrl('admin_article_edit', [
+        $fallbackUrl = $this->router->generate('admin_article_edit', [
             'id' => $article->getId()
         ]);
 

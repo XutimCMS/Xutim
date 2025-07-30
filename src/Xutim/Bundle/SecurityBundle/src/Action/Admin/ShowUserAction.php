@@ -6,7 +6,6 @@ namespace Xutim\SecurityBundle\Action\Admin;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Twig\Environment;
@@ -15,7 +14,6 @@ use Xutim\SecurityBundle\Repository\ResetPasswordRequestRepository;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/user/{id}', name: 'admin_user_show')]
 class ShowUserAction
 {
     public function __construct(

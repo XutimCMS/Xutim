@@ -11,7 +11,7 @@
 {% block pageMenu %}
     <twig:Xutim:Admin:ModalForm
         class="btn btn-primary d-none d-sm-inline-block"
-        action="{{ path('admin_user_change_password') }}"
+        action="{{ admin_path('admin_user_change_password') }}"
         title="{{ 'new password'|trans({}, 'admin')|capitalize }}"
     >
         {{ 'change password'|trans({}, 'admin')|capitalize }}

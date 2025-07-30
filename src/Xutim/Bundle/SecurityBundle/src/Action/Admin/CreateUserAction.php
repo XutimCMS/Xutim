@@ -10,11 +10,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Twig\Environment;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Form\CreateUserFormData;
@@ -24,7 +23,6 @@ use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-#[Route('/user/new', name: 'admin_user_new')]
 class CreateUserAction
 {
     /**
@@ -36,7 +34,7 @@ class CreateUserAction
         private readonly AuthorizationCheckerInterface $authChecker,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
-        private readonly UrlGeneratorInterface $router,
+        private readonly AdminUrlGenerator $router,
         private readonly FlashNotifier $flashNotifier,
         private readonly UserStorage $userStorage,
     ) {

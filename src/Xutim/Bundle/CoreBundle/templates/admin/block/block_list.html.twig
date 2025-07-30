@@ -13,7 +13,7 @@
         <twig:Xutim:Admin:Button
             tag="a"
             variant="nav"
-            href="{{ path('admin_block_new') }}"
+            href="{{ admin_path('admin_block_new') }}"
         >
             <twig:Xutim:Admin:Icon name="block" />
             {{ 'New block'|trans({}, 'admin') }}
@@ -34,7 +34,7 @@
         {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
         <th>
             <a
-                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
+                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
             >
                 {{ 'name'|trans({}, 'admin') }}
                 {{

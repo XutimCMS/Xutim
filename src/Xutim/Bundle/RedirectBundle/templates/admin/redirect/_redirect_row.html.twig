@@ -1,7 +1,7 @@
 <tr id="redirect-row-{{ redirect.id }}">
     <td>
         <a
-            href="{{ path('admin_redirect_edit', {id: redirect.id}) }}"
+            href="{{ admin_path('admin_redirect_edit', {id: redirect.id}) }}"
             data-turbo-frame="modal"
         >
             {{ redirect.source }}
@@ -36,7 +36,7 @@
         <twig:Xutim:Admin:ModalDialog
             class="btn btn-outline-danger float-end"
             modalDialogColor="danger"
-            action="{{ path('admin_redirect_delete', {id: redirect.id}) }}"
+            action="{{ admin_path('admin_redirect_delete', {id: redirect.id}) }}"
             confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
         >
             <twig:Xutim:Admin:Icon name="trash" />

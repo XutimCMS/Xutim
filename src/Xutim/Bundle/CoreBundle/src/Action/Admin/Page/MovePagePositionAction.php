@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\Page;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
 
-#[Route('/page/{id}/move/{dir}', name: 'admin_page_move')]
 class MovePagePositionAction extends AbstractController
 {
-    public function __construct(private readonly PageRepository $pageRepo)
-    {
+    public function __construct(
+        private readonly PageRepository $pageRepo,
+        private readonly AdminUrlGenerator $router,
+    ) {
     }
 
     public function __invoke(string $id, string $dir): Response
@@ -35,11 +37,9 @@ class MovePagePositionAction extends AbstractController
         $this->pageRepo->save($page, true);
 
         if ($page->getParent() === null) {
-            return $this->redirectToRoute('admin_page_list');
+            return new RedirectResponse($this->router->generate('admin_page_list'));
         }
 
-        return $this->redirectToRoute('admin_page_list', [
-            'id' => $page->getParent()->getId()
-        ]);
+        return new RedirectResponse($this->router->generate('admin_page_list', ['id' => $page->getParent()->getId()]));
     }
 }

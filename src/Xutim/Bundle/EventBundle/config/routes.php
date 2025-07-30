@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Symfony\Component\Routing\Requirement\EnumRequirement;
+use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\EventBundle\Action\Admin\CreateEventAction;
 use Xutim\EventBundle\Action\Admin\DeleteEventAction;
 use Xutim\EventBundle\Action\Admin\EditEventAction;
@@ -42,5 +44,6 @@ return function (RoutingConfigurator $routes) {
 
     $routes->add('admin_event_publication_status_edit', '/publication-status/event/edit/{id}/{status}')
         ->methods(['post'])
+        ->requirements(['status' => new EnumRequirement(PublicationStatus::class)])
         ->controller(EditEventStatusAction::class);
 };

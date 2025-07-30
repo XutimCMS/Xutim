@@ -3,17 +3,17 @@
 <div class="col">
     <div class="card card-sm">
         <a
-            href="{{ path('admin_media_edit', {id: file.id}) }}"
+            href="{{ admin_path('admin_media_edit', {id: file.id}) }}"
             class="d-block"
         >
             {% if file.isImage() %}
                 <img
                     class="card-img-top"
-                    src="{{ uploaded_asset(file.fileName)| imagine_filter('thumb_small') }}"
+                    src="{{ uploaded_asset(file.fileName)|imagine_filter('thumb_small') }}"
                     alt=""
                 />
             {% else %}
-                {% include '@XutimCore/admin/media/_image_icon.html.twig' %}
+                {{ include('@XutimCore/admin/media/_image_icon.html.twig') }}
             {% endif %}
         </a>
 

@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
@@ -27,7 +27,7 @@ class CreateRedirectAction
         private readonly RedirectFactoryInterface $factory,
         private readonly Environment $twig,
         private readonly FormFactoryInterface $formFactory,
-        private readonly UrlGeneratorInterface $router,
+        private readonly AdminUrlGenerator $router,
         private readonly AuthorizationCheckerInterface $authChecker,
         private readonly FlashNotifier $flashNotifier,
         private readonly RedirectRouteService $redirectRouteService

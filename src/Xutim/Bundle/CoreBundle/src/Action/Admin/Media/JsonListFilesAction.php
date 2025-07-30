@@ -11,7 +11,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Xutim\CoreBundle\Entity\File;
 use Xutim\CoreBundle\Repository\FileRepository;
@@ -29,7 +28,6 @@ class JsonListFilesAction extends AbstractController
     ) {
     }
 
-    #[Route('/json/file/list', name: 'admin_json_file_list', methods: ['get'])]
     public function __invoke(
         Request $request,
         #[MapQueryParameter]

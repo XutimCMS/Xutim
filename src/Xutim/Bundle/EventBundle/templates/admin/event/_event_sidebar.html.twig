@@ -14,7 +14,7 @@
                 <twig:block name="content">
                     <twig:Xutim:Admin:Button
                         variant="primary"
-                        href="{{ path('admin_event_edit', {id: event.id}) }}"
+                        href="{{ admin_path('admin_event_edit', {id: event.id}) }}"
                         tag="a"
                     >
                         {{ 'Add the translation'|trans({}, 'admin') }}
@@ -25,7 +25,7 @@
     {% endif %}
     {% if translation %}
         <twig:Xutim:Admin:SidebarSection>
-            {% include '@XutimEvent/admin/event/_event_status_item.html.twig' %}
+            {{ include('@XutimEvent/admin/event/_event_status_item.html.twig') }}
 
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="header">
@@ -42,7 +42,7 @@
                             variant="link"
                             class="p-0"
                             data-turbo-frame="modal"
-                            href="{{ path('admin_event_dates_edit', {id: event.id}) }}"
+                            href="{{ admin_path('admin_event_dates_edit', {id: event.id}) }}"
                         >
                             <twig:Xutim:Admin:Icon name="edit" />
                         </twig:Xutim:Admin:Button>
@@ -65,7 +65,7 @@
                             variant="link"
                             class="p-0"
                             data-turbo-frame="modal"
-                            href="{{ path('admin_event_dates_edit', {id: event.id}) }}"
+                            href="{{ admin_path('admin_event_dates_edit', {id: event.id}) }}"
                         >
                             <twig:Xutim:Admin:Icon name="edit" />
                         </twig:Xutim:Admin:Button>
@@ -92,7 +92,7 @@
                             variant="link"
                             class="p-0"
                             data-turbo-frame="modal"
-                            href="{{ path('admin_event_article_edit', {id: event.id}) }}"
+                            href="{{ admin_path('admin_event_article_edit', {id: event.id}) }}"
                         >
                             <twig:Xutim:Admin:Icon name="edit" />
                         </twig:Xutim:Admin:Button>
@@ -119,7 +119,7 @@
                             variant="link"
                             class="p-0"
                             data-turbo-frame="modal"
-                            href="{{ path('admin_event_page_edit', {id: event.id}) }}"
+                            href="{{ admin_path('admin_event_page_edit', {id: event.id}) }}"
                         >
                             <twig:Xutim:Admin:Icon name="edit" />
                         </twig:Xutim:Admin:Button>
@@ -135,9 +135,9 @@
                                 set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived')
                             %}
                             <twig:Xutim:Admin:ModalDialog
-                                class="btn btn-outline-{{ archiveStatus.colorClass}}"
-                                modalDialogColor="{{archiveStatus.colorClass}}"
-                                action="{{ path('admin_event_publication_status_edit', {id: event.id, status: archiveStatus.value}) }}"
+                                class="btn btn-outline-{{ archiveStatus.colorClass }}"
+                                modalDialogColor="{{ archiveStatus.colorClass }}"
+                                action="{{ admin_path('admin_event_publication_status_edit', {id: event.id, status: archiveStatus.value}) }}"
                                 confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
                             >
                                 <twig:Xutim:Admin:Icon name="archive" />
@@ -147,7 +147,7 @@
                         <twig:Xutim:Admin:ModalDialog
                             class="btn btn-outline-danger"
                             modalDialogColor="danger"
-                            action="{{ path('admin_event_delete', {id: event.id}) }}"
+                            action="{{ admin_path('admin_event_delete', {id: event.id}) }}"
                             confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
                         >
                             <twig:Xutim:Admin:Icon name="trash" />

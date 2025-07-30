@@ -4,7 +4,7 @@
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
         <li class="breadcrumb-item">
-            <a href="{{ path('admin_user_list') }}">Users</a>
+            <a href="{{ admin_path('admin_user_list') }}">Users</a>
         </li>
         <li class="breadcrumb-item">{{ user.email }}</li>
     </twig:Xutim:Admin:Breadcrumbs>
@@ -24,7 +24,7 @@
         variant="nav"
         class="me-1"
         data-turbo-frame="modal"
-        href="{{ path('admin_user_edit', {id: user.id}) }}"
+        href="{{ admin_path('admin_user_edit', {id: user.id}) }}"
     >
         <twig:Xutim:Admin:Icon name="edit" class="me-1" />
         {{ 'Edit'|trans({}, 'admin')|capitalize }}
@@ -33,7 +33,7 @@
         class="text-danger btn btn-link nav"
         data-turbo-frame="_top"
         modalDialogColor="danger"
-        action="{{ path('admin_user_delete', {id: user.id}) }}"
+        action="{{ admin_path('admin_user_delete', {id: user.id}) }}"
         confirmActionLabel="{{ 'action.delete'|trans({}, 'admin')|capitalize }}"
     >
         <twig:Xutim:Admin:Icon name="trash" />
@@ -132,7 +132,7 @@
                     <twig:Xutim:Admin:ModalDialog
                         class="btn-link btn-success"
                         modalDialogColor="danger"
-                        action="{{ path('admin_reset_password_send_token', {id: user.id}) }}"
+                        action="{{ admin_path('admin_reset_password_send_token', {id: user.id}) }}"
                         confirmActionLabel="{{ 'action.approve'|trans({}, 'admin')|capitalize }}"
                     >
                         <twig:ux:icon name="tabler:checks" class="icon" />

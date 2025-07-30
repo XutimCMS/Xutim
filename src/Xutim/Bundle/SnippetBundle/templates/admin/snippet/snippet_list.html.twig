@@ -12,7 +12,7 @@
             tag="a"
             variant="nav"
             data-turbo-frame="modal"
-            href="{{ path('admin_snippet_new') }}"
+            href="{{ admin_path('admin_snippet_new') }}"
         >
             <twig:Xutim:Admin:Icon name="text" />
             {{ 'New snippet'|trans({}, 'admin') }}
@@ -33,7 +33,7 @@
             pager: snippets,
             filter: filter,
             'data-controller': 'snippet-editor',
-            'data-snippet-editor-url-value': path('admin_json_snippet_translate'),
+            'data-snippet-editor-url-value': admin_path('admin_json_snippet_translate'),
 
         }
     %}
@@ -48,7 +48,7 @@
         <th>
             <a
                 class=""
-                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'code', orderDirection: filter.reverseDirection('code')}) }}"
+                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'code', orderDirection: filter.reverseDirection('code')}) }}"
             >
                 {{ 'code'|trans({}, 'admin') }}
                 {{
@@ -59,7 +59,7 @@
         <th>
             <a
                 class=""
-                href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'category', orderDirection: filter.reverseDirection('category')}) }}"
+                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'category', orderDirection: filter.reverseDirection('category')}) }}"
             >
                 {{ 'category'|trans({}, 'admin') }}
                 {{

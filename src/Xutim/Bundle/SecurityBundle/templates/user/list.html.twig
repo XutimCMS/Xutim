@@ -7,7 +7,7 @@
         tag="a"
         variant="nav"
         data-turbo-frame="modal"
-        href="{{ path('admin_user_new') }}"
+        href="{{ admin_path('admin_user_new') }}"
     >
         <twig:Xutim:Admin:Icon name="users" class="me-1" />
         {{ 'add a new user'|trans({}, 'admin')|capitalize }}
@@ -17,7 +17,7 @@
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
         <li class="breadcrumb-item">
-            <a href="{{ path('admin_settings_site') }}">
+            <a href="{{ admin_path('admin_settings_site') }}">
                 {{ 'settings'|trans({}, 'admin')|capitalize }}
             </a>
         </li>
@@ -44,7 +44,7 @@
                 <th class="w-1"></th>
                 <th>
                     <a
-                        href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
+                        href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
                     >
                         {{ 'name'|trans({}, 'admin')|capitalize }}
                         {{
@@ -54,7 +54,7 @@
                 </th>
                 <th>
                     <a
-                        href="{{ path(app.current_route, {...app.request.query.all(), orderColumn: 'email', orderDirection: filter.reverseDirection('email')}) }}"
+                        href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'email', orderDirection: filter.reverseDirection('email')}) }}"
                     >
                         {{ 'email'|trans({}, 'admin')|capitalize }}
                         {{

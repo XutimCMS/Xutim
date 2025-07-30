@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Xutim\EventBundle\Action\Admin;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\EventBundle\Domain\Factory\EventTranslationFactory;
 use Xutim\EventBundle\Domain\Model\EventTranslationInterface;
 use Xutim\EventBundle\Form\Admin\EventTranslationDto;
@@ -18,7 +19,6 @@ use Xutim\EventBundle\Infra\Doctrine\ORM\EventTranslationRepository;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
-#[Route('/event/edit/{id}/{locale? }', name: 'admin_event_edit', methods: ['get', 'post'])]
 class EditEventAction extends AbstractController
 {
     public function __construct(
@@ -27,6 +27,7 @@ class EditEventAction extends AbstractController
         private readonly EventTranslationRepository $eventTransRepo,
         private readonly EventRepository $eventRepo,
         private readonly EventTranslationFactory $eventTranslationFactory,
+        private readonly AdminUrlGenerator $router,
     ) {
     }
 
@@ -60,7 +61,9 @@ class EditEventAction extends AbstractController
 
             $this->addFlash('success', 'Changes were made successfully.');
 
-            return $this->redirectToRoute('admin_event_edit', ['id' => $event->getId()]);
+            $url = $this->router->generate('admin_event_edit', ['id' => $event->getId()]);
+
+            return new RedirectResponse($url);
         }
 
         // if ($this->isGranted(UserRoles::ROLE_ADMIN) === false && $this->isGranted(UserRoles::ROLE_TRANSLATOR)) {
