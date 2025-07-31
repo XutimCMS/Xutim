@@ -105,6 +105,7 @@ export default class XutimFootnoteInline {
                 </label>
                 <menu>
                     <button value="cancel">Cancel</button>
+                    <button value="delete" style="color:red" type="button" id="xutim-footnote-delete-btn">X</button>
                     <button value="default">Save</button>
                 </menu>
             </form>
@@ -136,6 +137,16 @@ export default class XutimFootnoteInline {
             }
 
             dialog._xutimFootnoteSup = null;
+        });
+        const deleteBtn = dialog.querySelector('#xutim-footnote-delete-btn');
+        deleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const sup = dialog._xutimFootnoteSup;
+            if (sup) {
+                sup.remove();
+            }
+            dialog._xutimFootnoteSup = null;
+            dialog.close();
         });
     }
 }
