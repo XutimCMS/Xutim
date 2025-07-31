@@ -23,7 +23,7 @@ class ContentTranslationRouteGenerator
         ?string $mainLocale,
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
-        if ($mainLocale === null) {
+        if (!in_array($mainLocale, $this->siteContext->getMainLocales(), true)) {
             $mainLocale = $this->defaultLocale;
         }
 
