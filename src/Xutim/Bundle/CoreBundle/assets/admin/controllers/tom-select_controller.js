@@ -6,10 +6,10 @@ import '../styles/tom-select.css';
 export default class extends Controller {
     connect() {
         new TomSelect(this.element, {
+            dropdownParent: 'body',
             maxOptions: null,
             plugins: {
                 remove_button: {},
-                no_backspace_delete: {},
             },
         });
     }
