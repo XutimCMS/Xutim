@@ -100,7 +100,13 @@
                 set translation = article.translationByLocaleOrAny(content_context_language())
             %}
             <tr>
-                <td>{{ badges.publicationStatusBadge(translation) }}</td>
+                <td>
+                    {% if translation.locale == content_context_language() %}
+                        {{ badges.publicationStatusBadge(translation) }}
+                    {% else %}
+                        {{ badges.missingBadge() }}
+                    {% endif %}
+                </td>
                 <td class="text-wrap">
                     <twig:Xutim:Admin:Button
                         tag="a"
@@ -144,11 +150,11 @@
                     {% endif %}
                 </td>
                 <td>
-                    {{ article.updatedAt|time_ago() }}
+                    {{ translation.updatedAt|time_ago() }}
                 </td>
                 <td>
-                    {% if article.publishedAt %}
-                        {{ article.publishedAt|time_ago() }}
+                    {% if translation.publishedAt %}
+                        {{ translation.publishedAt|time_ago() }}
                     {% else %}
                         -
                     {% endif %}

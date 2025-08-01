@@ -195,7 +195,7 @@ class ContentTranslationRepository extends ServiceEntityRepository
         $translations = $builder
             ->innerJoin('trans.article', 'article')
             ->where('trans.status = :status')
-            ->andWhere('article.publishedAt <= :now')
+            ->andWhere('article.scheduledAt <= :now')
             ->setParameter('status', PublicationStatus::Scheduled)
             ->setParameter('now', new DateTimeImmutable())
             ->getQuery()

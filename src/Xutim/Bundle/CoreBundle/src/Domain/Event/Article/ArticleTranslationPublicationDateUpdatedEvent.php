@@ -8,10 +8,7 @@ use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 use Xutim\Domain\DomainEvent;
 
-/**
- * @Deprecated BC break for existing events in the database.
- */
-final readonly class ArticlePublicationDateUpdatedEvent implements DomainEvent
+final readonly class ArticleTranslationPublicationDateUpdatedEvent implements DomainEvent
 {
     public DateTimeImmutable $createdAt;
 

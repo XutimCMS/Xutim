@@ -7,13 +7,12 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\BlockContext;
-use Xutim\CoreBundle\Domain\Event\Article\ArticlePublicationDateUpdatedEvent;
+use Xutim\CoreBundle\Domain\Event\Article\ArticleTranslationPublicationDateUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
-use Xutim\CoreBundle\Entity\Article;
+use Xutim\CoreBundle\Entity\ContentTranslation;
 use Xutim\CoreBundle\Form\Admin\PublishedDateType;
-use Xutim\CoreBundle\Repository\ArticleRepository;
+use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
@@ -23,28 +22,24 @@ class EditPublishedDateAction extends AbstractController
 {
     public function __construct(
         private readonly LogEventFactory $logEventFactory,
-        private readonly ArticleRepository $repo,
+        private readonly ContentTranslationRepository $repo,
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
         private readonly BlockContext $blockContext,
-        private readonly ContentContext $contentContext,
         private readonly AdminUrlGenerator $router,
     ) {
     }
 
     public function __invoke(Request $request, string $id): Response
     {
-        $article = $this->repo->find($id);
-        if ($article === null) {
-            throw $this->createNotFoundException('The article does not exist');
-        }
-        $translation = $article->getTranslationByLocale($this->contentContext->getLanguage());
-        if ($translation === null) {
-            throw $this->createNotFoundException('The translation of an article does not exist');
+        $trans = $this->repo->find($id);
+        if ($trans === null) {
+            throw $this->createNotFoundException('The content translation does not exist');
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-        $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getPublishedAt()], [
-            'action' => $this->router->generate('admin_article_edit_publication_date', ['id' => $article->getId()]),
+        $article = $trans->getArticle();
+        $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $trans->getPublishedAt()], [
+            'action' => $this->router->generate('admin_article_edit_publication_date', ['id' => $trans->getId()]),
             'future_date_only' => false
         ]);
 
@@ -53,27 +48,29 @@ class EditPublishedDateAction extends AbstractController
             /** @var array{publishedAt: \DateTimeImmutable} $data */
             $data = $form->getData();
 
-            $article->setPublishedAt($data['publishedAt']);
-            $this->repo->save($article, true);
+            $trans->changePublishedAt($data['publishedAt']);
+            $this->repo->save($trans, true);
 
-            $event = new ArticlePublicationDateUpdatedEvent($article->getId(), $data['publishedAt']);
+
+            $event = new ArticleTranslationPublicationDateUpdatedEvent($trans->getId(), $data['publishedAt']);
             $logEntry = $this->logEventFactory->create(
-                $article->getId(),
+                $trans->getId(),
                 $this->userStorage->getUserWithException()->getUserIdentifier(),
-                Article::class,
+                ContentTranslation::class,
                 $event
             );
 
             $this->eventRepository->save($logEntry, true);
 
-            $this->blockContext->resetBlocksBelongsToArticle($article);
+
+            $this->blockContext->resetBlocksBelongsToArticle($trans->getArticle());
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 
             if ($request->headers->has('turbo-frame')) {
                 $stream = $this->renderBlockView('@XutimCore/admin/article/article_edit_publication_date.html.twig', 'stream_success', [
                     'article' => $article,
-                    'translation' => $translation
+                    'translation' => $trans
                 ]);
 
                 $this->addFlash('stream', $stream);

@@ -47,9 +47,7 @@ readonly class ChangeStatusHandler implements CommandHandlerInterface
         $trans->changeStatus($cmd->status);
 
         if ($trans->hasArticle()) {
-            $article = $trans->getArticle();
             if ($cmd->status->isPublished()) {
-                $article->setPublishedAt(new DateTimeImmutable());
                 $trans->changePublishedAt(new DateTimeImmutable());
             }
         }

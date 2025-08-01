@@ -79,7 +79,7 @@ class Article implements ArticleInterface
     private Collection $blockItems;
 
     #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?DateTimeImmutable $publishedAt;
+    private ?DateTimeImmutable $scheduledAt;
 
     /**
      * @param Collection<int, TagInterface> $tags
@@ -98,6 +98,7 @@ class Article implements ArticleInterface
         $this->archived = false;
         $this->featuredImage = $featuredImage;
         $this->files = new ArrayCollection();
+        $this->scheduledAt = null;
     }
 
     public function change(): void
@@ -207,34 +208,34 @@ class Article implements ArticleInterface
         return true;
     }
 
-    public function setPublishedAt(?DateTimeImmutable $date): void
+    public function setScheduledAt(?DateTimeImmutable $date): void
     {
-        $this->publishedAt = $date;
+        $this->scheduledAt = $date;
     }
 
-    public function getPublishedAt(): ?DateTimeImmutable
+    public function getScheduledAt(): ?DateTimeImmutable
     {
-        return $this->publishedAt;
+        return $this->scheduledAt;
     }
 
     public function canBePublished(): bool
     {
-        if ($this->publishedAt === null) {
+        if ($this->scheduledAt === null) {
             return true;
         }
         $now = new DateTimeImmutable();
 
-        return $this->publishedAt <= $now;
+        return $this->scheduledAt <= $now;
     }
 
     public function isPublishingScheduled(): bool
     {
-        if ($this->publishedAt === null) {
+        if ($this->scheduledAt === null) {
             return false;
         }
         $now = new DateTimeImmutable();
 
-        return $this->publishedAt > $now;
+        return $this->scheduledAt > $now;
     }
 
     public function getFeaturedImage(): ?FileInterface

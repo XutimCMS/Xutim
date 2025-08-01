@@ -61,9 +61,9 @@ interface ArticleInterface
 
     public function prepareDeletion(): bool;
 
-    public function setPublishedAt(?DateTimeImmutable $date): void;
+    public function setScheduledAt(?DateTimeImmutable $date): void;
 
-    public function getPublishedAt(): ?DateTimeImmutable;
+    public function getScheduledAt(): ?DateTimeImmutable;
 
     public function canBePublished(): bool;
 

@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\BlockContext;
-use Xutim\CoreBundle\Domain\Event\Article\ArticlePublicationDateUpdatedEvent;
+use Xutim\CoreBundle\Domain\Event\Article\ArticleScheduledDateUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\PublicationStatus;
@@ -47,7 +47,7 @@ class EditScheduledPublishedDateAction extends AbstractController
             throw $this->createNotFoundException('The translation of an article does not exist');
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-        $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getPublishedAt()], [
+        $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getScheduledAt()], [
             'action' => $this->router->generate('admin_article_edit_scheduled_publication_date', ['id' => $article->getId()]),
             'future_date_only' => true
         ]);
@@ -57,10 +57,10 @@ class EditScheduledPublishedDateAction extends AbstractController
             /** @var array{publishedAt: \DateTimeImmutable} $data */
             $data = $form->getData();
 
-            $article->setPublishedAt($data['publishedAt']);
+            $article->setScheduledAt($data['publishedAt']);
             $this->repo->save($article, true);
 
-            $event = new ArticlePublicationDateUpdatedEvent($article->getId(), $data['publishedAt']);
+            $event = new ArticleScheduledDateUpdatedEvent($article->getId(), $data['publishedAt']);
             $logEntry = $this->logEventFactory->create(
                 $article->getId(),
                 $this->userStorage->getUserWithException()->getUserIdentifier(),

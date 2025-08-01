@@ -23,8 +23,8 @@ class ArticleRepository extends ServiceEntityRepository
         'title' => 'translation.title',
         'slug' => 'translation.slug',
         'tags' => 'tagTranslation.name',
-        'updatedAt' => 'article.updatedAt',
-        'publishedAt' => 'article.publishedAt'
+        'updatedAt' => 'translation.updatedAt',
+        'publishedAt' => 'translation.publishedAt'
     ];
 
     public function __construct(ManagerRegistry $registry, string $entityClass)
@@ -73,46 +73,49 @@ class ArticleRepository extends ServiceEntityRepository
         return $count;
     }
 
+
+
     public function queryByFilter(FilterDto $filter, ?string $locale = null): QueryBuilder
     {
         $builder = $this->createQueryBuilder('article')
-            ->select('article', 'translation')
-            ->leftJoin('article.translations', 'translation')
+            ->select('article')
+            ->leftJoin('article.translations', 'translation', 'WITH', 'translation.locale = :localeParam')
+            ->leftJoin('article.defaultTranslation', 'defaultTranslation')
             ->leftJoin('article.tags', 'tag')
-            ->leftJoin('tag.translations', 'tagTranslation');
-        if ($locale !== null) {
-            $builder
-                ->where('translation.locale = :localeParam')
-                ->setParameter('localeParam', $locale);
-        }
+            ->leftJoin('tag.translations', 'tagTranslation')
+            ->setParameter('localeParam', $locale);
 
         if ($filter->hasSearchTerm() === true) {
             $builder
                 ->andWhere($builder->expr()->orX(
-                    $builder->expr()->like('LOWER(translation.title)', ':searchTerm'),
-                    $builder->expr()->like('LOWER(translation.slug)', ':searchTerm'),
-                    $builder->expr()->like('LOWER(translation.description)', ':searchTerm'),
-                    $builder->expr()->like('LOWER(tagTranslation.name)', ':searchTerm'),
+                    $builder->expr()->like('LOWER(COALESCE(translation.title, defaultTranslation.title))', ':searchTerm'),
+                    $builder->expr()->like('LOWER(COALESCE(translation.slug, defaultTranslation.slug))', ':searchTerm'),
+                    $builder->expr()->like('LOWER(COALESCE(translation.description, defaultTranslation.description))', ':searchTerm'),
+                    $builder->expr()->like('LOWER(tagTranslation.name)', ':searchTerm')
                     // $builder->expr()->like('LOWER(CAST(translation.content AS TEXT))', ':searchTerm')
                 ))
                 ->setParameter('searchTerm', '%' . strtolower($filter->searchTerm) . '%');
         }
 
-        // Check if the order has a valid orderDir and orderColumn parameters.
-        if (in_array(
+        if ($filter->orderColumn === 'publishedAt' || in_array(
             $filter->orderColumn,
             array_keys(self::FILTER_ORDER_COLUMN_MAP),
             true
-        ) === true) {
+        ) === false) {
+            $builder
+                ->addOrderBy(
+                    'CASE
+                        WHEN translation.status = :scheduledParam AND article.scheduledAt IS NOT NULL THEN article.scheduledAt
+                        ELSE COALESCE(translation.publishedAt, defaultTranslation.publishedAt)
+                     END',
+                    $filter->getOrderDir()
+                )
+                ->setParameter('scheduledParam', PublicationStatus::Scheduled);
+        } else {
             $builder->orderBy(
                 self::FILTER_ORDER_COLUMN_MAP[$filter->orderColumn],
                 $filter->getOrderDir()
             );
-        } else {
-            $builder
-                ->orderBy('article.publishedAt', 'desc')
-                ->addOrderBy('article.id', 'asc')
-            ;
         }
 
         return $builder;

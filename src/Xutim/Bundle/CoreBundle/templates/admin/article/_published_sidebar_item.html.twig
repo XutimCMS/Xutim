@@ -3,39 +3,36 @@
         {{ 'publish'|trans({}, 'admin')|capitalize }}:
     </twig:block>
     <twig:block name="content">
-        {% if article.publishedAt and article.publishedAt > date('now') %}
+        {% if translation.isPublished() %}
+            {% if translation.publishedAt %}
+                <span
+                    title="{{ translation.publishedAt|date('d/m/Y H:i') }}"
+                    data-controller="tooltip"
+                >
+                    {{ translation.publishedAt|time_ago }}
+                </span>
+            {% else %}
+                -
+            {% endif %}
+        {% elseif article.isPublishingScheduled() %}
             <span
-                title="{{ article.publishedAt|date('d/m/Y H:i') }}"
+                title="{{ article.scheduledAt|date('d/m/Y H:i') }}"
                 data-controller="tooltip"
             >
-                {{ article.publishedAt|time_until }}
-            </span>
-        {% elseif article.publishedAt %}
-            <span
-                title="{{ article.publishedAt|date('d/m/Y H:i') }}"
-                data-controller="tooltip"
-            >
-                {{ article.publishedAt|time_ago }}
-            </span>
-        {% elseif translation.publishedAt %}
-            <span
-                title="{{ translation.publishedAt|date('d/m/Y H:i') }}"
-                data-controller="tooltip"
-            >
-                {{ translation.publishedAt|time_ago }}
+                {{ article.scheduledAt|time_until }}
             </span>
         {% else %}
             {{ 'Not yet published'|trans({}, 'admin') }}
         {% endif %}
 
-        {% if translation.article.publishedAt != null %}
+        {% if translation.isPublished() == true %}
             <div class="ms-auto">
                 <twig:Xutim:Admin:Button
                     tag="a"
                     variant="link"
                     class="p-0"
                     data-turbo-frame="modal"
-                    href="{{ admin_path('admin_article_edit_publication_date', {id: article.id}) }}"
+                    href="{{ admin_path('admin_article_edit_publication_date', {id: translation.id}) }}"
                 >
                     <twig:Xutim:Admin:Icon name="edit" />
                 </twig:Xutim:Admin:Button>
