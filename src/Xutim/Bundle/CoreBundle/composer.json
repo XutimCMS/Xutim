@@ -27,6 +27,7 @@
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.3",
+        "dragonmantank/cron-expression": "^3.4",
         "dunglas/doctrine-json-odm": "^1.4",
         "gedmo/doctrine-extensions": "^3.18",
         "jdenticon/jdenticon": "^1.0",
