@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 use Xutim\RedirectBundle\Action\Admin\CreateRedirectAction;
@@ -28,7 +28,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$factory', service(RedirectFactoryInterface::class))
         ->arg('$twig', service(Environment::class))
         ->arg('$formFactory', service(FormFactoryInterface::class))
-        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->arg('$redirectRouteService', service(RedirectRouteService::class))
@@ -39,7 +39,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$repo', service(RedirectRepositoryInterface::class))
         ->arg('$twig', service(Environment::class))
         ->arg('$formFactory', service(FormFactoryInterface::class))
-        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->arg('$redirectRouteService', service(RedirectRouteService::class))
@@ -56,7 +56,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(DeleteRedirectAction::class)
         ->arg('$csrfTokenChecker', service(CsrfTokenChecker::class))
         ->arg('$repo', service(RedirectRepositoryInterface::class))
-        ->arg('$router', service(UrlGeneratorInterface::class))
+        ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->tag('controller.service_arguments')
