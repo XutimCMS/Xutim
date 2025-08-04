@@ -1,9 +1,13 @@
 sup[data-footnote] {
+    all: unset;
+    display: inline;
     background-color: #fff8c4;
-    padding: 0 2px;
-    border-bottom: 1px dotted #888;
+    padding: 0 4px;
+    border-bottom: 1px #888;
+    vertical-align: middle;
     cursor: pointer;
     font-weight: bold;
+    font-size: 1.4em;
 }
 
 dialog#xutim-footnote-dialog {

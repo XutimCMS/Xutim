@@ -11,10 +11,12 @@ export default class XutimFootnoteInline {
                 class: true,
                 'data-footnote': true,
             },
+            svg: {
+                class: true,
+            },
         };
     }
 
-    // Private fields
     #api;
     #button;
 
