@@ -296,6 +296,8 @@ export default function createContentLink(title, icon) {
                         select.value = this.selectedId;
                     }
                 }
+
+                return true;
             } else {
                 this.selectedId = null;
                 this.button.classList.remove(
@@ -308,6 +310,8 @@ export default function createContentLink(title, icon) {
                         select.value = '';
                     }
                 }
+
+                return false;
             }
         }
     };
