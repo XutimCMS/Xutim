@@ -166,7 +166,7 @@ abstract class User implements UserInterface, JsonSerializable
         return $roles;
     }
 
-    private function hasRoleInHierarchy(string $role): bool
+    protected function hasRoleInHierarchy(string $role): bool
     {
         foreach ($this->getRoles() as $userRole) {
             if ($userRole === $role) {
