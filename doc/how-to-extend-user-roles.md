@@ -2,8 +2,6 @@
 
 This guide explains how to register a custom Symfony role, display it in user forms, and define its permissions and description using the extension points provided by `XutimSecurityBundle`.
 
----
-
 ## 1. Define the Custom Role Constant
 
 In your application, define a role constant. For example:
@@ -20,8 +18,6 @@ class User
     // ...
 }
 ```
-
----
 
 ## 2. Add the Role to the Security Role Hierarchy
 
@@ -72,8 +68,6 @@ You can also completely change the `config/packages/security.yaml` role_hierarch
     role_hierarchy: !php/const Xutim\SecurityBundle\Security\UserRoles::ROLE_HIERARCHY
 ```
 
----
-
 ## 3. Register the Role in the Role Provider
 
 Override the default `UserRolesProviderInterface` to include your custom role in the user form.
@@ -105,8 +99,6 @@ And register it in `services.yaml`:
 services:
     Xutim\SecurityBundle\Service\UserRolesProviderInterface: '@App\Service\AppUserRolesProvider'
 ```
-
----
 
 ## 4. Add a Translatable Description
 
@@ -144,8 +136,6 @@ services:
     Xutim\SecurityBundle\Service\UserRoleDescriptorProviderInterface: '@App\Service\AppUserRoleDescriptorProvider'
 ```
 
----
-
 ## 5. Translate the Role Descriptions (Optional)
 
 Add translations to your `translations/messages.{locale}.yaml`:
@@ -156,8 +146,6 @@ Add translations to your `translations/messages.{locale}.yaml`:
 Has full control over the CMS, including the ability to modify the code.: 'Has full control over the CMS, including the ability to modify the code.'
 Can manage events, schedules, and related content.: 'Can manage events, schedules, and related content.'
 ```
-
----
 
 ## Note: Override `hasRoleInHierarchy()` if Extending the User Entity
 
@@ -194,17 +182,3 @@ public function hasRoleInHierarchy(string $role, RoleHierarchyInterface $hierarc
 ```
 
 You can inject `RoleHierarchyInterface` via controller, service, or security voter where needed.
-
----
-
-## Summary
-
-| Step | Action                                                |
-| ---- | ----------------------------------------------------- |
-| 1    | Define the role constant                              |
-| 2    | Add to Symfony's role hierarchy                       |
-| 3    | Register in `UserRolesProviderInterface`              |
-| 4    | Describe it via `UserRoleDescriptorProviderInterface` |
-| 5    | (Optional) Translate it                               |
-
-This modular design lets you add new roles without modifying the core bundle, keeping your app maintainable and extensible.
