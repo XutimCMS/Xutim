@@ -150,11 +150,21 @@
                     {% endif %}
                 </td>
                 <td>
-                    {{ translation.updatedAt|time_ago() }}
+                    <span
+                        title="{{ translation.updatedAt|date('d/m/Y H:i') }}"
+                        data-controller="tooltip"
+                    >
+                        {{ translation.updatedAt|time_ago() }}
+                    </span>
                 </td>
                 <td>
                     {% if translation.publishedAt %}
-                        {{ translation.publishedAt|time_ago() }}
+                        <span
+                            title="{{ translation.publishedAt|date('d/m/Y H:i') }}"
+                            data-controller="tooltip"
+                        >
+                            {{ translation.publishedAt|time_ago() }}
+                        </span>
                     {% else %}
                         -
                     {% endif %}
