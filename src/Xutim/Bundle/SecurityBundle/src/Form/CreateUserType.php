@@ -20,7 +20,8 @@ use Symfony\Component\Validator\Constraints\NotNull;
 use Traversable;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Validator\UniqueEmail;
-use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\UserRoleDescriptorProviderInterface;
+use Xutim\SecurityBundle\Service\UserRolesProviderInterface;
 use Xutim\SecurityBundle\Validator\UniqueUsername;
 
 /**
@@ -29,8 +30,11 @@ use Xutim\SecurityBundle\Validator\UniqueUsername;
  */
 class CreateUserType extends AbstractType implements DataMapperInterface
 {
-    public function __construct(private readonly SiteContext $siteContext)
-    {
+    public function __construct(
+        private readonly SiteContext $siteContext,
+        private readonly UserRolesProviderInterface $rolesProvider,
+        private readonly UserRoleDescriptorProviderInterface $roleDescriptorProvider,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -55,20 +59,16 @@ class CreateUserType extends AbstractType implements DataMapperInterface
                 ]
             ])
             ->add('roles', ChoiceType::class, [
-                'choices' => [
-                    str_replace('ROLE_', '', UserRoles::ROLE_DEVELOPER) => UserRoles::ROLE_DEVELOPER,
-                    str_replace('ROLE_', '', UserRoles::ROLE_ADMIN) => UserRoles::ROLE_ADMIN,
-                    str_replace('ROLE_', '', UserRoles::ROLE_TRANSLATOR) => UserRoles::ROLE_TRANSLATOR,
-                    str_replace('ROLE_', '', UserRoles::ROLE_EDITOR) => UserRoles::ROLE_EDITOR
-                ],
+                'choices' => $this->rolesProvider->getAvailableRoles(),
                 'choice_label' => function ($choice, string $key, mixed $value): string {
-                    return $key . ' (' . match ($value) {
-                        UserRoles::ROLE_DEVELOPER => new TranslatableMessage('Has full control over the CMS, including the ability to modify the code.'),
-                        UserRoles::ROLE_ADMIN => new TranslatableMessage('Has full control over the CMS, except for code-related operations.'),
-                        UserRoles::ROLE_TRANSLATOR => new TranslatableMessage('Can view and translate articles and pages in the assigned languages.'),
-                        UserRoles::ROLE_EDITOR => new TranslatableMessage('Can create and edit articles, pages, and other types of content.'),
-                        default => ''
-                    } . ')';
+                    $descriptions = $this->roleDescriptorProvider->getRoleDescriptions();
+
+                    $desc = '';
+                    if (isset($descriptions[$value]) === true) {
+                        $desc = ' (' . $descriptions[$value] . ')';
+                    }
+                    
+                    return sprintf('%s%s', $key, $desc);
                 },
                 'multiple' => true,
                 'expanded' => true,
