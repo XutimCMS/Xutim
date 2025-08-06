@@ -173,8 +173,10 @@ abstract class User implements UserInterface, JsonSerializable
                 return true;
             }
 
-            if (in_array($role, UserRoles::ROLE_HIERARCHY[$userRole], true)) {
-                return true;
+            if (array_key_exists($userRole, UserRoles::ROLE_HIERARCHY) === true) {
+                if (in_array($role, UserRoles::ROLE_HIERARCHY[$userRole], true)) {
+                    return true;
+                }
             }
         }
 
