@@ -80,7 +80,9 @@ class ResetPasswordAction
         }
 
         // The token is valid; allow the user to change their password.
-        $form = $this->formFactory->create(ChangePasswordFormType::class);
+        $form = $this->formFactory->create(ChangePasswordFormType::class, [], [
+            'action' => $this->router->generate('admin_reset_password')
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
