@@ -17,7 +17,7 @@
                         href="{{ admin_path('admin_page_edit', {id: page.id}) }}"
                         tag="a"
                     >
-                        {{ 'Add the translation'|trans({}, 'admin') }}
+                        {{ 'Add translation'|trans({}, 'admin') }}
                     </twig:Xutim:Admin:Button>
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
@@ -27,7 +27,8 @@
         <twig:Xutim:Admin:SidebarSection>
             {{
                 include('@XutimCore/admin/page/_publication_status_sidebar_item.html.twig',
-            ) }}
+            )
+            }}
 
             {%
                 if translation is defined and translation is not same as(null) and translation.untranslatedChange()

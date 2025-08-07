@@ -17,7 +17,7 @@
                         href="{{ admin_path('admin_event_edit', {id: event.id}) }}"
                         tag="a"
                     >
-                        {{ 'Add the translation'|trans({}, 'admin') }}
+                        {{ 'Add translation'|trans({}, 'admin') }}
                     </twig:Xutim:Admin:Button>
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
@@ -25,7 +25,9 @@
     {% endif %}
     {% if translation %}
         <twig:Xutim:Admin:SidebarSection>
-            {{ include('@XutimEvent/admin/event/_event_status_item.html.twig') }}
+            {{
+                include('@XutimEvent/admin/event/_event_status_item.html.twig')
+            }}
 
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="header">
