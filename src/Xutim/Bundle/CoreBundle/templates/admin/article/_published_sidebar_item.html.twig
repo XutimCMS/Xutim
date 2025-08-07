@@ -1,6 +1,10 @@
 <twig:Xutim:Admin:SidebarItem id="published-at-sidebar-item">
     <twig:block name="header">
-        {{ 'publish'|trans({}, 'admin')|capitalize }}:
+        {% if article.isPublishingScheduled() %}
+            {{ 'scheduled for'|trans({}, 'admin')|capitalize }}:
+        {% else %}
+            {{ 'published on'|trans({}, 'admin')|capitalize }}:
+        {% endif %}
     </twig:block>
     <twig:block name="content">
         {% if translation.isPublished() %}
@@ -15,12 +19,19 @@
                 -
             {% endif %}
         {% elseif article.isPublishingScheduled() %}
-            <span
-                title="{{ article.scheduledAt|date('d/m/Y H:i') }}"
+            <time
+                datetime="{{ article.scheduledAt|date('c') }}"
+                title="{{ article.scheduledAt|format_datetime('long') }}"
+                class="d-inline-flex flex-column"
                 data-controller="tooltip"
             >
-                {{ article.scheduledAt|time_until }}
-            </span>
+                <span class="mb-1">
+                    {{ article.scheduledAt|format_datetime() }}
+                </span>
+                <span>
+                    {{ article.scheduledAt|time_ago() }}
+                </span>
+            </time>
         {% else %}
             {{ 'Not yet published'|trans({}, 'admin') }}
         {% endif %}
