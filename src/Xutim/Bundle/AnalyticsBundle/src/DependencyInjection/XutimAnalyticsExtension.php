@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\AnalyticsBundle\DependencyInjection;
 
+use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -72,6 +73,7 @@ final class XutimAnalyticsExtension extends Extension implements PrependExtensio
         ]);
 
         $this->prependMessengerRouting($container, $config);
+        $this->prependAssetMapper($container, $config);
     }
 
     /**
@@ -101,5 +103,40 @@ final class XutimAnalyticsExtension extends Extension implements PrependExtensio
                 'messenger' => ['routing' => $routing],
             ]);
         }
+    }
+
+    /**
+     * @param array{
+     *      models: array<string, array{class: class-string}>,
+     *      message_routing?: array<class-string, string>
+     * } $config
+     */
+    private function prependAssetMapper(ContainerBuilder $container, array $config): void
+    {
+        if (!$this->isAssetMapperAvailable($container)) {
+            return;
+        }
+
+        $container->prependExtensionConfig('framework', [
+              'asset_mapper' => [
+                  'paths' => [
+                      __DIR__ . '/../../assets/dist' => '@xutim/analytics-bundle',
+                  ],
+              ],
+          ]);
+    }
+
+    private function isAssetMapperAvailable(ContainerBuilder $container): bool
+    {
+        if (!interface_exists(AssetMapperInterface::class)) {
+            return false;
+        }
+
+        $bundlesMetadata = $container->getParameter('kernel.bundles_metadata');
+        if (!isset($bundlesMetadata['FrameworkBundle'])) {
+            return false;
+        }
+
+        return is_file($bundlesMetadata['FrameworkBundle']['path'] . '/Resources/config/asset_mapper.php');
     }
 }

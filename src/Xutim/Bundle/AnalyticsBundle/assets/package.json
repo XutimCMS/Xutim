@@ -1,0 +1,19 @@
+{
+    "name": "@xutim/analytics-bundle",
+    "version": "1.0.0",
+    "symfony": {
+        "controllers": {
+            "analytics": {
+                "main": "dist/analytics_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.2.0"
+        }
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.2.0"
+    }
+}

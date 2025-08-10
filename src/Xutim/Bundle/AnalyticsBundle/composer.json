@@ -10,7 +10,8 @@
         "symfony",
         "analytics",
         "bundle",
-        "privacy"
+        "privacy",
+        "symfony-ux"
     ],
     "homepage": "https://xutim.com",
     "license": "MIT",
