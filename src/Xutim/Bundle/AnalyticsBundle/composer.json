@@ -71,7 +71,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Xutim\\SecurityBundle\\": "src/"
+            "Xutim\\AnalyticsBundle\\": "src/"
         },
         "exclude-from-classmap": [
             "/Tests/"
@@ -79,7 +79,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Xutim\\SecurityBundle\\Tests\\": "tests/"
+            "Xutim\\AnalyticsBundle\\Tests\\": "tests/"
         }
     }
 }

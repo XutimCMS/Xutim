@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\AnalyticsBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Xutim\AnalyticsBundle\Domain\Model\AnalyticsEventInterface;
 use Xutim\AnalyticsBundle\Domain\Repository\AnalyticsEventRepositoryInterface;
 
@@ -13,6 +14,11 @@ use Xutim\AnalyticsBundle\Domain\Repository\AnalyticsEventRepositoryInterface;
  */
 class AnalyticsEventRepository extends ServiceEntityRepository implements AnalyticsEventRepositoryInterface
 {
+    public function __construct(ManagerRegistry $registry, string $entityClass)
+    {
+        parent::__construct($registry, $entityClass);
+    }
+
     public function save(AnalyticsEventInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);

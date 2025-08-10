@@ -25,14 +25,13 @@ final class XutimAnalyticsExtension extends Extension implements PrependExtensio
         $configs = $this->processConfiguration($this->getConfiguration([], $container), $config);
 
         foreach ($configs['models'] as $alias => $modelConfig) {
-            $container->setParameter(sprintf('xutim_security.model.%s.class', $alias), $modelConfig['class']);
+            $container->setParameter(sprintf('xutim_analytics.model.%s.class', $alias), $modelConfig['class']);
         }
 
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
 
         $loader->load('repositories.php');
         $loader->load('factories.php');
-        $loader->load('services.php');
         $loader->load('handlers.php');
         $loader->load('actions.php');
 

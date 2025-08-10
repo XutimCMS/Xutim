@@ -27,6 +27,8 @@ jobs:
                       split_repository: 'security-bundle'
                     - local_path: 'src/Xutim/Bundle/SnippetBundle'
                       split_repository: 'snippet-bundle'
+                    - local_path: 'src/Xutim/Bundle/AnalyticsBundle'
+                      split_repository: 'analytics-bundle'
                     - local_path: 'src/Xutim/Domain'
                       split_repository: 'domain'
 
