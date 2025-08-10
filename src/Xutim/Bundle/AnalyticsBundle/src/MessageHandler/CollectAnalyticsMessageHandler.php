@@ -68,7 +68,8 @@ final class CollectAnalyticsMessageHandler
                 country: null,
                 isBot: $isBot,
                 anonymizedIp: $anonymizedIp,
-            )
+            ),
+            true
         );
     }
 }
