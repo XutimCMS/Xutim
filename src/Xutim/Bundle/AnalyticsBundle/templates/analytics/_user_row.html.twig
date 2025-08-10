@@ -1,0 +1,36 @@
+<tr>
+    <td>
+        <span
+            class="avatar avatar-sm"
+            style="background-image: url({{ user.avatar }})"
+        ></span>
+    </td>
+    <td>
+        <a
+            href="{{ admin_path('admin_user_show', {id: user.id}) }}"
+            data-turbo-frame="_top"
+        >
+            {{ user.name }}
+        </a>
+    </td>
+    <td>{{ user.email }}</td>
+    <td>
+        {% for role in user.roles %}
+            <code>{{ role|replace({ROLE_: ''}) }}</code>
+        {% endfor %}
+    </td>
+    <td class="w-8 justify-end">
+        <div class="d-flex justify-content-end">
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                href="{{ impersonation_path(user.email) }}"
+                data-turbo-frame="_top"
+                data-turbo-prefetch="false"
+                class="mt-1 align-text-top pe-1"
+            >
+                <twig:Xutim:Admin:Icon name="spy" />
+            </twig:Xutim:Admin:Button>
+        </div>
+    </td>
+</tr>

@@ -1,0 +1,101 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}{{ 'profile'|trans({}, 'admin')|capitalize }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">{{ user.email }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:ModalForm
+        class="btn btn-primary d-none d-sm-inline-block"
+        action="{{ admin_path('admin_user_change_password') }}"
+        title="{{ 'new password'|trans({}, 'admin')|capitalize }}"
+    >
+        {{ 'change password'|trans({}, 'admin')|capitalize }}
+    </twig:Xutim:Admin:ModalForm>
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="row g-0">
+            <div class="col d-flex flex-column">
+                <div class="card-body">
+                    <div class="datagrid">
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">
+                                {{ 'user'|trans({}, 'admin') }}
+                            </div>
+                            <div class="datagrid-content">
+                                <div class="d-flex align-items-center">
+                                    <span
+                                        class="avatar avatar-xs me-2 rounded"
+                                        style="background-image: url({{ user.avatar }})"
+                                    ></span>
+                                    {{ user.name }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">
+                                {{ 'email'|trans({}, 'admin') }}
+                            </div>
+                            <div class="datagrid-content">{{ user.email }}</div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">
+                                {{ 'roles'|trans({}, 'admin') }}
+                            </div>
+                            <div class="datagrid-content">
+                                {% for role in user.roles %}
+                                    <code>{{ role|replace({ROLE_: ''}) }}</code>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if user.isTranslator() %}
+                            <div class="datagrid-item">
+                                <div class="datagrid-title">
+                                    {{ 'Languages'|trans({}, 'admin') }}
+                                </div>
+                                <div class="datagrid-content">
+                                    {% for locale in user.translationLocales %}
+                                        <code>{{ locale|language_name }}</code>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">
+                                {{ 'status'|trans({}, 'admin') }}
+                            </div>
+                            <div class="datagrid-content">
+                                <span class="status status-green">
+                                    {{ 'active'|trans({}, 'admin')|capitalize }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">
+                                {{ 'created_at'|trans({}, 'admin') }}
+                            </div>
+                            <div class="datagrid-content">
+                                {{ user.createdAt|date('d/m/Y H:i') }}
+                            </div>
+                        </div>
+
+                        <div class="datagrid-item">
+                            <div class="datagrid-title">
+                                {{ 'updated_at'|trans({}, 'admin') }}
+                            </div>
+                            <div class="datagrid-content">
+                                {{ user.createdAt|date('d/m/Y H:i') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -15,6 +15,7 @@ return ECSConfig::configure()
         __DIR__ . '/src/Xutim/Component/SecurityComponent/src',
         __DIR__ . '/src/Xutim/Bundle/RedirectBundle/src',
         __DIR__ . '/src/Xutim/Bundle/SnippetBundle/src',
+        __DIR__ . '/src/Xutim/Bundle/AnalyticsBundle/src',
         __DIR__ . '/src/Xutim/Bundle/UserBundle/src',
         __DIR__ . '/src/Xutim/Bundle/CoreBundle/tests',
         __DIR__ . '/src/Xutim/Bundle/EventBundle/tests',

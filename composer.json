@@ -98,6 +98,7 @@
     },
     "replace": {
         "xutim/domain": "self.version",
+        "xutimcms/analytics-bundle": "self.version",
         "xutimcms/core-bundle": "self.version",
         "xutimcms/domain": "self.version",
         "xutimcms/event-bundle": "self.version",
@@ -122,6 +123,7 @@
             "Xutim\\SnippetBundle\\": "src/Xutim/Bundle/SnippetBundle/src/"
         },
         "exclude-from-classmap": [
+            "src/Xutim/Bundle/AnalyticsBundle/Tests/",
             "src/Xutim/Bundle/CoreBundle/Tests/",
             "src/Xutim/Bundle/EventBundle/Tests/",
             "src/Xutim/Bundle/RedirectBundle/Tests/",
@@ -137,7 +139,10 @@
             "Xutim\\EventBundle\\Tests\\": "src/Xutim/Bundle/EventBundle/tests/",
             "Xutim\\RedirectBundle\\Tests\\": "src/Xutim/Bundle/RedirectBundle/tests/",
             "Xutim\\RedirectComponent\\Tests\\": "src/Xutim/Component/RedirectComponent/tests/",
-            "Xutim\\SecurityBundle\\Tests\\": "src/Xutim/Bundle/SecurityBundle/tests/",
+            "Xutim\\SecurityBundle\\Tests\\": [
+                "src/Xutim/Bundle/AnalyticsBundle/tests/",
+                "src/Xutim/Bundle/SecurityBundle/tests/"
+            ],
             "Xutim\\SecurityComponent\\Tests\\": "src/Xutim/Component/SecurityComponent/tests/",
             "Xutim\\SnippetBundle\\Tests\\": "src/Xutim/Bundle/SnippetBundle/tests/"
         }
