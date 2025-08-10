@@ -120,7 +120,7 @@ final class XutimAnalyticsExtension extends Extension implements PrependExtensio
         $container->prependExtensionConfig('framework', [
               'asset_mapper' => [
                   'paths' => [
-                      __DIR__ . '/../../assets/dist' => '@xutim/analytics-bundle',
+                      __DIR__ . '/../../assets' => '@xutim/analytics-bundle',
                   ],
               ],
           ]);
