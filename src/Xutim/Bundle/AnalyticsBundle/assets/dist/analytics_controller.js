@@ -32,7 +32,7 @@ export default class extends Controller {
 
         this._timer = setTimeout(() => {
             navigator.sendBeacon(
-                '/_analytics',
+                '/_analytics/collect',
                 JSON.stringify({
                     path: location.pathname,
                     screenSize: `${window.innerWidth}x${window.innerHeight}`,
