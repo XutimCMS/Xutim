@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Xutim\AnalyticsBundle\Factory;
 
+use Xutim\AnalyticsBundle\Domain\Factory\AnalyticsEventFactoryInterface;
 use Xutim\AnalyticsBundle\Domain\Model\AnalyticsEventInterface;
 
-class AnalyticsEventFactory implements AnalyticsEventInterface
+class AnalyticsEventFactory implements AnalyticsEventFactoryInterface
 {
     public function __construct(private readonly string $entityClass)
     {

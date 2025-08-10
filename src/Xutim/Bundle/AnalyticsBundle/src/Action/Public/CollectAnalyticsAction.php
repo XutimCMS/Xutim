@@ -16,7 +16,7 @@ class CollectAnalyticsAction
     ) {
     }
 
-    public function collect(Request $request): JsonResponse
+    public function __invoke(Request $request): JsonResponse
     {
         /** @var array<string, mixed>|null $data */
         $data = json_decode($request->getContent(), true);
