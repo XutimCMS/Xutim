@@ -29,9 +29,6 @@ class ContentTranslation implements ContentTranslationInterface
     #[Column(type: 'uuid')]
     private Uuid $id;
 
-    #[Column(type: 'integer', nullable: false)]
-    private int $visits;
-
     #[ManyToOne(targetEntity: PageInterface::class, inversedBy: 'translations')]
     #[JoinColumn(nullable: true)]
     private ?PageInterface $page;
@@ -68,7 +65,6 @@ class ContentTranslation implements ContentTranslationInterface
         $this->description = $description;
         $this->page = $page;
         $this->article = $article;
-        $this->visits = 0;
         Assert::false($page === null && $article === null, 'A content translation requires either a page or an article.');
     }
 

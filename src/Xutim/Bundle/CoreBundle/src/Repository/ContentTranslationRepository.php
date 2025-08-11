@@ -173,17 +173,6 @@ class ContentTranslationRepository extends ServiceEntityRepository
         return false;
     }
 
-    public function incrementVisits(ContentTranslationInterface $translation): void
-    {
-        $query = $this->getEntityManager()->createQuery(
-            'UPDATE ' . $this->entityClass . ' at 
-             SET at.visits = at.visits + 1
-             WHERE at.id = \'' . $translation->getId()->toRfc4122() . "'"
-        );
-
-        $query->execute();
-    }
-
     /**
      * @return array<int, ContentTranslationInterface>
      */

@@ -30,7 +30,6 @@ class ShowContentTranslation extends AbstractController
         ) {
             throw $this->createNotFoundException(sprintf('The content translation with a slug %s and locale %s was not found.', $slug, $contentLocale));
         }
-        $this->repository->incrementVisits($translation);
 
         if ($translation->hasArticle()) {
             $article = $translation->getArticle();
