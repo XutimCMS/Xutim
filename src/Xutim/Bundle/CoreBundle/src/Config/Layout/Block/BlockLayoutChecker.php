@@ -91,7 +91,26 @@ class BlockLayoutChecker
             return true;
         }
 
+        if ($block->getBlockItems()->count() === 0 && $this->canBeEmpty($config) === false) {
+            return false;
+        }
+
         return $this->processItems($block->getBlockItems(), $config);
+    }
+
+    /**
+     * @param array<BlockItemOption> $options
+     */
+    private function canBeEmpty(array $options): bool
+    {
+        foreach ($options as $option) {
+            if ($option instanceof BlockItemOptionCollection) {
+                continue;
+            }
+            return false;
+        }
+
+        return true;
     }
 
     /**
