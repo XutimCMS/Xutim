@@ -22,6 +22,7 @@ final readonly class CollectAnalyticsMessage
         public readonly ?string $userAgent,
         public readonly ?string $language,
         public readonly ?string $clientIp,
+        public readonly ?string $country,
         public readonly ?string $hostname = null,
         public readonly ?string $referrerDomain = null,
     ) {

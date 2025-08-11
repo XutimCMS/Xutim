@@ -65,7 +65,7 @@ final class CollectAnalyticsMessageHandler
                 loadTimeMs: $mes->loadTimeMs,
                 scrollDepth: $mes->scrollDepth,
                 clickedElements: $clicks,
-                country: null,
+                country: $mes->country,
                 isBot: $isBot,
                 anonymizedIp: $anonymizedIp,
             ),

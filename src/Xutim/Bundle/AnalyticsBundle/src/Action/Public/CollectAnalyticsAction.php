@@ -6,6 +6,7 @@ namespace Xutim\AnalyticsBundle\Action\Public;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Xutim\AnalyticsBundle\Message\CollectAnalyticsMessage;
 
@@ -43,7 +44,9 @@ class CollectAnalyticsAction
         $referer = $request->headers->get('Referer');
         $userAgent = $request->headers->get('User-Agent');
         $language = $request->headers->get('Accept-Language');
-        $clientIp = $request->getClientIp();
+        $proxyIp = $request->headers->get('CF-Connecting-IP');
+        $clientIp = $proxyIp ?: $request->getClientIp();
+        $country = $request->headers->get('CF-IPCountry');
         $hostname = $request->getHost();
 
         $referrerDomain = null;
@@ -62,10 +65,15 @@ class CollectAnalyticsAction
             userAgent: $userAgent,
             language: $language,
             clientIp: $clientIp,
+            country: $country,
             hostname: $hostname,
             referrerDomain: $referrerDomain,
         ));
 
-        return new JsonResponse(['ok' => true]);
+        return new JsonResponse(
+            ['ok' => true],
+            Response::HTTP_OK,
+            ['Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0', 'Pragma' => 'no-cache']
+        );
     }
 }
