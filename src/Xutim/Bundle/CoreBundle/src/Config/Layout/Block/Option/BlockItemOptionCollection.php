@@ -8,9 +8,8 @@ use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 
 readonly class BlockItemOptionCollection implements BlockItemOption
 {
-    public function __construct(
-        private BlockItemOption $option
-    ) {
+    public function __construct(private BlockItemOption $option)
+    {
     }
 
     public function canFullFill(BlockItemInterface $item): bool

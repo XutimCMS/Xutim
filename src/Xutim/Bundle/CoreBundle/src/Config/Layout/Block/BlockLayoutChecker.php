@@ -91,10 +91,6 @@ class BlockLayoutChecker
             return true;
         }
 
-        if ($block->getBlockItems()->count() === 0) {
-            return false;
-        }
-
         return $this->processItems($block->getBlockItems(), $config);
     }
 
