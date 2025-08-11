@@ -97,18 +97,16 @@ class ArticleRepository extends ServiceEntityRepository
                 ->setParameter('searchTerm', '%' . strtolower($filter->searchTerm) . '%');
         }
 
-        if ($filter->orderColumn === 'publishedAt' || in_array(
-            $filter->orderColumn,
-            array_keys(self::FILTER_ORDER_COLUMN_MAP),
-            true
-        ) === false) {
+        $hasOrder = in_array($filter->orderColumn, array_keys(self::FILTER_ORDER_COLUMN_MAP), true);
+
+        if ($filter->orderColumn === 'publishedAt' || $hasOrder === false) {
             $builder
                 ->addOrderBy(
                     'CASE
                         WHEN translation.status = :scheduledParam AND article.scheduledAt IS NOT NULL THEN article.scheduledAt
                         ELSE COALESCE(translation.publishedAt, defaultTranslation.publishedAt)
                      END',
-                    $filter->getOrderDir()
+                    $hasOrder === true ? $filter->getOrderDir() : 'desc'
                 )
                 ->setParameter('scheduledParam', PublicationStatus::Scheduled);
         } else {
