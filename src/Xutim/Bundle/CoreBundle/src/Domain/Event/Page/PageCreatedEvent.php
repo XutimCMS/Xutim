@@ -15,7 +15,6 @@ readonly class PageCreatedEvent implements DomainEvent
      */
     public function __construct(
         public Uuid $id,
-        public ?string $color,
         public array $locales,
         public Uuid $defaultTranslation,
         public DateTimeImmutable $createdAt,

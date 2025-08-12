@@ -60,7 +60,6 @@ readonly class CreatePageHandler implements CommandHandlerInterface
 
         $pageCreatedEvent = new PageCreatedEvent(
             $page->getId(),
-            $cmd->color,
             $cmd->locales,
             $translation->getId(),
             $page->getCreatedAt(),

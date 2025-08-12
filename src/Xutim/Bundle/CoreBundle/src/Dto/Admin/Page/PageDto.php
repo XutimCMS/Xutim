@@ -15,7 +15,6 @@ final readonly class PageDto
      */
     public function __construct(
         public ?string $layout,
-        public ?string $color,
         public string $preTitle,
         public string $title,
         public string $subTitle,
@@ -34,7 +33,6 @@ final readonly class PageDto
         $translation = $page->getDefaultTranslation();
         return new self(
             $page->getLayout(),
-            $page->getColor()->getHex(),
             $translation->getPreTitle(),
             $translation->getTitle(),
             $translation->getSubTitle(),

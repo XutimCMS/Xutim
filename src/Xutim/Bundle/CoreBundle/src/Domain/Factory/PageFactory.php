@@ -29,7 +29,6 @@ class PageFactory
         /** @var PageInterface $page */
         $page = new ($this->pageClass)(
             $data->layout,
-            $data->color,
             $data->locales,
             $parent,
             $featuredImage

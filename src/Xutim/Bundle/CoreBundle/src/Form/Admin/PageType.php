@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Form\Admin;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -119,14 +118,6 @@ class PageType extends AbstractType implements DataMapperInterface
                 'label' => new TranslatableMessage('In page', [], 'admin'),
                 'required' => false,
             ])
-            ->add('color', ColorType::class, [
-                'label' => new TranslatableMessage('color', [], 'admin'),
-                'required' => false,
-                'constraints' => [
-                    new Length(['max' => 6])
-                ],
-                'disabled' => $update,
-            ])
             ->add('featuredImage', HiddenType::class, [
                 'required' => false,
             ])
@@ -180,8 +171,6 @@ class PageType extends AbstractType implements DataMapperInterface
         $content = json_decode($jsonContent, true, 512, JSON_THROW_ON_ERROR);
         /** @var string $language */
         $language = $forms['locale']->getData();
-        /** @var string $color */
-        $color = $forms['color']->getData();
 
         /** @var ?string $featuredImageId */
         $featuredImageId = $forms['featuredImage']->getData();
@@ -192,7 +181,6 @@ class PageType extends AbstractType implements DataMapperInterface
 
         $viewData = new PageDto(
             $layout,
-            $color,
             $preTitle,
             $title,
             $subTitle,

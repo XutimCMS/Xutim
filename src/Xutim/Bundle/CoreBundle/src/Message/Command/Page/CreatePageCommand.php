@@ -15,7 +15,6 @@ final readonly class CreatePageCommand
      */
     public function __construct(
         public ?string $layout,
-        public ?string $color,
         public string $preTitle,
         public string $title,
         public string $subTitle,
@@ -34,7 +33,6 @@ final readonly class CreatePageCommand
     {
         return new self(
             $dto->layout,
-            $dto->color,
             $dto->preTitle,
             $dto->title,
             $dto->subTitle,

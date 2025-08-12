@@ -99,14 +99,13 @@ class Page implements PageInterface
      */
     public function __construct(
         ?string $layout,
-        ?string $colorHex,
         array $locales,
         ?PageInterface $parent,
         ?FileInterface $featuredImage
     ) {
         $this->id = Uuid::v4();
         $this->layout = $layout;
-        $this->color = new Color($colorHex);
+        $this->color = new Color('ef7d01');
         $this->translationLocales = $locales;
         $this->parent = $parent;
         $this->setRootParent($parent);
