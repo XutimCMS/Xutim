@@ -139,6 +139,11 @@ class Page implements PageInterface
         $this->setRootParent($parent);
     }
 
+    public function changeColor(?string $colorHex): void
+    {
+        $this->color = new Color($colorHex);
+    }
+
     public function addTranslation(ContentTranslationInterface $trans): void
     {
         if ($this->translations->contains($trans) === true) {
