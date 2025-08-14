@@ -45,7 +45,7 @@ class CollectAnalyticsAction
         $userAgent = $request->headers->get('User-Agent');
         $language = $request->headers->get('Accept-Language');
         $proxyIp = $request->headers->get('CF-Connecting-IP');
-        $clientIp = $proxyIp ?: $request->getClientIp();
+        $clientIp = $proxyIp === null || $proxyIp === '' ? $request->getClientIp() : $proxyIp;
         $country = $request->headers->get('CF-IPCountry');
         $hostname = $request->getHost();
 

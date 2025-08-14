@@ -15,6 +15,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(CollectAnalyticsMessageHandler::class)
         ->arg('$factory', service(AnalyticsEventFactoryInterface::class))
         ->arg('$repo', service(AnalyticsEventRepositoryInterface::class))
+        ->arg('$appSecret', param('kernel.secret'))
         ->tag('messenger.message_handler', [
             'handles' => CollectAnalyticsMessage::class,
             'bus' => 'command.bus'

@@ -8,12 +8,14 @@ use Xutim\AnalyticsBundle\Domain\Factory\AnalyticsEventFactoryInterface;
 use Xutim\AnalyticsBundle\Domain\Repository\AnalyticsEventRepositoryInterface;
 use Xutim\AnalyticsBundle\Message\CollectAnalyticsMessage;
 use Xutim\AnalyticsBundle\Util\IpAddressUtil;
+use Xutim\AnalyticsBundle\Util\SessionBucketUtil;
 
 final class CollectAnalyticsMessageHandler
 {
     public function __construct(
         private readonly AnalyticsEventFactoryInterface $factory,
         private readonly AnalyticsEventRepositoryInterface $repo,
+        private readonly string $appSecret
     ) {
     }
 
@@ -48,12 +50,20 @@ final class CollectAnalyticsMessageHandler
             $clicks[] = $row;
         }
 
-        $ua = $mes->userAgent ?? '';
-        $isBot = preg_match('/bot|crawler|spider|curl|fetch|preview/i', $ua) === 1;
+        $userAgent = $mes->userAgent ?? '';
+        $isBot = preg_match('/bot|crawler|spider|curl|fetch|preview/i', $userAgent) === 1;
 
         $anonymizedIp = $mes->clientIp !== null
             ? IpAddressUtil::anonymizeIp($mes->clientIp)
             : '0.0.0.0';
+
+        $sessionBucket = SessionBucketUtil::build(
+            $anonymizedIp,
+            $userAgent,
+            $mes->language,
+            30,
+            $this->appSecret
+        );
 
         $this->repo->save(
             $this->factory->create(
@@ -68,6 +78,7 @@ final class CollectAnalyticsMessageHandler
                 country: $mes->country,
                 isBot: $isBot,
                 anonymizedIp: $anonymizedIp,
+                sessionBucket: $sessionBucket
             ),
             true
         );

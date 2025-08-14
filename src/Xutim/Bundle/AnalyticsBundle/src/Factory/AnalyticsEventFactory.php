@@ -36,10 +36,11 @@ class AnalyticsEventFactory implements AnalyticsEventFactoryInterface
         array $clickedElements,
         ?string $country,
         bool $isBot,
-        ?string $anonymizedIp
+        ?string $anonymizedIp,
+        string $sessionBucket
     ): AnalyticsEventInterface {
         /** @var AnalyticsEventInterface $event */
-        $event = new ($this->entityClass)($path, $referer, $userAgent, $language, $screenSize, $loadTimeMs, $scrollDepth, $clickedElements, $country, $isBot, $anonymizedIp);
+        $event = new ($this->entityClass)($path, $referer, $userAgent, $language, $screenSize, $loadTimeMs, $scrollDepth, $clickedElements, $country, $isBot, $anonymizedIp, $sessionBucket);
 
         return $event;
     }

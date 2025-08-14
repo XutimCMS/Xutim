@@ -28,6 +28,7 @@ interface AnalyticsEventFactoryInterface
         array $clickedElements,
         ?string $country,
         bool $isBot,
-        ?string $anonymizedIp
+        ?string $anonymizedIp,
+        string $sessionBucket,
     ): AnalyticsEventInterface;
 }

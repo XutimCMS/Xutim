@@ -16,19 +16,19 @@ class AnalyticsEvent implements AnalyticsEventInterface
     #[Column(type: 'uuid')]
     private readonly Uuid $id;
 
-    #[Column(type: 'string')]
+    #[Column(type: 'text')]
     private readonly string $path;
 
-    #[Column(type: 'string', nullable: true)]
+    #[Column(type: 'text', nullable: true)]
     private readonly ?string $referer;
 
-    #[Column(type: 'string', nullable: true)]
+    #[Column(type: 'text', nullable: true)]
     private readonly ?string $userAgent;
 
     #[Column(type: 'string', nullable: true)]
     private readonly ?string $language;
 
-    #[Column(type: 'string', nullable: true)]
+    #[Column(type: 'string', length: 32, nullable: true)]
     private readonly ?string $screenSize;
 
     #[Column(type: 'integer', nullable: true)]
@@ -58,8 +58,11 @@ class AnalyticsEvent implements AnalyticsEventInterface
     #[Column(type: 'datetime_immutable')]
     private readonly \DateTimeImmutable $recordedAt;
 
-    #[Column(type: 'string', nullable: true)]
+    #[Column(type: 'string', length: 128, nullable: true)]
     private readonly ?string $anonymizedIp;
+
+    #[Column(type: 'string', length: 128)]
+    private readonly string $sessionBucket;
 
     /**
      * @param list<array{
@@ -81,7 +84,8 @@ class AnalyticsEvent implements AnalyticsEventInterface
         array $clickedElements,
         ?string $country,
         bool $isBot,
-        ?string $anonymizedIp
+        ?string $anonymizedIp,
+        string $sessionBucket
     ) {
         $this->id = Uuid::v4();
         $this->path = $path;
@@ -96,5 +100,76 @@ class AnalyticsEvent implements AnalyticsEventInterface
         $this->isBot = $isBot;
         $this->recordedAt = new \DateTimeImmutable();
         $this->anonymizedIp = $anonymizedIp;
+        $this->sessionBucket = $sessionBucket;
+    }
+
+    // Getters for the properties
+    public function getId(): Uuid
+    {
+        return $this->id;
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+    public function getReferer(): ?string
+    {
+        return $this->referer;
+    }
+    public function getUserAgent(): ?string
+    {
+        return $this->userAgent;
+    }
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+    public function getScreenSize(): ?string
+    {
+        return $this->screenSize;
+    }
+    public function getLoadTimeMs(): ?int
+    {
+        return $this->loadTimeMs;
+    }
+    public function getScrollDepth(): ?int
+    {
+        return $this->scrollDepth;
+    }
+
+    /**
+     * @return list<array{
+     *     tag: string,
+     *     id?: string,
+     *     class?: string,
+     *     role?: string,
+     *     text?: string
+     * }>
+     */
+    public function getClickedElements(): array
+    {
+        return $this->clickedElements;
+    }
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+    public function isBot(): bool
+    {
+        return $this->isBot;
+    }
+    public function getRecordedAt(): \DateTimeImmutable
+    {
+        return $this->recordedAt;
+    }
+    public function getAnonymizedIp(): ?string
+    {
+        return $this->anonymizedIp;
+    }
+
+    public function getSessionBucket(): string
+    {
+        return $this->sessionBucket;
     }
 }

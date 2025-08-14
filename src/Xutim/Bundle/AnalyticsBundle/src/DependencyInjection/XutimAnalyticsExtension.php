@@ -136,7 +136,12 @@ final class XutimAnalyticsExtension extends Extension implements PrependExtensio
         if (!isset($bundlesMetadata['FrameworkBundle'])) {
             return false;
         }
+        /** @var array<string> $frameworkConfig */
+        $frameworkConfig = $bundlesMetadata['FrameworkBundle'];
 
-        return is_file($bundlesMetadata['FrameworkBundle']['path'] . '/Resources/config/asset_mapper.php');
+        /** @var string $frameworkPath */
+        $frameworkPath = $frameworkConfig['path'];
+
+        return is_file($frameworkPath . '/Resources/config/asset_mapper.php');
     }
 }
