@@ -37,7 +37,7 @@ app.register('article-preview', ArticlePreview);
 app.register('auto-expand', AutoExpand);
 app.register('auto-submit', AutoSubmit);
 app.register('clipboard', Clipboard);
-app.register('datetime', DateTime);
+app.register('date-time', DateTime);
 app.register('dialog-modal', DialogModal);
 app.register('editorjs-form', EditorjsForm);
 app.register('featured-image', FeaturedImage);
