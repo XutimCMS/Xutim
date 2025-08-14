@@ -52,7 +52,6 @@ class ContentTranslation implements ContentTranslationInterface
         ?ArticleInterface $article
     ) {
         $this->id = Uuid::v4();
-        $this->scheduledAt = null;
         $this->status = PublicationStatus::Draft;
         $this->createdAt = $this->updatedAt = new DateTimeImmutable();
         $this->hasUntranslatedChange = false;

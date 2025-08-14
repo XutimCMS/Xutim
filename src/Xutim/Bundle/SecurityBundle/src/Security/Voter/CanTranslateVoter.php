@@ -9,6 +9,9 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 
+/**
+ * @extends Voter<string, string>
+ */
 class CanTranslateVoter extends Voter
 {
     public const TRANSLATE = 'can_translate';
