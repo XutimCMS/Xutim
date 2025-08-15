@@ -36,9 +36,9 @@ final class XutimAnalyticsExtension extends Extension implements PrependExtensio
         $loader->load('handlers.php');
         $loader->load('actions.php');
 
-        if ($container->getParameter('kernel.environment') === 'test') {
-            $loader->load('fixtures.php');
-        }
+        // if ($container->getParameter('kernel.environment') === 'test') {
+        //     $loader->load('fixtures.php');
+        // }
     }
 
     public function prepend(ContainerBuilder $container): void
