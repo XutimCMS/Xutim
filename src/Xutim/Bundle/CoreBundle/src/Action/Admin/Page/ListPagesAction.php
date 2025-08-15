@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Context\PageTreeContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
@@ -19,7 +20,8 @@ class ListPagesAction extends AbstractController
         private readonly PageRepository $pageRepo,
         private readonly ContentContext $contentContext,
         private readonly LogEventRepository $eventRepo,
-        private readonly SiteContext $siteContext
+        private readonly SiteContext $siteContext,
+        private readonly PageTreeContext $pageTreeContext,
     ) {
     }
 
@@ -39,7 +41,8 @@ class ListPagesAction extends AbstractController
         if ($translated === true) {
             $locale = $this->contentContext->getLanguage();
         }
-        $hierarchy = $this->pageRepo->hierarchyByPublished($locale, $archived);
+
+        $hierarchy = $this->pageTreeContext->getTree($locale, $archived);
         $path = $page !== null ? $this->pageRepo->getPathHydrated($page) : [];
 
         if ($this->isGranted('ROLE_ADMIN') === false && $this->isGranted('ROLE_TRANSLATOR')) {

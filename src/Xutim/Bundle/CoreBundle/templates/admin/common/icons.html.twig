@@ -1,3 +1,33 @@
+{% macro sprite(names) %}
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        style="position: absolute; width: 0; height: 0; overflow: hidden"
+    >
+        {% for name in names %}
+            {% set svg %}{% apply spaceless %}<twig:ux:icon
+                        :name="'tabler:'~name"
+                    />{% endapply %}{% endset %}
+
+            {# Replace outer <svg …>…</svg> with <symbol id="icon-name">…</symbol> #}
+            {{
+                svg
+        |replace({
+          '<svg': '<symbol id="icon-' ~ name ~ '"',
+          '</svg>': '</symbol>',
+        })
+        |raw
+            }}
+        {% endfor %}
+    </svg>
+{% endmacro %}
+
+{% macro icon(name, class = '') %}
+    <svg class="{{ class }}" aria-hidden="true" focusable="false">
+        <use href="#{{ 'icon-' ~ name }}"></use>
+    </svg>
+{% endmacro %}
+
 {% macro order_arrow(currentField, order, orderDirection) %}
     {% if currentField == order %}
         {% if orderDirection == 'asc' %}

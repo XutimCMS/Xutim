@@ -1,6 +1,8 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
+{% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+{% import '@XutimCore/admin/page/_page_recursive_item.html.twig' as tree %}
 
 {% block breadcrumbHeader %}
     {% if selectedPage %}
@@ -213,20 +215,47 @@
         <div class="{% if selectedPage %}col-md-4{% else %}col-md-12{% endif %}">
             <div class="card">
                 {% if hierarchy.pages is not empty %}
+                    {{
+                        icons.sprite(['dots', 'arrow-up', 'arrow-down', 'edit', 'folder', 'article', 'chevron-down-left'])
+                    }}
+                    {%
+                        set selectedId = selectedPage ? selectedPage.id.toRfc4122 : null
+                    %}
+                    {% set openIds = {} %}
+                    {% for sec in path %}
+                        {%
+                            set openIds = openIds|merge({(sec.id.toRfc4122): true})
+                        %}
+                    {% endfor %}
+                    {%
+                        set canEdit = is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
+                    %}
+
+                    {% set transEdit = 'edit'|trans|capitalize %}
+                    {% set transNewPage = 'New page'|trans({}, 'admin') %}
+                    {% set transNewArticle = 'New article'|trans({}, 'admin') %}
+                    {%
+                        set transMoveUp = 'move up'|trans({}, 'admin')|capitalize
+                    %}
+                    {%
+                        set transMoveDown = 'move down'|trans({}, 'admin')|capitalize
+                    %}
+
                     <ul class="list-unstyled list-group-flush me-2">
-                        {% for pageRootId in hierarchy.roots %}
-                            {% set node = hierarchy.pages[pageRootId] %}
-                            {{
-                                include('@XutimCore/admin/page/_page_recursive_item.html.twig', {
-                                    pages: hierarchy.pages,
-                                    node: node,
-                                    page: node.page,
-                                    child: false,
-                                    path: path,
-                                    selectedPage: selectedPage,
-                                })
-                            }}
-                        {% endfor %}
+                        {{
+                            tree.render_list(
+                                    hierarchy.pages,
+                                    hierarchy.roots,
+                                    selectedId,
+                                    openIds,
+                                    canEdit,
+                                    transEdit,
+                                    transNewPage,
+                                    transNewArticle,
+                                    transMoveUp,
+                                    transMoveDown,
+                                  )
+                        }}
                     </ul>
                 {% else %}
                     <div class="card-body">

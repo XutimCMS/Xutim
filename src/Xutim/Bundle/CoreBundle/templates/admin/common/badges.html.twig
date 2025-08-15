@@ -25,12 +25,13 @@
 {% endmacro %}
 
 {% macro languageBadge(object) %}
-    <twig:Xutim:Admin:Badge
+    <span
         data-controller="tooltip"
         title="{{ 'There is no translation for language %language%.'|trans({'%language%': content_context_language()|language_name}, 'admin') }}"
+        class="badge badge-outline text-primary me-1"
     >
         {{ object.locale }}
-    </twig:Xutim:Admin:Badge>
+    </span>
 {% endmacro %}
 
 {# {% macro publicationStatusBadge(status, extraClass) %} #}

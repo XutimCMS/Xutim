@@ -1,135 +1,83 @@
-{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-{% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
-{% set isRootPage = page.isRoot %}
-{% set isSelectedPage = selectedPage and selectedPage.id.equals(page.id) %}
+{% macro render_list(pages, ids, selectedId, openIds, canEdit,
+    transEdit, transNewPage, transNewArticle, transMoveUp, transMoveDown
+) %}
+    {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+    {% for id in ids %}
+        {% set node = pages[id] %}
+        {% set page = node.page %}
+        {% set translation = node.translation %}
+        {% set hasChildren = node.children is not empty %}
+        {% set isSelected = selectedId and selectedId == id %}
+        {% set opened = openIds is defined and openIds[id] is defined %}
 
-<li class="my-2 ms-3{{ isSelectedPage ? ' bg-yellow-lt' : '' }}">
-    {% if node.children is empty %}
-        <twig:Xutim:Admin:Icon name="chevron-down-left" class="text-black" />
-        {{
-            _self.pageLine(pages, node, page, child, loop.first, loop.last, selectedPage)
-        }}
-        {{ _self.subTree(pages, node, page, child, path, selectedPage) }}
-    {% else %}
-        {%
-            set detailsOpened = path|reduce((carry, sec, k) => carry is same as(true) or page.id.equals(sec.id), false)
-        %}
-        <details {{ detailsOpened ? ' open="open"' : '' }} class="text-black">
-            <summary class="ms-2{{ isSelectedPage ? ' fw-bold' : '' }}">
-                {{
-                    _self.pageLine(pages, node, page, child, loop.first, loop.last, selectedPage)
-                }}
-            </summary>
-            {{ _self.subTree(pages, node, page, child, path, selectedPage) }}
-        </details>
-    {% endif %}
-</li>
-
-{% macro subTree(pages, node, page, child, path, selectedPage) %}
-    {% if node.children is not empty %}
-        <ul class="list-unstyled">
-            {% for childId in node.children %}
-                {% set child = pages[childId] %}
-                {{
-                    include('@XutimCore/admin/page/_page_recursive_item.html.twig', {
-                        pages: pages,
-                        node: child,
-                        page: child.page,
-                        child: true,
-                        path: path,
-                        selectedPage: selectedPage,
-                    })
-                }}
-            {% endfor %}
-        </ul>
-    {% endif %}
+        <li class="my-2 ms-3{{ isSelected ? ' bg-yellow-lt' : '' }}">
+            {% if not hasChildren %}
+                {{ icons.icon('chevron-down-left', 'text-black w-3 h-3') }}
+                {{ _self.line(page, translation, isSelected, false, false, canEdit,
+                    transEdit, transNewPage, transNewArticle, transMoveUp, transMoveDown) }}
+            {% else %}
+                <details{{ opened ? ' open="open"' : '' }} class="text-black">
+                    <summary class="ms-2{{ isSelected ? ' fw-bold' : '' }}">
+                        {{ _self.line(page, translation, isSelected, loop.first, loop.last, canEdit,
+                            transEdit, transNewPage, transNewArticle, transMoveUp, transMoveDown) }}
+                    </summary>
+                    <ul class="list-unstyled">
+                        {{ _self.render_list(pages, node.children, selectedId, openIds, canEdit,
+                            transEdit, transNewPage, transNewArticle, transMoveUp, transMoveDown) }}
+                    </ul>
+                </details>
+            {% endif %}
+        </li>
+    {% endfor %}
 {% endmacro %}
 
-{% macro pageLine(pages, node, page, child, first, last, selectedPage) %}
-    {% set isSelectedPage = selectedPage and selectedPage.id.equals(page.id) %}
-    {# {{ badges.publicationStatusBadge(page) }} #}
-    {%
-        set pageTranslation = page.translationByLocaleOrDefault(content_context_language())
-    %}
-
+{% macro line(page, translation, isSelected, first, last, canEdit,
+    transEdit, transNewPage, transNewArticle, transMoveUp, transMoveDown
+) %}
+    {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
+    {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
     <span class="me-1"></span>
-
-    {%
-        import '@XutimCore/admin/common/translatable.html.twig' as translatable
-    %}
-    {{ translatable.languageBadge(pageTranslation) }}
+    {{ translatable.languageBadge(translation) }}
 
     <a href="{{ admin_path('admin_page_list', {id: page.id}) }}">
-        <span class="text-black{{ isSelectedPage ? ' fw-bold' : '' }}">
-            {{
-                page.translationByLocaleOrDefault(content_context_language()).title
-            }}
+        <span class="text-black{{ isSelected ? ' fw-bold' : '' }}">
+            {{ translation.title }}
         </span>
     </a>
 
-    {%
-        if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
-    %}
+    {% if canEdit %}
         <div class="dropdown float-end">
-            <a href="#" class="link-secondary" data-bs-toggle="dropdown">
-                <twig:Xutim:Admin:Icon name="dots" />
+            <a href="#" class="link-secondary" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ icons.icon('dots', 'w-3 h-3') }}
             </a>
             <div class="dropdown-menu dropdown-menu-end">
-                <a
-                    class="dropdown-item"
-                    href="{{ admin_path('admin_page_edit', {id: page.id}) }}"
-                >
-                    <twig:Xutim:Admin:Icon name="edit" class="me-2" />
-                    {{ 'edit'|trans|capitalize }}
+                <a class="dropdown-item" href="{{ admin_path('admin_page_edit', {id: page.id}) }}">
+                    {{ icons.icon('edit', 'me-2 w-3 h-3') }} {{ transEdit }}
                 </a>
 
                 <div class="dropdown-divider"></div>
 
-                <a
-                    class="dropdown-item"
-                    href="{{ admin_path('admin_page_new', {id: page.id}) }}"
-                >
-                    <twig:Xutim:Admin:Icon name="folder" class="me-2" />
-                    {{ 'New page'|trans({}, 'admin') }}
+                <a class="dropdown-item" href="{{ admin_path('admin_page_new', {id: page.id}) }}">
+                    {{ icons.icon('folder', 'me-2 w-3 h-3') }} {{ transNewPage }}
                 </a>
 
-                <a
-                    class="dropdown-item"
-                    href="{{ admin_path('admin_article_new', {id: page.id}) }}"
-                >
-                    <twig:Xutim:Admin:Icon name="article" class="me-2" />
-                    {{ 'New article'|trans({}, 'admin') }}
+                <a class="dropdown-item" href="{{ admin_path('admin_article_new', {id: page.id}) }}">
+                    {{ icons.icon('article', 'me-2 w-3 h-3') }} {{ transNewArticle }}
                 </a>
 
-                {% if first is not same as(true) or last is not same as(true) %}
-                    <div class="dropdown-divider"></div>
-
-                    {% if first is not same as(true) %}
-                        <a
-                            class="dropdown-item"
-                            href="{{ admin_path('admin_page_move', {id: page.id, dir: 'up'}) }}"
-                        >
-                            <twig:Xutim:Admin:Icon
-                                name="arrow-up"
-                                class="me-2"
-                            />
-                            {{ 'move up'|trans({}, 'admin')|capitalize }}
-                        </a>
-                    {% endif %}
-
-                    {% if last is not same as(true) %}
-                        <a
-                            class="dropdown-item"
-                            href="{{ admin_path('admin_page_move', {id: page.id, dir: 'down'}) }}"
-                        >
-                            <twig:Xutim:Admin:Icon
-                                name="arrow-down"
-                                class="me-2"
-                            />
-                            {{ 'move down'|trans({}, 'admin')|capitalize }}
-                        </a>
-                    {% endif %}
-                {% endif %}
+              {% if not first or not last %}
+                  <div class="dropdown-divider"></div>
+                  {% if not first %}
+                      <a class="dropdown-item" href="{{ admin_path('admin_page_move', {id: page.id, dir: 'up'}) }}">
+                          {{ icons.icon('arrow-up', 'me-2 w-3 h-3') }} {{ transMoveUp }}
+                      </a>
+                  {% endif %}
+                  {% if not last %}
+                      <a class="dropdown-item" href="{{ admin_path('admin_page_move', {id: page.id, dir: 'down'}) }}">
+                          {{ icons.icon('arrow-down', 'me-2 w-3 h-3') }} {{ transMoveDown }}
+                      </a>
+                  {% endif %}
+              {% endif %}
             </div>
         </div>
     {% endif %}

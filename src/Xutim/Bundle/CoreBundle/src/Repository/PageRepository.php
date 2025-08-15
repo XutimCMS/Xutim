@@ -25,10 +25,6 @@ class PageRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<string, array{page: PageInterface, children: array}>
-     */
-
-    /**
      * @return array{
      *      roots: array<string>,
      *      pages: array<string, array{page: PageInterface, translation: ContentTranslationInterface,children: list<string>}>
@@ -37,15 +33,23 @@ class PageRepository extends ServiceEntityRepository
     public function hierarchyByPublished(?string $locale, bool $archived = false): array
     {
         $builder = $this->createQueryBuilder('node');
-        $builder->leftJoin('node.children', 'children')
-            ->addSelect('children')
-            ->leftJoin('node.defaultTranslation', 'translation')
-            ->leftJoin('node.translations', 'trans')
-            ->orderBy('node.parent, node.position');
-        if ($locale !== null && strlen($locale) > 0) {
+        $builder
+            ->leftJoin('node.parent', 'parent')
+            ->addSelect('parent')
+            // fetch exactly two translations per page:
+            // - locale-specific (if present)
+            // - defaultTranslation (always one)
+
+            ->leftJoin('node.defaultTranslation', 'transDef')
+            ->addSelect('transDef')
+
+            ->addOrderBy('parent.id', 'ASC')
+            ->addOrderBy('node.position', 'ASC');
+        if ($locale !== null && $locale !== '') {
             $builder
-                ->where('trans.locale = :localeParam')
-                ->setParameter('localeParam', $locale);
+                ->leftJoin('node.translations', 'transLoc', 'WITH', 'transLoc.locale = :locale')
+                ->addSelect('transLoc')
+                ->setParameter('locale', $locale);
         }
 
         if ($archived === false) {
@@ -64,7 +68,12 @@ class PageRepository extends ServiceEntityRepository
                 $rootPagesIds[] = $pageId;
             }
 
-            $trans = $locale !== null ? $page->getTranslationByLocaleOrDefault($locale) : $page->getDefaultTranslation();
+            $trans = null;
+            if ($locale !== null && $locale !== '') {
+                $trans = $page->getTranslations()->get($locale) ?: null;
+            }
+            $trans = $trans ?? $page->getDefaultTranslation();
+
             $pagesMap[$pageId] = [
                 'page' => $page,
                 'translation' => $trans,
@@ -74,9 +83,9 @@ class PageRepository extends ServiceEntityRepository
 
         foreach ($pages as $page) {
             if ($page->getParent() !== null) {
-                $pageId = $page->getId()->toRfc4122();
+                $childId = $page->getId()->toRfc4122();
                 $parentId = $page->getParent()->getId()->toRfc4122();
-                $pagesMap[$parentId]['children'][] = $pageId;
+                $pagesMap[$parentId]['children'][] = $childId;
             }
         }
 
