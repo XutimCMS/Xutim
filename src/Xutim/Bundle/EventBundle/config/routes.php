@@ -15,35 +15,62 @@ use Xutim\EventBundle\Action\Admin\EditEventStatusAction;
 use Xutim\EventBundle\Action\Admin\ListEventsAction;
 
 return function (RoutingConfigurator $routes) {
-    $routes->add('admin_event_new', '/event/new/{id?null}')
+    $requirements = ['_content_locale' => '[a-z]{2}(?:_[A-Za-z]{2,8})*'];
+    $defaults = ['_content_locale' => '%kernel.default_locale%'];
+
+    $routes->add('admin_event_new', '/admin/{_content_locale}/event/new/{id?null}')
         ->methods(['get', 'post'])
-        ->controller(CreateEventAction::class);
+        ->controller(CreateEventAction::class)
 
-    $routes->add('admin_event_delete', '/event/delete/{id}')
-        ->controller(DeleteEventAction::class);
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
 
-    $routes->add('admin_event_edit', '/event/edit/{id}/{locale? }')
+    $routes->add('admin_event_delete', '/admin/{_content_locale}/event/delete/{id}')
+        ->controller(DeleteEventAction::class)
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
+
+    $routes->add('admin_event_edit', '/admin/{_content_locale}/event/edit/{id}/{locale? }')
         ->methods(['get', 'post'])
-        ->controller(EditEventAction::class);
+        ->controller(EditEventAction::class)
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
 
-    $routes->add('admin_event_article_edit', '/event/edit-article/{id}')
+    $routes->add('admin_event_article_edit', '/admin/{_content_locale}/event/edit-article/{id}')
         ->methods(['get', 'post'])
-        ->controller(EditEventArticleAction::class);
+        ->controller(EditEventArticleAction::class)
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
 
-    $routes->add('admin_event_dates_edit', '/event/edit-dates/{id}')
+    $routes->add('admin_event_dates_edit', '/admin/{_content_locale}/event/edit-dates/{id}')
         ->methods(['get', 'post'])
-        ->controller(EditEventDatesAction::class);
+        ->controller(EditEventDatesAction::class)
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
 
-    $routes->add('admin_event_page_edit', '/event/edit-page/{id}')
+    $routes->add('admin_event_page_edit', '/admin/{_content_locale}/event/edit-page/{id}')
         ->methods(['get', 'post'])
-        ->controller(EditEventPageAction::class);
+        ->controller(EditEventPageAction::class)
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
 
-    $routes->add('admin_event_list', '/admin/event')
+    $routes->add('admin_event_list', '/admin/{_content_locale}/event')
         ->methods(['get'])
-        ->controller(ListEventsAction::class);
+        ->controller(ListEventsAction::class)
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
 
-    $routes->add('admin_event_publication_status_edit', '/publication-status/event/edit/{id}/{status}')
+    $routes->add('admin_event_publication_status_edit', '/admin/{_content_locale}/publication-status/event/edit/{id}/{status}')
         ->methods(['post'])
-        ->requirements(['status' => new EnumRequirement(PublicationStatus::class)])
-        ->controller(EditEventStatusAction::class);
+        ->controller(EditEventStatusAction::class)
+        ->requirements(array_merge($requirements, ['status' => new EnumRequirement(PublicationStatus::class)]))
+        ->defaults($defaults)
+    ;
 };
