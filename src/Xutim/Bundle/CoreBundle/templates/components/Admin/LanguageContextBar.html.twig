@@ -64,7 +64,6 @@
 {%
     macro renderLocale(locale, entity, simpleTranslation, routeName, baseRouteParams, baseQuery, activeLocale, translatedLabel)
 %}
-    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
     {%
         set fullParams = baseRouteParams|merge({_content_locale: locale})|merge(baseQuery)
     %}
@@ -78,6 +77,7 @@
         %}
 
         <twig:Xutim:Admin:Badge class="{{ classes }}">
+            {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
             {% if entity is not null %}
                 {% set trans = entity.translationByLocale(locale) %}
                 {% if trans is null %}
