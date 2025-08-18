@@ -37,12 +37,9 @@ class ListPagesAction extends AbstractController
         }
         $archived = $request->query->getBoolean('archived');
         $translated = $request->query->getBoolean('translated');
-        $locale = null;
-        if ($translated === true) {
-            $locale = $this->contentContext->getLanguage();
-        }
+        $locale = $this->contentContext->getLanguage();
 
-        $hierarchy = $this->pageTreeContext->getTree($locale, $archived);
+        $hierarchy = $this->pageTreeContext->getTree($locale, $archived, $translated);
         $path = $page !== null ? $this->pageRepo->getPathHydrated($page) : [];
 
         if ($this->isGranted('ROLE_ADMIN') === false && $this->isGranted('ROLE_TRANSLATOR')) {

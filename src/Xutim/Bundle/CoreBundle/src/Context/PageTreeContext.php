@@ -26,9 +26,9 @@ final class PageTreeContext
      *      pages: array<string, array{page: PageInterface, translation: ContentTranslationInterface, children: list<string>}>
      * }
      */
-    public function getTree(?string $locale, bool $showArchived): array
+    public function getTree(string $locale, bool $showArchived, bool $showOnlyTranslated): array
     {
-        $key = $this->key($locale, $showArchived);
+        $key = $this->key($locale, $showArchived, $showOnlyTranslated);
         $tags = $this->tags($locale);
 
         /** @var array{
@@ -44,21 +44,23 @@ final class PageTreeContext
              *      pages: array<string, array{page: PageInterface, translation: ContentTranslationInterface, children: list<string>}>
              * }
              */
-            function (ItemInterface $item) use ($locale, $showArchived, $tags): array {
+            function (ItemInterface $item) use ($locale, $showArchived, $showOnlyTranslated, $tags): array {
                 $item->expiresAfter(604800);
                 $item->tag($tags);
 
-                return $this->pageRepository->hierarchyByPublished($locale, $showArchived);
+                return $this->pageRepository->hierarchyByPublished($locale, $showArchived, $showOnlyTranslated);
             }
         );
 
         return $result;
     }
 
-    public function resetForLocale(?string $locale): void
+    public function resetForLocale(string $locale): void
     {
-        $this->cache->delete($this->key($locale, false));
-        $this->cache->delete($this->key($locale, true));
+        $this->cache->delete($this->key($locale, false, true));
+        $this->cache->delete($this->key($locale, false, false));
+        $this->cache->delete($this->key($locale, true, true));
+        $this->cache->delete($this->key($locale, true, false));
         $this->cache->invalidateTags($this->tags($locale));
     }
 
@@ -67,10 +69,12 @@ final class PageTreeContext
         $this->cache->invalidateTags([self::TAG_ALL]);
     }
 
-    public function warmupForLocale(?string $locale): void
+    public function warmupForLocale(string $locale): void
     {
-        $this->getTree($locale, false);
-        $this->getTree($locale, true);
+        $this->getTree($locale, false, true);
+        $this->getTree($locale, false, false);
+        $this->getTree($locale, true, true);
+        $this->getTree($locale, true, false);
     }
 
     /** @param list<string> $locales */
@@ -81,16 +85,14 @@ final class PageTreeContext
         }
     }
 
-    private function key(?string $locale, bool $showArchived): string
+    private function key(string $locale, bool $showArchived, bool $showOnlyTranslated): string
     {
-        $loc = $locale ?? '_any';
-        return sprintf('page_tree.%s.%d', $loc, (int) $showArchived);
+        return sprintf('page_tree.%s.%d.%d', $locale, (int) $showArchived, (int) $showOnlyTranslated);
     }
 
     /** @return list<string> */
-    private function tags(?string $locale): array
+    private function tags(string $locale): array
     {
-        $loc = $locale ?? '_any';
-        return [self::TAG_ALL, 'page_tree.' . $loc];
+        return [self::TAG_ALL, 'page_tree.' . $locale];
     }
 }

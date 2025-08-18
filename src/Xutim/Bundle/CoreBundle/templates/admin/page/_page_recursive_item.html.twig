@@ -36,8 +36,14 @@
 ) %}
     {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
     {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
     <span class="me-1"></span>
-    {{ translatable.languageBadge(translation) }}
+
+    {% if translation.locale != content_context_language() %}
+        {{ translatable.languageBadge(translation) }}
+    {% else %}
+        {{ badges.publicationStatusBadge(translation) }}
+    {% endif %}
 
     <a href="{{ admin_path('admin_page_list', {id: page.id}) }}">
         <span class="text-black{{ isSelected ? ' fw-bold' : '' }}">

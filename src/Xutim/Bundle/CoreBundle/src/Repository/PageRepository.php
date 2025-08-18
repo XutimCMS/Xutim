@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
@@ -19,6 +20,7 @@ class PageRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         string $entityClass,
+        private readonly string $contentTranslationEntityClass,
         private readonly ContentContext $contentContext
     ) {
         parent::__construct($registry, $entityClass);
@@ -30,26 +32,23 @@ class PageRepository extends ServiceEntityRepository
      *      pages: array<string, array{page: PageInterface, translation: ContentTranslationInterface,children: list<string>}>
      * }
      */
-    public function hierarchyByPublished(?string $locale, bool $archived = false): array
+    public function hierarchyByPublished(string $locale, bool $archived = false, bool $onlyTranslated = false): array
     {
         $builder = $this->createQueryBuilder('node');
         $builder
             ->leftJoin('node.parent', 'parent')
             ->addSelect('parent')
-            // fetch exactly two translations per page:
-            // - locale-specific (if present)
-            // - defaultTranslation (always one)
-
             ->leftJoin('node.defaultTranslation', 'transDef')
             ->addSelect('transDef')
-
             ->addOrderBy('parent.id', 'ASC')
             ->addOrderBy('node.position', 'ASC');
-        if ($locale !== null && $locale !== '') {
+
+        if ($onlyTranslated === true) {
             $builder
-                ->leftJoin('node.translations', 'transLoc', 'WITH', 'transLoc.locale = :locale')
+                ->leftJoin('node.translations', 'transLoc')
+                ->andWhere('transLoc.locale = :locale')
                 ->addSelect('transLoc')
-                ->setParameter('locale', $locale);
+                ->setParameter('locale', $locale, Types::STRING);
         }
 
         if ($archived === false) {
@@ -59,6 +58,24 @@ class PageRepository extends ServiceEntityRepository
 
         /** @var array<PageInterface> */
         $pages = $builder->getQuery()->getResult();
+
+        // Pre-fetch translations for the pages.
+        if ($onlyTranslated === false) {
+            if ($pages !== []) {
+                $this->getEntityManager()
+                    ->createQuery(<<<DQL
+                        SELECT t, p
+                        FROM {$this->contentTranslationEntityClass} t
+                        JOIN t.page p
+                        WHERE p IN (:pages) AND t.locale = :locale
+                    DQL)
+                    ->setParameter('pages', $pages)
+                    ->setParameter('locale', $locale)
+                    ->getResult();
+            }
+        }
+
+
         $rootPagesIds = [];
         $pagesMap = [];
 
@@ -68,10 +85,7 @@ class PageRepository extends ServiceEntityRepository
                 $rootPagesIds[] = $pageId;
             }
 
-            $trans = null;
-            if ($locale !== null && $locale !== '') {
-                $trans = $page->getTranslations()->get($locale) ?: null;
-            }
+            $trans = $page->getTranslations()->get($locale) ?: null;
             $trans = $trans ?? $page->getDefaultTranslation();
 
             $pagesMap[$pageId] = [
