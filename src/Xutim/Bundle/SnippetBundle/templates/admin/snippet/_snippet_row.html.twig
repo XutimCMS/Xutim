@@ -36,8 +36,11 @@
         </twig:Xutim:Admin:Badge>
     </td>
 
-    <td class="text-truncate w-4">
-        {{ snippet.description }}
+    <td class="text-truncate w-4"
+        title="{{ snippet.description }}"
+        data-controller="tooltip"
+    >
+        {{ snippet.description|slice(0, 10) }}
     </td>
 
     {% for locale in site_context.locales %}
