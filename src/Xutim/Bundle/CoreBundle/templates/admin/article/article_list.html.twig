@@ -92,6 +92,90 @@
             </a>
         </th>
     {% endblock %}
+    {% block filters %}
+        <th>
+            <form method="GET" data-controller="auto-submit">
+                <input type="hidden" name="page" value="1">
+                <select
+                    type="text"
+                    name="col[status]"
+                    class="form-control form-control-sm"
+                    placeholder="{{ 'Filter by status'|trans({}, 'admin') }}"
+                    data-action="auto-submit#debouncedSubmit"
+                >
+                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value }}"
+                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value %}
+                            selected="selected"
+                        {% endif %}
+                    >
+
+                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value }}
+                    </option>
+
+                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value }}"
+                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value %}
+                            selected="selected"
+                        {% endif %}
+                    >
+                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value }}
+                    </option>
+
+                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value }}"
+                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value %}
+                            selected="selected"
+                        {% endif %}
+                    >
+                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value }}
+                    </option>
+
+                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value }}"
+                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value %}
+                            selected="selected"
+                        {% endif %}
+                    >
+                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value }}
+                    </option>
+
+                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value }}"
+                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value %}
+                            selected="selected"
+                        {% endif %}
+                    >
+                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value }}
+                    </option>
+                </select>
+            </form>
+        </th>
+        <th>
+            <form method="GET" data-controller="auto-submit">
+                <input type="hidden" name="page" value="1">
+                <input
+                    type="text"
+                    name="col[title]"
+                    class="form-control form-control-sm"
+                    placeholder="{{ 'Filter by title'|trans({}, 'admin') }}"
+                    value="{{ filter.cols['title'] ?? '' }}"
+                    data-action="auto-submit#debouncedSubmit"
+                />
+            </form>
+        </th>
+        <th>
+            <form method="GET" data-controller="auto-submit">
+                <input type="hidden" name="page" value="1">
+                <input
+                  type="text"
+                  name="col[tag]"
+                  class="form-control form-control-sm"
+                  placeholder="{{ 'Filter by tag'|trans({}, 'admin') }}"
+                  value="{{ filter.cols['tag'] ?? '' }}"
+                  data-action="auto-submit#debouncedSubmit"
+                />
+            </form>
+        </th>
+        <th></th>
+        <th></th>
+        <th></th>
+    {% endblock %}
 
     {% block body %}
         {% import '@XutimCore/admin/common/badges.html.twig' as badges %}

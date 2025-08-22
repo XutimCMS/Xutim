@@ -3,6 +3,11 @@
     id="{{ this.frameId }}-list"
     data-turbo-action="advance"
 >
+
+    {% set _chips %}{% block filterChips %}{% endblock %}{% endset %}
+    {% if _chips|trim is not empty %}
+        {{ _chips|raw }}
+    {% endif %}
     <div class="card mb-3">
         <div class="card-body border-bottom py-3" data-table-target="cardBody">
             <div class="d-flex">
@@ -68,6 +73,12 @@
                     <tr>
                         {% block header %}{% endblock %}
                     </tr>
+                    {% set _filters %}{% block filters %}{% endblock %}{% endset %}
+                    {% if _filters|trim is not empty %}
+                        <tr>
+                            {{ _filters|raw }}
+                        </tr>
+                    {% endif %}
                 </thead>
                 <tbody
                     data-table-target="tableBody"

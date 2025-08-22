@@ -9,18 +9,21 @@ use Webmozart\Assert\Assert;
 readonly class FilterDto
 {
     /**
-     * @param int<0,max> $page
-     * @param int<1,max> $pageLength
+     * @param int<0,max>            $page
+     * @param int<1,max>            $pageLength
+     * @param array<string, string> $cols
      */
     public function __construct(
         public string $searchTerm = '',
         public int $page = 1,
         public int $pageLength = 10,
         public string $orderColumn = '',
-        public string $orderDirection = 'asc'
+        public string $orderDirection = 'asc',
+        public array $cols = []
     ) {
         Assert::inArray($pageLength, [1, 4, 10, 12, 18, 20, 50, 100]);
         Assert::inArray($orderDirection, ['asc', 'desc']);
+        Assert::allString($cols);
     }
 
     public function hasSearchTerm(): bool
@@ -45,5 +48,15 @@ readonly class FilterDto
         }
 
         return 'asc';
+    }
+
+    public function hasCol(string $key): bool
+    {
+        return array_key_exists($key, $this->cols) && $this->cols[$key] !== '';
+    }
+
+    public function col(string $key): ?string
+    {
+        return $this->cols[$key] ?? null;
     }
 }
