@@ -29,6 +29,8 @@
         "pagerfanta/doctrine-orm-adapter": "^4.7",
         "pagerfanta/twig": "^4.7",
         "php": ">=8.4",
+        "spatie/image": "^3.8",
+        "spatie/image-optimizer": "^1.8",
         "stof/doctrine-extensions-bundle": "^1.13",
         "symfony/asset": "7.3.*",
         "symfony/asset-mapper": "7.3.*",
@@ -102,8 +104,10 @@
         "xutimcms/core-bundle": "self.version",
         "xutimcms/domain": "self.version",
         "xutimcms/event-bundle": "self.version",
+        "xutimcms/media-bundle": "self.version",
         "xutimcms/redirect-bundle": "self.version",
         "xutimcms/redirect-component": "self.version",
+        "xutimcms/resource-bundle": "self.version",
         "xutimcms/security-bundle": "self.version",
         "xutimcms/security-component": "self.version",
         "xutimcms/snippet-bundle": "self.version"
@@ -113,11 +117,14 @@
     "autoload": {
         "psr-4": {
             "Xutim\\": "src/Xutim/",
+            "Xutim\\AnalyticsBundle\\": "src/Xutim/Bundle/AnalyticsBundle/src/",
             "Xutim\\CoreBundle\\": "src/Xutim/Bundle/CoreBundle/src/",
             "Xutim\\Domain\\": "src/Xutim/Domain/src/",
             "Xutim\\EventBundle\\": "src/Xutim/Bundle/EventBundle/src/",
+            "Xutim\\MediaBundle\\": "src/Xutim/Bundle/MediaBundle/src/",
             "Xutim\\RedirectBundle\\": "src/Xutim/Bundle/RedirectBundle/src/",
             "Xutim\\RedirectComponent\\": "src/Xutim/Component/RedirectComponent/src/",
+            "Xutim\\ResourceBundle\\": "src/Xutim/Bundle/ResourceBundle/src/",
             "Xutim\\SecurityBundle\\": "src/Xutim/Bundle/SecurityBundle/src/",
             "Xutim\\SecurityComponent\\": "src/Xutim/Component/SecurityComponent/src/",
             "Xutim\\SnippetBundle\\": "src/Xutim/Bundle/SnippetBundle/src/"
@@ -126,7 +133,9 @@
             "src/Xutim/Bundle/AnalyticsBundle/Tests/",
             "src/Xutim/Bundle/CoreBundle/Tests/",
             "src/Xutim/Bundle/EventBundle/Tests/",
+            "src/Xutim/Bundle/MediaBundle/Tests/",
             "src/Xutim/Bundle/RedirectBundle/Tests/",
+            "src/Xutim/Bundle/ResourceBundle/Tests/",
             "src/Xutim/Bundle/SecurityBundle/Tests/",
             "src/Xutim/Bundle/SnippetBundle/Tests/",
             "src/Xutim/Component/RedirectComponent/Tests/",
@@ -135,10 +144,13 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Xutim\\AnalyticsBundle\\Tests\\": "src/Xutim/Bundle/AnalyticsBundle/tests/",
             "Xutim\\CoreBundle\\Tests\\": "src/Xutim/Bundle/CoreBundle/tests/",
             "Xutim\\EventBundle\\Tests\\": "src/Xutim/Bundle/EventBundle/tests/",
+            "Xutim\\MediaBundle\\Tests\\": "src/Xutim/Bundle/MediaBundle/tests/",
             "Xutim\\RedirectBundle\\Tests\\": "src/Xutim/Bundle/RedirectBundle/tests/",
             "Xutim\\RedirectComponent\\Tests\\": "src/Xutim/Component/RedirectComponent/tests/",
+            "Xutim\\ResourceBundle\\Tests\\": "src/Xutim/Bundle/ResourceBundle/tests/",
             "Xutim\\SecurityBundle\\Tests\\": [
                 "src/Xutim/Bundle/AnalyticsBundle/tests/",
                 "src/Xutim/Bundle/SecurityBundle/tests/"
