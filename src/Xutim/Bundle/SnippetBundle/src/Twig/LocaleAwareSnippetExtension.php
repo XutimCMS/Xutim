@@ -26,7 +26,8 @@ class LocaleAwareSnippetExtension extends AbstractExtension
 
     public function renderSnippet(string $code): string
     {
-        $locale = $this->requestStack->getMainRequest()?->getLocale() ?? 'en';
+        $contentLocale = $this->requestStack->getMainRequest()?->attributes->get('_content_locale', null);
+        $locale = $contentLocale ?? $this->requestStack->getMainRequest()?->getLocale() ?? 'en';
         $dto = $this->context->getSnippet($code);
 
         if ($dto !== null && $dto->hasTranslation($locale)) {
