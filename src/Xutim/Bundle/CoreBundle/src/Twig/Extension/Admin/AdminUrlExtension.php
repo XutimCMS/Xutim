@@ -14,6 +14,8 @@ class AdminUrlExtension extends AbstractExtension
     {
         return [
             new TwigFunction('admin_path', [AdminUrlExtensionRuntime::class, 'generatePath']),
+            new TwigFunction('admin_current_path_with', [AdminUrlExtensionRuntime::class, 'getCurrentPathWith']),
+            new TwigFunction('admin_filter_order_path_with', [AdminUrlExtensionRuntime::class, 'getFilterOrderPathWith']),
         ];
     }
 }

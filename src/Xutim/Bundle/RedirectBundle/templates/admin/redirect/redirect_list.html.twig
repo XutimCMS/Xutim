@@ -47,7 +47,7 @@
                 {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
                 <th>
                     <a
-                        href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'source', orderDirection: filter.reverseDirection('source')}) }}"
+                        href="{{ admin_filter_order_path_with('source', filter) }}"
                     >
                         {{ 'source'|trans({}, 'admin')|capitalize }}
                         {{
@@ -57,7 +57,7 @@
                 </th>
                 <th>
                     <a
-                        href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'target', orderDirection: filter.reverseDirection('target')}) }}"
+                        href="{{ admin_filter_order_path_with('target', filter) }}"
                     >
                         {{ 'target'|trans({}, 'admin')|capitalize }}
                         {{

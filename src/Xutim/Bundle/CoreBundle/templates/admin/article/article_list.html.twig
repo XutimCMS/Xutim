@@ -45,10 +45,7 @@
             S
         </th>
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'title', orderDirection: filter.reverseDirection('title'), _content_locale: content_context_language()}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('title', filter) }}">
                 {{ 'title'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('title', filter.orderColumn, filter.orderDirection)
@@ -56,10 +53,7 @@
             </a>
         </th>
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'tags', orderDirection: filter.reverseDirection('tags'), _content_locale: content_context_language()}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('tags', filter) }}">
                 {{ 'tags'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('tags', filter.orderColumn, filter.orderDirection)
@@ -70,10 +64,7 @@
             {{ 'in news'|trans({}, 'admin') }}
         </th>
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'updatedAt', orderDirection: filter.reverseDirection('updatedAt'), _content_locale: content_context_language()}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('updatedAt', filter) }}">
                 {{ 'updated at'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('updatedAt', filter.orderColumn, filter.orderDirection)
@@ -81,10 +72,7 @@
             </a>
         </th>
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'publishedAt', orderDirection: filter.reverseDirection('publishedAt'), _content_locale: content_context_language()}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('publishedAt', filter) }}">
                 {{ 'published at'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('published', filter.orderColumn, filter.orderDirection)
@@ -103,45 +91,69 @@
                     placeholder="{{ 'Filter by status'|trans({}, 'admin') }}"
                     data-action="auto-submit#debouncedSubmit"
                 >
-                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value }}"
-                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value %}
+                    <option
+                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value }}"
+                        {%
+                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value
+                        %}
                             selected="selected"
                         {% endif %}
                     >
-
-                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value }}
+                        {{
+                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value
+                        }}
                     </option>
 
-                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value }}"
-                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value %}
+                    <option
+                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value }}"
+                        {%
+                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value
+                        %}
                             selected="selected"
                         {% endif %}
                     >
-                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value }}
+                        {{
+                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value
+                        }}
                     </option>
 
-                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value }}"
-                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value %}
+                    <option
+                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value }}"
+                        {%
+                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value
+                        %}
                             selected="selected"
                         {% endif %}
                     >
-                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value }}
+                        {{
+                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value
+                        }}
                     </option>
 
-                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value }}"
-                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value %}
+                    <option
+                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value }}"
+                        {%
+                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value
+                        %}
                             selected="selected"
                         {% endif %}
                     >
-                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value }}
+                        {{
+                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value
+                        }}
                     </option>
 
-                    <option value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value }}"
-                        {% if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value %}
+                    <option
+                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value }}"
+                        {%
+                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value
+                        %}
                             selected="selected"
                         {% endif %}
                     >
-                        {{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value }}
+                        {{
+                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value
+                        }}
                     </option>
                 </select>
             </form>
@@ -163,12 +175,12 @@
             <form method="GET" data-controller="auto-submit">
                 <input type="hidden" name="page" value="1">
                 <input
-                  type="text"
-                  name="col[tag]"
-                  class="form-control form-control-sm"
-                  placeholder="{{ 'Filter by tag'|trans({}, 'admin') }}"
-                  value="{{ filter.cols['tag'] ?? '' }}"
-                  data-action="auto-submit#debouncedSubmit"
+                    type="text"
+                    name="col[tag]"
+                    class="form-control form-control-sm"
+                    placeholder="{{ 'Filter by tag'|trans({}, 'admin') }}"
+                    value="{{ filter.cols['tag'] ?? '' }}"
+                    data-action="auto-submit#debouncedSubmit"
                 />
             </form>
         </th>

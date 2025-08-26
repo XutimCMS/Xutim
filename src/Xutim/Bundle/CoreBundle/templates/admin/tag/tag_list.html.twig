@@ -51,10 +51,7 @@
             T
         </th>
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'name', orderDirection: filter.reverseDirection('name')}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('name', filter) }}">
                 {{ 'name'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('name', filter.orderColumn, filter.orderDirection)

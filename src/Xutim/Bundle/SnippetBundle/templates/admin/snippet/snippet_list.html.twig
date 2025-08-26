@@ -46,10 +46,7 @@
             <th class="w-1 text-end">A</th>
         {% endif %}
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'code', orderDirection: filter.reverseDirection('code')}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('code', filter) }}">
                 {{ 'code'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('code', filter.orderColumn, filter.orderDirection)
@@ -57,10 +54,7 @@
             </a>
         </th>
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'category', orderDirection: filter.reverseDirection('category')}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('category', filter) }}">
                 {{ 'category'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('category', filter.orderColumn, filter.orderDirection)

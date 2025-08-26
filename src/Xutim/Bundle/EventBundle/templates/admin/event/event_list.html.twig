@@ -50,10 +50,7 @@
             T
         </th>
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'title', orderDirection: filter.reverseDirection('title')}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('title', filter) }}">
                 {{ 'title'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('title', filter.orderColumn, filter.orderDirection)
@@ -61,10 +58,7 @@
             </a>
         </th>
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'location', orderDirection: filter.reverseDirection('location')}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('location', filter) }}">
                 {{ 'location'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('location', filter.orderColumn, filter.orderDirection)
@@ -73,10 +67,7 @@
         </th>
 
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'startsAt', orderDirection: filter.reverseDirection('startsAt')}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('startsAt', filter) }}">
                 {{ 'starts at'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('startsAt', filter.orderColumn, filter.orderDirection)
@@ -85,10 +76,7 @@
         </th>
 
         <th>
-            <a
-                class=""
-                href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'endsAt', orderDirection: filter.reverseDirection('endsAt')}) }}"
-            >
+            <a href="{{ admin_filter_order_path_with('endsAt', filter) }}">
                 {{ 'ends at'|trans({}, 'admin') }}
                 {{
                     icons.order_arrow('endsAt', filter.orderColumn, filter.orderDirection)

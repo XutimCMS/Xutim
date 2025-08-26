@@ -1,59 +1,35 @@
 {% import _self as macro %}
 
 <div class="d-flex flex-column justify-content-start">
-    {% set routeName = app.request.attributes.get('_route') %}
-    {%
-        set baseRouteParams = app.request.attributes.get('_route_params')|default({})
-    %}
-    {% set baseQuery = app.request.query.all() %}
     {% set activeLocale = content_context_language() %}
     {% set translatedLabel = 'Translated'|trans({}, 'admin') %}
+
+    {# main languages #}
     {%
         set mainLanguages = site_context.locales
-        |filter(locale =>
-            app.user.canTranslate(locale),
-        )
+        |filter(locale => app.user.canTranslate(locale))
     %}
     {% if mainLanguages is not empty %}
         <div class="d-flex justify-content-end align-items-center mb-2">
             {% for locale in mainLanguages %}
                 {{
-                    macro.renderLocale(
-                        locale,
-                        this.entity,
-                        this.simpleTranslation,
-                        routeName,
-                        baseRouteParams,
-                        baseQuery,
-                        activeLocale,
-                        translatedLabel,
-                    )
+                    macro.renderLocale(locale, this.entity, this.simpleTranslation, activeLocale, translatedLabel)
                 }}
             {% endfor %}
         </div>
     {% endif %}
 
+    {# extended languages #}
     {% if this.showExtendedLanguages is same as(true) %}
         {%
             set extendedLanguages = site_context.extendedContentLocales
-            |filter(locale =>
-                app.user.canTranslate(locale),
-            )
+            |filter(locale => app.user.canTranslate(locale))
         %}
         {% if extendedLanguages is not empty %}
             <div class="d-flex justify-content-end align-items-center flex-wrap row-gap-1">
                 {% for locale in extendedLanguages %}
                     {{
-                        macro.renderLocale(
-                            locale,
-                            this.entity,
-                            this.simpleTranslation,
-                            routeName,
-                            baseRouteParams,
-                            baseQuery,
-                            activeLocale,
-                            translatedLabel,
-                        )
+                        macro.renderLocale(locale, this.entity, this.simpleTranslation, activeLocale, translatedLabel)
                     }}
                 {% endfor %}
             </div>
@@ -62,18 +38,15 @@
 </div>
 
 {%
-    macro renderLocale(locale, entity, simpleTranslation, routeName, baseRouteParams, baseQuery, activeLocale, translatedLabel)
+    macro renderLocale(locale, entity, simpleTranslation, activeLocale, translatedLabel)
 %}
-    {%
-        set fullParams = baseRouteParams|merge({_content_locale: locale})|merge(baseQuery)
-    %}
     <a
-        href="{{ path(routeName, fullParams) }}"
+        href="{{ admin_current_path_with({_content_locale: locale}) }}"
         data-turbo-prefetch="false"
     >
         {% set isActive = locale == activeLocale %}
         {%
-            set classes = isActive ? ' bg-outline-primary border-3 border-primary' : 'text-secondary'
+            set classes = isActive ? ' bg-outline-primary border-3 border-primary' : ' text-secondary'
         %}
 
         <twig:Xutim:Admin:Badge class="{{ classes }}">
