@@ -190,7 +190,7 @@
 {% block pageTitle %}
     {% if selectedPage %}
         {%
-            set trans = selectedPage.translationByLocaleOrAny(content_context_language())
+            set trans = selectedPage.translationByLocaleOrDefault(content_context_language())
         %}
         {{ translatable.languageBadge(trans) }}
         {{ trans.title }}
