@@ -19,4 +19,13 @@ class DataTable
      */
     public iterable $pager;
     public FilterDto $filter;
+
+    public bool $showChips = true;
+
+    public string $filterFormId = '';
+
+    /**
+     * @var list<array<string,mixed>>
+     */
+    public array $columns = [];
 }

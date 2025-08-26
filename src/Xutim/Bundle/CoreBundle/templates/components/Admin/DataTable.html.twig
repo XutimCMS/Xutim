@@ -3,11 +3,98 @@
     id="{{ this.frameId }}-list"
     data-turbo-action="advance"
 >
+    {% block filterChips %}
+        {% if this.showChips %}
+            {% set qs = app.request.query.all() %}
+            {% set cols = qs.col|default({}) %}
+            {% set activeKeys = [] %}
 
-    {% set _chips %}{% block filterChips %}{% endblock %}{% endset %}
-    {% if _chips|trim is not empty %}
-        {{ _chips|raw }}
-    {% endif %}
+            {% for column in this.columns %}
+                {% set key = column.key %}
+                {%
+                    set wantChip = column.chip is same as(true) or column.chip is iterable
+                %}
+                {% if wantChip and cols[key]|default('') is not empty %}
+                    {% set activeKeys = activeKeys|merge([key]) %}
+                {% endif %}
+            {% endfor %}
+
+            {% if activeKeys is not empty %}
+                <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
+                    <span class="text-muted small">{{
+                        'Filters:'|trans({}, 'admin')
+                    }}</span>
+
+                    {% for column in this.columns %}
+                        {% set key = column.key %}
+                        {% set wantChip = column.chip is same as(true) or column.chip is iterable %}
+                        {% set value = cols[key]|default('') %}
+                        {% if wantChip and value is not empty %}
+
+                        {% set chipConf = column.chip is iterable ? column.chip : {} %}
+                        {% set label = chipConf.label|default(column.label) %}
+
+                        {# try mapping select value -> label; else apply formatter #}
+                        {% set displayVal = value %}
+                        {%
+                            set fmt = chipConf.formatter|default(column.filter.formatter|default(''))
+                        %}
+
+                        {%
+                            if column.filter.type|default('none') == 'select' and column.filter.options is defined
+                        %}
+                            {% set options = column.filter.options %}
+                            {% for opt in options %}
+                                {%
+                                    set oVal = opt.value|default(opt.code|default(opt))
+                                %}
+                                {%
+                                    set oLab = opt.label|default(opt.code is defined
+                                        ? (opt.code|upper|country_name())
+                                        : (opt is iterable ? oVal : opt))
+                                %}
+                                {% if oVal == value %}
+                                    {% set displayVal = oLab %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if fmt == 'country' %}
+                            {%
+                                set displayVal = displayVal|upper|country_name()
+                            %}
+                        {% elseif fmt == 'upper' %}
+                            {% set displayVal = displayVal|upper %}
+                        {% elseif fmt == 'lower' %}
+                            {% set displayVal = displayVal|lower %}
+                        {% endif %}
+
+                        {% set cols_wo = cols|filter((v, k) => k != key) %}
+                        <span
+                            class="badge bg-primary text-white d-inline-flex align-items-center"
+                        >
+                            <span class="me-1">{{ label }}: {{
+                                    displayVal
+                                }}</span>
+                            <a
+                                class="btn-close btn-close-white ms-1 text-decoration-none"
+                                aria-label="{{ 'Remove filter'|trans({}, 'admin') }}"
+                                href="{{ admin_current_path_with({col: cols_wo, page: 1}) }}"
+                            ></a>
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+
+                    <a
+                        class="btn btn-link btn-sm text-decoration-none"
+                        href="{{ admin_current_path_with({col: {}, page: 1}) }}"
+                    >
+                        {{ 'Clear all'|trans({}, 'admin') }}
+                    </a>
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endblock %}
     <div class="card mb-3">
         <div class="card-body border-bottom py-3" data-table-target="cardBody">
             <div class="d-flex">
@@ -23,20 +110,28 @@
                             <div class="dropdown-menu">
                                 <a
                                     class="dropdown-item"
-                                    href="{{ admin_path(app.current_route, {...app.request.query.all(), pageLength: 10, _content_locale: content_context_language()}) }}"
-                                >10</a>
+                                    href="{{ admin_current_path_with({pageLength: 10, page: 1}) }}"
+                                >
+                                    10
+                                </a>
                                 <a
                                     class="dropdown-item"
-                                    href="{{ admin_path(app.current_route, {...app.request.query.all(), pageLength: 20, _content_locale: content_context_language()}) }}"
-                                >20</a>
+                                    href="{{ admin_current_path_with({pageLength: 20, page: 1}) }}"
+                                >
+                                    20
+                                </a>
                                 <a
                                     class="dropdown-item"
-                                    href="{{ admin_path(app.current_route, {...app.request.query.all(), pageLength: 50, _content_locale: content_context_language()}) }}"
-                                >50</a>
+                                    href="{{ admin_current_path_with({pageLength: 50, page: 1}) }}"
+                                >
+                                    50
+                                </a>
                                 <a
                                     class="dropdown-item"
-                                    href="{{ admin_path(app.current_route, {...app.request.query.all(), pageLength: 100, _content_locale: content_context_language()}) }}"
-                                >100</a>
+                                    href="{{ admin_current_path_with({pageLength: 100, page: 1}) }}"
+                                >
+                                    100
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -66,29 +161,127 @@
                 </div>
             </div>
         </div>
+        {% set _formId = this.filterFormId ?: this.frameId ~ '-filters' %}
+        <form id="{{ _formId }}" method="get" action="">
+            <input type="hidden" name="page" value="1">
+        </form>
 
         <div class="table-responsive" data-table-target="tableContainer">
-            <table class="table card-table table-vcenter text-nowrap datatable">
-                <thead>
-                    <tr>
-                        {% block header %}{% endblock %}
-                    </tr>
-                    {% set _filters %}{% block filters %}{% endblock %}{% endset %}
-                    {% if _filters|trim is not empty %}
-                        <tr>
-                            {{ _filters|raw }}
-                        </tr>
+            {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+            {% set qs = app.request.query.all() %}
+            {% set cols = qs.col|default({}) %}
+<table class="table card-table table-vcenter text-nowrap datatable">
+        <thead>
+          <tr>
+            {% for col in this.columns %}
+              {% set key = col.key %}
+              {% set label = col.label %}
+              {% set sortable = col.sortable|default(false) %}
+              {% set order = col.order|default(key) %}
+              {% set fconf = col.filter|default({type: 'none'}) %}
+              {% set ftype = fconf.type|default('none') %}
+              {% set popId = this.frameId ~ '-pop-' ~ key %}
+              {% set minWidth = fconf.minWidth|default('220px') %}
+
+              <th class="{{ ftype != 'none' ? 'position-relative' }}">
+                <div class="d-flex align-items-center gap-2" {{ ftype != 'none' ? 'data-controller="dt-filter"' }}>
+                  {% if ftype != 'none' %}
+                    <button
+                      type="button"
+                      class="btn-reset"
+                      aria-haspopup="dialog"
+                      aria-expanded="false"
+                      data-action="click->dt-filter#toggle"
+                      data-dt-filter-popover-id="{{ popId }}"
+                    >
+                      {{ label }}
+                    </button>
+                  {% else %}
+                    <span>{{ label }}</span>
+                  {% endif %}
+
+                  {% if sortable %}
+                    <a href="{{ admin_current_path_with({orderColumn: order, orderDirection: this.filter.reverseDirection(order)}) }}">
+                      {{ icons.order_arrow(order, this.filter.orderColumn, this.filter.orderDirection) }}
+                    </a>
+                  {% endif %}
+                </div>
+
+                {% if ftype != 'none' %}
+                  <div
+                    id="{{ popId }}"
+                    class="card shadow-sm p-3 position-absolute d-none"
+                    style="min-width: {{ minWidth }}; z-index: 1000"
+                    data-dt-filter-popover
+                    data-min-width="{{ minWidth }}"
+                  >
+                    <label class="form-label mb-2">
+                      {{ 'Filter by %label%'|trans({'%label%': label}, 'admin') }}
+                    </label>
+
+                    {% if ftype == 'text' %}
+                      <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        name="col[{{ key }}]"
+                        value="{{ cols[key]|default('') }}"
+                        placeholder="{{ fconf.placeholder|default('Type to search'|trans({}, 'admin')) }}"
+                        form="{{ _formId }}"
+                      >
+
+                    {% elseif ftype == 'select' %}
+                      {% set options = fconf.options|default([]) %}
+                      <select
+                        name="col[{{ key }}]"
+                        class="form-select form-select-sm"
+                        form="{{ _formId }}"
+                      >
+                        <option value="">{{ fconf.placeholder|default('Any'|trans({}, 'admin')) }}</option>
+
+                        {% for opt in options %}
+                          {% set val = opt.value|default(opt.code|default(opt)) %}
+                          {% set lab = opt.label
+                            |default(opt.code is defined
+                              ? (opt.code|upper|country_name())
+                              : (opt is iterable ? val : opt))
+                          %}
+                          <option value="{{ val }}" {{ cols[key]|default('') == val ? 'selected' }}>
+                            {{ lab }}
+                          </option>
+                        {% endfor %}
+                      </select>
                     {% endif %}
-                </thead>
-                <tbody
-                    data-table-target="tableBody"
-                    {% if this.tableBodyId is defined %}
-                        id="{{ this.tableBodyId }}"
-                    {% endif %}
-                >
-                    {% block body %}{% endblock %}
-                </tbody>
-            </table>
+
+                    <div class="mt-3 d-flex justify-content-between">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-secondary"
+                        data-action="click->dt-filter#resetField"
+                        data-dt-filter-form-id="{{ _formId }}"
+                        data-dt-filter-field="col[{{ key }}]"
+                      >
+                        {{ 'Reset'|trans({}, 'admin') }}
+                      </button>
+                      <button type="submit" class="btn btn-sm btn-primary" form="{{ _formId }}">
+                        {{ 'Apply'|trans({}, 'admin') }}
+                      </button>
+                    </div>
+                  </div>
+                {% endif %}
+              </th>
+            {% endfor %}
+          </tr>
+        </thead>
+
+        <tbody
+          data-table-target="tableBody"
+          {% if this.tableBodyId is defined %}
+            id="{{ this.tableBodyId }}"
+          {% endif %}
+        >
+          {% block body %}{% endblock %}
+        </tbody>
+      </table>
         </div>
         <div class="card-footer d-flex align-items-center">
             <p class="m-0 text-muted">
