@@ -54,6 +54,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(ArticleRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.article.class%')
+        ->arg('$tagEntityClass', '%xutim_core.model.tag.class%')
         ->tag('doctrine.repository_service');
 
     $services->set(PageRepository::class)

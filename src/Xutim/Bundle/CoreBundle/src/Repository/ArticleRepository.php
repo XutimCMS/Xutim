@@ -12,6 +12,7 @@ use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\PublicationStatus;
+use Xutim\CoreBundle\Entity\Tag;
 
 /**
  * @extends ServiceEntityRepository<ArticleInterface>
@@ -24,11 +25,15 @@ class ArticleRepository extends ServiceEntityRepository
         'slug' => 'translation.slug',
         'tags' => 'tagTranslation.name',
         'updatedAt' => 'translation.updatedAt',
-        'publishedAt' => 'translation.publishedAt'
+        'publishedAt' => 'translation.publishedAt',
+        'publicationStatus' => 'translation.status'
     ];
 
-    public function __construct(ManagerRegistry $registry, string $entityClass)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        string $entityClass,
+        public string $tagEntityClass
+    ) {
         parent::__construct($registry, $entityClass);
     }
 
@@ -73,8 +78,6 @@ class ArticleRepository extends ServiceEntityRepository
         return $count;
     }
 
-
-
     public function queryByFilter(FilterDto $filter, ?string $locale = null): QueryBuilder
     {
         $builder = $this->createQueryBuilder('article')
@@ -114,6 +117,38 @@ class ArticleRepository extends ServiceEntityRepository
                 self::FILTER_ORDER_COLUMN_MAP[$filter->orderColumn],
                 $filter->getOrderDir()
             );
+        }
+
+        if ($filter->hasCol('title')) {
+            $builder
+                ->andWhere(
+                    $builder->expr()->like('LOWER(COALESCE(translation.title, defaultTranslation.title))', ':colTitle')
+                )
+                ->setParameter('colTitle', sprintf('%%%s%%', strtolower($filter->col('title'))));
+        }
+
+        if ($filter->hasCol('tags')) {
+            $builder
+                ->andWhere('tag.id = :colTagId')
+                ->setParameter('colTagId', $filter->col('tags'));
+        }
+
+        if ($filter->hasCol('inNews')) {
+            $subDql = $this->getEntityManager()->createQueryBuilder()
+                ->select('1')
+                ->from($this->tagEntityClass, 'tagExcl')
+                ->where('tagExcl MEMBER OF article.tags')
+                ->andWhere('tagExcl.excludeFromNews = true')
+                ->getDQL();
+            $inNews = (bool) $filter->col('inNews');
+
+            if ($inNews === false) {
+                // any excluded tag → exclude from news
+                $builder->andWhere($builder->expr()->exists($subDql));
+            } else {
+                // no excluded tags (or no tags at all) → include in news
+                $builder->andWhere($builder->expr()->not($builder->expr()->exists($subDql)));
+            }
         }
 
         return $builder;

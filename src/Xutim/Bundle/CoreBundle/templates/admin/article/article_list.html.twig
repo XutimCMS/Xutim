@@ -28,167 +28,89 @@
 {% endblock %}
 
 {% block body %}
+    {% set tagsOptions = [] %}
+    {% for tag in fetch_tags() %}
+        {%
+            set tagsOptions = tagsOptions|merge([{label: tag.label, value: tag.id}])
+        %}
+    {% endfor %}
     {%
         component 'Xutim:Admin:DataTable' with {
             frameId: 'articles-list',
             pager: articles,
+            tableBodyId: 'articles-list-body',
             filter: filter,
+            showChips: true,
+            columns: [
+              {
+                key: 'publicationStatus',
+                label: 'S'|trans({}, 'admin'),
+                sortable: true,
+                order: 'publicationStatus',
+                filter: {type: 'none'},
+                chip: true,
+              },
+              {
+                key: 'title',
+                label: 'title'|trans({}, 'admin'),
+                sortable: true,
+                order: 'title',
+                filter: {type: 'text'},
+                chip: true,
+              },
+              {
+                key: 'tags',
+                label: 'tags'|trans({}, 'admin'),
+                sortable: true,
+                order: 'tags',
+                filter: {
+                  type: 'select',
+                  options: tagsOptions,
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '240px',
+                },
+                chip: true,
+              },
+              {
+                key: 'inNews',
+                label: 'In news'|trans({}, 'admin'),
+                sortable: true,
+                order: 'inNews',
+                filter: {
+                  type: 'select',
+                  options: [
+                      {
+                          label: 'yes'|trans({}, 'admin'),
+                          value: 'true',
+                      }, {
+                          label: 'no'|trans({}, 'admin'),
+                          value: 'false',
+                      },
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '240px',
+                },
+                chip: true,
+              },
+              {
+                key: 'updatedAt',
+                label: 'Updated at'|trans({}, 'admin'),
+                sortable: true,
+                order: 'updatedAt',
+                filter: {type: 'none'},
+                chip: true,
+              },
+              {
+                key: 'publishedAt',
+                label: 'published at'|trans({}, 'admin'),
+                sortable: true,
+                order: 'publishedAt',
+                filter: {type: 'none'},
+                chip: false,
+              },
+            ],
         }
     %}
-    {% block header %}
-        {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
-        <th
-            class="w-1"
-            title="{{ 'publication status'|trans({}, 'admin') }}"
-            data-controller="tooltip"
-        >
-            S
-        </th>
-        <th>
-            <a href="{{ admin_filter_order_path_with('title', filter) }}">
-                {{ 'title'|trans({}, 'admin') }}
-                {{
-                    icons.order_arrow('title', filter.orderColumn, filter.orderDirection)
-                }}
-            </a>
-        </th>
-        <th>
-            <a href="{{ admin_filter_order_path_with('tags', filter) }}">
-                {{ 'tags'|trans({}, 'admin') }}
-                {{
-                    icons.order_arrow('tags', filter.orderColumn, filter.orderDirection)
-                }}
-            </a>
-        </th>
-        <th>
-            {{ 'in news'|trans({}, 'admin') }}
-        </th>
-        <th>
-            <a href="{{ admin_filter_order_path_with('updatedAt', filter) }}">
-                {{ 'updated at'|trans({}, 'admin') }}
-                {{
-                    icons.order_arrow('updatedAt', filter.orderColumn, filter.orderDirection)
-                }}
-            </a>
-        </th>
-        <th>
-            <a href="{{ admin_filter_order_path_with('publishedAt', filter) }}">
-                {{ 'published at'|trans({}, 'admin') }}
-                {{
-                    icons.order_arrow('published', filter.orderColumn, filter.orderDirection)
-                }}
-            </a>
-        </th>
-    {% endblock %}
-    {% block filters %}
-        <th>
-            <form method="GET" data-controller="auto-submit">
-                <input type="hidden" name="page" value="1">
-                <select
-                    type="text"
-                    name="col[status]"
-                    class="form-control form-control-sm"
-                    placeholder="{{ 'Filter by status'|trans({}, 'admin') }}"
-                    data-action="auto-submit#debouncedSubmit"
-                >
-                    <option
-                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value }}"
-                        {%
-                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value
-                        %}
-                            selected="selected"
-                        {% endif %}
-                    >
-                        {{
-                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft').value
-                        }}
-                    </option>
-
-                    <option
-                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value }}"
-                        {%
-                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value
-                        %}
-                            selected="selected"
-                        {% endif %}
-                    >
-                        {{
-                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value
-                        }}
-                    </option>
-
-                    <option
-                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value }}"
-                        {%
-                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value
-                        %}
-                            selected="selected"
-                        {% endif %}
-                    >
-                        {{
-                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Scheduled').value
-                        }}
-                    </option>
-
-                    <option
-                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value }}"
-                        {%
-                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value
-                        %}
-                            selected="selected"
-                        {% endif %}
-                    >
-                        {{
-                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived').value
-                        }}
-                    </option>
-
-                    <option
-                        value="{{ constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value }}"
-                        {%
-                            if filter.hasCol('status') and filter.cols['status'] == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value
-                        %}
-                            selected="selected"
-                        {% endif %}
-                    >
-                        {{
-                            constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation').value
-                        }}
-                    </option>
-                </select>
-            </form>
-        </th>
-        <th>
-            <form method="GET" data-controller="auto-submit">
-                <input type="hidden" name="page" value="1">
-                <input
-                    type="text"
-                    name="col[title]"
-                    class="form-control form-control-sm"
-                    placeholder="{{ 'Filter by title'|trans({}, 'admin') }}"
-                    value="{{ filter.cols['title'] ?? '' }}"
-                    data-action="auto-submit#debouncedSubmit"
-                />
-            </form>
-        </th>
-        <th>
-            <form method="GET" data-controller="auto-submit">
-                <input type="hidden" name="page" value="1">
-                <input
-                    type="text"
-                    name="col[tag]"
-                    class="form-control form-control-sm"
-                    placeholder="{{ 'Filter by tag'|trans({}, 'admin') }}"
-                    value="{{ filter.cols['tag'] ?? '' }}"
-                    data-action="auto-submit#debouncedSubmit"
-                />
-            </form>
-        </th>
-        <th></th>
-        <th></th>
-        <th></th>
-    {% endblock %}
-
     {% block body %}
         {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
         {% for article in articles %}

@@ -37,7 +37,9 @@ class ListArticlesAction extends AbstractController
         #[MapQueryParameter]
         string $orderDirection = 'asc',
     ): Response {
-        $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
+        /** @var array<string,string> $cols */
+        $cols = $request->query->all('col');
+        $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection, $cols);
 
         /** @var QueryAdapter<Article> $adapter */
         $adapter = new QueryAdapter($this->articleRepository->queryByFilter($filter, $this->contentContext->getLocale()));
