@@ -23,7 +23,7 @@
     {% if this.showExtendedLanguages is same as(true) %}
         {%
             set extendedLanguages = site_context.extendedContentLocales
-            |filter(locale => app.user.canTranslate(locale))
+            |filter(locale => app.user.canTranslate(locale))|sort((loc1, loc2) => loc1 <=> loc2)
         %}
         {% if extendedLanguages is not empty %}
             <div class="d-flex justify-content-end align-items-center flex-wrap row-gap-1">
