@@ -21,12 +21,14 @@ class PublishedDateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $constraints = $options['future_date_only'] === true ? [new GreaterThan('now')] : [];
+
         $builder
             ->add('publishedAt', DateTimeType::class, [
                 'label' => new TranslatableMessage('published at', [], 'admin'),
                 'input' => 'datetime_immutable',
                 'required' => true,
-                'constraints' => array_merge([new NotNull()], $constraints)
+                'constraints' => array_merge([new NotNull()], $constraints),
+                'disabled' => $options['disable_date'],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => new TranslatableMessage('submit', [], 'admin')
@@ -38,8 +40,10 @@ class PublishedDateType extends AbstractType
     {
         $resolver->setDefaults([
             'future_date_only' => false,
+            'disable_date' => false,
         ]);
 
         $resolver->setAllowedTypes('future_date_only', 'bool');
+        $resolver->setAllowedTypes('disable_date', 'bool');
     }
 }

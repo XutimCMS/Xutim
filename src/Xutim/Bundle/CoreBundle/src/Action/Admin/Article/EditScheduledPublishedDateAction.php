@@ -19,7 +19,7 @@ use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCo
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
-use Xutim\SecurityBundle\Security\UserRoles;
+use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 
 class EditScheduledPublishedDateAction extends AbstractController
@@ -33,6 +33,7 @@ class EditScheduledPublishedDateAction extends AbstractController
         private readonly MessageBusInterface $commandBus,
         private readonly ContentContext $contentContext,
         private readonly AdminUrlGenerator $router,
+        private readonly TranslatorAuthChecker $transAuthChecker
     ) {
     }
 
@@ -46,10 +47,11 @@ class EditScheduledPublishedDateAction extends AbstractController
         if ($translation === null) {
             throw $this->createNotFoundException('The translation of an article does not exist');
         }
-        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
+        $this->transAuthChecker->denyUnlessCanTranslate($translation->getLocale());
         $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getScheduledAt()], [
             'action' => $this->router->generate('admin_article_edit_scheduled_publication_date', ['id' => $article->getId()]),
-            'future_date_only' => true
+            'future_date_only' => true,
+            'disable_date' => $this->isGranted('ROLE_EDITOR') === false
         ]);
 
         $form->handleRequest($request);
