@@ -38,6 +38,7 @@ final class XutimSecurityExtension extends Extension implements PrependExtension
         $loader->load('console.php');
         $loader->load('handlers.php');
         $loader->load('actions.php');
+        $loader->load('voters.php');
 
         if ($container->getParameter('kernel.environment') === 'test') {
             $loader->load('fixtures.php');

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Xutim\SecurityBundle\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
-use Xutim\SecurityBundle\Security\UserRoles;
 
 /**
  * @extends Voter<string, string>
@@ -15,6 +15,11 @@ use Xutim\SecurityBundle\Security\UserRoles;
 class CanTranslateVoter extends Voter
 {
     public const TRANSLATE = 'can_translate';
+
+    public function __construct(
+        private AccessDecisionManagerInterface $accessDecisionManager,
+    ) {
+    }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -32,13 +37,11 @@ class CanTranslateVoter extends Voter
         /** @var string $locale */
         $locale = $subject;
 
-        // Editors can translate to any language
-        if (in_array(UserRoles::ROLE_EDITOR, $user->getRoles(), true)) {
+        if ($this->accessDecisionManager->decide($token, ['ROLE_EDITOR'])) {
             return true;
         }
 
-        // Regular users need to have the language in their translationLocales
-        if (in_array(UserRoles::ROLE_USER, $user->getRoles(), true)) {
+        if ($this->accessDecisionManager->decide($token, ['ROLE_TRANSLATOR'])) {
             return in_array($locale, $user->getTranslationLocales(), true);
         }
 
