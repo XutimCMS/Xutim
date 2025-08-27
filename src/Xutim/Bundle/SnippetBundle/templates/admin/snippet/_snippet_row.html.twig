@@ -57,6 +57,7 @@
                     data-snippet-id="{{ snippet.id }}"
                     data-locale="{{ locale }}"
                     data-token="{{ csrf_token('translate_snippet_' ~ snippet.id ~ '_' ~ locale) }}"
+                    {{ canTranslateLocales[locale] ? '' : 'disabled' }}
                 >{{ trans.content ?? '' }}</textarea>
             </div>
         </td>

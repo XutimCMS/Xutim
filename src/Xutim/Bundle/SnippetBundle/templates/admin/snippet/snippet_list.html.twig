@@ -116,9 +116,17 @@
         {% for locale in site_context.allLocales %}
             <th data-lang="{{ locale }}">{{ locale|upper }}</th>
         {% endfor %}
+
+        {% set canTranslateLocales = {} %}
+        {% for locale in site_context.allLocales %}
+            {%
+                set canTranslateLocales = canTranslateLocales|merge({(locale): is_granted(constant('Xutim\\SecurityBundle\\Security\\Voter\\CanTranslateVoter::TRANSLATE'), locale)})
+            %}
+        {% endfor %}
+
         {% for snippet in snippets %}
             {{
-                include('@XutimSnippet/admin/snippet/_snippet_row.html.twig', {snippet: snippet})
+                include('@XutimSnippet/admin/snippet/_snippet_row.html.twig', {snippet: snippet, canTranslateLocales: canTranslateLocales}, with_context: false)
             }}
         {% endfor %}
     {% endblock %}
