@@ -21,7 +21,6 @@ class SnippetRepository extends ServiceEntityRepository implements SnippetReposi
         'id' => 'snippet.id',
         'code' => 'snippet.code',
         'category' => 'snippet.category',
-        'content' => 'translation.content'
     ];
 
     public function __construct(ManagerRegistry $registry, string $entityClass)
@@ -37,7 +36,6 @@ class SnippetRepository extends ServiceEntityRepository implements SnippetReposi
         if ($filter->hasSearchTerm() === true) {
             $builder
                 ->andWhere($builder->expr()->orX(
-                    $builder->expr()->like('LOWER(translation.content)', ':searchTerm'),
                     $builder->expr()->like('LOWER(snippet.code)', ':searchTerm'),
                     $builder->expr()->like('LOWER(snippet.category)', ':searchTerm'),
                 ))
