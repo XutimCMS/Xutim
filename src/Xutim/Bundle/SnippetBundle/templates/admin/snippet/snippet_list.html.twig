@@ -1,5 +1,5 @@
+{% set containerClass = 'container-expanded' %}
 {% extends '@XutimCore/admin/base.html.twig' %}
-
 {% block pageTitle %}{{ 'snippets'|trans({}, 'admin')|capitalize }}{%
     endblock
 %}
@@ -27,6 +27,56 @@
 {% endblock %}
 
 {% block body %}
+    <div
+        class="d-flex flex-column justify-content-start my-4"
+        data-controller="lang-bar"
+        data-action="turbo:frame-load@document->lang-bar#apply turbo:load@document->lang-bar#apply"
+    >
+        <div class="d-flex flex-column justify-content-start">
+            {%
+                set mainLanguages = site_context.locales|sort((loc1, loc2) => loc1 <=> loc2)
+            %}
+            {% if mainLanguages is not empty %}
+                <div class="d-flex justify-content-end align-items-center mb-2">
+                    {% for locale in mainLanguages %}
+                        <button
+                            data-lang="{{ locale }}"
+                            data-action="click->lang-bar#toggle"
+                            class="btn-reset btn-sm"
+                        >
+                            <span
+                                class="badge badge-outline text-primary me-1 text-secondary"
+                            >
+                                {{ locale }}
+                            </span>
+                        </button>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {%
+                set extendedLanguages = site_context.extendedContentLocales|sort((loc1, loc2) => loc1 <=> loc2)
+            %}
+            {% if extendedLanguages is not empty %}
+                <div class="d-flex justify-content-end align-items-center flex-wrap row-gap-1">
+                    {% for locale in extendedLanguages %}
+                        <button
+                            data-lang="{{ locale }}"
+                            data-action="click->lang-bar#toggle"
+                            class="btn-reset"
+                        >
+                            <span
+                                class="badge badge-outline text-primary me-1 text-secondary"
+                            >
+                                {{ locale }}
+                            </span>
+                        </button>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
     {%
         component 'Xutim:Admin:DataTable' with {
             frameId: 'snippet-list',
@@ -34,25 +84,18 @@
             filter: filter,
             'data-controller': 'snippet-editor',
             'data-snippet-editor-url-value': admin_path('admin_json_snippet_translate'),
-
+            responsive: false,
         }
     %}
-    {% block header %}
+
+    {% block body %}
         {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
 
         {%
             if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_ADMIN'))
         %}
-            <th class="w-1 text-end">A</th>
+            <th class="w-1 text-end"></th>
         {% endif %}
-        <th>
-            <a href="{{ admin_filter_order_path_with('code', filter) }}">
-                {{ 'code'|trans({}, 'admin') }}
-                {{
-                    icons.order_arrow('code', filter.orderColumn, filter.orderDirection)
-                }}
-            </a>
-        </th>
         <th>
             <a href="{{ admin_filter_order_path_with('category', filter) }}">
                 {{ 'category'|trans({}, 'admin') }}
@@ -61,16 +104,18 @@
                 }}
             </a>
         </th>
-        <th class="w-1">
-            {{ 'description'|trans({}, 'admin') }}
+        <th>
+            <a href="{{ admin_filter_order_path_with('code', filter) }}">
+                {{ 'code'|trans({}, 'admin') }}
+                {{
+                    icons.order_arrow('code', filter.orderColumn, filter.orderDirection)
+                }}
+            </a>
         </th>
-        {% for locale in site_context.locales %}
-            <th>{{ locale|upper }}</th>
-        {% endfor %}
-    {% endblock %}
 
-    {% block body %}
-        {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+        {% for locale in site_context.allLocales %}
+            <th data-lang="{{ locale }}">{{ locale|upper }}</th>
+        {% endfor %}
         {% for snippet in snippets %}
             {{
                 include('@XutimSnippet/admin/snippet/_snippet_row.html.twig', {snippet: snippet})

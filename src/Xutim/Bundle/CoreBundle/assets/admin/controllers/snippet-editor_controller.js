@@ -6,12 +6,24 @@ export default class extends Controller {
         url: String,
     };
 
+    connect() {
+        // Remember the initial values to detect changes
+        this.inputTargets.forEach((el) => {
+            el.dataset.savedValue = this.#normalize(el.value);
+        });
+    }
+
     save(event) {
         const input = event.target;
         const id = input.dataset.snippetId;
         const locale = input.dataset.locale;
         const value = input.value;
         const token = input.dataset.token;
+
+        const current = this.#normalize(input.value);
+        const lastSaved = input.dataset.savedValue ?? '';
+        // No changes
+        if (current === lastSaved) return;
 
         fetch(this.urlValue, {
             method: 'POST',
@@ -23,15 +35,15 @@ export default class extends Controller {
         })
             .then((response) => {
                 if (response.ok) {
-                    this.flashSuccess(event.target);
+                    this.#flashSuccess(event.target);
                 } else {
-                    this.flashError(event.target);
+                    this.#flashError(event.target);
                 }
             })
-            .catch(() => this.flashError());
+            .catch(() => this.#flashError());
     }
 
-    flashSuccess(elem) {
+    #flashSuccess(elem) {
         elem.classList.remove('is-invalid');
         elem.classList.add('is-valid');
 
@@ -40,8 +52,12 @@ export default class extends Controller {
         }, 2000);
     }
 
-    flashError(elem) {
+    #flashError(elem) {
         elem.classList.remove('is-valid');
         elem.classList.add('is-invalid');
+    }
+
+    #normalize(text) {
+        return (text ?? '').replace(/\r\n/g, '\n');
     }
 }

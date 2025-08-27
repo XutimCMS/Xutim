@@ -31,6 +31,7 @@ import Tooltip from './controllers/tooltip_controller.js';
 import TranslationRow from './controllers/translation-row_controller.js';
 import Sidebar from './controllers/sidebar_controller.js';
 import SnippetEditor from './controllers/snippet-editor_controller.js';
+import LangBar from './controllers/lang-bar_controller.js';
 
 app.register('sidebar', Sidebar);
 app.register('article-preview', ArticlePreview);
@@ -57,3 +58,4 @@ app.register('tom-select', TomSelect);
 app.register('tooltip', Tooltip);
 app.register('translation-row', TranslationRow);
 app.register('snippet-editor', SnippetEditor);
+app.register('lang-bar', LangBar);

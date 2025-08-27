@@ -166,7 +166,7 @@
             <input type="hidden" name="page" value="1">
         </form>
 
-        <div class="table-responsive" data-table-target="tableContainer">
+        <div class="{{ this.responsive ? 'class="table-responsive"' : '' }} data-table-target="tableContainer">
             {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
             {% set qs = app.request.query.all() %}
             {% set cols = qs.col|default({}) %}

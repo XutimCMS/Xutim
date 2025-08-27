@@ -13,11 +13,17 @@
                 modalDialogColor="danger"
                 action="{{ admin_path('admin_snippet_delete', {id: snippet.id}) }}"
                 confirmActionLabel="{{ 'action.delete'|trans({}, 'admin')|capitalize }}"
-            ><twig:Xutim:Admin:Icon
-                    name="trash"
-                /></twig:Xutim:Admin:ModalDialog>
+            >
+                <twig:Xutim:Admin:Icon name="trash" />
+            </twig:Xutim:Admin:ModalDialog>
         </td>
     {% endif %}
+
+    <td class="w-1">
+        <twig:Xutim:Admin:Badge>{{
+            snippet.category.value
+        }}</twig:Xutim:Admin:Badge>
+    </td>
 
     <td>
         <twig:Xutim:Admin:Button
@@ -28,34 +34,31 @@
         >
             {{ snippet.code }}
         </twig:Xutim:Admin:Button>
+
+        <p
+            class="text-wrap mt-2"
+            style="max-width: 200px"
+            title="{{ snippet.description }}"
+            data-controller="tooltip"
+        >
+            {{ snippet.description }}
+        </p>
     </td>
 
-    <td>
-        <twig:Xutim:Admin:Badge>
-            {{ snippet.category.value }}
-        </twig:Xutim:Admin:Badge>
-    </td>
-
-    <td class="text-truncate w-4"
-        title="{{ snippet.description }}"
-        data-controller="tooltip"
-    >
-        {{ snippet.description|slice(0, 10) }}
-    </td>
-
-    {% for locale in site_context.locales %}
+    {% for locale in site_context.allLocales %}
         {% set trans = snippet.translationByLocale(locale) %}
-        <td>
-            <textarea
-                type="text"
-                rows="4"
-                data-snippet-editor-target="input"
-                data-action="blur->snippet-editor#save"
-                data-snippet-id="{{ snippet.id }}"
-                data-locale="{{ locale }}"
-                data-token="{{ csrf_token('translate_snippet_' ~ snippet.id ~ '_' ~ locale) }}"
-                class="p-2 form-control form-control-sm w-100"
-            >{{ trans.content ?? '' }}</textarea>
+        <td data-lang="{{ locale }}">
+            <div class="mb-1">
+                <textarea
+                    rows="3"
+                    class="p-2 form-control form-control-sm w-100"
+                    data-snippet-editor-target="input"
+                    data-action="blur->snippet-editor#save"
+                    data-snippet-id="{{ snippet.id }}"
+                    data-locale="{{ locale }}"
+                    data-token="{{ csrf_token('translate_snippet_' ~ snippet.id ~ '_' ~ locale) }}"
+                >{{ trans.content ?? '' }}</textarea>
+            </div>
         </td>
     {% endfor %}
 </tr>

@@ -19,6 +19,8 @@ class DataTable
      */
     public iterable $pager;
     public FilterDto $filter;
+    
+    public bool $responsive = true;
 
     public bool $showChips = true;
 
