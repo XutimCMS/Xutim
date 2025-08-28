@@ -64,6 +64,12 @@ class ContentTranslation implements ContentTranslationInterface
         $this->description = $description;
         $this->page = $page;
         $this->article = $article;
+        if ($this->hasArticle()) {
+            $this->article->addTranslation($this);
+        }
+        if ($this->hasPage()) {
+            $this->page->addTranslation($this);
+        }
         Assert::false($page === null && $article === null, 'A content translation requires either a page or an article.');
     }
 
