@@ -18,14 +18,18 @@ class RouteExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('content_translation_path', [$this, 'generatePath']),
+            new TwigFunction('content_translation_path', [$this, 'generateContentTranslationPath']),
         ];
     }
 
-    public function generatePath(
+    /**
+     * @param array<string, string> $params
+     */
+    public function generateContentTranslationPath(
         ContentTranslationInterface $trans,
-        string $mainLocale
+        string $mainLocale,
+        array $params = []
     ): string {
-        return $this->routeGenerator->generatePath($trans, $mainLocale);
+        return $this->routeGenerator->generatePath($trans, $mainLocale, $params);
     }
 }

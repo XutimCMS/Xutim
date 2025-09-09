@@ -18,19 +18,23 @@ class ContentTranslationRouteGenerator
     ) {
     }
 
+    /**
+     * @param array<string, string> $params
+     */
     public function generatePath(
         ContentTranslationInterface $trans,
         ?string $mainLocale,
-        int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
+        int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
+        array $params = []
     ): string {
         if (!in_array($mainLocale, $this->siteContext->getMainLocales(), true)) {
             $mainLocale = $this->defaultLocale;
         }
 
-        $params = [
+        $params = array_merge([
             '_locale' => $mainLocale,
             'slug' => $trans->getSlug()
-        ];
+        ], $params);
 
         if ($mainLocale !== $trans->getLocale()) {
             if (in_array($trans->getLocale(), $this->siteContext->getMainLocales(), true)) {
