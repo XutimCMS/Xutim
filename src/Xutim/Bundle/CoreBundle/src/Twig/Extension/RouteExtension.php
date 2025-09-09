@@ -3,6 +3,7 @@
 declare(strict_types=1);
 namespace Xutim\CoreBundle\Twig\Extension;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
@@ -30,6 +31,6 @@ class RouteExtension extends AbstractExtension
         string $mainLocale,
         array $params = []
     ): string {
-        return $this->routeGenerator->generatePath($trans, $mainLocale, $params);
+        return $this->routeGenerator->generatePath($trans, $mainLocale, UrlGeneratorInterface::ABSOLUTE_PATH, $params);
     }
 }
