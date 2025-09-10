@@ -1,22 +1,22 @@
+{% set extraControllers = extraControllers|default('') ~ ' ' ~ 'dialog-modal' %}
 {% if buttonType is defined and buttonType == 'a' %}
     {% set buttonTag = 'a' %}
 {% else %}
     {% set buttonTag = 'button' %}
 {% endif %}
 <{{ buttonTag }}
-        {{ attributes }}
-        {{ buttonTag == 'a' ? 'href="#" role="button"' : '' }}
-        data-controller="dialog-modal"
-        data-action="click->dialog-modal#activate"
-        data-dialog-modal-help-text-value="{{ dialogHelp|default('') }}"
-        data-dialog-modal-action-value="{{ action }}"
-        data-dialog-modal-csrf-token-value="{{ csrf_token('pulse-dialog') }}"
-        data-dialog-modal-cancel-button-label-value="{{ 'cancel'|trans({}, 'admin')|capitalize }}"
-        data-dialog-modal-confirm-button-label-value="{{ confirmActionLabel|default('approve'|trans({}, 'admin')|capitalize) }}"
-        data-dialog-modal-dialog-value="{{ 'Are you sure?'|trans({}, 'admin') }}"
-        data-dialog-modal-dialog-color-value="{{ modalDialogColor|default('success') }}"
-        data-dialog-modal-open-on-init-value="{{ openOnInit|default('0') }}"
+    {{ attributes }}
+    {{ buttonTag == 'a' ? 'href="#" role="button"' : '' }}
+    data-controller="{{ extraControllers }}"
+    data-action="click->dialog-modal#activate"
+    data-dialog-modal-help-text-value="{{ dialogHelp|default('') }}"
+    data-dialog-modal-action-value="{{ action }}"
+    data-dialog-modal-csrf-token-value="{{ csrf_token('pulse-dialog') }}"
+    data-dialog-modal-cancel-button-label-value="{{ 'cancel'|trans({}, 'admin')|capitalize }}"
+    data-dialog-modal-confirm-button-label-value="{{ confirmActionLabel|default('approve'|trans({}, 'admin')|capitalize) }}"
+    data-dialog-modal-dialog-value="{{ 'Are you sure?'|trans({}, 'admin') }}"
+    data-dialog-modal-dialog-color-value="{{ modalDialogColor|default('success') }}"
+    data-dialog-modal-open-on-init-value="{{ openOnInit|default('0') }}"
 >
     {% block content %}{% endblock %}
-
 </{{ buttonTag }}>

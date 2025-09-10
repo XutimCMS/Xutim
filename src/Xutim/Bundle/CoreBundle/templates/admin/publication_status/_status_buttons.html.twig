@@ -5,7 +5,7 @@
         action="{{ admin_path(url, {id: id, status: status.value}) }}"
         confirmActionLabel="{{ confirmActionLabel }}"
         title="{{ confirmActionLabel }}"
-        data-controller="tooltip"
+        extraControllers="tooltip"
     >
         <twig:Xutim:Admin:Icon name="{{ iconName }}" plain="true" />
     </twig:Xutim:Admin:ModalDialog>
