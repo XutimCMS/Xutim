@@ -134,20 +134,40 @@ class ArticleRepository extends ServiceEntityRepository
         }
 
         if ($filter->hasCol('inNews')) {
-            $subDql = $this->getEntityManager()->createQueryBuilder()
+            // Does the article have any tags at all?
+            $subHasAnyTagDql = $this->getEntityManager()->createQueryBuilder()
                 ->select('1')
-                ->from($this->tagEntityClass, 'tagExcl')
-                ->where('tagExcl MEMBER OF article.tags')
-                ->andWhere('tagExcl.excludeFromNews = true')
+                ->from($this->tagEntityClass, 'tAny')
+                ->where('tAny MEMBER OF article.tags')
                 ->getDQL();
+
+            // Does the article have any tag that is NOT excluded from news?
+            $subHasNonExcludedTagDql = $this->getEntityManager()->createQueryBuilder()
+                ->select('1')
+                ->from($this->tagEntityClass, 'tNE')
+                ->where('tNE MEMBER OF article.tags')
+                ->andWhere('tNE.excludeFromNews = false')
+                ->getDQL();
+
             $inNews = (bool) $filter->col('inNews');
 
             if ($inNews === false) {
-                // any excluded tag → exclude from news
-                $builder->andWhere($builder->expr()->exists($subDql));
+                // EXCLUDED FROM NEWS ⇢ article has at least one tag AND has no non-excluded tags
+                // i.e., all its tags are excluded
+                $builder->andWhere(
+                    $builder->expr()->andX(
+                        $builder->expr()->exists($subHasAnyTagDql),
+                        $builder->expr()->not($builder->expr()->exists($subHasNonExcludedTagDql))
+                    )
+                );
             } else {
-                // no excluded tags (or no tags at all) → include in news
-                $builder->andWhere($builder->expr()->not($builder->expr()->exists($subDql)));
+                // INCLUDED IN NEWS ⇢ either it has no tags OR it has at least one non-excluded tag
+                $builder->andWhere(
+                    $builder->expr()->orX(
+                        $builder->expr()->not($builder->expr()->exists($subHasAnyTagDql)),
+                        $builder->expr()->exists($subHasNonExcludedTagDql)
+                    )
+                );
             }
         }
 
@@ -156,18 +176,30 @@ class ArticleRepository extends ServiceEntityRepository
 
     public function queryPublishedNewsByFilter(FilterDto $filter, string $locale): QueryBuilder
     {
-        $subQB1 = $this->createQueryBuilder('a2')
+        // article has any tag
+        $subHasAnyTag = $this->createQueryBuilder('a2')
             ->select('1')
             ->innerJoin('a2.tags', 't2')
-            ->where('a2.id = article.id')
-            ->andWhere('t2.excludeFromNews = true');
+            ->where('a2.id = article.id');
+
+        // article has at least one NON-excluded tag
+        $subHasNonExcludedTag = $this->createQueryBuilder('a3')
+            ->select('1')
+            ->innerJoin('a3.tags', 't3')
+            ->where('a3.id = article.id')
+            ->andWhere('t3.excludeFromNews = false');
 
         $builder = $this->queryByFilter($filter, $locale);
         $builder
             ->andWhere('translation.status = :status')
             ->setParameter('status', PublicationStatus::Published)
-            ->andWhere($builder->expr()->not($builder->expr()->exists($subQB1->getDQL())))
-        ;
+            // INCLUDED in news <=> (no tags) OR (has a non-excluded tag)
+            ->andWhere(
+                $builder->expr()->orX(
+                    $builder->expr()->not($builder->expr()->exists($subHasAnyTag->getDQL())),
+                    $builder->expr()->exists($subHasNonExcludedTag->getDQL())
+                )
+            );
 
         return $builder;
     }
