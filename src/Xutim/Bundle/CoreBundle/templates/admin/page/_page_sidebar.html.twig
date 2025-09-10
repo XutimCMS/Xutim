@@ -10,17 +10,19 @@
                     }}
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
-            <twig:Xutim:Admin:SidebarItem>
-                <twig:block name="content">
-                    <twig:Xutim:Admin:Button
-                        variant="primary"
-                        href="{{ admin_path('admin_page_edit', {id: page.id}) }}"
-                        tag="a"
-                    >
-                        {{ 'Add translation'|trans({}, 'admin') }}
-                    </twig:Xutim:Admin:Button>
-                </twig:block>
-            </twig:Xutim:Admin:SidebarItem>
+            {% if app.current_route != 'admin_page_edit' %}
+                <twig:Xutim:Admin:SidebarItem>
+                    <twig:block name="content">
+                        <twig:Xutim:Admin:Button
+                            variant="primary"
+                            href="{{ admin_path('admin_page_edit', {id: page.id}) }}"
+                            tag="a"
+                        >
+                            {{ 'Add translation'|trans({}, 'admin') }}
+                        </twig:Xutim:Admin:Button>
+                    </twig:block>
+                </twig:Xutim:Admin:SidebarItem>
+            {% endif %}
         </twig:Xutim:Admin:SidebarSection>
     {% endif %}
     {% if translation %}
