@@ -4,11 +4,22 @@
             <div id="article-sidebar-tags-list">
                 {% for tag in article.tags %}
                     <div class="mt-1">
-                        <twig:Xutim:Admin:Tag :color="tag.color">
-                            {{
-                                tag.translationByLocaleOrAny(content_context_language()).name
-                            }}
-                        </twig:Xutim:Admin:Tag>
+                        {%
+                            set name = tag.translationByLocaleOrAny(content_context_language()).name
+                        %}
+                        <a href="{{ path('admin_tag_edit', {id: tag.id}) }}">
+                            <twig:Xutim:Admin:Tag
+                                :color="tag.color"
+                                title="{{ name }}"
+                                data-controller="tooltip"
+                            >
+                                {% if name|length <= 20 %}
+                                    {{ name }}
+                                {% else %}
+                                    {{ name|slice(0, 17) }} ...
+                                {% endif %}
+                            </twig:Xutim:Admin:Tag>
+                        </a>
                     </div>
                 {% endfor %}
             </div>
