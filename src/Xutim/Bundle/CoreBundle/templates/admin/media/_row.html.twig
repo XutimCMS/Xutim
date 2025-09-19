@@ -1,6 +1,13 @@
 {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 
-<div class="col">
+<div
+    class="col"
+    data-controller="draggable"
+    data-draggable-id-value="{{ file.id }}"
+    data-draggable-name-value="{{ file.translationByLocaleOrAny(content_context_language()).name }}"
+    draggable="true"
+    data-action="dragstart->draggable#start dragend->draggable#end"
+>
     <div class="card card-sm">
         <a
             href="{{ admin_path('admin_media_edit', {id: file.id}) }}"

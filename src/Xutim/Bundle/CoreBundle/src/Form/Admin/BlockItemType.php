@@ -25,6 +25,7 @@ use Xutim\CoreBundle\Config\Layout\Block\Option\FileBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\ImageBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\LinkBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\MapCoordinatesBlockItemOption;
+use Xutim\CoreBundle\Config\Layout\Block\Option\MediaFolderBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\PageBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\SnippetBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\TagBlockItemOption;
@@ -32,6 +33,7 @@ use Xutim\CoreBundle\Config\Layout\Block\Option\TextBlockItemOption;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\Coordinates;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\MediaFolderInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
 use Xutim\CoreBundle\Repository\PageRepository;
@@ -48,6 +50,7 @@ class BlockItemType extends AbstractType implements DataMapperInterface
         private readonly string $fileClass,
         private readonly string $snippetClass,
         private readonly string $tagClass,
+        private readonly string $mediaFolderClass,
         private readonly PageRepository $pageRepository,
     ) {
     }
@@ -126,6 +129,17 @@ class BlockItemType extends AbstractType implements DataMapperInterface
                 ]);
         }
 
+        if ($blockOptions->hasOption(MediaFolderBlockItemOption::class)) {
+            $builder
+                ->add('mediaFolder', EntityType::class, [
+                    'class' => $this->mediaFolderClass,
+                    'label' => 'Media folder',
+                    'choice_label' => 'name',
+                    'placeholder' => new TranslatableMessage('select media folder', [], 'admin'),
+                    'required' => false,
+                ]);
+        }
+
         if ($blockOptions->hasOption(TextBlockItemOption::class)) {
             $builder
                 ->add('text', TextType::class, [
@@ -196,6 +210,9 @@ class BlockItemType extends AbstractType implements DataMapperInterface
         if (array_key_exists('tag', $forms)) {
             $forms['tag']->setData($viewData->tag);
         }
+        if (array_key_exists('mediaFolder', $forms)) {
+            $forms['mediaFolder']->setData($viewData->mediaFolder);
+        }
         if (array_key_exists('article', $forms)) {
             $forms['article']->setData($viewData->article);
         }
@@ -241,6 +258,10 @@ class BlockItemType extends AbstractType implements DataMapperInterface
             /** @var TagInterface $tag */
             $tag = $forms['tag']->getData();
         }
+        if (array_key_exists('mediaFolder', $forms)) {
+            /** @var MediaFolderInterface $mediaFolder */
+            $mediaFolder = $forms['mediaFolder']->getData();
+        }
         if (array_key_exists('text', $forms)) {
             /** @var string|null $text */
             $text = $forms['text']->getData();
@@ -268,6 +289,7 @@ class BlockItemType extends AbstractType implements DataMapperInterface
             $file ?? null,
             $snippet ?? null,
             $tag ?? null,
+            $mediaFolder ?? null,
             null,
             $text ?? null,
             $link ?? null,

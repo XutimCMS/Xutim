@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping\InverseJoinColumn;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Uid\Uuid;
@@ -22,6 +23,7 @@ use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\FileTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\MediaFolderInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 
@@ -99,6 +101,9 @@ class File implements FileInterface
     #[OneToMany(mappedBy: 'file', targetEntity: FileTranslationInterface::class)]
     private Collection $translations;
 
+    #[ManyToOne(inversedBy: 'files', targetEntity: MediaFolderInterface::class)]
+    private ?MediaFolderInterface $mediaFolder;
+
     public function __construct(
         Uuid $id,
         string $dataPath,
@@ -130,6 +135,7 @@ class File implements FileInterface
         $this->blockItems = new ArrayCollection();
         $this->createdAt = new DateTimeImmutable();
         $this->updatedAt = new DateTimeImmutable();
+        $this->mediaFolder = null;
     }
 
     public function addTranslation(FileTranslationInterface $trans): void
@@ -261,5 +267,10 @@ class File implements FileInterface
     public function getCopyright(): string
     {
         return $this->copyright;
+    }
+
+    public function changeFolder(?MediaFolderInterface $folder): void
+    {
+        $this->mediaFolder = $folder;
     }
 }

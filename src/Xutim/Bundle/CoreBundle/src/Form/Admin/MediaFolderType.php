@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Xutim\CoreBundle\Form\Admin;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Translation\TranslatableMessage;
+
+/**
+ * @extends AbstractType<array{name: string}>
+ */
+class MediaFolderType extends AbstractType
+{
+    public function __construct(private readonly string $mediaFolderClass)
+    {
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('name', TextType::class, [
+                'label' => new TranslatableMessage('Name', [], 'admin'),
+                'required' => true
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => new TranslatableMessage('submit', [], 'admin'),
+            ])
+        ;
+    }
+}

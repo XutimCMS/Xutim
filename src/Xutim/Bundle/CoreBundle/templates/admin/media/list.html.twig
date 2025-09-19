@@ -1,18 +1,38 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 
 {% block pageTitle %}
-    {{ 'media library'|trans({}, 'admin') }}
-{% endblock %}
-
-{% block languageBar %}
-    <twig:Xutim:Admin:LanguageContextBar
-        class="d-flex justify-content-end align-items-center mb-2"
-    />
+    <h2 class="pageTitle">
+        {% if currentFolder %}
+            {{ currentFolder.name }}
+        {% else %}
+            {{ 'Media library'|trans({}, 'admin') }}
+        {% endif %}
+    </h2>
 {% endblock %}
 
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
-        <li class="breadcrumb-item">Media</li>
+        <li class="breadcrumb-item">
+            <a href="{{ admin_path('admin_media_list') }}">{{
+                'Media'|trans({}, 'admin')
+            }}</a>
+        </li>
+
+        {% for f in currentFolder.folderPath|default([]) %}
+            {% if not loop.last %}
+                <li class="breadcrumb-item">
+                    <a
+                        href="{{ admin_path('admin_media_list', {id: f.id}) }}"
+                    >{{ f.name }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {% if currentFolder %}
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ currentFolder.name }}
+            </li>
+        {% endif %}
     </twig:Xutim:Admin:Breadcrumbs>
 {% endblock %}
 
@@ -39,6 +59,15 @@
             </div>
         </div>
     </div>
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        data-turbo-frame="modal"
+        href="{{ admin_path('admin_media_folder_new', {id: currentFolder.id|default(null)}) }}"
+    >
+        <twig:Xutim:Admin:Icon name="folder" class="me-1" />
+        {{ 'New folder'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
 
     <twig:Xutim:Admin:Button
         tag="a"
@@ -47,11 +76,88 @@
         href="{{ admin_path('admin_media_new') }}"
     >
         <twig:Xutim:Admin:Icon name="photo" class="me-1" />
-        {{ 'add new media file'|trans({}, 'admin') }}
+        {{ 'New file'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 {% endblock %}
 
 {% block body %}
+    {% if folders is not empty %}
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h3 m-0">
+                {{ 'Folders'|trans({}, 'admin') }}
+            </h2>
+        </div>
+    {% endif %}
+
+    <div
+        class="row row-cards row-cols-lg-6 g-3 row-cols-md-4 row-cols-sm-3 row-cols-2 mb-4"
+        id="media-folder-list"
+    >
+        {% for folder in folders %}
+            {% set childrenCnt = folder.children|length %}
+            {% set filesCnt = folder.files|length %}
+            <div
+                class="col"
+                data-controller="drop-target"
+                data-drop-target-id-value="{{ folder.id }}"
+                data-drop-target-move-url-value="{{ path('admin_media_move_file_to_folder') }}"
+                data-action="dragover->drop-target#over dragleave->drop-target#leave drop->drop-target#drop"
+            >
+                <a
+                    class="card card-link"
+                    href="{{ admin_path('admin_media_list', {id: folder.id}) }}"
+                    data-drop-target-target="folderCard"
+                >
+                    <div
+                        class="card-body d-flex align-items-center gap-2"
+                        data-drop-target-target="folderCard"
+                    >
+                        <twig:Xutim:Admin:Icon name="folder" />
+                        <div class="flex-fill">
+                            <div class="fw-medium text-truncate">
+                                {{ folder.name }}
+                            </div>
+                            <div class="text-secondary small">
+                                {{ childrenCnt|default(0) }}
+                                {{ 'folders'|trans({}, 'admin') }},
+                                {{ filesCnt|default(0) }}
+                                {{ 'files'|trans({}, 'admin') }}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+        <div class="col">
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="card-link"
+                style="border-style: dashed"
+                data-turbo-frame="modal"
+                href="{{ admin_path('admin_media_folder_new', {id: currentFolder.id|default(null)}) }}"
+            >
+                <div
+                    class="card-body d-flex align-items-center gap-2 text-black text-opacity-25"
+                    data-drop-target-target="folderCard"
+                >
+                    <twig:Xutim:Admin:Icon name="plus" />
+                    <div class="flex-fill">
+                        <div class="fw-medium text-truncate">
+                            {{ 'New folder'|trans({}, 'admin') }}
+                        </div>
+                    </div>
+                </div>
+            </twig:Xutim:Admin:Button>
+        </div>
+    </div>
+
+    {% if files is not empty %}
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h3 m-0">
+                {{ 'Files'|trans({}, 'admin') }}
+            </h2>
+        </div>
+    {% endif %}
     <div
         class="row row-cards row-cols-lg-6 g-3 row-cols-md-4 row-cols-sm-3 row-cols-2"
         id="media-list"

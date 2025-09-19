@@ -60,6 +60,14 @@
                     class="w-4"
                 />
             {% endif %}
+            {% if item.hasMediaFolder() %}
+                <twig:ux:icon
+                    name="tabler:folders"
+                    title="{{ 'Media folder'|trans({}, 'admin') }}"
+                    data-controller="tooltip"
+                    class="w-4"
+                />
+            {% endif %}
         </div>
     </td>
     {% if block.blockItems|filter(item => item.file) is not empty %}
@@ -81,11 +89,16 @@
     {% endif %}
     <td>
         {% if item.hasObject() %}
+            {% set hasUntranslated = false %}
             {% for trans in item.object.translations %}
                 {% if trans.isPublished() == false %}
-                    {{ badges.untranslatedBadge }}
+                    {% set hasUntranslated = true %}
+
                 {% endif %}
             {% endfor %}
+            {% if hasUntranslated %}
+                {{ badges.untranslatedBadge }}
+            {% endif %}
         {% endif %}
         {% if item.hasArticle %}
             <a href="{{ admin_path('admin_article_show', {id: item.article.id}) }}">
@@ -119,6 +132,13 @@
         {% if item.snippet %}
             <a href="{{ admin_path('admin_snippet_list', {searchTerm: item.snippet.code}) }}">
                 {{ item.snippet.code }}
+            </a>
+        {% endif %}
+    </td>
+    <td>
+        {% if item.hasMediaFolder() %}
+            <a href="{{ admin_path('admin_media_list', {id: item.mediaFolder.id}) }}">
+                {{ item.mediaFolder.name }}
             </a>
         {% endif %}
     </td>

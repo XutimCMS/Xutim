@@ -18,6 +18,7 @@ interface BlockItemInterface
         ?FileInterface $file,
         ?SnippetInterface $snippet,
         ?TagInterface $tag,
+        ?MediaFolderInterface $folder,
         ?string $text,
         ?string $link,
         ?string $colorHex,
@@ -63,6 +64,10 @@ interface BlockItemInterface
     public function getTag(): ?TagInterface;
 
     public function hasTag(): bool;
+
+    public function getMediaFolder(): ?MediaFolderInterface;
+
+    public function hasMediaFolder(): bool;
 
     public function isSimpleItem(): bool;
 

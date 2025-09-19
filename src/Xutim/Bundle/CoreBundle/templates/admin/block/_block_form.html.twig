@@ -13,10 +13,13 @@
 {% if form.tag is defined %}
     {{ form_row(form.tag, {attr: {'data-controller': 'tom-select'}}) }}
 {% endif %}
+{% if form.mediaFolder is defined %}
+    {{ form_row(form.mediaFolder, {attr: {'data-controller': 'tom-select'}}) }}
+{% endif %}
 {% if form.file is defined %}
     {{ form_row(form.file) }}
     {# hidden row #}
-    {% include '@XutimCore/admin/form/_file_widget.html.twig' %}
+    {{ include('@XutimCore/admin/form/_file_widget.html.twig') }}
     {{ form_row(form.fileDescription) }}
 {% endif %}
 

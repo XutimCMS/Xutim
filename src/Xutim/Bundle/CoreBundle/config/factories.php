@@ -11,6 +11,7 @@ use Xutim\CoreBundle\Domain\Factory\ContentTranslationFactory;
 use Xutim\CoreBundle\Domain\Factory\FileFactory;
 use Xutim\CoreBundle\Domain\Factory\FileTranslationFactory;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
+use Xutim\CoreBundle\Domain\Factory\MediaFolderFactory;
 use Xutim\CoreBundle\Domain\Factory\MenuItemFactory;
 use Xutim\CoreBundle\Domain\Factory\PageFactory;
 use Xutim\CoreBundle\Domain\Factory\SiteFactory;
@@ -23,6 +24,10 @@ return static function (ContainerConfigurator $container): void {
     $services->set(FileFactory::class)
         ->arg('$fileClass', '%xutim_core.model.file.class%')
         ->arg('$fileTranslationClass', '%xutim_core.model.file_translation.class%');
+
+    $services->set(MediaFolderFactory::class)
+        ->arg('$mediaFolderClass', '%xutim_core.model.media_folder.class%')
+    ;
 
     $services->set(TagFactory::class)
         ->arg('$tagClass', '%xutim_core.model.tag.class%')

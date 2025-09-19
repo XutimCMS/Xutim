@@ -15,6 +15,7 @@ use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\FileTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Repository\MediaFolderRepository;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\SiteRepository;
@@ -88,5 +89,10 @@ return static function (ContainerConfigurator $container): void {
     $services->set(FileRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.file.class%')
+        ->tag('doctrine.repository_service');
+    
+    $services->set(MediaFolderRepository::class)
+        ->arg('$registry', service(ManagerRegistry::class))
+        ->arg('$entityClass', '%xutim_core.model.media_folder.class%')
         ->tag('doctrine.repository_service');
 };

@@ -8,6 +8,7 @@ use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\MediaFolderInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
@@ -28,6 +29,7 @@ class BlockItemFactory
         ?FileInterface $file,
         ?SnippetInterface $snippet = null,
         ?TagInterface $tag = null,
+        ?MediaFolderInterface $mediaFolder = null,
         ?string $text = null,
         ?string $link = null,
         ?string $colorHex = null,
@@ -43,6 +45,7 @@ class BlockItemFactory
             $file,
             $snippet,
             $tag,
+            $mediaFolder,
             $text,
             $link,
             $colorHex,

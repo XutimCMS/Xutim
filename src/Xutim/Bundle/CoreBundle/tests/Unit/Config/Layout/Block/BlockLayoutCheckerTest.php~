@@ -56,11 +56,11 @@ class BlockLayoutCheckerTest extends TestCase
     {
         $block = new Block('code', 'name', 'desc', null, 'layout');
         $blockEmpty = new Block('code', 'name', 'desc', null, 'layout');
-        $linkItem = new BlockItem($block, null,null, null, null, null, null, null, 'link');
-        $linkItem2 = new BlockItem($block, null,null, null, null, null, null, null, 'link2');
-        $linkItem3 = new BlockItem($block, null,null, null, null, null, null, null, 'link3');
-        $coordItem = new BlockItem($block, null,null, null, null, null, null, null, null, null, null, 1.3, 2.4);
-        $coordItem2 = new BlockItem($block, null,null, null, null, null, null, null, null, null, null, 5.3, 5.4);
+        $linkItem = new BlockItem($block, null, null, null, null, null, null, 'link');
+        $linkItem2 = new BlockItem($block, null, null, null, null, null, null, 'link2');
+        $linkItem3 = new BlockItem($block, null, null, null, null, null, null, 'link3');
+        $coordItem = new BlockItem($block, null, null, null, null, null, null, null, null, null, 1.3, 2.4);
+        $coordItem2 = new BlockItem($block, null, null, null, null, null, null, null, null, null, 5.3, 5.4);
 
 
         $block2 = new Block('code', 'name', 'desc', null, 'layout');

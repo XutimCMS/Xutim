@@ -32,6 +32,8 @@ import TranslationRow from './controllers/translation-row_controller.js';
 import Sidebar from './controllers/sidebar_controller.js';
 import SnippetEditor from './controllers/snippet-editor_controller.js';
 import LangBar from './controllers/lang-bar_controller.js';
+import Draggable from './controllers/draggable_controller.js';
+import DropTarget from './controllers/drop-target_controller.js';
 
 app.register('sidebar', Sidebar);
 app.register('article-preview', ArticlePreview);
@@ -59,3 +61,5 @@ app.register('tooltip', Tooltip);
 app.register('translation-row', TranslationRow);
 app.register('snippet-editor', SnippetEditor);
 app.register('lang-bar', LangBar);
+app.register('draggable', Draggable);
+app.register('drop-target', DropTarget);

@@ -10,14 +10,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Xutim\CoreBundle\Entity\Article;
+use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Repository\FileRepository;
+use Xutim\CoreBundle\Repository\MediaFolderRepository;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 
 class ListFilesAction extends AbstractController
 {
     public function __construct(
-        private readonly FileRepository $fileRepository,
+        private readonly FileRepository $fileRepo,
+        private readonly MediaFolderRepository $mediaFolderRepo,
         private readonly ListFilterBuilder $filterBuilder
     ) {
     }
@@ -34,22 +36,31 @@ class ListFilesAction extends AbstractController
         string $orderColumn = '',
         #[MapQueryParameter]
         string $orderDirection = 'asc',
+        ?string $id = null
     ): Response {
+        if ($id !== null) {
+            $folder = $this->mediaFolderRepo->find($id);
+            if ($folder === null) {
+                throw $this->createNotFoundException('The media folder does not exist');
+            }
+        }
         $searchTerm = $request->query->getString('searchTerm');
-        $files = $this->fileRepository->findBySearchTerm($searchTerm);
-
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
 
-        /** @var QueryAdapter<Article> $adapter */
-        $adapter = new QueryAdapter($this->fileRepository->queryByFilter($filter));
+        /** @var QueryAdapter<FileInterface> $adapter */
+        $adapter = new QueryAdapter($this->fileRepo->queryByFolderAndFilter($filter, $folder ?? null));
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
             $adapter,
             $filter->page,
             $filter->pageLength
         );
 
+        $folders = $this->mediaFolderRepo->findByParentFolder($folder ?? null);
+
         return $this->render('@XutimCore/admin/media/list.html.twig', [
-            'files' => $pager
+            'currentFolder' => $folder ?? null,
+            'files' => $pager,
+            'folders' => $folders
         ]);
     }
 }

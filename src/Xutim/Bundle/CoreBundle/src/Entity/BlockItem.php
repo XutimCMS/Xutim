@@ -21,6 +21,7 @@ use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\Coordinates;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\MediaFolderInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
@@ -82,6 +83,10 @@ class BlockItem implements BlockItemInterface
     #[JoinColumn(nullable: true)]
     private ?TagInterface $tag;
 
+    #[ManyToOne(targetEntity: MediaFolderInterface::class)]
+    #[JoinColumn(nullable: true)]
+    private ?MediaFolderInterface $mediaFolder;
+
     public function __construct(
         BlockInterface $block,
         ?PageInterface $page,
@@ -89,6 +94,7 @@ class BlockItem implements BlockItemInterface
         ?FileInterface $file,
         ?SnippetInterface $snippet = null,
         ?TagInterface $tag = null,
+        ?MediaFolderInterface $folder = null,
         ?string $text = null,
         ?string $link = null,
         ?string $colorHex = null,
@@ -105,6 +111,7 @@ class BlockItem implements BlockItemInterface
             $file,
             $snippet,
             $tag,
+            $folder,
             $text,
             $link,
             $colorHex,
@@ -123,6 +130,7 @@ class BlockItem implements BlockItemInterface
         ?FileInterface $file,
         ?SnippetInterface $snippet,
         ?TagInterface $tag,
+        ?MediaFolderInterface $folder,
         ?string $text,
         ?string $link,
         ?string $colorHex,
@@ -135,6 +143,7 @@ class BlockItem implements BlockItemInterface
         $this->file = $file;
         $this->snippet = $snippet;
         $this->tag = $tag;
+        $this->mediaFolder = $folder;
         $this->text = $text;
         $this->link = $link;
         $this->color = new Color($colorHex);
@@ -283,6 +292,20 @@ class BlockItem implements BlockItemInterface
         return $this->tag !== null;
     }
 
+    public function getMediaFolder(): ?MediaFolderInterface
+    {
+        return $this->mediaFolder;
+    }
+
+    /**
+     * @phpstan-assert-if-true MediaFolderInterface $this->mediaFolder
+     * @phpstan-assert-if-false null $this->mediaFolder
+     */
+    public function hasMediaFolder(): bool
+    {
+        return $this->mediaFolder !== null;
+    }
+
     /**
      * @phpstan-assert-if-true null $this->article
      * @phpstan-assert-if-true null $this->page
@@ -316,6 +339,7 @@ class BlockItem implements BlockItemInterface
             $this->file,
             $this->snippet,
             $this->tag,
+            $this->mediaFolder,
             $this->position,
             $this->text,
             $this->link,

@@ -50,6 +50,7 @@ class AddBlockItemAction extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+
             Assert::notNull($data);
 
             $blockItem = $this->blockItemFactory->create(
@@ -59,6 +60,7 @@ class AddBlockItemAction extends AbstractController
                 $data->file,
                 $data->snippet,
                 $data->tag,
+                $data->mediaFolder,
                 $data->text,
                 $data->link,
                 $data->color,

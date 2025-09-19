@@ -26,6 +26,7 @@ class Button
             'tab' => 'nav-link',
             'nav' => 'nav-link',
             'nav-outline' => 'btn-outline-primary btn',
+            'card-link' => 'card card-link',
             default => throw new \LogicException(sprintf('Unknown button type "%s".', $this->variant))
         };
     }

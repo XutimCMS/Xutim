@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\MediaFolderInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Entity\File;
 
@@ -53,6 +54,23 @@ class FileRepository extends ServiceEntityRepository
         return $builder;
     }
 
+    public function queryByFolderAndFilter(FilterDto $filter, ?MediaFolderInterface $folder): QueryBuilder
+    {
+        $builder = $this->queryByFilter($filter);
+
+        if ($folder === null) {
+            return $builder
+                ->andWhere('file.mediaFolder IS NULL')
+            ;
+        }
+        
+        return $builder
+            ->innerJoin('file.mediaFolder', 'folder')
+            ->andWhere('folder = :folder')
+            ->setParameter('folder', $folder)
+        ;
+    }
+
     public function queryImagesByFilter(FilterDto $filter): QueryBuilder
     {
         $builder = $this->queryByFilter($filter);
@@ -63,13 +81,23 @@ class FileRepository extends ServiceEntityRepository
         ;
     }
 
-    public function queryNonImagesByFilter(FilterDto $filter): QueryBuilder
+    public function queryNonImagesByFolderAndFilter(FilterDto $filter, ?MediaFolderInterface $folder): QueryBuilder
     {
         $builder = $this->queryByFilter($filter);
-
-        return $builder
-            ->andWhere($builder->expr()->notIn('LOWER(file.extension)', ':imageExtensions'))
+        $builder->andWhere($builder->expr()->notIn('LOWER(file.extension)', ':imageExtensions'))
             ->setParameter('imageExtensions', File::ALLOWED_IMAGE_EXTENSIONS)
+        ;
+
+        if ($folder === null) {
+            return $builder
+                ->andWhere('file.mediaFolder IS NULL')
+            ;
+        }
+        
+        return $builder
+            ->andWhere('folder = :folder')
+            ->innerJoin('file.mediaFolder', 'folder')
+            ->setParameter('folder', $folder)
         ;
     }
 

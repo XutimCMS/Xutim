@@ -64,4 +64,6 @@ interface FileInterface
     public function getCopyright(): string;
 
     public function addTranslation(FileTranslationInterface $trans): void;
+
+    public function changeFolder(MediaFolderInterface $folder): void;
 }

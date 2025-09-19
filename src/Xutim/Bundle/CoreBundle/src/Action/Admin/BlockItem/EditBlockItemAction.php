@@ -54,6 +54,7 @@ class EditBlockItemAction extends AbstractController
                 $data->file,
                 $data->snippet,
                 $data->tag,
+                $data->mediaFolder,
                 $data->text,
                 $data->link,
                 $data->color,

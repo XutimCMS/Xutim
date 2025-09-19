@@ -12,14 +12,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\CoreBundle\Domain\Model\MediaFolderInterface;
 use Xutim\CoreBundle\Entity\File;
 use Xutim\CoreBundle\Repository\FileRepository;
+use Xutim\CoreBundle\Repository\MediaFolderRepository;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 
 class JsonListImagesAction extends AbstractController
 {
     public function __construct(
-        private readonly FileRepository $fileRepository,
+        private readonly FileRepository $fileRepo,
+        private readonly MediaFolderRepository $folderRepo,
         private readonly CacheManager $cacheManager,
         private readonly ListFilterBuilder $filterBuilder,
         private readonly string $publicUploadsDirectory
@@ -33,12 +37,30 @@ class JsonListImagesAction extends AbstractController
         #[MapQueryParameter]
         int $page = 1,
         #[MapQueryParameter]
-        int $pageLength = 10
+        int $pageLength = 10,
+        #[MapQueryParameter]
+        ?string $folderId = null
     ): Response {
+        $folder = null;
+        if ($folderId !== null) {
+            $folder = $this->folderRepo->find($folderId);
+        }
+
+        $folders = $this->folderRepo->findByParentFolder($folder);
+        $folderPath = [];
+        if ($folder !== null) {
+            /** @var array<int, MediaFolderInterface> $path */
+            $path = $folder->getFolderPath();
+            $folderPath = array_map(
+                fn (MediaFolderInterface $f) => ['id' => $f->getId(), 'name' => $f->getName()],
+                $path
+            );
+        }
+
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, 'createdAt', 'desc');
 
         /** @var QueryAdapter<File> $adapter */
-        $adapter = new QueryAdapter($this->fileRepository->queryImagesByFilter($filter));
+        $adapter = new QueryAdapter($this->fileRepo->queryByFolderAndFilter($filter, $folder));
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
             $adapter,
             $filter->page,
@@ -48,8 +70,15 @@ class JsonListImagesAction extends AbstractController
         $images = iterator_to_array($pager->getCurrentPageResults(), false);
 
         $fileUrls = [
+            'folders' => array_map(
+                fn (MediaFolderInterface $folder) => [
+                    'id' => $folder->getId(),
+                    'name' => $folder->getName()
+                ],
+                $folders
+            ),
             'items' => array_map(
-                fn (File $file) => [
+                fn (FileInterface $file) => [
                     'filteredUrl' => $this->getFilteredImagePath(sprintf(
                         '%s%s',
                         $this->publicUploadsDirectory,
@@ -64,7 +93,8 @@ class JsonListImagesAction extends AbstractController
                 ],
                 $images
             ),
-            'totalPages' => $pager->getNbPages()
+            'totalPages' => $pager->getNbPages(),
+            'folderPath' => $folderPath
         ];
 
         return $this->json($fileUrls);
