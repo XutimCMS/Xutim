@@ -60,7 +60,7 @@ class JsonListImagesAction extends AbstractController
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, 'createdAt', 'desc');
 
         /** @var QueryAdapter<File> $adapter */
-        $adapter = new QueryAdapter($this->fileRepo->queryByFolderAndFilter($filter, $folder));
+        $adapter = new QueryAdapter($this->fileRepo->queryImagesByFolderAndFilter($filter, $folder));
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
             $adapter,
             $filter->page,

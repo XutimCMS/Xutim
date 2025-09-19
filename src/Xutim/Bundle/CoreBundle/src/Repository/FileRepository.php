@@ -71,13 +71,24 @@ class FileRepository extends ServiceEntityRepository
         ;
     }
 
-    public function queryImagesByFilter(FilterDto $filter): QueryBuilder
+    public function queryImagesByFolderAndFilter(FilterDto $filter, ?MediaFolderInterface $folder): QueryBuilder
     {
         $builder = $this->queryByFilter($filter);
-
-        return $builder
+        $builder
             ->andWhere($builder->expr()->in('LOWER(file.extension)', ':imageExtensions'))
             ->setParameter('imageExtensions', File::ALLOWED_IMAGE_EXTENSIONS)
+        ;
+
+        if ($folder === null) {
+            return $builder
+                ->andWhere('file.mediaFolder IS NULL')
+            ;
+        }
+        
+        return $builder
+            ->andWhere('folder = :folder')
+            ->innerJoin('file.mediaFolder', 'folder')
+            ->setParameter('folder', $folder)
         ;
     }
 
