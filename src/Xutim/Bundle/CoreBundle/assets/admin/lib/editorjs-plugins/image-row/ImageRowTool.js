@@ -8,7 +8,11 @@ export default class ImageRowTool {
         };
     }
 
-    constructor({ data, config, api, block }) {
+    static get isReadOnlySupported() {
+        return true;
+    }
+
+    constructor({ data, config, api, block, readOnly }) {
         this.data = data || {};
         this.data.images = this.data.images || [];
         this.config = config || {};
@@ -24,6 +28,7 @@ export default class ImageRowTool {
         ];
         this.defaultImagesPerRow = this.config.defaultImagesPerRow || 5;
         this.setImagesPerRow(data.imagesPerRow);
+        this.readOnly = !!readOnly;
     }
 
     setImagesPerRow(imagesPerRowValue) {
@@ -42,6 +47,10 @@ export default class ImageRowTool {
         this.wrapper.style.flexWrap = 'nowrap';
         this.wrapper.style.overflowX = 'auto';
         this.wrapper.style.gap = '10px';
+
+        if (!this.readOnly) {
+            this.wrapper.style.cursor = 'pointer';
+        }
 
         for (let i = 0; i < this.imagesPerRow; i++) {
             const imageContainer = document.createElement('div');
@@ -87,12 +96,23 @@ export default class ImageRowTool {
                 this.openImageEditor(i);
             });
 
+            if (!this.readOnly) {
+                imageContainer.style.cursor = 'pointer';
+                imageContainer.addEventListener('click', (event) => {
+                    this.currentImageIndex = i;
+                    this.openImageEditor(i);
+                });
+            }
+
             this.wrapper.appendChild(imageContainer);
         }
         return this.wrapper;
     }
 
     openImageEditor(index) {
+        if (this.readOnly) {
+            return;
+        }
         if (!this.modal) {
             this.modal = new ImageGalleryModal({
                 galleryUrl: this.galleryUrl,
@@ -138,6 +158,9 @@ export default class ImageRowTool {
     }
 
     renderSettings() {
+        if (this.readOnly) {
+            return null;
+        }
         const wrapper = document.createElement('div');
         wrapper.classList.add('cdx-settings-popover');
 
@@ -186,6 +209,12 @@ export default class ImageRowTool {
     }
 
     save() {
+        if (this.readOnly) {
+            return {
+                images: this.data.images || [],
+                imagesPerRow: this.data.imagesPerRow,
+            };
+        }
         const imagesData = [];
         this.wrapper.querySelectorAll('img').forEach((img) => {
             if (img.dataset.url && img.style.display === 'block') {

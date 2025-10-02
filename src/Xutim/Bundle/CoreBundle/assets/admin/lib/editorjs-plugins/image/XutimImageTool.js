@@ -8,7 +8,11 @@ export default class XutimImageTool {
         };
     }
 
-    constructor({ data, config, api, block }) {
+    static get isReadOnlySupported() {
+        return true;
+    }
+
+    constructor({ data, config, api, block, readOnly }) {
         this.data = data || {};
         this.config = config || {};
         this.api = api;
@@ -16,6 +20,7 @@ export default class XutimImageTool {
         this.wrapper = null;
         this.modal = null;
         this.galleryUrl = this.config.galleryUrl || '';
+        this.readOnly = !!readOnly;
     }
 
     render() {
@@ -23,6 +28,9 @@ export default class XutimImageTool {
 
         this.wrapper.className = 'border rounded p-3 my-4';
         this.wrapper.style.cursor = 'pointer';
+        if (!this.readOnly) {
+            this.wrapper.style.cursor = 'pointer';
+        }
 
         const placeholderText = document.createElement('span');
         placeholderText.textContent = '+ Add Image';
@@ -48,11 +56,19 @@ export default class XutimImageTool {
         this.wrapper.addEventListener('click', (_) => {
             this.openImageEditor();
         });
+        if (!this.readOnly) {
+            this.wrapper.addEventListener('click', (_) => {
+                this.openImageEditor();
+            });
+        }
 
         return this.wrapper;
     }
 
     openImageEditor() {
+        if (this.readOnly) {
+            return;
+        }
         if (!this.modal) {
             this.modal = new ImageGalleryModal({
                 galleryUrl: this.galleryUrl,
@@ -156,6 +172,11 @@ export default class XutimImageTool {
     }
 
     save() {
+        if (this.readOnly) {
+            return {
+                file: this.data && this.data.file ? this.data.file : {},
+            };
+        }
         const img = this.wrapper.querySelector('img');
         let data = {};
         if (img.dataset.thumbnailUrl && img.style.display === 'block') {

@@ -11,6 +11,10 @@ export default class XutimFileTool {
         };
     }
 
+    static get isReadOnlySupported() {
+        return true;
+    }
+
     /**
      * Tool's CSS classes
      *
@@ -69,7 +73,7 @@ export default class XutimFileTool {
         };
     }
 
-    constructor({ data, config, api, block }) {
+    constructor({ data, config, api, block, readOnly }) {
         this.data = data || {};
         this.config = {
             buttonText: config.buttonText || 'Select file to upload',
@@ -84,6 +88,7 @@ export default class XutimFileTool {
             title: null,
             modal: null,
         };
+        this.readOnly = !!readOnly;
     }
 
     render() {
@@ -199,6 +204,9 @@ export default class XutimFileTool {
     }
 
     openImageEditor() {
+        if (this.readOnly) {
+            return;
+        }
         if (!this.nodes.modal) {
             this.nodes.modal = new FileGalleryModal({
                 galleryUrl: this.config.fetchFilesUrl,
@@ -290,6 +298,11 @@ export default class XutimFileTool {
     }
 
     save() {
+        if (this.readOnly) {
+            return {
+                file: this.data && this.data.file ? this.data.file : {},
+            };
+        }
         let data = {};
         if (this.nodes.wrapper.dataset.id) {
             data = {

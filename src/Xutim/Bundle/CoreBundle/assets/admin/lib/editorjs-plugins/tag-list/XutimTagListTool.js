@@ -1,11 +1,16 @@
 export default class XutimTagListTool {
-    constructor({ data, config, api }) {
+    constructor({ data, config, api, readOnly }) {
         this.api = api;
         this.data = {
             id: data.id || '',
             layout: data.layout || 'regular',
         };
         this.config = config || {};
+        this.readOnly = !!readOnly;
+    }
+
+    static get isReadOnlySupported() {
+        return true;
     }
 
     static get toolbox() {
@@ -20,9 +25,24 @@ export default class XutimTagListTool {
         wrapper.classList.add('mt-4');
         wrapper.classList.add('form-floating');
 
+        // if (this.readOnly) {
+        //     const value = this.data.id
+        //         ? this.config.tags.find((t) => t.id === this.data.id)?.label ||
+        //           this.data.id
+        //         : 'No tag selected';
+        //     const text = document.createElement('div');
+        //     text.classList.add('form-control-plaintext');
+        //     text.textContent = value;
+        //     wrapper.appendChild(text);
+        //     return wrapper;
+        // }
+
         const select = document.createElement('select');
         select.name = 'idSelect';
         select.id = 'idSelect';
+        if (this.readOnly) {
+            select.disabled = true;
+        }
         select.classList.add('form-select');
 
         const label = document.createElement('label');
@@ -61,6 +81,9 @@ export default class XutimTagListTool {
     }
 
     save(blockContent) {
+        if (this.readOnly) {
+            return { id: this.data.id };
+        }
         const input = blockContent.querySelector('select');
 
         return {
@@ -85,6 +108,9 @@ export default class XutimTagListTool {
     }
 
     renderSettings() {
+        if (this.readOnly) {
+            return null;
+        }
         const layouts = [
             { name: 'regular', icon: '🟦', label: 'Regular' },
             { name: 'compact', icon: '🔲', label: 'Compact' },

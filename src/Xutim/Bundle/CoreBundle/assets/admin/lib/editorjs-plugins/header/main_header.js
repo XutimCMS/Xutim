@@ -1,5 +1,5 @@
 export default class MainHeader {
-    constructor({ data, config, api }) {
+    constructor({ data, config, api, readOnly }) {
         this.api = api;
         this.data = data;
         this.config = config || {};
@@ -17,6 +17,11 @@ export default class MainHeader {
                 name: 'Sub-title',
             },
         ];
+        this.readOnly = !!readOnly;
+    }
+
+    static get isReadOnlySupported() {
+        return true;
     }
 
     static get toolbox() {
@@ -55,6 +60,10 @@ export default class MainHeader {
             div.classList.add('form-floating');
 
             const input = this.#createInput(type.id);
+            if (this.readOnly) {
+                input.readOnly = true;
+                input.classList.add('text-bg-light');
+            }
             const label = this.#createLabel(type.id, type.name);
             // Set the value to previously selected if available
             if (this.data[type.id]) {
@@ -75,6 +84,10 @@ export default class MainHeader {
     }
 
     save(blockContent) {
+        if (this.readOnly) {
+            return this.data;
+        }
+
         return this.availableTypes.reduce((accumulator, currentVal) => {
             const input = blockContent.querySelector('input#' + currentVal.id);
 

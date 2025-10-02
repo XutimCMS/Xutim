@@ -1,9 +1,14 @@
 export default function createContentLink(title, icon) {
     return class ContentLink {
-        constructor({ data, config, api }) {
+        constructor({ data, config, api, readOnly }) {
             this.api = api;
             this.data = data;
             this.config = config || {};
+            this.readOnly = !!readOnly;
+        }
+
+        static get isReadOnlySupported() {
+            return true;
         }
 
         static get toolbox() {
@@ -58,7 +63,12 @@ export default function createContentLink(title, icon) {
                         select.tomselect?.destroy();
                         select.removeAttribute('data-controller');
                         select.value = this.data.id;
-                        link.href = `//${this.data.id}`;
+                        if (this.readOnly) {
+                            link.href = '';
+                        } else {
+                            link.href = `//${this.data.id}`;
+                        }
+
                         link.textContent = `🔗 Go to ${selectedText}`;
                         link.style.display = 'inline';
                         select.style.display = 'none';
@@ -69,32 +79,38 @@ export default function createContentLink(title, icon) {
                     console.error('Error:', error);
                 });
 
-            select.addEventListener('change', (event) => {
-                const selectedId = event.target.value;
-                const selectedText =
-                    event.target.options[event.target.selectedIndex].text;
-                this.data.id = selectedId;
+            if (!this.readOnly) {
+                select.addEventListener('change', (event) => {
+                    const selectedId = event.target.value;
+                    const selectedText =
+                        event.target.options[event.target.selectedIndex].text;
+                    this.data.id = selectedId;
 
-                if (selectedId) {
-                    select.tomselect?.destroy();
-                    select.removeAttribute('data-controller');
-                    select.value = selectedId;
-                    link.href = `//${selectedId}`;
-                    link.textContent = `🔗 Go to ${selectedText}`;
-                    link.style.display = 'inline';
-                    select.style.display = 'none';
-                    label.style.display = 'none';
-                }
-            });
+                    if (selectedId) {
+                        select.tomselect?.destroy();
+                        select.removeAttribute('data-controller');
+                        select.value = selectedId;
+                        link.href = `//${selectedId}`;
+                        link.textContent = `🔗 Go to ${selectedText}`;
+                        link.style.display = 'inline';
+                        select.style.display = 'none';
+                        label.style.display = 'none';
+                    }
+                });
 
-            link.addEventListener('click', (event) => {
-                event.preventDefault();
-                select.style.display = 'block';
-                label.style.display = 'block';
-                link.style.display = 'none';
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    select.style.display = 'block';
+                    label.style.display = 'block';
+                    link.style.display = 'none';
 
-                select.setAttribute('data-controller', 'tom-select');
-            });
+                    select.setAttribute('data-controller', 'tom-select');
+                });
+            } else {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                });
+            }
 
             wrapper.appendChild(select);
             wrapper.appendChild(label);
@@ -109,6 +125,11 @@ export default function createContentLink(title, icon) {
         }
 
         save() {
+            if (this.readOnly) {
+                return {
+                    id: this.data?.id || '',
+                };
+            }
             return {
                 id: this.data.id || '',
             };

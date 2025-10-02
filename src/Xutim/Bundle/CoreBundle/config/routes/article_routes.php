@@ -9,13 +9,13 @@ use Xutim\CoreBundle\Action\Admin\Article\EditArticleLayoutAction;
 use Xutim\CoreBundle\Action\Admin\Article\EditFeaturedImageAction;
 use Xutim\CoreBundle\Action\Admin\Article\EditPublishedDateAction;
 use Xutim\CoreBundle\Action\Admin\Article\EditScheduledPublishedDateAction;
+use Xutim\CoreBundle\Action\Admin\Article\JsonEditorJSDataAction;
 use Xutim\CoreBundle\Action\Admin\Article\JsonListArticlesAction;
 use Xutim\CoreBundle\Action\Admin\Article\ListArticlesAction;
 use Xutim\CoreBundle\Action\Admin\Article\MarkDefaultTranslationAction;
 use Xutim\CoreBundle\Action\Admin\Article\ShowArticleAction;
 use Xutim\CoreBundle\Action\Admin\Article\ShowArticleBySlugAction;
 use Xutim\CoreBundle\Action\Admin\Article\ShowArticlePreviewAction;
-use Xutim\CoreBundle\Action\Admin\Article\ShowArticleTranslationAction;
 use Xutim\CoreBundle\Action\Admin\Article\ToggleTagAction;
 
 return function (RoutingConfigurator $routes) {
@@ -62,6 +62,12 @@ return function (RoutingConfigurator $routes) {
     ;
 
     $routes
+        ->add('admin_json_content_translation_show', '/admin/{_content_locale}/json/content-translation/{id}/show')
+        ->methods(['get'])
+        ->controller(JsonEditorJSDataAction::class)
+    ;
+
+    $routes
         ->add('admin_article_list', '/admin/{_content_locale}/article')
         ->methods(['get'])
         ->controller(ListArticlesAction::class)
@@ -89,12 +95,6 @@ return function (RoutingConfigurator $routes) {
         ->add('admin_article_frame_show', '/admin/{_content_locale}/article-frame/{id<[^/]+>}')
         ->methods(['get'])
         ->controller(ShowArticlePreviewAction::class)
-    ;
-
-    $routes
-        ->add('admin_article_translation_show', '/admin/{_content_locale}/article/{id}/show-translation/{locale}')
-        ->methods(['get'])
-        ->controller(ShowArticleTranslationAction::class)
     ;
 
     $routes

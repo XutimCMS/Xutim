@@ -35,19 +35,6 @@
                         General
                     </twig:Xutim:Admin:Button>
                 </twig:Xutim:Admin:SidebarTab>
-                <twig:Xutim:Admin:SidebarTab target="translation-reference-tab">
-                    <twig:Xutim:Admin:Button
-                        variant="tab"
-                        type="a"
-                        data-bs-toggle="tab"
-                        href="#translation-reference-tab"
-                        role="tab"
-                        aria-controls="translation-reference-tab"
-                        aria-selected="false"
-                    >
-                        Translation Reference
-                    </twig:Xutim:Admin:Button>
-                </twig:Xutim:Admin:SidebarTab>
             </twig:Xutim:Admin:SidebarTabs>
         </twig:block>
         <twig:block name="content">
@@ -55,15 +42,6 @@
                 <div id="general-tab" class="tab-pane active" role="tabpanel">
                     {{
                         include('@XutimCore/admin/article/_article_sidebar.html.twig', {translation: currentTranslation})
-                    }}
-                </div>
-                <div
-                    id="translation-reference-tab"
-                    class="tab-pane m-4"
-                    role="tabpanel"
-                >
-                    {{
-                        include('@XutimCore/admin/article/article_translation_show.html.twig', {article: article, translation: article.defaultTranslation})
                     }}
                 </div>
             </div>

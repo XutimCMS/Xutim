@@ -1,8 +1,13 @@
 export default class Block {
-    constructor({ data, config, api }) {
+    constructor({ data, config, api, readOnly }) {
         this.api = api;
         this.data = data;
         this.config = config || {};
+        this.readOnly = !!readOnly;
+    }
+
+    static get isReadOnlySupported() {
+        return true;
     }
 
     static get toolbox() {
@@ -16,6 +21,20 @@ export default class Block {
         const wrapper = document.createElement('div');
         wrapper.classList.add('mt-4');
         wrapper.classList.add('form-floating');
+
+        if (this.readOnly) {
+            const selected =
+                this.config.codes?.find((c) => c.code === this.data?.code) ||
+                null;
+            const text = document.createElement('span');
+            text.classList.add('d-block');
+            text.textContent = selected
+                ? `🧱 Block: ${selected.label}`
+                : 'No block selected';
+            wrapper.appendChild(text);
+
+            return wrapper;
+        }
 
         const select = document.createElement('select');
         select.name = 'codeSelect';
@@ -99,6 +118,11 @@ export default class Block {
     }
 
     save(blockContent) {
+        if (this.readOnly) {
+            return {
+                code: this.data?.code || '',
+            };
+        }
         const input = blockContent.querySelector('select');
 
         return {

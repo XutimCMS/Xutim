@@ -74,19 +74,6 @@
                         General
                     </twig:Xutim:Admin:Button>
                 </twig:Xutim:Admin:SidebarTab>
-                <twig:Xutim:Admin:SidebarTab target="translation-reference-tab">
-                    <twig:Xutim:Admin:Button
-                        variant="tab"
-                        type="a"
-                        data-bs-toggle="tab"
-                        href="#translation-reference-tab"
-                        role="tab"
-                        aria-controls="translation-reference-tab"
-                        aria-selected="false"
-                    >
-                        Translation Reference
-                    </twig:Xutim:Admin:Button>
-                </twig:Xutim:Admin:SidebarTab>
             </twig:Xutim:Admin:SidebarTabs>
         </twig:block>
         <twig:block name="content">
@@ -96,240 +83,188 @@
                         include('@XutimCore/admin/article/_article_sidebar.html.twig')
                     }}
                 </div>
-                <div
-                    id="translation-reference-tab"
-                    class="tab-pane m-4"
-                    role="tabpanel"
-                >
-                    {{
-                        include('@XutimCore/admin/article/article_translation_show.html.twig', {article: article, translation: article.defaultTranslation})
-                    }}
-                </div>
             </div>
         </twig:block>
     </twig:Xutim:Admin:Sidebar>
 {% endblock %}
 
 {% block body %}
-    <div class="card mb-3">
+    <div
+        data-controller="split-view"
+        data-split-view-target="root"
+        data-split-view-reference-url-value="{{ admin_path('admin_json_content_translation_show', {id: article.defaultTranslation.id}) }}"
+        data-split-view-current-translation-id-value="{{ translation ? translation.id : '' }}"
+        class="card mb-3"
+        data-split-view-block-codes-value="{{ fetch_block_codes()|json_encode }}"
+        data-split-view-tags-value="{{ fetch_tags()|json_encode }}"
+        data-split-view-fetch-files-url-value="{{ admin_path('admin_json_file_list') }}"
+        data-split-view-fetch-all-files-url-value="{{ admin_path('admin_json_file_all_list') }}"
+        data-split-view-fetch-file-url-value="{{ admin_path('admin_json_file_show', {id: ':id:'}) }}"
+        data-split-view-fetch-images-url-value="{{ admin_path('admin_json_image_list') }}"
+        data-split-view-page-ids-url-value="{{ admin_path('admin_json_page_list') }}"
+        data-split-view-article-ids-url-value="{{ admin_path('admin_json_article_list') }}"
+        data-split-view-tag-ids-url-value="{{ admin_path('admin_json_tag_list') }}"
+        data-split-view-fetch-anchor-snippets-url-value="{{ admin_path('admin_json_snippet_list', {type: 'anchor'}) }}"
+    >
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <div class="fw-bold">
+                {% if translation is null %}
+                    Translate into {{ content_context_language()|upper }}
+                {% else %}
+                    {{ translation.locale|upper }} translation
+                {% endif %}
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <select
+                    class="form-select form-select-sm"
+                    data-split-view-target="localeSelect"
+                    data-action="change->split-view#loadReference"
+                    hidden
+                >
+                    {% for tr in article.translations %}
+                        <option
+                            value="{{ admin_path('admin_json_content_translation_show', {id: tr.id}) }}"
+                            {% if article.defaultTranslation.id == tr.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ tr.locale|locale_name }}{%
+                                if article.defaultTranslation.id == tr.id
+                            %}
+                                — {{
+                                    'reference for translations'|trans({}, 'admin')
+                                }}{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <twig:Xutim:Admin:Button
+                    tag="button"
+                    variant="default"
+                    class="btn-sm"
+                    data-split-view-target="localeSelectClipboard"
+                    data-action="split-view#copyAllBlocks"
+                    title="Copy all blocks"
+                    hidden
+                >
+                    <twig:ux:icon name="tabler:clipboard" class="w-3 h-3" />
+                </twig:Xutim:Admin:Button>
+
+                <twig:Xutim:Admin:Button
+                    tag="button"
+                    variant="default"
+                    class="text-dark d-flex align-items-center text-nowrap btn-sm"
+                    data-action="split-view#toggle"
+                    title="Toggle split view"
+                >
+                    <span
+                        data-split-view-target="iconOn"
+                        class="d-flex align-items-center"
+                    >
+                        <twig:ux:icon
+                            name="tabler:columns-2"
+                            class="w-3 h-3 me-1"
+                        />
+                        Split view
+                    </span>
+
+                    <span
+                        data-split-view-target="iconOff"
+                        class="d-none d-flex align-items-center"
+                    >
+                        <twig:ux:icon
+                            name="tabler:columns-1"
+                            class="w-3 h-3 me-1"
+                        />
+                        Single view
+                    </span>
+                </twig:Xutim:Admin:Button>
+            </div>
+        </div>
+
         <div class="card-body p-0">
-            <div class="tab-content">
-                <div id="main-form" class="tab-pane active show p-4">
+            <div class="row g-0" data-split-view-target="container">
+                <div class="col-12 p-4" data-split-view-target="left">
                     {{
                         include('@XutimCore/admin/content_translation/_form.html.twig')
                     }}
-                    {%
-                        if not translation and article.translations|length > 0 and form.slug.vars.value is empty and form.vars.disabled == false
-                    %}
-                        {{
-                            include('@XutimCore/admin/article_translation/new_translation_modal.html.twig', {article: article})
-                        }}
-                    {% endif %}
                 </div>
-                <div id="translations" class="tab-pane p-0">
-                    <div class="table-responsive">
-                        <table class="table table-vcenter card-table">
-                            <thead>
-                                <tr>
-                                    <th
-                                        class="w-6"
-                                        title="Status"
-                                        data-controller="tooltip"
-                                    >
-                                        S
-                                    </th>
-                                    <th
-                                        class="w-1"
-                                        title="Translation reference"
-                                        data-controller="tooltip"
-                                    >
-                                        T
-                                    </th>
-                                    <th>{{ 'title'|trans({}, 'admin') }}</th>
-                                    <th>{{ 'language'|trans({}, 'admin') }}</th>
-                                    <th>
-                                        {{
-                                            'status actions'|trans({}, 'admin')
-                                        }}
-                                    </th>
-                                    <th class="w-15 text-end">
-                                        {{ 'actions'|trans({}, 'admin') }}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for translation in article.translations %}
-                                    <tr>
-                                        <td class="w-6">
-                                            <twig:Xutim:Admin:Button
-                                                variant="default"
-                                                type="button"
-                                                class="btn-link p-0 border-0"
-                                                data-bs-placement="bottom"
-                                                data-controller="popover"
-                                                data-bs-toggle="popover"
-                                                data-bs-selector="#changeStatus"
-                                            >
-                                                {%
-                                                    import '@XutimCore/admin/common/badges.html.twig' as badges
-                                                %}
-                                                {{
-                                                    badges.publicationStatusBadge(translation)
-                                                }}
-                                            </twig:Xutim:Admin:Button>
-                                        </td>
-                                        <td
-                                            title="Translation reference"
-                                            data-controller="tooltip"
-                                        >
-                                            {%
-                                                if article.defaultTranslation.id == translation.id
-                                            %}
-                                                <span
-                                                    class="fw-bold text-green"
-                                                >
-                                                    <twig:Xutim:Admin:Icon
-                                                        name="language"
-                                                    />
-                                                </span>
-                                            {% else %}
-                                                <twig:Xutim:Admin:ModalDialog
-                                                    class="btn-link d-sm-inline-block px-0 border-0"
-                                                    action="{{ admin_path('admin_article_mark_default_translation', {id: article.id, transId: translation.id}) }}"
-                                                    confirmActionLabel="{{ 'action.mark_as_default'|trans({}, 'admin')|capitalize }}"
-                                                >
-                                                    <span
-                                                        class="badge text-bg-secondary"
-                                                    ></span>
-                                                </twig:Xutim:Admin:ModalDialog>
-                                            {% endif %}
-                                        </td>
-                                        <td class="text-muted">
-                                            <a
-                                                href="{{ admin_path('admin_content_translation_edit', {id: translation.id}) }}"
-                                                class="btn-link"
-                                                aria-label="{{ 'edit'|trans({}, 'admin') }}"
-                                            >
-                                                {{ translation.title }}
-                                            </a>
-                                            {%
-                                                if article.defaultTranslation.id == translation.id
-                                            %}
-                                                ({{
-                                                    'reference for translations'|trans({}, 'admin')
-                                                }})
-                                            {% endif %}
-                                        </td>
-                                        <td class="text-muted">
-                                            {{ translation.locale|locale_name }}
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                {%
-                                                    if translation.status.canBeDrafted()
-                                                %}
-                                                    {{
-                                                        _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard')
-                                                    }}
-                                                {% endif %}
 
-                                                {%
-                                                    if translation.status.canPublish
-                                                %}
-                                                    {{
-                                                        _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload')
-                                                    }}
-                                                {% endif %}
+                <div
+                    class="col-12 col-lg-6 border-start d-none p-4"
+                    data-split-view-target="right"
+                >
+                    <div class="mb-3">
+                        <label class="form-label">Intro title</label>
+                        <input
+                            type="text"
+                            class="form-control text-bg-light"
+                            readonly
+                            value="{{ article.defaultTranslation.pretitle }}"
+                            data-split-view-target="metaPretitle"
+                        />
+                    </div>
 
-                                                {%
-                                                    if translation.status.canSubmitForEvaluation
-                                                %}
-                                                    {{
-                                                        _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert')
-                                                    }}
-                                                {% endif %}
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input
+                            type="text"
+                            class="form-control text-bg-light"
+                            readonly
+                            value="{{ article.defaultTranslation.title }}"
+                            data-split-view-target="metaTitle"
+                        />
+                    </div>
 
-                                                {%
-                                                    if translation.status.canBeArchived
-                                                %}
-                                                    {{
-                                                        _self.modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived'), 'archive'|trans({}, 'admin')|capitalize, 'archive')
-                                                    }}
-                                                {% endif %}
+                    <div class="mb-3">
+                        <label class="form-label">Subtitle</label>
+                        <input
+                            type="text"
+                            class="form-control text-bg-light"
+                            readonly
+                            value="{{ article.defaultTranslation.subtitle }}"
+                            data-split-view-target="metaSubtitle"
+                        />
+                    </div>
 
-                                                <twig:Xutim:Admin:ModalDialog
-                                                    class="btn-link text-danger p-0"
-                                                    modalDialogColor="danger"
-                                                    action="{{ admin_path('admin_publication_status_edit', {id: translation.id, status: 'archived'}) }}"
-                                                    confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
-                                                >
-                                                    <twig:Xutim:Admin:Icon
-                                                        name="trash"
-                                                        plain="true"
-                                                    />
-                                                </twig:Xutim:Admin:ModalDialog>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="float-end">
-                                                <div class="btn-group">
-                                                    <twig:Xutim:Admin:Button
-                                                        variant="link"
-                                                        tag="a"
-                                                        href="{{ path('content_translation_show', {_locale: translation.locale, slug: translation.slug}) }}"
-                                                        class="mt-1"
-                                                        aria-label="{{ 'Show on public page'|trans({}, 'admin') }}"
-                                                        data-turbo="false"
-                                                    >
-                                                        <twig:Xutim:Admin:Icon
-                                                            name="cloud-search"
-                                                        />
-                                                    </twig:Xutim:Admin:Button>
+                    <div class="mb-3">
+                        <label class="form-label">Slug</label>
+                        <input
+                            type="text"
+                            class="form-control text-bg-light"
+                            readonly
+                            value="{{ article.defaultTranslation.slug }}"
+                            data-split-view-target="metaSlug"
+                        />
+                    </div>
 
-                                                    {%
-                                                        if app.user.canTranslate(translation.locale)
-                                                    %}
-                                                        <a
-                                                            href="{{ admin_path('admin_content_translation_edit', {id: translation.id}) }}"
-                                                            class="btn-link mt-1"
-                                                            aria-label="{{ 'edit'|trans({}, 'admin') }}"
-                                                        >
-                                                            <twig:Xutim:Admin:Icon
-                                                                name="edit"
-                                                            />
-                                                        </a>
+                    <div class="mb-6">
+                        <label class="form-label">Description</label>
+                        <textarea
+                            class="form-control text-bg-light"
+                            rows="2"
+                            readonly
+                            data-split-view-target="metaDescription"
+                        >{{ article.defaultTranslation.description|striptags }}</textarea>
+                        <div
+                            id="content_translation_description_help"
+                            class="form-text mb-0 help-text"
+                        >
+                            &ensp;<br>
+                            &ensp;
+                        </div>
+                    </div>
 
-                                                        <a
-                                                            href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
-                                                            class="btn-link mt-1"
-                                                            aria-label="{{ 'revisions'|trans({}, 'admin') }}"
-                                                        >
-                                                            <twig:Xutim:Admin:Icon
-                                                                name="history"
-                                                            />
-                                                        </a>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="ms-4 mt-3">
+                        <div
+                            id="reference-editor"
+                            data-split-view-target="reference"
+                        >
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
-
-{% macro modalDialogPage(id, status, confirmActionLabel, iconName) %}
-    <twig:Xutim:Admin:ModalDialog
-        class="btn-link text-{{ status.colorClass }} p-0"
-        modalDialogColor="{{ status.colorClass }}"
-        action="{{ admin_path('admin_publication_status_edit', {id: id, status: status.value}) }}"
-        confirmActionLabel="{{ confirmActionLabel }}"
-    >
-        <twig:Xutim:Admin:Icon name="{{ iconName }}" plain="true" />
-    </twig:Xutim:Admin:ModalDialog>
-{% endmacro %}
