@@ -189,6 +189,13 @@
                     {{
                         include('@XutimCore/admin/content_translation/_form.html.twig')
                     }}
+                    {%
+                        if not translation and article.translations|length > 0 and form.slug.vars.value is empty and form.vars.disabled == false
+                    %}
+                        {{
+                            include('@XutimCore/admin/article_translation/new_translation_modal.html.twig', {article: article})
+                        }}
+                    {% endif %}
                 </div>
 
                 <div
