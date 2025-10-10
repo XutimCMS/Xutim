@@ -1,0 +1,28 @@
+{% set url = fragment.data.source ?? '' %}
+{% set caption = fragment.data.caption ?? '' %}
+{% set captionMeta = meta.caption is defined ? meta.caption : null %}
+{%
+    set captionChanged = captionMeta and captionMeta.status is defined and captionMeta.status != 'same'
+%}
+<div class="small text-muted mb-2">
+    <twig:ux:icon name="tabler:link" class="w-4 h-4" />
+    <span class="fw-bold">{{ 'Embed:'|trans({}, 'admin') }}</span>
+    {% if url %}
+        <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{
+            url
+        }}</a>
+    {% else %}
+        <span class="text-secondary">—</span>
+    {% endif %}
+</div>
+
+{% if captionChanged %}
+    <div>
+        {{ 'Caption:'|trans({}, 'admin') }}
+        <del>{{ captionMeta.old ?? '' }}</del>
+        →
+        <ins>{{ captionMeta.new ?? '' }}</ins>
+    </div>
+{% elseif caption %}
+    <div>Caption: {{ caption }}</div>
+{% endif %}

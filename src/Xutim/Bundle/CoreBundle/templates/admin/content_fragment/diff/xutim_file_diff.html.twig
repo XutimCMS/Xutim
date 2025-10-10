@@ -1,0 +1,93 @@
+{% set curId = fragment.data.file.id ?? '' %}
+{% set curUrl = fragment.data.file.url ?? '' %}
+{% set curFile = curId ? (curId|xutim_image_file_from_id) : null %}
+{% set curTrans = curFile ? curFile.translationByLocaleOrAny(locale) : null %}
+{% set curName = curTrans ? curTrans.name|striptags|raw : curId %}
+
+{%
+    set idMeta = meta is defined and meta.fileId is defined ? meta.fileId : null
+%}
+{% set urlMeta = meta is defined and meta.url is defined ? meta.url : null %}
+{%
+    set idChanged = idMeta and idMeta.status is defined and idMeta.status != 'same'
+%}
+{%
+    set urlChanged = urlMeta and urlMeta.status is defined and urlMeta.status != 'same'
+%}
+{% set changed = idChanged or urlChanged %}
+
+{%
+    if op == 'added' or op == 'removed' or meta is not defined or meta is empty
+%}
+    <div>
+        <span class="text-muted fw-bold">
+            <twig:ux:icon name="tabler:file" class="w-4 h-4" />
+            {{ 'File:'|trans({}, 'admin') }}
+        </span>
+        {% if curUrl %}
+            <a href="{{ curUrl }}" target="_blank" rel="noopener noreferrer">{{
+                curName
+            }}</a>
+        {% else %}
+            <span class="small text-secondary">—</span>
+        {% endif %}
+    </div>
+{% elseif changed %}
+    {% set oldId = idChanged and idMeta.old is defined ? idMeta.old : curId %}
+    {% set newId = idChanged and idMeta.new is defined ? idMeta.new : curId %}
+    {%
+        set oldUrl = urlChanged and urlMeta.old is defined ? urlMeta.old : curUrl
+    %}
+    {%
+        set newUrl = urlChanged and urlMeta.new is defined ? urlMeta.new : curUrl
+    %}
+
+    {% set oldFile = oldId ? (oldId|xutim_image_file_from_id) : null %}
+    {% set newFile = newId ? (newId|xutim_image_file_from_id) : null %}
+    {%
+        set oldTrans = oldFile ? oldFile.translationByLocaleOrAny(locale) : null
+    %}
+    {%
+        set newTrans = newFile ? newFile.translationByLocaleOrAny(locale) : null
+    %}
+    {% set oldName = oldTrans ? oldTrans.name|striptags|raw : oldId %}
+    {% set newName = newTrans ? newTrans.name|striptags|raw : newId %}
+
+    <div>
+        <span class="text-muted fw-bold">{{ 'File'|trans({}, 'admin') }}:</span>
+        <del>
+            {% if oldUrl %}
+                <a
+                    href="{{ oldUrl }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >{{ oldName }}</a>
+            {% else %}
+                {{ oldName }}
+            {% endif %}
+        </del>
+        &nbsp;→&nbsp;
+        <ins>
+            {% if newUrl %}
+                <a
+                    href="{{ newUrl }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >{{ newName }}</a>
+            {% else %}
+                {{ newName }}
+            {% endif %}
+        </ins>
+    </div>
+{% else %}
+    <div>
+        <span class="text-muted fw-bold">{{ 'File'|trans({}, 'admin') }}:</span>
+        {% if curUrl %}
+            <a href="{{ curUrl }}" target="_blank" rel="noopener noreferrer">{{
+                curName
+            }}</a>
+        {% else %}
+            <span class="small text-secondary">—</span>
+        {% endif %}
+    </div>
+{% endif %}

@@ -1,0 +1,26 @@
+<div class="small text-muted mb-2">
+    <twig:ux:icon name="tabler:blocks" class="w-4 h-4" />
+    <span class="fw-bold">
+        {{ 'Block:'|trans({}, 'admin') }}
+    </span>
+    {% if op == 'added' or op == 'removed' %}
+        {{ fragment.data.code }}
+    {% else %}
+        {% set codeMeta = meta.code is defined ? meta.code : null %}
+        {%
+            set oldCode = codeMeta and codeMeta.old is defined ? codeMeta.old : ''
+        %}
+        {%
+            set newCode = codeMeta and codeMeta.new is defined ? codeMeta.new : (fragment.data.code ?? '')
+        %}
+
+        {%
+            if codeMeta and codeMeta.status is defined and codeMeta.status != 'same'
+        %}
+            <del>{{ oldCode|e }}</del> →
+            <ins>{{ newCode|e }}</ins>
+        {% else %}
+            {{ (fragment.data.code ?? '')|e }}
+        {% endif %}
+    {% endif %}
+</div>

@@ -1,2 +1,9 @@
-{%- set tag = 'h' ~ fragment.data.level -%}
-<{{ tag }}>{{fragment.data.text}}</{{ tag }}>
+{% set tag = 'h' ~ fragment.data.level %}
+
+<{{ tag }}>
+    {% if inlineHtml is defined and inlineHtml %}
+        <span class="diff-inline">{{ inlineHtml|raw }}</span>
+    {% else %}
+        {{ fragment.data.text|raw }}
+    {% endif %}
+</{{ tag }}>

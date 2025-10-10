@@ -1,0 +1,114 @@
+{% macro wrapper_class(op) %}
+    {% if op == 'added' %}block-added
+    {% elseif op == 'removed' %}block-removed
+    {% elseif op == 'modified_text' or op == 'modified' %}block-modified
+    {% else %}block-unchanged{% endif %}
+{% endmacro %}
+
+{% import _self as diff %}
+
+{% for row in rows %}
+    {% set op = row.op %}
+    {% set fragment = row.block_new is defined ? row.block_new : row.block %}
+    {% set inlineHtml = row.html is defined ? row.html : null %}
+    {% set meta = row.meta is defined ? row.meta : null %}
+
+    {% set hasMetaChange = false %}
+    {% if meta %}
+        {% set break = false %}
+        {% for f in meta %}
+            {% if break == false %}
+                {% if f.status is defined and f.status != 'same' %}
+                    {% set hasMetaChange = true %}
+                    {% set break = true %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% set opEff = (op == 'unchanged' and hasMetaChange) ? 'modified' : op %}
+
+    {% set wrapperClass = diff.wrapper_class(opEff) %}
+    <div class="{{ wrapperClass }} {% if inlineHtml %}diff-inline{% endif %}">
+        <div class="mb-2">
+            {% if opEff == 'added' %}
+                <span class="badge bg-success text-white">{{
+                    'Added'|trans({}, 'admin')
+                }}</span>
+            {% elseif opEff == 'removed' %}
+                <span class="badge bg-danger text-white">{{
+                    'Removed'|trans({}, 'admin')
+                }}</span>
+            {% elseif opEff == 'modified_text' %}
+                <span class="badge bg-warning text-black">{{
+                    'Changed text'|trans({}, 'admin')
+                }}</span>
+            {% elseif opEff == 'modified' %}
+                <span class="badge bg-warning text-black">{{
+                    'Changed'|trans({}, 'admin')
+                }}</span>
+            {% else %}
+                <span class="badge bg-secondary text-white">{{
+                    'Unchanged'|trans({}, 'admin')
+                }}</span>
+            {% endif %}
+        </div>
+
+        {% if fragment.type == 'paragraph' %}
+            {{
+                include('@XutimCore/admin/content_fragment/paragraph.html.twig', {fragment: fragment, inlineHtml: inlineHtml})
+            }}
+        {% elseif fragment.type == 'header' %}
+            {{
+                include('@XutimCore/admin/content_fragment/header.html.twig', {fragment: fragment, inlineHtml: inlineHtml})
+            }}
+        {% elseif fragment.type == 'quote' %}
+            {{
+                include('@XutimCore/admin/content_fragment/quote.html.twig', {fragment: fragment, inlineHtml: inlineHtml})
+            }}
+        {% elseif fragment.type == 'list' %}
+            {{
+                include('@XutimCore/admin/content_fragment/list.html.twig', {fragment: fragment})
+            }}
+        {% elseif fragment.type == 'xutimImage' %}
+            {{
+                include('@XutimCore/admin/content_fragment/diff/xutim_image_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
+            }}
+        {% elseif fragment.type == 'xutimFile' %}
+            {{
+                include('@XutimCore/admin/content_fragment/diff/xutim_file_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
+            }}
+        {% elseif fragment.type == 'imageRow' %}
+            {{
+                include('@XutimCore/admin/content_fragment/diff/image_row_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
+            }}
+        {%
+            elseif fragment.type == 'pageLink' or fragment.type == 'articleLink'
+        %}
+            {{
+                include('@XutimCore/admin/content_fragment/diff/link_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
+            }}
+        {% elseif fragment.type == 'xutimTag' %}
+            {{
+                include('@XutimCore/admin/content_fragment/diff/link_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
+            }}
+        {% elseif fragment.type == 'mainHeader' %}
+            {{
+                include('@XutimCore/admin/content_fragment/diff/main_header_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
+            }}
+        {% elseif fragment.type == 'embed' %}
+            {{
+                include('@XutimCore/admin/content_fragment/diff/embed_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
+            }}
+        {% elseif fragment.type == 'block' %}
+            {{
+                include('@XutimCore/admin/content_fragment/diff/code_block_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
+            }}
+        {% else %}
+            {% if meta %}
+                <pre class="small text-secondary">{{ meta|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+            {% else %}
+                {{ 'Unknown block'|trans({}, 'admin') }}
+            {% endif %}
+        {% endif %}
+    </div>
+{% endfor %}

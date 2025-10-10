@@ -1,1 +1,5 @@
-<p>{{ fragment.data.text|replace({'<br>': ''})|raw }}</p>
+{% if inlineHtml is defined and inlineHtml %}
+    <p class="diff-inline">{{ inlineHtml|raw }}</p>
+{% else %}
+    <p>{{ fragment.data.text|replace({'<br>': ''})|raw }}</p>
+{% endif %}

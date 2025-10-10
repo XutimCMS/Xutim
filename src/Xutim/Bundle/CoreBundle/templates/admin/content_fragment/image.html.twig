@@ -1,6 +1,4 @@
-<figure>
-    <img src="{{ fragment.data.file.url }}" alt="{{ fragment.data.caption }}" />
-    {% if fragment.data.caption %}
-        <figcaption>{{ fragment.data.caption }}</figcaption>
-    {% endif %}
-</figure>
+<div class="fw-semibold">{{ 'Legacy Image:'|trans({}, '') }}</div>
+<div class="small text-secondary">
+    #{{ fragment.data.file.url }}
+</div>

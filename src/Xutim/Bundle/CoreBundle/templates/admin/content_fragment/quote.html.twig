@@ -1,4 +1,8 @@
 <blockquote>
-    <p>{{ fragment.data.text|replace({'<br>': ''})|raw }}</p>
+    {% if inlineHtml is defined and inlineHtml %}
+        {{ inlineHtml|raw }}
+    {% else %}
+        <p>{{ fragment.data.text|replace({'<br>': ''})|raw }}</p>
+    {% endif %}
     <footer>{{ fragment.data.caption|replace({'<br>': ''}) }}</footer>
 </blockquote>

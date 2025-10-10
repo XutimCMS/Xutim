@@ -15,8 +15,8 @@
         {{ include('@XutimCore/admin/content_fragment/quote.html.twig') }}
     {% endif %}
 
-    {% if fragment.type == 'image' %}
-        {{ include('@XutimCore/admin/content_fragment/image.html.twig') }}
+    {% if fragment.type == 'xutimImage' %}
+        {{ include('@XutimCore/admin/content_fragment/xutim_image.html.twig') }}
     {% endif %}
 
     {% if fragment.type == 'embed' %}

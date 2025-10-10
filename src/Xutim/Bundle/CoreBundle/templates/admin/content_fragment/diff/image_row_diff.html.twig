@@ -1,0 +1,72 @@
+{% set changed = false %}
+{% if meta %}
+    {% set break = false %}
+    {% for f in meta %}
+        {% if break == false %}
+            {% if f.status is defined and f.status != 'same' %}
+                {% set changed = true %}
+                {% set break = true %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% set oldImages = [] %}
+{% set newImages = [] %}
+
+{% if meta %}
+    {% for key, info in meta %}
+        {% if key matches '/^image\\[\\d+\\]$/' %}
+            {%
+                set oldImages = oldImages|merge([info.old is defined and info.old ? info.old : null])
+            %}
+            {%
+                set newImages = newImages|merge([info.new is defined and info.new ? info.new : null])
+            %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% macro render_row(label, items) %}
+    <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+        <div class="small text-muted me-2" style="width: 3rem">
+            {{ label|trans({}, 'admin') }}
+        </div>
+        {% if items|length == 0 %}
+            <div class="small text-secondary">—</div>
+        {% else %}
+            {% for raw in items %}
+                {% set img = raw ? raw|json_decode : null %}
+                {% if img and img.url is defined %}
+                    <img
+                        src="{{ img.thumbnailUrl is defined and img.thumbnailUrl ? img.thumbnailUrl : img.url }}"
+                        alt=""
+                        class="img-thumbnail"
+                        style="max-width: 120px; height: auto"
+                    >
+                {% else %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% import _self as IR %}
+
+{% if changed %}
+    {{ IR.render_row('Old', oldImages) }}
+    <div class="text-muted my-1">→</div>
+    {{ IR.render_row('New', newImages) }}
+{% else %}
+    {% set imgs = fragment.data.images ?? [] %}
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        {% for it in imgs %}
+            <img
+                src="{{ it.thumbnailUrl is defined and it.thumbnailUrl ? it.thumbnailUrl : it.url }}"
+                alt=""
+                class="img-thumbnail"
+                style="max-width: 120px; height: auto"
+            >
+        {% endfor %}
+    </div>
+{% endif %}

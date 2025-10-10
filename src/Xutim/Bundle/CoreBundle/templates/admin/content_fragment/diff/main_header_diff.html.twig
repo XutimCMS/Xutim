@@ -1,0 +1,63 @@
+{% set preMeta = meta.pretitle is defined ? meta.pretitle : null %}
+{% set titMeta = meta.title is defined ? meta.title : null %}
+{% set subMeta = meta.subtitle is defined ? meta.subtitle : null %}
+
+{%
+    set showPlain = (op == 'added') or (op == 'removed') or (meta is not defined) or (meta is empty)
+%}
+
+<div class="vstack gap-2">
+    <div>
+        <div class="small text-muted">{{ 'Pretitle'|trans({}, 'admin') }}</div>
+        {% if showPlain %}
+            <div>{{ fragment.data.pretitle ?? '' }}</div>
+        {% else %}
+            {%
+                if preMeta and preMeta.status is defined and preMeta.status != 'same'
+            %}
+                <div>
+                    <del>{{ preMeta.old ?? '' }}</del> &nbsp;→&nbsp;
+                    <ins>{{ preMeta.new ?? '' }}</ins>
+                </div>
+            {% else %}
+                <div>{{ preMeta.new ?? preMeta.old ?? '' }}</div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div>
+        <div class="small text-muted">{{ 'Title'|trans({}, 'admin') }}</div>
+        {% if showPlain %}
+            <h2 class="h4">{{ fragment.data.title ?? '' }}</h2>
+        {% else %}
+            {%
+                if titMeta and titMeta.status is defined and titMeta.status != 'same'
+            %}
+                <h2 class="h4">
+                    <del>{{ titMeta.old ?? '' }}</del> &nbsp;→&nbsp;
+                    <ins>{{ titMeta.new ?? '' }}</ins>
+                </h2>
+            {% else %}
+                <h2 class="h4">{{ titMeta.new ?? titMeta.old ?? '' }}</h2>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div>
+        <div class="small text-muted">{{ 'Subtitle'|trans({}, 'admin') }}</div>
+        {% if showPlain %}
+            <div>{{ fragment.data.subtitle ?? '' }}</div>
+        {% else %}
+            {%
+                if subMeta and subMeta.status is defined and subMeta.status != 'same'
+            %}
+                <div>
+                    <del>{{ subMeta.old ?? '' }}</del> &nbsp;→&nbsp;
+                    <ins>{{ subMeta.new ?? '' }}</ins>
+                </div>
+            {% else %}
+                <div>{{ subMeta.new ?? subMeta.old ?? '' }}</div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

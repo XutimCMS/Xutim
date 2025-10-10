@@ -1,83 +1,165 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 
-{% block pageTitle %}{{ 'Translation revisions'|trans({}, 'admin')|capitalize }}{% endblock %}
+{% block pageTitle %}{{
+        'Translation revisions'|trans({}, 'admin')|capitalize
+    }}{% endblock %}
 
 {% block body %}
     <style>
-        del {
-            color: red;
-        }
+    del {
+      color: red;
+    }
 
-        ins {
-            color: green;
-        }
+    ins {
+      color: green;
+    }
+    .block-modified {
+      background: rgba(246, 211, 45, 0.08);
+    }
+    .block-added {
+      background: rgba(46, 160, 67, 0.06);
+    }
+    .block-removed {
+      background: rgba(248, 81, 73, 0.06);
+    }
+    .diff-inline ins {
+      background: rgba(46, 160, 67, 0.18);
+      text-decoration: none;
+      border-radius: 0.25rem;
+      padding: 0.05rem 0.15rem;
+    }
+    .diff-inline del {
+      background: rgba(248, 81, 73, 0.18);
+      text-decoration: line-through;
+      border-radius: 0.25rem;
+      padding: 0.05rem 0.15rem;
+    }
+    .block-added {
+      outline: 2px solid rgba(46, 160, 67, 0.35);
+      border-radius: 0.5rem;
+      padding: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
+    .block-removed {
+      outline: 2px solid rgba(248, 81, 73, 0.35);
+      border-radius: 0.5rem;
+      padding: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
+    .block-modified {
+      outline: 1px dashed rgba(128, 128, 128, 0.6);
+      border-radius: 0.5rem;
+      padding: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
+    .block-unchanged {
+      outline: 1px dashed rgba(128, 128, 128, 0.6);
+      opacity: 0.95;
+      border-radius: 0.5rem;
+      padding: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
     </style>
     <div class="row">
         <div class="col-md-3">
-            {% if form is defined and events is defined %}
-                {{ form_start(form) }}
+            {% if (events|length) > 0 %}
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Revisions</h3>
+                        <h3 class="card-title">
+                            {{ 'Revisions'|trans({}, 'admin') }}
+                        </h3>
                     </div>
-                    <div class="card-header py-2 ps-2">
-                        Select the version to compare
+
+                    <div class="px-3 pt-3">
+                        <div class="small text-muted mb-1">
+                            {{ 'You are comparing'|trans({}, 'admin') }}
+                        </div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="badge bg-secondary text-white">
+                                {{ 'Old'|trans({}, 'admin') }} •
+                                {{ selectedOld.recordedAt|date('d M Y H:i') }}
+                            </span>
+                            <span class="text-muted">→</span>
+                            <span class="badge bg-primary text-white">
+                                {{ 'New'|trans({}, 'admin') }} •
+                                {{ selectedNew.recordedAt|date('d M Y H:i') }}
+                            </span>
+                            <a
+                                class="btn btn-outline-secondary btn-sm ms-auto"
+                                href="{{ path('admin_content_translation_revisions', {
+                                id: translation.id,
+                                oldId: selectedNew.id,
+                                newId: selectedOld.id,
+                            }) }}"
+                            >
+                                {{ 'Swap'|trans({}, 'admin') }}
+                            </a>
+                        </div>
+                        <hr class="my-2" />
                     </div>
-                    <table
-                        class="card-table table table-sm table-bordered table-vcenter table-responsive"
-                    >
-                        <tbody>
-                            {% set eventsCnt = events|length %}
-                            {% for key, event in events|reverse %}
-                                <tr>
-                                    <td>{{ eventsCnt - key }}</td>
-                                    <td>
-                                        <input
-                                            type="radio"
-                                            name="{{ form.revision_version.vars.full_name }}"
-                                            id="{{ form.revision_version.vars.id }}"
-                                            value="{{ event.id }}"
-                                            {% if form.revision_version.vars.value == event.id or (not isSubmitted and loop.first) %}checked{% endif %}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="radio"
-                                            name="{{ form.revision_diff.vars.full_name }}"
-                                            id="{{ form.revision_diff.vars.id }}"
-                                            value="{{ event.id }}"
-                                            {% if form.revision_diff.vars.value == event.id or (not isSubmitted and loop.index == 2) %}checked{% endif %}
-                                        />
-                                    </td>
-                                    <td>
+
+                    <div class="list-group list-group-flush">
+                        {% set total = events|length %}
+                        {% for event in events %}
+                            {%
+                                set author = usernames[event.userIdentifier].name is defined ? usernames[event.userIdentifier].name : event.userIdentifier
+                            %}
+                            <div class="list-group-item d-flex align-items-center gap-2">
+                                <div class="text-muted" style="width: 1.5rem">
+                                    {{ total - loop.index0 }}
+                                </div>
+                                <div class="flex-fill">
+                                    <div class="fw-semibold">
                                         {{ event.recordedAt|date('d M Y H:i') }}
-                                    </td>
-                                    <td>
-                                        {{ usernames[event.userIdentifier].name is defined ? usernames[event.userIdentifier].name : event.userIdentifier }}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    <div class="card-footer text-end py-3">
-                        <twig:Xutim:Admin:Button
-                            variant="default"
-                            class="btn-sm text-end"
-                            type="submit"
-                            >Show revisions</twig:Xutim:Admin:Button
-                        >
+                                    </div>
+                                    <div class="small text-secondary">
+                                        {{ author }}
+                                    </div>
+                                </div>
+                                <div
+                                    class="btn-group btn-group-sm"
+                                    role="group"
+                                    aria-label="Choose side"
+                                >
+                                    <a
+                                        class="btn btn-outline-secondary {{ selectedOld.id == event.id ? 'active' }}"
+                                        href="{{ path('admin_content_translation_revisions', {
+                                            id: translation.id,
+                                            oldId: event.id,
+                                            newId: selectedNew.id,
+                                        }) }}"
+                                        title="{{ 'Set as Old'|trans({}, 'admin') }}"
+                                    >
+                                        {{ 'Old'|trans({}, 'admin') }}
+                                    </a>
+                                    <a
+                                        class="btn btn-outline-primary {{ selectedNew.id == event.id ? 'active' }}"
+                                        title="{{ 'Set as New'|trans({}, 'admin') }}"
+                                        href="{{ path('admin_content_translation_revisions', {
+                                            id: translation.id,
+                                            oldId: selectedOld.id,
+                                            newId: event.id,
+                                        }) }}"
+                                    >
+                                        {{ 'New'|trans({}, 'admin') }}
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
-                {{ form_end(form, {render_rest: false}) }}
             {% else %}
                 <div class="alert alert-warning" role="alert">
                     <h4 class="alert-title">No revision</h4>
                     <div class="text-secondary">
-                        There is no revision to compare.
+                        {{
+                            'There is no revision to compare.'|trans({}, 'admin')
+                        }}
                     </div>
                 </div>
             {% endif %}
         </div>
+
         <div class="col-md-9">
             <h2>Title</h2>
             {% if titleDiff is defined %}
@@ -94,10 +176,21 @@
             {% endif %}
 
             <h2 class="mt-4">Content</h2>
-            {% if contentDiff is defined %}
-                {{ contentDiff|raw }}
+
+            {% if contentRows is defined %}
+                {{
+                    include('@XutimCore/admin/content_fragment/content_diff.html.twig', {
+                        rows: contentRows,
+                        locale: content_context_language(),
+                    })
+                }}
             {% else %}
-                <p>{{ translation.content }}</p>
+                {{
+                    include('@XutimCore/admin/content_fragment/content.html.twig', {
+                        fragments: translation.content,
+                        locale: content_context_language(),
+                    })
+                }}
             {% endif %}
         </div>
     </div>

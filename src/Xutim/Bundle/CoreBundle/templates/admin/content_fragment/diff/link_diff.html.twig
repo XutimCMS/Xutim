@@ -1,0 +1,93 @@
+{% set type = fragment.type %}
+{% set id = fragment.data.id ?? '' %}
+
+{% if type == 'pageLink' %}
+    {% set label = 'Page link'|trans({}, 'admin') %}
+    {% set route = 'admin_page_edit' %}
+{% elseif type == 'articleLink' %}
+    {% set label = 'Article link'|trans({}, 'admin') %}
+    {% set route = 'admin_article_edit' %}
+{% elseif type == 'xutimTag' %}
+    {% set label = 'Tag'|trans({}, 'admin') %}
+    {% set route = 'admin_tag_edit' %}
+{% else %}
+    {% set label = 'Link'|trans({}, 'admin') %}
+    {% set route = null %}
+{% endif %}
+
+{% set idMeta = meta is defined and meta.id is defined ? meta.id : null %}
+{%
+    set idChanged = idMeta and idMeta.status is defined and idMeta.status != 'same'
+%}
+{% set oldId = idMeta and idMeta.old is defined ? idMeta.old : '' %}
+{% set newId = idMeta and idMeta.new is defined ? idMeta.new : id %}
+
+{# Helper to render a link to the admin route for a given ID #}
+{% macro link_for(routeName, idValue, type) %}
+    {% if type == 'pageLink' %}
+        {%
+            set title = get_page(idValue).translationByLocaleOrDefault(app.locale).title|default('page link doesn\'t exist')
+        %}
+    {% elseif type == 'articleLink' %}
+        {%
+            set title = get_article(idValue).translationByLocaleOrDefault(app.locale).title|default('article link doesn\'t exist')
+        %}
+    {% elseif type == 'xutimTag' %}
+        {%
+            set title = fetch_tag(idValue).translationByLocaleOrAny(app.locale).title|default('tag link doesn\'t exist')
+        %}
+    {% else %}
+        {% set title = '' %}
+    {% endif %}
+
+    {% if routeName and idValue %}
+        <a
+            href="{{ path(routeName, {id: idValue}) }}"
+            target="_blank"
+            rel="noopener noreferrer"
+        >{{ title }}</a>
+    {% else %}
+        {{ idValue }}
+    {% endif %}
+{% endmacro %}
+{% import _self as H %}
+
+<div class="small text-muted mb-1">
+    <twig:ux:icon name="tabler:link" class="w-4 h-4" />
+    <span class="fw-bold">{{ label }}:</span>
+    {% if idChanged %}
+        <del>{{ H.link_for(route, oldId, type) }}</del> &nbsp;→&nbsp;
+        <ins>{{ H.link_for(route, newId, type) }}</ins>
+    {% else %}
+        {{ H.link_for(route, id, type) }}
+    {% endif %}
+</div>
+
+{% if type == 'xutimTag' %}
+    {%
+        set layoutMeta = meta is defined and meta.layout is defined ? meta.layout : null
+    %}
+    {%
+        set layoutChanged = layoutMeta and layoutMeta.status is defined and layoutMeta.status != 'same'
+    %}
+    {%
+        set curLayout = fragment.data.layout is defined ? fragment.data.layout : ''
+    %}
+
+    {% if layoutChanged %}
+        <div class="small">
+            <span class="text-muted fw-bold">{{
+                    'Layout'|trans({}, 'admin')
+                }}:</span>
+            <del>{{ layoutMeta.old ?? '' }}</del> &nbsp;→&nbsp;
+            <ins>{{ layoutMeta.new ?? '' }}</ins>
+        </div>
+    {% elseif curLayout %}
+        <div class="small">
+            <span class="text-muted fw-bold">{{
+                    'Layout'|trans({}, 'admin')
+                }}:</span>
+            {{ curLayout }}
+        </div>
+    {% endif %}
+{% endif %}

@@ -28,8 +28,12 @@ return function (RoutingConfigurator $routes) {
     ;
 
     $routes
-        ->add('admin_content_translation_revisions', '/admin/{_content_locale}/content-translation/revisions/{id}/{version?}/{diff?}')
+        ->add('admin_content_translation_revisions', '/admin/{_content_locale}/content-translation/revisions/{id}/{oldId?}/{newId?}')
         ->methods(['get'])
         ->controller(ShowTranslationRevisionsAction::class)
+        ->requirements([
+            'oldId' => '[0-9a-fA-F-]{36}',
+            'newId' => '[0-9a-fA-F-]{36}'
+        ])
     ;
 };
