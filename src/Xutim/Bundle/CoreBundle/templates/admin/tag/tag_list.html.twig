@@ -32,6 +32,49 @@
             frameId: 'tags-list',
             pager: tags,
             filter: filter,
+            showChips: true,
+            columns: [
+              {
+                key: 'publicationStatus',
+                label: 'S'|trans({}, 'admin'),
+                sortable: false,
+                order: 'publicationStatus',
+                filter: {type: 'none'},
+                chip: true,
+              },
+              {
+                key: 'language',
+                label: 'T'|trans({}, 'admin'),
+                sortable: false,
+                order: 'locale',
+                filter: {type: 'none'},
+                chip: true,
+              },
+              {
+                key: 'name',
+                label: 'Name'|trans({}, 'admin'),
+                sortable: false,
+                order: 'publicationStatus',
+                filter: {type: 'none'},
+                chip: true,
+              },
+              {
+                key: 'excludeFromNews',
+                label: 'Exclude from news'|trans({}, 'admin'),
+                sortable: false,
+                order: 'excludeFromNews',
+                filter: {type: 'none'},
+                chip: true,
+              },
+              {
+                key: 'updatedAt',
+                label: 'Updated at'|trans({}, 'admin'),
+                sortable: false,
+                order: 'updatedAt',
+                filter: {type: 'none'},
+                chip: true,
+              },
+          ],
         }
     %}
     {% block header %}

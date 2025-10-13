@@ -28,6 +28,46 @@
             tableBodyId: 'block-list-table-body',
             pager: blocks,
             filter: filter,
+            showChips: true,
+            columns: [
+              {
+                key: 'name',
+                label: 'Name'|trans({}, 'admin'),
+                sortable: true,
+                order: 'name',
+                filter: {type: 'none'},
+                chip: true,
+              },
+              {
+                key: 'description',
+                label: 'Description'|trans({}, 'admin'),
+                sortable: true,
+                order: 'description',
+                filter: {type: 'none'},
+                chip: true,
+              },
+              {
+                key: 'layout',
+                label: 'Layout'|trans({}, 'admin'),
+                sortable: false,
+                filter: {type: 'none'},
+                chip: true,
+              },
+              {
+                key: 'articles',
+                label: 'Articles'|trans({}, 'admin'),
+                sortable: false,
+                filter: {type: 'none'},
+                chip: false,
+              },
+              {
+                key: 'pages',
+                label: 'Pages'|trans({}, 'admin'),
+                sortable: false,
+                filter: {type: 'none'},
+                chip: false,
+              },
+          ],
         }
     %}
     {% block header %}
