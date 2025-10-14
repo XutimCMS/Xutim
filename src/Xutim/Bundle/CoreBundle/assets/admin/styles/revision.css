@@ -1,0 +1,35 @@
+del {
+    color: red;
+}
+
+ins {
+    color: green;
+}
+.block-added {
+    background: rgba(46, 160, 67, 0.06);
+    outline: 2px solid rgba(46, 160, 67, 0.35);
+    border-radius: 0.5rem;
+    padding: 0.35rem;
+    margin-bottom: 0.5rem;
+}
+.block-removed {
+    background: rgba(248, 81, 73, 0.06);
+    outline: 2px solid rgba(248, 81, 73, 0.35);
+    border-radius: 0.5rem;
+    padding: 0.35rem;
+    margin-bottom: 0.5rem;
+}
+.block-modified {
+    background: rgba(246, 211, 45, 0.06);
+    outline: 2px solid rgba(246, 211, 45, 0.6);
+    border-radius: 0.5rem;
+    padding: 0.35rem;
+    margin-bottom: 0.5rem;
+}
+.block-unchanged {
+    outline: 1px dashed rgba(128, 128, 128, 0.6);
+    opacity: 0.95;
+    border-radius: 0.5rem;
+    padding: 0.35rem;
+    margin-bottom: 0.5rem;
+}

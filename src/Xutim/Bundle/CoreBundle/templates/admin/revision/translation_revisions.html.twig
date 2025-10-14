@@ -5,61 +5,6 @@
     }}{% endblock %}
 
 {% block body %}
-    <style>
-    del {
-      color: red;
-    }
-
-    ins {
-      color: green;
-    }
-    .block-modified {
-      background: rgba(246, 211, 45, 0.08);
-    }
-    .block-added {
-      background: rgba(46, 160, 67, 0.06);
-    }
-    .block-removed {
-      background: rgba(248, 81, 73, 0.06);
-    }
-    .diff-inline ins {
-      background: rgba(46, 160, 67, 0.18);
-      text-decoration: none;
-      border-radius: 0.25rem;
-      padding: 0.05rem 0.15rem;
-    }
-    .diff-inline del {
-      background: rgba(248, 81, 73, 0.18);
-      text-decoration: line-through;
-      border-radius: 0.25rem;
-      padding: 0.05rem 0.15rem;
-    }
-    .block-added {
-      outline: 2px solid rgba(46, 160, 67, 0.35);
-      border-radius: 0.5rem;
-      padding: 0.35rem;
-      margin-bottom: 0.5rem;
-    }
-    .block-removed {
-      outline: 2px solid rgba(248, 81, 73, 0.35);
-      border-radius: 0.5rem;
-      padding: 0.35rem;
-      margin-bottom: 0.5rem;
-    }
-    .block-modified {
-      outline: 1px dashed rgba(128, 128, 128, 0.6);
-      border-radius: 0.5rem;
-      padding: 0.35rem;
-      margin-bottom: 0.5rem;
-    }
-    .block-unchanged {
-      outline: 1px dashed rgba(128, 128, 128, 0.6);
-      opacity: 0.95;
-      border-radius: 0.5rem;
-      padding: 0.35rem;
-      margin-bottom: 0.5rem;
-    }
-    </style>
     <div class="row">
         <div class="col-md-3">
             {% if (events|length) > 0 %}
