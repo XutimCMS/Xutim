@@ -7,6 +7,21 @@ export default class extends Controller {
         this.maxScroll = 0;
         this.clicked = [];
 
+        // Capture and persist the original referrer
+        const storageKey = 'xutim_analytics_referrer';
+        let originalReferrer = sessionStorage.getItem(storageKey);
+
+        if (!originalReferrer && document.referrer) {
+            // Only store if it's from a different domain
+            const currentHost = window.location.hostname;
+            const referrerHost = new URL(document.referrer).hostname;
+
+            if (referrerHost !== currentHost) {
+                originalReferrer = document.referrer;
+                sessionStorage.setItem(storageKey, originalReferrer);
+            }
+        }
+
         this._onScroll = () => {
             const depth = Math.floor(
                 ((window.scrollY + window.innerHeight) /
@@ -31,15 +46,21 @@ export default class extends Controller {
         document.addEventListener('click', this._onClick);
 
         this._timer = setTimeout(() => {
+            const payload = {
+                path: location.pathname,
+                screenSize: `${window.innerWidth}x${window.innerHeight}`,
+                loadTime: Math.round(performance.now()),
+                scrollDepth: this.maxScroll,
+                clicks: this.clicked,
+            };
+
+            if (originalReferrer) {
+                payload.referrer = originalReferrer;
+            }
+
             navigator.sendBeacon(
                 '/_analytics/collect',
-                JSON.stringify({
-                    path: location.pathname,
-                    screenSize: `${window.innerWidth}x${window.innerHeight}`,
-                    loadTime: Math.round(performance.now()),
-                    scrollDepth: this.maxScroll,
-                    clicks: this.clicked,
-                }),
+                JSON.stringify(payload),
             );
             window.removeEventListener('scroll', this._onScroll);
             document.removeEventListener('click', this._onClick);

@@ -41,7 +41,11 @@ class CollectAnalyticsAction
             ? (int) $data['scrollDepth']
             : null;
 
-        $referer = $request->headers->get('Referer');
+        // Prioritize referrer from payload over HTTP Referer header
+        $referer = isset($data['referrer']) && is_string($data['referrer']) && $data['referrer'] !== ''
+            ? $data['referrer']
+            : $request->headers->get('Referer');
+
         $userAgent = $request->headers->get('User-Agent');
         $language = $request->headers->get('Accept-Language');
         $proxyIp = $request->headers->get('CF-Connecting-IP');
@@ -73,7 +77,10 @@ class CollectAnalyticsAction
         return new JsonResponse(
             ['ok' => true],
             Response::HTTP_OK,
-            ['Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0', 'Pragma' => 'no-cache']
+            [
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma' => 'no-cache'
+            ]
         );
     }
 }
