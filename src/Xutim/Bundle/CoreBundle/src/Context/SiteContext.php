@@ -53,7 +53,10 @@ class SiteContext
      */
     public function getMenu(): array
     {
-        return $this->siteContextCache->get(self::MAIN_MENU, fn () => $this->menuBuilder->buildMenu());
+        return $this->siteContextCache->get(
+            self::MAIN_MENU,
+            fn () => $this->menuBuilder->buildMenu($this->getAllLocales())
+        );
     }
 
     public function resetMenu(): void

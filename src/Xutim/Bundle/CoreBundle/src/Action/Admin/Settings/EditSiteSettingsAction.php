@@ -38,6 +38,7 @@ class EditSiteSettingsAction extends AbstractController
             $site->change($dto->locales, $dto->extendedContentLocales, $dto->theme, $dto->sender);
             $this->siteRepository->save($site, true);
             $this->siteContext->resetDefaultSite();
+            $this->siteContext->resetMenu();
             $this->layoutLoader->loadAllLayouts();
 
             $this->addFlash('success', 'flash.changes_made_successfully');

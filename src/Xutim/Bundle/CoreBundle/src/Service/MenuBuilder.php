@@ -60,6 +60,8 @@ final readonly class MenuBuilder
     }
 
     /**
+     * @param array<string> $allowedLocales
+     *
      * @return array{
      *      roots: array<string>,
      *      items: array<string, array{
@@ -68,7 +70,7 @@ final readonly class MenuBuilder
      *      }>
      * }
      */
-    public function buildMenu(): array
+    public function buildMenu(array $allowedLocales): array
     {
         $items = $this->repo->findByHierarchy();
 
@@ -83,7 +85,7 @@ final readonly class MenuBuilder
                 $rootItemsId[] = $itemId;
             }
 
-            $translations = $this->generateTranslations($item);
+            $translations = $this->generateTranslations($item, $allowedLocales);
             $itemsMap[$itemId] = [
                 'children' => [],
                 'translations' => $translations,
@@ -104,9 +106,11 @@ final readonly class MenuBuilder
     }
 
     /**
+     * @param array<string> $allowedLocales
+     *
      * @return array<string, array{name: string, route: string, hasLink: bool}>
      */
-    private function generateTranslations(MenuItemInterface $item): array
+    private function generateTranslations(MenuItemInterface $item, array $allowedLocales): array
     {
         $translations = [];
         if ($item->hasPage() && $item->ovewritesPage()) {
@@ -116,45 +120,51 @@ final readonly class MenuBuilder
         }
 
         foreach ($item->getObject()->getTranslations() as $trans) {
-            if ($trans->isPublished()) {
-                $link = null;
-                if ($overwritePage !== null) {
-                    $linkTrans = $overwritePage->getTranslationByLocale($trans->getLocale());
-                    if ($linkTrans !== null && $linkTrans->isPublished()) {
-                        $link = $this->router->generate(
-                            'content_translation_show',
-                            [
-                                '_locale' => $linkTrans->getLocale(),
-                                'slug' => $linkTrans->getSlug(),
-                            ]
-                        );
-                    }
-                    if ($item->hasSnippetAnchor()) {
-                        /** @var SnippetInterface $snippet */
-                        $snippet = $item->getSnippetAnchor();
-                        $snippetTrans = $snippet->getTranslationByLocale($trans->getLocale());
-                        if ($snippetTrans !== null) {
-                            $link .= '#' . trim($snippetTrans->getContent());
-                        }
-                    }
-                }
+            if (!$trans->isPublished()) {
+                continue;
+            }
 
-                if ($link === null) {
+            if (!in_array($trans->getLocale(), $allowedLocales, true)) {
+                continue;
+            }
+
+            $link = null;
+            if ($overwritePage !== null) {
+                $linkTrans = $overwritePage->getTranslationByLocale($trans->getLocale());
+                if ($linkTrans !== null && $linkTrans->isPublished()) {
                     $link = $this->router->generate(
                         'content_translation_show',
                         [
-                            '_locale' => $trans->getLocale(),
-                            'slug' => $trans->getSlug(),
+                            '_locale' => $linkTrans->getLocale(),
+                            'slug' => $linkTrans->getSlug(),
                         ]
                     );
                 }
-
-                $translations[$trans->getLocale()] = [
-                    'name' => $trans instanceof TagTranslationInterface ? $trans->getName() : $trans->getTitle(),
-                    'route' => $link,
-                    'hasLink' => $item->hasLink()
-                ];
+                if ($item->hasSnippetAnchor()) {
+                    /** @var SnippetInterface $snippet */
+                    $snippet = $item->getSnippetAnchor();
+                    $snippetTrans = $snippet->getTranslationByLocale($trans->getLocale());
+                    if ($snippetTrans !== null) {
+                        $link .= '#' . trim($snippetTrans->getContent());
+                    }
+                }
             }
+
+            if ($link === null) {
+                $link = $this->router->generate(
+                    'content_translation_show',
+                    [
+                        '_locale' => $trans->getLocale(),
+                        'slug' => $trans->getSlug(),
+                    ]
+                );
+            }
+
+            $translations[$trans->getLocale()] = [
+                'name' => $trans instanceof TagTranslationInterface ? $trans->getName() : $trans->getTitle(),
+                'route' => $link,
+                'hasLink' => $item->hasLink()
+            ];
         }
 
         return $translations;
