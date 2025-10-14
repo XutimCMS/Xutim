@@ -1,7 +1,11 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 {% import '@XutimCore/admin/common/forms.html.twig' as forms %}
 
-{% set pageTitle = 'Edit tag'|trans({}, 'admin')|capitalize %}
+{%
+    set pageTitle = 'Edit "%tagName%" tag'|trans({
+        '%tagName%': tag.translationByLocaleOrAny(content_context_language(), default_locale).name,
+    }, 'admin')|capitalize
+%}
 {% block pageTitle %}{{ pageTitle }}{% endblock %}
 
 {% block breadcrumbHeader %}
@@ -32,7 +36,6 @@
         :entity="tag"
         :simpleTranslation="true"
         class="d-flex justify-content-end align-items-center mb-2"
-        :showExtendedLanguages="false"
     />
 {% endblock %}
 
