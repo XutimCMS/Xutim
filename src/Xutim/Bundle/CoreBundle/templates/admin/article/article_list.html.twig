@@ -115,7 +115,7 @@
         {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
         {% for article in articles %}
             {%
-                set translation = article.translationByLocaleOrAny(content_context_language())
+                set translation = article.translationByLocaleOrAny(content_context_language(), default_locale)
             %}
             <tr>
                 <td>
@@ -145,7 +145,7 @@
                     {% for tag in article.tags %}
                         <twig:Xutim:Admin:Tag :color="tag.color">
                             {{
-                                tag.translationByLocaleOrAny(content_context_language()).name
+                                tag.translationByLocaleOrAny(content_context_language(), default_locale).name
                             }}
                         </twig:Xutim:Admin:Tag>
                     {% endfor %}

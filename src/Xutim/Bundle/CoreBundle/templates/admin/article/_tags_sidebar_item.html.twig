@@ -6,7 +6,7 @@
         <div id="article-sidebar-tags-list">
             {% for tag in article.tags %}
                 <div class="mt-1">
-                    {% set name = tag.translationByLocaleOrAny(content_context_language()).name %}
+                    {% set name = tag.translationByLocaleOrAny(content_context_language(), default_locale).name %}
                     <a href="{{ path('admin_tag_edit', {id: tag.id}) }}">
                         <twig:Xutim:Admin:Tag
                             :color="tag.color"
@@ -64,7 +64,7 @@
                     {% for tag in allTags %}
                         <label class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
                                data-tag-menu-target="item"
-                               data-name="{{ tag.translationByLocaleOrAny(content_context_language()).name|lower }}"
+                               data-name="{{ tag.translationByLocaleOrAny(content_context_language(), default_locale).name|lower }}"
                                >
                             <input class="form-check-input m-0"
                                    type="checkbox"
@@ -74,7 +74,7 @@
                                    {{ article.hasTag(tag) ? 'checked' : '' }} >
                             <span class="badge badge-3 tag-status badge-dot"
                                   style="background-color: {{ tag.color.HTMLHex }}"></span>
-                            {{ tag.translationByLocaleOrAny(content_context_language()).name }}
+                            {{ tag.translationByLocaleOrAny(content_context_language(), default_locale).name }}
                         </label>
                     {% endfor %}
                 </div>

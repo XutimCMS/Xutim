@@ -16,7 +16,6 @@
 {% block languageBar %}
     <twig:Xutim:Admin:LanguageContextBar
         class="d-flex justify-content-end align-items-center mb-2"
-        :showExtendedLanguages="false"
     />
 {% endblock %}
 
@@ -119,7 +118,7 @@
         {% for tag in tags %}
             {% set tagColor = tag.color %}
             {%
-                set translation = tag.translationByLocaleOrAny(content_context_language())
+                set translation = tag.translationByLocaleOrAny(content_context_language(), default_locale)
             %}
             <tr>
                 <td>{{ badges.publicationStatusBadgeSimple(tag) }}</td>

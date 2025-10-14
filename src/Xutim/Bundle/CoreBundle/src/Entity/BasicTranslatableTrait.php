@@ -27,9 +27,12 @@ trait BasicTranslatableTrait
     /**
      * @return T
      */
-    public function getTranslationByLocaleOrAny(string $locale)
+    public function getTranslationByLocaleOrAny(string $locale, ?string $altLocale = null)
     {
         $translation = $this->getTranslationByLocale($locale);
+        if ($translation === null && $altLocale !== null) {
+            $translation = $this->getTranslationByLocale($altLocale);
+        }
 
         if ($translation === null) {
             /** @var T */
