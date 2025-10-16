@@ -37,7 +37,7 @@ return function (RoutingConfigurator $routes) {
     ;
 
     $routes
-        ->add('admin_media_new', '/admin/{_content_locale}/media/new')
+        ->add('admin_media_new', '/admin/{_content_locale}/media/new/{id?}')
         ->methods(['get', 'post'])
         ->controller(CreateFileAction::class)
     ;

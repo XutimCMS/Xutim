@@ -67,7 +67,7 @@
         tag="a"
         variant="nav"
         data-turbo-frame="modal"
-        href="{{ admin_path('admin_media_new') }}"
+        href="{{ admin_path('admin_media_new', {id: currentFolder.id|default(null)}) }}"
     >
         <twig:Xutim:Admin:Icon name="photo" class="me-1" />
         {{ 'New file'|trans({}, 'admin') }}

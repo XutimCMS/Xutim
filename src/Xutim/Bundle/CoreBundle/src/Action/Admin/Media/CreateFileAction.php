@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Form\Admin\FileType;
 use Xutim\CoreBundle\Message\Command\File\UploadFileMessage;
+use Xutim\CoreBundle\Repository\FileRepository;
+use Xutim\CoreBundle\Repository\MediaFolderRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FileService;
 use Xutim\SecurityBundle\Security\UserRoles;
@@ -22,14 +24,24 @@ class CreateFileAction extends AbstractController
         private readonly UserStorage $userStorage,
         private readonly FileService $fileService,
         private readonly AdminUrlGenerator $router,
+        private readonly MediaFolderRepository $folderRepository,
+        private readonly FileRepository $fileRepository
     ) {
     }
 
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request, ?string $id): Response
     {
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
+        $folder = null;
+        if ($id !== null) {
+            $folder = $this->folderRepository->find($id);
+            if ($folder === null) {
+                throw $this->createNotFoundException('The media folder does not exist');
+            }
+        }
+
         $form = $this->createForm(FileType::class, null, [
-            'action' => $this->router->generate('admin_media_new')
+            'action' => $this->router->generate('admin_media_new', ['id' => $id])
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -48,6 +60,11 @@ class CreateFileAction extends AbstractController
             );
             $file = $this->fileService->persistFile($command);
 
+            if ($folder !== null) {
+                $file->changeFolder($folder);
+                $this->fileRepository->save($file, true);
+            }
+
             if ($request->headers->has('turbo-frame')) {
                 $stream = $this->renderBlockView('@XutimCore/admin/media/new.html.twig', 'stream_success', [
                     'file' => $file
@@ -56,7 +73,11 @@ class CreateFileAction extends AbstractController
                 $this->addFlash('stream', $stream);
             }
 
-            return new RedirectResponse($this->router->generate('admin_media_list'), Response::HTTP_SEE_OTHER);
+            $redirectId = $folder?->getId();
+            return new RedirectResponse(
+                $this->router->generate('admin_media_list', ['id' => $redirectId]),
+                Response::HTTP_SEE_OTHER
+            );
         }
 
         return $this->render('@XutimCore/admin/media/new.html.twig', [
