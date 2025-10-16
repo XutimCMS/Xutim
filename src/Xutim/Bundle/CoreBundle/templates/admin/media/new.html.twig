@@ -25,7 +25,7 @@
 {% endblock %}
 
 {% block stream_success %}
-    <turbo-stream action="append" targets="#media-list">
+    <turbo-stream action="prepend" targets="#media-list">
         <template>
             {{ include('@XutimCore/admin/media/_row.html.twig') }}
         </template>
