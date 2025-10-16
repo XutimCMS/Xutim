@@ -1,13 +1,7 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 
 {% block pageTitle %}
-    <h2 class="pageTitle">
-        {% if currentFolder %}
-            {{ currentFolder.name }}
-        {% else %}
-            {{ 'Media library'|trans({}, 'admin') }}
-        {% endif %}
-    </h2>
+    {{ include('@XutimCore/admin/media/_title.html.twig') }}
 {% endblock %}
 
 {% block breadcrumbHeader %}
@@ -98,6 +92,7 @@
             {% set filesCnt = folder.files|length %}
             <div
                 class="col"
+                id="folder-{{ folder.id }}"
                 data-controller="drop-target"
                 data-drop-target-id-value="{{ folder.id }}"
                 data-drop-target-move-url-value="{{ path('admin_media_move_file_to_folder') }}"

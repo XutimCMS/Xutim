@@ -1,0 +1,19 @@
+<div class="d-flex align-items-center gap-3" id="page-title-wrapper">
+    <h2 class="pageTitle mb-0">
+        {% if currentFolder %}
+            {{ currentFolder.name }}
+        {% else %}
+            {{ 'Media library'|trans({}, 'admin') }}
+        {% endif %}
+    </h2>
+    {% if currentFolder %}
+        <a
+            href="{{ admin_path('admin_media_folder_edit', {id: currentFolder.id}) }}"
+            data-turbo-frame="modal"
+            aria-label="{{ 'Edit folder'|trans({}, 'admin') }}"
+            class="text-primary"
+        >
+            <twig:Xutim:Admin:Icon name="edit" />
+        </a>
+    {% endif %}
+</div>
