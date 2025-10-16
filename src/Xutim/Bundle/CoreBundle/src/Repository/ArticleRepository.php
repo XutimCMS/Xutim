@@ -104,7 +104,21 @@ class ArticleRepository extends ServiceEntityRepository
         $hasOrder = in_array($filter->orderColumn, array_keys(self::FILTER_ORDER_COLUMN_MAP), true);
 
         if ($filter->orderColumn === 'publishedAt') {
+            $orderDir = $filter->getOrderDir();
+            $isDesc = strtolower($orderDir) === 'desc';
+
+            //  DESC puts NULLs last, ASC puts NULLs first
             $builder
+                ->addOrderBy(
+                    'CASE
+                        WHEN translation.status = :scheduledParam AND article.scheduledAt IS NOT NULL THEN ' . ($isDesc ? '0' : '1') . '
+                        WHEN translation.id IS NOT NULL AND translation.publishedAt IS NOT NULL THEN ' . ($isDesc ? '0' : '1') . '
+                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL AND fallbackTranslation.publishedAt IS NOT NULL THEN ' . ($isDesc ? '0' : '1') . '
+                        WHEN defaultTranslation.publishedAt IS NOT NULL THEN ' . ($isDesc ? '0' : '1') . '
+                        ELSE ' . ($isDesc ? '1' : '0') . '
+                     END',
+                    'ASC'
+                )
                 ->addOrderBy(
                     'CASE
                         WHEN translation.status = :scheduledParam AND article.scheduledAt IS NOT NULL THEN article.scheduledAt
@@ -112,7 +126,7 @@ class ArticleRepository extends ServiceEntityRepository
                         WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.publishedAt
                         ELSE defaultTranslation.publishedAt
                      END',
-                    $filter->getOrderDir()
+                    $orderDir
                 )
                 ->setParameter('scheduledParam', PublicationStatus::Scheduled);
         } elseif ($hasOrder === false) {
@@ -124,6 +138,16 @@ class ArticleRepository extends ServiceEntityRepository
                         ELSE defaultTranslation.updatedAt
                      END',
                     'desc'
+                );
+        } elseif ($filter->orderColumn === 'updatedAt') {
+            $builder
+                ->addOrderBy(
+                    'CASE
+                        WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                        ELSE defaultTranslation.updatedAt
+                     END',
+                    $filter->getOrderDir()
                 );
         } else {
             $builder->orderBy(
@@ -167,7 +191,7 @@ class ArticleRepository extends ServiceEntityRepository
             $inNews = (bool) $filter->col('inNews');
 
             if ($inNews === false) {
-                // EXCLUDED FROM NEWS ⇢ article has at least one tag AND has no non-excluded tags
+                // EXCLUDED FROM NEWS -> article has at least one tag AND has no non-excluded tags
                 // i.e., all its tags are excluded
                 $builder->andWhere(
                     $builder->expr()->andX(
@@ -176,13 +200,177 @@ class ArticleRepository extends ServiceEntityRepository
                     )
                 );
             } else {
-                // INCLUDED IN NEWS ⇢ either it has no tags OR it has at least one non-excluded tag
+                // INCLUDED IN NEWS -> either it has no tags OR it has at least one non-excluded tag
                 $builder->andWhere(
                     $builder->expr()->orX(
                         $builder->expr()->not($builder->expr()->exists($subHasAnyTagDql)),
                         $builder->expr()->exists($subHasNonExcludedTagDql)
                     )
                 );
+            }
+        }
+
+        if ($filter->hasCol('publicationStatus')) {
+            /** @var string $status */
+            $status = $filter->col('publicationStatus');
+            $builder
+                ->andWhere(
+                    'CASE
+                        WHEN translation.id IS NOT NULL THEN translation.status
+                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.status
+                        ELSE defaultTranslation.status
+                     END = :colStatus'
+                )
+                ->setParameter('colStatus', $status);
+        }
+
+        if ($filter->hasCol('translationStatus')) {
+            /** @var string $translationStatus */
+            $translationStatus = $filter->col('translationStatus');
+
+            if ($translationStatus === 'translated') {
+                // Article has translation in requested locale
+                $builder->andWhere('translation.id IS NOT NULL');
+            } elseif ($translationStatus === 'missing') {
+                // Article has no translation in requested locale AND no fallback
+                $builder->andWhere('translation.id IS NULL')
+                    ->andWhere(
+                        $builder->expr()->orX(
+                            ':localeParam = :fallbackLocale',
+                            'fallbackTranslation.id IS NULL'
+                        )
+                    );
+            } elseif ($translationStatus === 'fallback') {
+                // Article is using fallback (not in requested locale, but fallback or default exists)
+                $builder->andWhere('translation.id IS NULL')
+                    ->andWhere(
+                        $builder->expr()->orX(
+                            $builder->expr()->andX(
+                                ':localeParam != :fallbackLocale',
+                                'fallbackTranslation.id IS NOT NULL'
+                            ),
+                            'defaultTranslation.id IS NOT NULL'
+                        )
+                    );
+            }
+        }
+
+        if ($filter->hasCol('updatedAt')) {
+            /** @var string $updatedAtRange */
+            $updatedAtRange = $filter->col('updatedAt');
+            $now = new \DateTimeImmutable();
+
+            if ($updatedAtRange === '7') {
+                $since = $now->modify('-7 days');
+                $builder
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                            ELSE defaultTranslation.updatedAt
+                         END >= :updatedSince'
+                    )
+                    ->setParameter('updatedSince', $since);
+            } elseif ($updatedAtRange === '30') {
+                $since = $now->modify('-30 days');
+                $builder
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                            ELSE defaultTranslation.updatedAt
+                         END >= :updatedSince'
+                    )
+                    ->setParameter('updatedSince', $since);
+            } elseif ($updatedAtRange === '90') {
+                $since = $now->modify('-90 days');
+                $builder
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                            ELSE defaultTranslation.updatedAt
+                         END >= :updatedSince'
+                    )
+                    ->setParameter('updatedSince', $since);
+            } elseif ($updatedAtRange === '90+') {
+                $since = $now->modify('-90 days');
+                $builder
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                            ELSE defaultTranslation.updatedAt
+                         END < :updatedBefore'
+                    )
+                    ->setParameter('updatedBefore', $since);
+            }
+        }
+
+        if ($filter->hasCol('publishedAt')) {
+            /** @var string $publishedAtFilter */
+            $publishedAtFilter = $filter->col('publishedAt');
+            $now = new \DateTimeImmutable();
+
+            if ($publishedAtFilter === 'recent') {
+                // Recently published (last 30 days)
+                $since = $now->modify('-30 days');
+                $builder
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.status
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.status
+                            ELSE defaultTranslation.status
+                         END = :publishedStatus'
+                    )
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.publishedAt
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.publishedAt
+                            ELSE defaultTranslation.publishedAt
+                         END >= :publishedSince'
+                    )
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.publishedAt
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.publishedAt
+                            ELSE defaultTranslation.publishedAt
+                         END <= :now'
+                    )
+                    ->setParameter('publishedStatus', PublicationStatus::Published)
+                    ->setParameter('publishedSince', $since)
+                    ->setParameter('now', $now);
+            } elseif ($publishedAtFilter === 'scheduled') {
+                // Scheduled for future (status = Scheduled)
+                $builder
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.status
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.status
+                            ELSE defaultTranslation.status
+                         END = :scheduledStatus'
+                    )
+                    ->setParameter('scheduledStatus', PublicationStatus::Scheduled);
+            } elseif ($publishedAtFilter === 'never') {
+                // Never published (status = Draft or publishedAt is null)
+                $builder
+                    ->andWhere(
+                        $builder->expr()->orX(
+                            'CASE
+                                WHEN translation.id IS NOT NULL THEN translation.status
+                                WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.status
+                                ELSE defaultTranslation.status
+                             END = :draftStatus',
+                            $builder->expr()->isNull(
+                                'CASE
+                                    WHEN translation.id IS NOT NULL THEN translation.publishedAt
+                                    WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.publishedAt
+                                    ELSE defaultTranslation.publishedAt
+                                 END'
+                            )
+                        )
+                    )
+                    ->setParameter('draftStatus', PublicationStatus::Draft);
             }
         }
 

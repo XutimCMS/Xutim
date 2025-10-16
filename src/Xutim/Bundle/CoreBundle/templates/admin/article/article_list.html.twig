@@ -47,8 +47,35 @@
                 label: 'S'|trans({}, 'admin'),
                 sortable: true,
                 order: 'publicationStatus',
-                filter: {type: 'none'},
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Draft'|trans({}, 'admin'), value: 'draft'},
+                    {label: 'Published'|trans({}, 'admin'), value: 'published'},
+                    {label: 'Scheduled'|trans({}, 'admin'), value: 'scheduled'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '180px',
+                },
                 chip: true,
+              },
+              {
+                key: 'translationStatus',
+                label: 'Translation'|trans({}, 'admin'),
+                sortable: false,
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Translated'|trans({}, 'admin'), value: 'translated'},
+                    {label: 'Missing'|trans({}, 'admin'), value: 'missing'},
+                    {label: 'Using fallback'|trans({}, 'admin'), value: 'fallback'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '200px',
+                },
+                chip: {
+                  label: 'Translation'|trans({}, 'admin'),
+                },
               },
               {
                 key: 'title',
@@ -97,7 +124,17 @@
                 label: 'Updated at'|trans({}, 'admin'),
                 sortable: true,
                 order: 'updatedAt',
-                filter: {type: 'none'},
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Last 7 days'|trans({}, 'admin'), value: '7'},
+                    {label: 'Last 30 days'|trans({}, 'admin'), value: '30'},
+                    {label: 'Last 90 days'|trans({}, 'admin'), value: '90'},
+                    {label: 'Older than 90 days'|trans({}, 'admin'), value: '90+'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '200px',
+                },
                 chip: true,
               },
               {
@@ -105,8 +142,17 @@
                 label: 'published at'|trans({}, 'admin'),
                 sortable: true,
                 order: 'publishedAt',
-                filter: {type: 'none'},
-                chip: false,
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Recently published'|trans({}, 'admin'), value: 'recent'},
+                    {label: 'Scheduled for future'|trans({}, 'admin'), value: 'scheduled'},
+                    {label: 'Never published'|trans({}, 'admin'), value: 'never'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '220px',
+                },
+                chip: true,
               },
             ],
         }
@@ -123,6 +169,17 @@
                         {{ badges.publicationStatusBadge(translation) }}
                     {% else %}
                         {{ badges.missingBadge() }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if translation.locale == content_context_language() %}
+                        <span class="status status-green">
+                            {{ 'Translated'|trans({}, 'admin') }}
+                        </span>
+                    {% else %}
+                        <span class="status status-warning">
+                            {{ translation.locale|upper }}
+                        </span>
                     {% endif %}
                 </td>
                 <td class="text-wrap">
@@ -180,7 +237,18 @@
                     </time>
                 </td>
                 <td>
-                    {% if translation.publishedAt %}
+                    {% if translation.isScheduled() and article.scheduledAt %}
+                        <time
+                            datetime="{{ article.scheduledAt|date('c') }}"
+                            title="{{ article.scheduledAt|format_datetime('long') }}"
+                            class="inline-flex flex-col leading-tight text-xs"
+                            data-controller="tooltip"
+                        >
+                            <span>{{
+                                article.scheduledAt|time_ago()
+                            }}</span>
+                        </time>
+                    {% elseif translation.publishedAt %}
                         <time
                             datetime="{{ translation.publishedAt|date('c') }}"
                             title="{{ translation.publishedAt|format_datetime('long') }}"
