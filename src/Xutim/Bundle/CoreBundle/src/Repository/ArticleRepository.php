@@ -10,9 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
-use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\PublicationStatus;
-use Xutim\CoreBundle\Entity\Tag;
 
 /**
  * @extends ServiceEntityRepository<ArticleInterface>
@@ -32,7 +30,8 @@ class ArticleRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         string $entityClass,
-        public string $tagEntityClass
+        public string $tagEntityClass,
+        private readonly string $defaultLocale
     ) {
         parent::__construct($registry, $entityClass);
     }
@@ -83,17 +82,19 @@ class ArticleRepository extends ServiceEntityRepository
         $builder = $this->createQueryBuilder('article')
             ->select('article')
             ->leftJoin('article.translations', 'translation', 'WITH', 'translation.locale = :localeParam')
+            ->leftJoin('article.translations', 'fallbackTranslation', 'WITH', 'fallbackTranslation.locale = :fallbackLocale')
             ->leftJoin('article.defaultTranslation', 'defaultTranslation')
             ->leftJoin('article.tags', 'tag')
             ->leftJoin('tag.translations', 'tagTranslation')
-            ->setParameter('localeParam', $locale);
+            ->setParameter('localeParam', $locale)
+            ->setParameter('fallbackLocale', $this->defaultLocale);
 
         if ($filter->hasSearchTerm() === true) {
             $builder
                 ->andWhere($builder->expr()->orX(
-                    $builder->expr()->like('LOWER(COALESCE(translation.title, defaultTranslation.title))', ':searchTerm'),
-                    $builder->expr()->like('LOWER(COALESCE(translation.slug, defaultTranslation.slug))', ':searchTerm'),
-                    $builder->expr()->like('LOWER(COALESCE(translation.description, defaultTranslation.description))', ':searchTerm'),
+                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.title WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.title ELSE defaultTranslation.title END)', ':searchTerm'),
+                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.slug WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.slug ELSE defaultTranslation.slug END)', ':searchTerm'),
+                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.description WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.description ELSE defaultTranslation.description END)', ':searchTerm'),
                     $builder->expr()->like('LOWER(tagTranslation.name)', ':searchTerm')
                     // $builder->expr()->like('LOWER(CAST(translation.content AS TEXT))', ':searchTerm')
                 ))
@@ -102,16 +103,28 @@ class ArticleRepository extends ServiceEntityRepository
 
         $hasOrder = in_array($filter->orderColumn, array_keys(self::FILTER_ORDER_COLUMN_MAP), true);
 
-        if ($filter->orderColumn === 'publishedAt' || $hasOrder === false) {
+        if ($filter->orderColumn === 'publishedAt') {
             $builder
                 ->addOrderBy(
                     'CASE
                         WHEN translation.status = :scheduledParam AND article.scheduledAt IS NOT NULL THEN article.scheduledAt
-                        ELSE COALESCE(translation.publishedAt, defaultTranslation.publishedAt)
+                        WHEN translation.id IS NOT NULL THEN translation.publishedAt
+                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.publishedAt
+                        ELSE defaultTranslation.publishedAt
                      END',
-                    $hasOrder === true ? $filter->getOrderDir() : 'desc'
+                    $filter->getOrderDir()
                 )
                 ->setParameter('scheduledParam', PublicationStatus::Scheduled);
+        } elseif ($hasOrder === false) {
+            $builder
+                ->addOrderBy(
+                    'CASE
+                        WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                        ELSE defaultTranslation.updatedAt
+                     END',
+                    'desc'
+                );
         } else {
             $builder->orderBy(
                 self::FILTER_ORDER_COLUMN_MAP[$filter->orderColumn],
@@ -120,11 +133,13 @@ class ArticleRepository extends ServiceEntityRepository
         }
 
         if ($filter->hasCol('title')) {
+            /** @var string $title */
+            $title = $filter->col('title');
             $builder
                 ->andWhere(
-                    $builder->expr()->like('LOWER(COALESCE(translation.title, defaultTranslation.title))', ':colTitle')
+                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.title WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.title ELSE defaultTranslation.title END)', ':colTitle')
                 )
-                ->setParameter('colTitle', sprintf('%%%s%%', strtolower($filter->col('title'))));
+                ->setParameter('colTitle', sprintf('%%%s%%', strtolower($title)));
         }
 
         if ($filter->hasCol('tags')) {

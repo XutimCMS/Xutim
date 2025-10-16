@@ -115,7 +115,7 @@
         {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
         {% for article in articles %}
             {%
-                set translation = article.translationByLocaleOrAny(content_context_language(), default_locale)
+                set translation = article.translationByLocaleOrFallback(content_context_language(), default_locale)
             %}
             <tr>
                 <td>
@@ -138,7 +138,9 @@
                             import '@XutimCore/admin/common/translatable.html.twig' as translatable
                         %}
 
-                        {{ translatable.titleWithBadge(article) }}
+                        {{
+                            translatable.titleWithBadge(article, default_locale)
+                        }}
                     </twig:Xutim:Admin:Button>
                 </td>
                 <td>
