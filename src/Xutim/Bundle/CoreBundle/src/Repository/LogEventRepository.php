@@ -47,18 +47,19 @@ class LogEventRepository extends ServiceEntityRepository
     public function findContentRevisionsByTranslation(ContentTranslationInterface $translation): array
     {
         /** @var array<LogEventInterface> */
-        return $this->createQueryBuilder('event')
+        $allEvents = $this->createQueryBuilder('event')
             ->where('event.objectId = :translationIdParam')
-            ->andWhere('event.eventType IN (:contentEventTypes)')
             ->setParameter('translationIdParam', $translation->getId())
-            ->setParameter('contentEventTypes', [
-                ContentTranslationCreatedEvent::class,
-                ContentTranslationUpdatedEvent::class,
-            ])
             ->orderBy('event.recordedAt')
             ->getQuery()
             ->getResult()
         ;
+
+        return array_values(array_filter($allEvents, static function (LogEventInterface $event): bool {
+            $domainEvent = $event->getEvent();
+            return $domainEvent instanceof ContentTranslationCreatedEvent
+                || $domainEvent instanceof ContentTranslationUpdatedEvent;
+        }));
     }
 
     public function findLastByTranslation(ContentTranslationInterface|TagTranslationInterface $translation): LogEventInterface
