@@ -2,6 +2,7 @@
 
 <div
     class="col"
+    id="file-{{ file.id }}"
     data-controller="draggable"
     data-draggable-id-value="{{ file.id }}"
     data-draggable-name-value="{{ file.translationByLocaleOrAny(content_context_language()).name }}"
@@ -9,20 +10,49 @@
     data-action="dragstart->draggable#start dragend->draggable#end"
 >
     <div class="card card-sm">
-        <a
-            href="{{ admin_path('admin_media_edit', {id: file.id}) }}"
-            class="d-block"
-        >
-            {% if file.isImage() %}
-                <img
-                    class="card-img-top"
-                    src="{{ uploaded_asset(file.fileName)|imagine_filter('thumb_small') }}"
-                    alt=""
-                />
-            {% else %}
-                {{ include('@XutimCore/admin/media/_image_icon.html.twig') }}
-            {% endif %}
-        </a>
+        <div class="position-relative">
+            <a
+                href="{{ admin_path('admin_media_edit', {id: file.id}) }}"
+                class="d-block"
+            >
+                {% if file.isImage() %}
+                    <img
+                        class="card-img-top"
+                        src="{{ uploaded_asset(file.fileName)|imagine_filter('thumb_small') }}"
+                        alt=""
+                    />
+                {% else %}
+                    {{
+                        include('@XutimCore/admin/media/_image_icon.html.twig')
+                    }}
+                {% endif %}
+            </a>
+            <div class="position-absolute top-0 end-0 m-2">
+                <div class="dropdown">
+                    <button
+                        class="btn btn-sm btn-icon p-2 btn-white"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        <twig:ux:Icon
+                            name="tabler:dots-vertical"
+                            class="w-3 h-3"
+                        />
+                    </button>
+                    <div class="dropdown-menu">
+                        <a
+                            class="dropdown-item"
+                            href="{{ admin_path('admin_media_move', {id: file.id}) }}"
+                            data-turbo-frame="modal"
+                        >
+                            <twig:Xutim:Admin:Icon name="folder" class="me-2" />
+                            {{ 'Move to folder'|trans({}, 'admin') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="card-body border-top">
             {%

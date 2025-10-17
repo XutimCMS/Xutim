@@ -32,7 +32,7 @@
         "symfony/http-client": "7.3.*",
         "twig/twig": "^3.20",
         "webmozart/assert": "^1.11",
-        "spatie/image": "^3.8"
+        "spatie/image": "^3.8",
         "spatie/image-optimizer": "^1.8"
     },
     "require-dev": {

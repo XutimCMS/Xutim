@@ -65,5 +65,7 @@ interface FileInterface
 
     public function addTranslation(FileTranslationInterface $trans): void;
 
-    public function changeFolder(MediaFolderInterface $folder): void;
+    public function changeFolder(?MediaFolderInterface $folder): void;
+
+    public function getMediaFolder(): ?MediaFolderInterface;
 }

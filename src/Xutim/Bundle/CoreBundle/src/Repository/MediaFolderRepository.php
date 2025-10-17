@@ -102,4 +102,49 @@ class MediaFolderRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    /**
+     * Returns all folders in hierarchical order: root folders alphabetically,
+     * followed by each folder's children alphabetically (depth-first).
+     *
+     * @return array<int, MediaFolderInterface>
+     */
+    public function findAllOrderedHierarchically(): array
+    {
+        $allFolders = $this->findBy([], ['name' => 'asc']);
+
+        $foldersByParent = [];
+        foreach ($allFolders as $folder) {
+            $parentId = $folder->getParent()?->getId()?->toRfc4122() ?? 'root';
+            $foldersByParent[$parentId] ??= [];
+            $foldersByParent[$parentId][] = $folder;
+        }
+
+        return $this->addFoldersRecursively($foldersByParent, 'root');
+    }
+
+    /**
+     * @param array<string, array<int, MediaFolderInterface>> $foldersByParent
+     * @return array<int, MediaFolderInterface>
+     */
+    private function addFoldersRecursively(
+        array $foldersByParent,
+        string $parentId
+    ): array {
+        if (!isset($foldersByParent[$parentId])) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($foldersByParent[$parentId] as $folder) {
+            $result[] = $folder;
+            $childFolders = $this->addFoldersRecursively(
+                $foldersByParent,
+                $folder->getId()->toRfc4122()
+            );
+            $result = array_merge($result, $childFolders);
+        }
+
+        return $result;
+    }
 }

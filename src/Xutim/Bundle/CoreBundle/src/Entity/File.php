@@ -273,4 +273,9 @@ class File implements FileInterface
     {
         $this->mediaFolder = $folder;
     }
+
+    public function getMediaFolder(): ?MediaFolderInterface
+    {
+        return $this->mediaFolder;
+    }
 }

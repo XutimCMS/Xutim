@@ -14,6 +14,7 @@ use Xutim\CoreBundle\Action\Admin\Media\JsonListFilesAction;
 use Xutim\CoreBundle\Action\Admin\Media\JsonListImagesAction;
 use Xutim\CoreBundle\Action\Admin\Media\JsonShowFileAction;
 use Xutim\CoreBundle\Action\Admin\Media\ListFilesAction;
+use Xutim\CoreBundle\Action\Admin\Media\MoveFileAction;
 use Xutim\CoreBundle\Action\Admin\Media\MoveFileToFolderAction;
 use Xutim\CoreBundle\Action\Public\ShowFileAction;
 
@@ -40,6 +41,12 @@ return function (RoutingConfigurator $routes) {
         ->add('admin_media_new', '/admin/{_content_locale}/media/new/{id?}')
         ->methods(['get', 'post'])
         ->controller(CreateFileAction::class)
+    ;
+
+    $routes
+        ->add('admin_media_move', '/admin/{_content_locale}/media/move/{id}/{folderId?}')
+        ->methods(['get', 'post'])
+        ->controller(MoveFileAction::class)
     ;
 
     $routes
