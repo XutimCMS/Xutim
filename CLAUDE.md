@@ -204,14 +204,23 @@ refactor(core-bundle): extract menu builder logic
 docs: update CLAUDE.md with commit conventions
 ```
 
-**Important:**
+**CRITICAL COMMIT MESSAGE RULES:**
 
-- Never include AI attribution, co-authorship, or "Generated with Claude Code" in commit messages
-- Never use emojis in commit messages
-- Keep commits professional and focused on the technical changes
+- **NEVER** include AI attribution, co-authorship, or any mention of "Claude", "Claude Code", "Generated with", "Co-Authored-By: Claude", or similar AI-related content
+- **NEVER** add emojis (🤖 or any other) to commit messages
+- **NEVER** add footer lines about code generation or AI assistance
+- Keep commits strictly professional and focused on technical changes only
 - Hard limit of 72 characters per line for commit messages (subject and body)
 - Only reference issues from this repository (XutimCMS/Xutim) using simple issue numbers like "#45"
 - Do not reference external repositories (e.g., avoid "php/src#45")
+
+**Commit message template (use exactly this format, nothing more):**
+
+```
+<type>(<scope>): <subject>
+
+<optional body with technical details>
+```
 
 ## Important Configuration Files
 

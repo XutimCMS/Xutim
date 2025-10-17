@@ -14,20 +14,20 @@
         data-drop-target-target="folderCard"
     >
         <div
-            class="card-body d-flex align-items-center gap-2"
+            class="card-body"
             data-drop-target-target="folderCard"
         >
-            <twig:Xutim:Admin:Icon name="folder" />
-            <div class="flex-fill">
-                <div class="fw-medium text-truncate">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <twig:Xutim:Admin:Icon name="folder" />
+                <div class="flex-fill text-truncate fw-medium" title="{{ folder.name }}">
                     {{ folder.name }}
                 </div>
-                <div class="text-secondary small">
-                    {{ childrenCnt|default(0) }}
-                    {{ 'folders'|trans({}, 'admin') }},
-                    {{ filesCnt|default(0) }}
-                    {{ 'files'|trans({}, 'admin') }}
-                </div>
+            </div>
+            <div class="text-secondary small">
+                {{ childrenCnt|default(0) }}
+                {{ 'folders'|trans({}, 'admin') }},
+                {{ filesCnt|default(0) }}
+                {{ 'files'|trans({}, 'admin') }}
             </div>
         </div>
     </a>
