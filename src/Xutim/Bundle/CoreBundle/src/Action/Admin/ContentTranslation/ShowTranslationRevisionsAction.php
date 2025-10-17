@@ -34,7 +34,7 @@ class ShowTranslationRevisionsAction extends AbstractController
             throw $this->createNotFoundException('Either both (oldId and newId) should be set or both have to be null.');
         }
 
-        $logEvents = $this->eventRepository->findByTranslation($translation);
+        $logEvents = $this->eventRepository->findContentRevisionsByTranslation($translation);
         $logEventsNewestFirst = array_values(array_reverse($logEvents));
         if ($oldId === null && $newId === null) {
             $newRevision = $logEventsNewestFirst[0];
@@ -52,9 +52,17 @@ class ShowTranslationRevisionsAction extends AbstractController
         /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent $oldEvent */
         $oldEvent = $oldRevision->getEvent();
 
+        $preTitleDiff = $this->diffRenderer->diffTitle(
+            $oldEvent->preTitle,
+            $newEvent->preTitle
+        );
         $titleDiff = $this->diffRenderer->diffTitle(
             $oldEvent->title,
             $newEvent->title
+        );
+        $subTitleDiff = $this->diffRenderer->diffTitle(
+            $oldEvent->subTitle,
+            $newEvent->subTitle
         );
         $descriptionDiff = $this->diffRenderer->diffDescription(
             $oldEvent->description,
@@ -69,7 +77,9 @@ class ShowTranslationRevisionsAction extends AbstractController
 
         return $this->render('@XutimCore/admin/revision/translation_revisions.html.twig', [
             'translation' => $translation,
+            'preTitleDiff' => $preTitleDiff,
             'titleDiff' => $titleDiff,
+            'subTitleDiff' => $subTitleDiff,
             'selectedOld' => $oldRevision,
             'selectedNew' => $newRevision,
             'descriptionDiff' => $descriptionDiff,

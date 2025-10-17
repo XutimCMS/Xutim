@@ -6,6 +6,8 @@ namespace Xutim\CoreBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
+use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\FileInterface;
@@ -33,6 +35,26 @@ class LogEventRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('event')
             ->where('event.objectId = :translationIdParam')
             ->setParameter('translationIdParam', $translation->getId())
+            ->orderBy('event.recordedAt')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @return array<LogEventInterface>
+     */
+    public function findContentRevisionsByTranslation(ContentTranslationInterface $translation): array
+    {
+        /** @var array<LogEventInterface> */
+        return $this->createQueryBuilder('event')
+            ->where('event.objectId = :translationIdParam')
+            ->andWhere('event.eventType IN (:contentEventTypes)')
+            ->setParameter('translationIdParam', $translation->getId())
+            ->setParameter('contentEventTypes', [
+                ContentTranslationCreatedEvent::class,
+                ContentTranslationUpdatedEvent::class,
+            ])
             ->orderBy('event.recordedAt')
             ->getQuery()
             ->getResult()
