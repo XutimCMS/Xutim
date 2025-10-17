@@ -115,4 +115,21 @@ class TagRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @return array<TagInterface>
+     */
+    public function findAllSorted(string $locale = 'en'): array
+    {
+        /** @var array<TagInterface> */
+        return $this->createQueryBuilder('tag')
+            ->select('tag', 'translation')
+            ->leftJoin('tag.translations', 'translation')
+            ->where('translation.locale = :localeParam')
+            ->setParameter('localeParam', $locale)
+            ->orderBy('LOWER(translation.name)', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

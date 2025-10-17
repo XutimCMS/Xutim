@@ -92,7 +92,7 @@ class EditArticleAction extends AbstractController
             'translation' => $translation,
             'totalTranslations' => $totalTranslations,
             'translatedTranslations' => $translatedArticles,
-            'allTags' => $this->tagRepo->findAll()
+            'allTags' => $this->tagRepo->findAllSorted($contentLocale)
         ]);
     }
 

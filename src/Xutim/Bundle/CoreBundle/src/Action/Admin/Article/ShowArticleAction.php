@@ -62,7 +62,7 @@ class ShowArticleAction extends AbstractController
             'contextTranslation' => $contextTranslation,
             'totalTranslations' => $totalTranslations,
             'translatedTranslations' => $translatedArticles,
-            'allTags' => $this->tagRepo->findAll()
+            'allTags' => $this->tagRepo->findAllSorted($locale)
         ]);
     }
 }
