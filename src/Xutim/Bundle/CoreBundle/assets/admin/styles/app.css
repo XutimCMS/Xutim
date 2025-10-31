@@ -6,7 +6,7 @@
 }
 
 /* Split view scrollable right panel */
-[data-split-view-target="right"] {
+[data-split-view-target='right'] {
     position: sticky;
     top: 0;
     max-height: 100vh;
@@ -190,6 +190,27 @@ dialog::backdrop {
 
 .dialog-lg {
     --tblr-modal-width: 720px;
+}
+
+/* Foldable Editor.js Blocks */
+.foldable-start-block {
+    border: 1px dashed var(--tblr-border-color);
+    background: var(--tblr-bg-surface);
+    border-radius: 4px;
+    transition: border-color 0.15s ease;
+    margin: 1rem 0;
+}
+
+.foldable-start-block:hover {
+    border-color: var(--tblr-border-color-active);
+}
+
+.foldable-end-block {
+    border: 1px dashed var(--tblr-border-color);
+    background: transparent;
+    border-radius: 4px;
+    padding: 0.5rem !important;
+    margin: 1rem 0;
 }
 
 /* poppins-latin-100-italic */

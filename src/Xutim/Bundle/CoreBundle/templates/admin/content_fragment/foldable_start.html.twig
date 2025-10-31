@@ -1,0 +1,11 @@
+{% if inlineHtml is defined and inlineHtml %}
+    <div class="foldable-start-block p-2 text-center diff-inline">
+        <span class="text-muted" style="font-size: 0.75rem">▼</span>
+        <span class="text-muted small">{{ inlineHtml|raw }}</span>
+    </div>
+{% else %}
+    <div class="foldable-start-block p-2 text-center">
+        <span class="text-muted" style="font-size: 0.75rem">▼</span>
+        <span class="text-muted small">{{ fragment.data.title }}</span>
+    </div>
+{% endif %}

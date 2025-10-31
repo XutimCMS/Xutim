@@ -103,6 +103,14 @@
             {{
                 include('@XutimCore/admin/content_fragment/diff/code_block_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
             }}
+        {% elseif fragment.type == 'foldableStart' %}
+            {{
+                include('@XutimCore/admin/content_fragment/foldable_start.html.twig', {fragment: fragment, inlineHtml: inlineHtml})
+            }}
+        {% elseif fragment.type == 'foldableEnd' %}
+            {{
+                include('@XutimCore/admin/content_fragment/foldable_end.html.twig', {fragment: fragment})
+            }}
         {% else %}
             {% if meta %}
                 <pre class="small text-secondary">{{ meta|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>

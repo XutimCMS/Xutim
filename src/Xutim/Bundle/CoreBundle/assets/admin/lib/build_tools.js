@@ -15,6 +15,8 @@ import AlignmentBlockTune from './editorjs-plugins/alignment-tune/AlignmentBlock
 import XutimTagListTool from './editorjs-plugins/tag-list/XutimTagListTool.js';
 import XutimAnchorTune from './editorjs-plugins/anchor-tune/XutimAnchorTune.js';
 import XutimFootnoteInline from './editorjs-plugins/footnotes-tune/XutimFootnoteInline.js';
+import FoldableStart from './editorjs-plugins/foldable/FoldableStart.js';
+import FoldableEnd from './editorjs-plugins/foldable/FoldableEnd.js';
 
 import createContentLink from './editorjs-plugins/content-link/content-link.js';
 import createInternalLink from './editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
@@ -201,6 +203,16 @@ export function buildEditorTools({
         xutimTag: {
             class: XutimTagListTool,
             config: { tags },
+            tunes: ['xutimAnchor'],
+        },
+
+        foldableStart: {
+            class: FoldableStart,
+            tunes: ['xutimAnchor'],
+        },
+
+        foldableEnd: {
+            class: FoldableEnd,
             tunes: ['xutimAnchor'],
         },
     };

@@ -106,7 +106,7 @@ final class EditorJsDiffRenderer
             ];
         }
 
-        if (in_array($typeNew, ['paragraph', 'header', 'quote', 'list'], true)) {
+        if (in_array($typeNew, ['paragraph', 'header', 'quote', 'list', 'foldableStart'], true)) {
             $oldTxt = $this->extractText($oldBlock);
             $newTxt = $this->extractText($newBlock);
             if ($oldTxt === $newTxt) {
@@ -119,6 +119,10 @@ final class EditorJsDiffRenderer
                 'block_old' => $oldBlock,
                 'html' => $html,
             ];
+        }
+
+        if ($typeNew === 'foldableEnd') {
+            return ['op' => 'unchanged', 'block_new' => $newBlock];
         }
 
         $meta = $this->diffStructuredBlock($typeNew, $oldBlock['data'], $newBlock['data']);
@@ -267,6 +271,15 @@ final class EditorJsDiffRenderer
         if ($type === 'mainHeader') {
             /** @var array{pretitle:string, title:string, subtitle:string} $data */
             return $this->normalizeWs($data['pretitle'] . "\n" . $data['title'] . "\n" . $data['subtitle']);
+        }
+
+        if ($type === 'foldableStart') {
+            /** @var array{title:string, open:bool} $data */
+            return $this->normalizeWs($data['title']);
+        }
+
+        if ($type === 'foldableEnd') {
+            return '';
         }
 
         return '';
@@ -499,6 +512,15 @@ final class EditorJsDiffRenderer
 
             case 'block':
                 $meta['code'] = $field('code', $old['code'] ?? '', $new['code'] ?? '');
+                break;
+
+            case 'foldableStart':
+                $meta['title'] = $field('title', $old['title'] ?? '', $new['title'] ?? '');
+                $meta['open'] = $field('open', $old['open'] ?? false, $new['open'] ?? false);
+                break;
+
+            case 'foldableEnd':
+                // No data to diff
                 break;
 
             default:
