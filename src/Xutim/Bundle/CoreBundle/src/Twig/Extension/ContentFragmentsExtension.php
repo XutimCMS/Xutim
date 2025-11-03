@@ -22,6 +22,7 @@ class ContentFragmentsExtension extends AbstractExtension
     {
         return [
             new TwigFunction('render_content_fragment', [$this, 'fragmentToHtml'], ['is_safe' => ['html']]),
+            new TwigFunction('render_content_fragments', [$this, 'fragmentsToHtml'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -46,6 +47,17 @@ class ContentFragmentsExtension extends AbstractExtension
         $path = $this->themeFinder->getActiveThemePath();
 
         return $this->fragmentConverter->convertFragmentToThemeHtml($fragment, $path, $locale, $options);
+    }
+
+    /**
+     * @param EditorBlock           $fragments
+     * @param array<string, string> $locale
+     */
+    public function fragmentsToHtml(array $fragments, string $locale, array $options = []): string
+    {
+        $path = $this->themeFinder->getActiveThemePath();
+
+        return $this->fragmentConverter->convertFragmentsToThemeHtml($fragments, $path, $locale, $options);
     }
 
     /**

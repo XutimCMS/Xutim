@@ -52,6 +52,28 @@ readonly class ContentFragmentsConverter
     }
 
     /**
+     * @param EditorBlock           $fragments
+     * @param array<string, string> $options
+     */
+    public function convertFragmentsToThemeHtml(
+        array $fragments,
+        string $themePath,
+        string $locale,
+        array $options = []
+    ): string {
+        if (count($fragments) === 0 || count($fragments['blocks']) === 0) {
+            return '';
+        }
+
+        return $this->twig->render(sprintf('%s/content_fragment/content.html.twig', $themePath), [
+            'fragments' => $fragments,
+            'themePath' => $themePath,
+            'fragmentOptions' => $options,
+            'locale' => $locale
+        ]);
+    }
+
+    /**
      * @param EditorBlock $fragments
      */
     public function convertToAdminHtml(array $fragments, string $locale): string
