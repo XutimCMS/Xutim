@@ -92,7 +92,7 @@ export default class FileGalleryModal {
         this.gallery.className = 'overflow-auto';
 
         this.folderBar = document.createElement('div');
-        this.folderBar.className = 'p-2 d-flex gap-2';
+        this.folderBar.className = 'p-2 row';
         this.folderBar.style.overflowX = 'auto';
 
         this.fileTable = document.createElement('table');
@@ -195,7 +195,8 @@ export default class FileGalleryModal {
                 const chip = document.createElement('button');
                 chip.type = 'button';
                 chip.className =
-                    'btn btn-outline d-inline-flex align-items-center';
+                    'btn btn-outline w-100 d-flex align-items-center';
+                chip.title = `${folder.name}`;
                 chip.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -209,7 +210,10 @@ export default class FileGalleryModal {
                     this.cache.clear();
                     this.#loadGalleryFiles();
                 });
-                this.folderBar.appendChild(chip);
+                const chipContainer = document.createElement('div');
+                chipContainer.className = 'col-12 col-md-4 my-2';
+                chipContainer.appendChild(chip);
+                this.folderBar.appendChild(chipContainer);
             });
 
             this.fileTbody.innerHTML = '';
