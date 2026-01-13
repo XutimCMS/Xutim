@@ -23,6 +23,7 @@ class EditSiteSettingsAction extends AbstractController
         private readonly SiteRepository $siteRepository,
         private readonly LayoutLoader $layoutLoader,
         private readonly AdminUrlGenerator $router,
+        private readonly string $snippetVersionPath,
     ) {
     }
 
@@ -40,6 +41,7 @@ class EditSiteSettingsAction extends AbstractController
             $this->siteContext->resetDefaultSite();
             $this->siteContext->resetMenu();
             $this->layoutLoader->loadAllLayouts();
+            file_put_contents($this->snippetVersionPath, microtime());
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 
