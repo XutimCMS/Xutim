@@ -45,9 +45,9 @@
         </p>
     </td>
 
-    {% for locale in site_context.allLocales %}
+    {% for locale in visibleLanguages %}
         {% set trans = snippet.translationByLocale(locale) %}
-        <td data-lang="{{ locale }}">
+        <td>
             <div class="mb-1">
                 <textarea
                     rows="3"

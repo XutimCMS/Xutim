@@ -27,55 +27,24 @@
 {% endblock %}
 
 {% block body %}
-    <div
-        class="d-flex flex-column justify-content-start my-4"
-        data-controller="lang-bar"
-        data-action="turbo:frame-load@document->lang-bar#apply turbo:load@document->lang-bar#apply"
-    >
-        <div class="d-flex flex-column justify-content-start">
-            {%
-                set mainLanguages = site_context.locales|sort((loc1, loc2) => loc1 <=> loc2)
-            %}
-            {% if mainLanguages is not empty %}
-                <div class="d-flex justify-content-end align-items-center mb-2">
-                    {% for locale in mainLanguages %}
-                        <button
-                            data-lang="{{ locale }}"
-                            data-action="click->lang-bar#toggle"
-                            class="btn-reset btn-sm"
-                        >
-                            <span
-                                class="badge badge-outline text-primary me-1 text-secondary"
-                            >
-                                {{ locale }}
-                            </span>
-                        </button>
-                    {% endfor %}
-                </div>
-            {% endif %}
+    {% set mainLanguages = site_context.locales|sort((loc1, loc2) => loc1 <=> loc2) %}
+    {% set extendedLanguages = site_context.extendedContentLocales|sort((loc1, loc2) => loc1 <=> loc2) %}
 
-            {%
-                set extendedLanguages = site_context.extendedContentLocales|sort((loc1, loc2) => loc1 <=> loc2)
-            %}
-            {% if extendedLanguages is not empty %}
-                <div class="d-flex justify-content-end align-items-center flex-wrap row-gap-1">
-                    {% for locale in extendedLanguages %}
-                        <button
-                            data-lang="{{ locale }}"
-                            data-action="click->lang-bar#toggle"
-                            class="btn-reset"
-                        >
-                            <span
-                                class="badge badge-outline text-primary me-1 text-secondary"
-                            >
-                                {{ locale }}
-                            </span>
-                        </button>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-    </div>
+    {% set localeFilterOptions = [] %}
+    {% for locale in site_context.allLocales %}
+        {% set localeFilterOptions = localeFilterOptions|merge([{label: locale|upper, value: locale}]) %}
+    {% endfor %}
+
+    {% set columnVisibilityOptions = [] %}
+    {% for locale in mainLanguages %}
+        {% set columnVisibilityOptions = columnVisibilityOptions|merge([{label: locale|upper, value: locale, checked: true}]) %}
+    {% endfor %}
+    {% if extendedLanguages is not empty %}
+        {% set columnVisibilityOptions = columnVisibilityOptions|merge([{separator: true}]) %}
+        {% for locale in extendedLanguages %}
+            {% set columnVisibilityOptions = columnVisibilityOptions|merge([{label: locale|upper, value: locale, checked: false}]) %}
+        {% endfor %}
+    {% endif %}
 
     {%
         component 'Xutim:Admin:DataTable' with {
@@ -85,6 +54,25 @@
             'data-controller': 'snippet-editor',
             'data-snippet-editor-url-value': admin_path('admin_json_snippet_translate'),
             responsive: false,
+            showChips: true,
+            filters: [
+                {
+                    key: 'notTranslatedInLocales',
+                    label: 'Not translated in'|trans({}, 'admin'),
+                    type: 'multiselect',
+                    chipLabel: 'Missing translations'|trans({}, 'admin'),
+                    options: localeFilterOptions,
+                    minWidth: '250px',
+                },
+                {
+                    key: 'showLanguages',
+                    label: 'Show languages'|trans({}, 'admin'),
+                    type: 'columnVisibility',
+                    chipLabel: 'Languages'|trans({}, 'admin'),
+                    options: columnVisibilityOptions,
+                    minWidth: '200px',
+                },
+            ],
         }
     %}
 
@@ -113,12 +101,12 @@
             </a>
         </th>
 
-        {% for locale in site_context.allLocales %}
-            <th data-lang="{{ locale }}">{{ locale|upper }}</th>
+        {% for locale in visibleLanguages %}
+            <th>{{ locale|upper }}</th>
         {% endfor %}
 
         {% set canTranslateLocales = {} %}
-        {% for locale in site_context.allLocales %}
+        {% for locale in visibleLanguages %}
             {%
                 set canTranslateLocales = canTranslateLocales|merge({(locale): is_granted(constant('Xutim\\SecurityBundle\\Security\\Voter\\CanTranslateVoter::TRANSLATE'), locale)})
             %}
@@ -126,7 +114,7 @@
 
         {% for snippet in snippets %}
             {{
-                include('@XutimSnippet/admin/snippet/_snippet_row.html.twig', {snippet: snippet, canTranslateLocales: canTranslateLocales}, with_context: false)
+                include('@XutimSnippet/admin/snippet/_snippet_row.html.twig', {snippet: snippet, canTranslateLocales: canTranslateLocales, visibleLanguages: visibleLanguages}, with_context: false)
             }}
         {% endfor %}
     {% endblock %}

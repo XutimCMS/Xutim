@@ -6,6 +6,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
@@ -73,6 +75,9 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$repo', service(SnippetRepositoryInterface::class))
         ->arg('$filterBuilder', service(ListFilterBuilder::class))
         ->arg('$twig', service(Environment::class))
+        ->arg('$siteContext', service(SiteContext::class))
+        ->arg('$requestStack', service(RequestStack::class))
+        ->arg('$urlGenerator', service(UrlGeneratorInterface::class))
         ->tag('controller.service_arguments')
     ;
 

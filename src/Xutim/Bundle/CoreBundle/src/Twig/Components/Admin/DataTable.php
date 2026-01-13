@@ -30,4 +30,9 @@ class DataTable
      * @var list<array<string,mixed>>
      */
     public array $columns = [];
+
+    /**
+     * @var list<array{key: string, label: string, type: string, chipLabel: string, options?: list<array{label?: string, value?: string, separator?: bool, checked?: bool}>, minWidth?: string}>
+     */
+    public array $filters = [];
 }

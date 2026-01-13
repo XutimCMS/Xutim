@@ -42,6 +42,32 @@ class SnippetRepository extends ServiceEntityRepository implements SnippetReposi
                 ->setParameter('searchTerm', '%' . strtolower($filter->searchTerm) . '%');
         }
 
+        // Filter by non-translated snippets in selected locales
+        if ($filter->hasCol('notTranslatedInLocales')) {
+            $locales = $filter->colArray('notTranslatedInLocales');
+
+            if (count($locales) > 0) {
+                // Build OR conditions for each locale that should be missing
+                $missingConditions = [];
+                foreach ($locales as $index => $locale) {
+                    $paramName = 'missingLocale' . $index;
+                    $subquery = $this->getEntityManager()->createQueryBuilder()
+                        ->select('1')
+                        ->from($this->getEntityName(), 'sub' . $index)
+                        ->innerJoin('sub' . $index . '.translations', 'subt' . $index)
+                        ->where('sub' . $index . '.id = snippet.id')
+                        ->andWhere('subt' . $index . '.locale = :' . $paramName)
+                        ->getDQL();
+
+                    $missingConditions[] = 'NOT EXISTS (' . $subquery . ')';
+                    $builder->setParameter($paramName, $locale);
+                }
+
+                // Show snippets missing ANY of the selected locales
+                $builder->andWhere('(' . implode(' OR ', $missingConditions) . ')');
+            }
+        }
+
         // Check if the order has a valid orderDir and orderColumn parameters.
         if (in_array(
             $filter->orderColumn,
