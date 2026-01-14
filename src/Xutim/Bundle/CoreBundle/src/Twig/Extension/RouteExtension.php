@@ -28,7 +28,7 @@ class RouteExtension extends AbstractExtension
      */
     public function generateContentTranslationPath(
         ContentTranslationInterface $trans,
-        string $mainLocale,
+        ?string $mainLocale,
         array $params = [],
         int $referencePath = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
