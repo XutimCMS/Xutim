@@ -39,7 +39,6 @@ return static function (ContainerConfigurator $container): void {
         ->bind('string $tagLayoutRelativeDir', 'layout/tag')
         ->bind('string $defaultLocale', '%kernel.default_locale%')
         ->bind('string $appHost', '%env(APP_HOST)%')
-        ->bind('string $snippetVersionPath', '%snippet_routes_version_file%')
     ;
 
     $services->load('Xutim\\CoreBundle\\', '../src/')
