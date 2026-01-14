@@ -16,8 +16,8 @@ class ListFilterBuilder
     }
 
     /**
-     * @param array<string, string> $cols
-    */
+     * @param array<string, string|list<string>> $cols
+     */
     public function buildFilter(
         string $searchTerm,
         int $page,
