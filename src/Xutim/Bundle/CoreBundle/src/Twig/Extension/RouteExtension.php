@@ -29,8 +29,9 @@ class RouteExtension extends AbstractExtension
     public function generateContentTranslationPath(
         ContentTranslationInterface $trans,
         string $mainLocale,
-        array $params = []
+        array $params = [],
+        int $referencePath = UrlGeneratorInterface::ABSOLUTE_PATH
     ): string {
-        return $this->routeGenerator->generatePath($trans, $mainLocale, UrlGeneratorInterface::ABSOLUTE_PATH, $params);
+        return $this->routeGenerator->generatePath($trans, $mainLocale, $referencePath, $params);
     }
 }
