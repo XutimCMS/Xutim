@@ -7,6 +7,7 @@ namespace Xutim\SnippetBundle\Action;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -32,6 +33,7 @@ class ListSnippetsAction
     }
 
     public function __invoke(
+        Request $request,
         #[MapQueryParameter]
         string $searchTerm = '',
         #[MapQueryParameter]
@@ -45,14 +47,24 @@ class ListSnippetsAction
         #[MapQueryParameter(name: 'col', options: ['multiple' => true])]
         array $col = []
     ): Response {
-        $sessionFilters = $this->getSessionFilters();
+        $shouldClearFilters = isset($col['_clear']);
+        unset($col['_clear']);
 
-        if (count($col) === 0 && count($sessionFilters) > 0) {
-            return new RedirectResponse($this->buildUrlWithFilters($sessionFilters));
-        }
-
-        if (count($col) > 0) {
+        if ($shouldClearFilters) {
+            $this->clearSessionFilters();
+            $col = [];
+        } elseif (count($col) > 0) {
             $this->saveSessionFilters($col);
+        } elseif (!$request->query->has('col')) {
+            $sessionFilters = $this->getSessionFilters();
+            if (count($sessionFilters) > 0) {
+                $params = $request->query->all();
+                $params['col'] = $sessionFilters;
+
+                return new RedirectResponse(
+                    $this->urlGenerator->generate('admin_snippet_list', $params)
+                );
+            }
         }
 
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection, $col);
@@ -98,11 +110,8 @@ class ListSnippetsAction
         $this->requestStack->getSession()->set(self::SESSION_KEY, $filters);
     }
 
-    /**
-     * @param array<string, string|list<string>> $filters
-     */
-    private function buildUrlWithFilters(array $filters): string
+    private function clearSessionFilters(): void
     {
-        return $this->urlGenerator->generate('admin_snippet_list', ['col' => $filters]);
+        $this->requestStack->getSession()->remove(self::SESSION_KEY);
     }
 }

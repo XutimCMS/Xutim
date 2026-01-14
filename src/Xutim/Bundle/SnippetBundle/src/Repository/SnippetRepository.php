@@ -42,14 +42,12 @@ class SnippetRepository extends ServiceEntityRepository implements SnippetReposi
                 ->setParameter('searchTerm', '%' . strtolower($filter->searchTerm) . '%');
         }
 
-        // Filter by non-translated snippets in selected locales
         if ($filter->hasCol('notTranslatedInLocales')) {
             $locales = $filter->colArray('notTranslatedInLocales');
 
             if (count($locales) > 0) {
-                // Build OR conditions for each locale that should be missing
                 $missingConditions = [];
-                foreach ($locales as $index => $locale) {
+                foreach ($locales as $index => $missingLocale) {
                     $paramName = 'missingLocale' . $index;
                     $subquery = $this->getEntityManager()->createQueryBuilder()
                         ->select('1')
@@ -57,13 +55,14 @@ class SnippetRepository extends ServiceEntityRepository implements SnippetReposi
                         ->innerJoin('sub' . $index . '.translations', 'subt' . $index)
                         ->where('sub' . $index . '.id = snippet.id')
                         ->andWhere('subt' . $index . '.locale = :' . $paramName)
+                        ->andWhere('subt' . $index . '.content IS NOT NULL')
+                        ->andWhere("TRIM(subt{$index}.content) != ''")
                         ->getDQL();
 
                     $missingConditions[] = 'NOT EXISTS (' . $subquery . ')';
-                    $builder->setParameter($paramName, $locale);
+                    $builder->setParameter($paramName, $missingLocale);
                 }
 
-                // Show snippets missing ANY of the selected locales
                 $builder->andWhere('(' . implode(' OR ', $missingConditions) . ')');
             }
         }

@@ -58,12 +58,13 @@
                             {% endif %}
 
                             {% set filtersWithoutCurrent = activeFilters|filter((v, k) => k != filterKey) %}
+                            {% set removeFilterCol = filtersWithoutCurrent|length > 0 ? filtersWithoutCurrent : {_clear: '1'} %}
                             <span class="badge bg-primary text-white d-inline-flex align-items-center">
                                 <span class="me-1">{{ filter.chipLabel }}: {{ displayValue }}</span>
                                 <a
                                     class="btn-close btn-close-white ms-1 text-decoration-none"
                                     aria-label="{{ 'Remove filter'|trans({}, 'admin') }}"
-                                    href="{{ admin_current_path_with({col: filtersWithoutCurrent, page: 1}) }}"
+                                    href="{{ admin_current_path_with({col: removeFilterCol, page: 1}) }}"
                                 ></a>
                             </span>
                         {% endif %}
@@ -71,7 +72,7 @@
 
                     <a
                         class="btn btn-link btn-sm text-decoration-none"
-                        href="{{ admin_current_path_with({col: {}, page: 1}) }}"
+                        href="{{ admin_current_path_with({col: {_clear: '1'}, page: 1}) }}"
                     >
                         {{ 'Clear all'|trans({}, 'admin') }}
                     </a>
