@@ -37,8 +37,10 @@ parameters:
         PageLinkBlock: 'array{ id: string, type: "pageLink", data: array{id: string}, tunes: XutimAnchorTune }'
         ArticleLinkBlock: 'array{ id: string, type: "articleLink", data: array{id: string}, tunes: XutimAnchorTune }'
         XutimTagBlock: 'array{ id: string, type: "xutimTag", data: array{id: string, layout: string}, tunes: XutimAnchorTune }'
+        FoldableStartBlock: 'array{ id: string, type: "foldableStart", data: array{title: string, open: bool}, tunes: XutimAnchorTune }'
+        FoldableEndBlock: 'array{ id: string, type: "foldableEnd", data: array{}, tunes: XutimAnchorTune }'
 
-        EditorBlocksUnion: ListBlock|ParagraphBlock|DelimiterBlock|HeaderBlock|MainHeaderBlock|QuoteBlock|BlockBlock|XutimFileBlock|XutimImageBlock|ImageRowBlock|EmbedBlock|PageLinkBlock|ArticleLinkBlock|XutimTagBlock
+        EditorBlocksUnion: ListBlock|ParagraphBlock|DelimiterBlock|HeaderBlock|MainHeaderBlock|QuoteBlock|BlockBlock|XutimFileBlock|XutimImageBlock|ImageRowBlock|EmbedBlock|PageLinkBlock|ArticleLinkBlock|XutimTagBlock|FoldableStartBlock|FoldableEndBlock
         EditorBlock: 'array{}|array{ time: int, version: string, blocks: array<int, EditorBlocksUnion> }'
         NonEmptyEditorBlock: 'array{ time: int, version: string, blocks: non-empty-array<int, EditorBlocksUnion> }'
 
