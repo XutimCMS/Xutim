@@ -26,7 +26,24 @@ final class RedirectToTargetAction
         }
 
         $url = $redirect->getTarget();
+        $response = new RedirectResponse($url, $redirect->isPermanent() ? 301 : 302);
 
-        return new RedirectResponse($url, $redirect->isPermanent() ? 301 : 302);
+        if ($this->isExternalUrl($url, $request->getHost())) {
+            $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
+        }
+
+        return $response;
+    }
+
+    private function isExternalUrl(string $url, string $currentHost): bool
+    {
+        $parsed = parse_url($url);
+
+        if (isset($parsed['host']) === false) {
+            return false;
+        }
+
+        return $parsed['host'] !== $currentHost
+            && str_ends_with($parsed['host'], '.' . $currentHost) === false;
     }
 }
