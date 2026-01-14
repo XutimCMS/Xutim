@@ -22,12 +22,12 @@
 {% block body %}
     <div class="card">
         <div class="row g-0">
-            <div class="col-3 border-end">
+            <div class="col-12 col-md-3 border-end">
                 {{
                     include('@XutimCore/admin/settings/_settings_navigation.html.twig')
                 }}
             </div>
-            <div class="col d-flex flex-column">
+            <div class="col-12 col-md-9 d-flex flex-column">
                 <div class="card-body">
                     {% block settingsBody %}{% endblock %}
                 </div>
