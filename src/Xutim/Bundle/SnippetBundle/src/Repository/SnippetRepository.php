@@ -48,19 +48,21 @@ class SnippetRepository extends ServiceEntityRepository implements SnippetReposi
             if (count($locales) > 0) {
                 $missingConditions = [];
                 foreach ($locales as $index => $missingLocale) {
-                    $paramName = 'missingLocale' . $index;
+                    $localeParam = 'missingLocale' . $index;
+                    $emptyParam = 'emptyContent' . $index;
                     $subquery = $this->getEntityManager()->createQueryBuilder()
                         ->select('1')
                         ->from($this->getEntityName(), 'sub' . $index)
                         ->innerJoin('sub' . $index . '.translations', 'subt' . $index)
                         ->where('sub' . $index . '.id = snippet.id')
-                        ->andWhere('subt' . $index . '.locale = :' . $paramName)
+                        ->andWhere('subt' . $index . '.locale = :' . $localeParam)
                         ->andWhere('subt' . $index . '.content IS NOT NULL')
-                        ->andWhere("TRIM(subt{$index}.content) != ''")
+                        ->andWhere('TRIM(subt' . $index . '.content) != :' . $emptyParam)
                         ->getDQL();
 
                     $missingConditions[] = 'NOT EXISTS (' . $subquery . ')';
-                    $builder->setParameter($paramName, $missingLocale);
+                    $builder->setParameter($localeParam, $missingLocale);
+                    $builder->setParameter($emptyParam, '');
                 }
 
                 $builder->andWhere('(' . implode(' OR ', $missingConditions) . ')');
