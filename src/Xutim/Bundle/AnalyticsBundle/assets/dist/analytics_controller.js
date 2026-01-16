@@ -7,21 +7,6 @@ export default class extends Controller {
         this.maxScroll = 0;
         this.clicked = [];
 
-        // Capture and persist the original referrer
-        const storageKey = 'xutim_analytics_referrer';
-        let originalReferrer = sessionStorage.getItem(storageKey);
-
-        if (!originalReferrer && document.referrer) {
-            // Only store if it's from a different domain
-            const currentHost = window.location.hostname;
-            const referrerHost = new URL(document.referrer).hostname;
-
-            if (referrerHost !== currentHost) {
-                originalReferrer = document.referrer;
-                sessionStorage.setItem(storageKey, originalReferrer);
-            }
-        }
-
         this._onScroll = () => {
             const depth = Math.floor(
                 ((window.scrollY + window.innerHeight) /
@@ -54,8 +39,8 @@ export default class extends Controller {
                 clicks: this.clicked,
             };
 
-            if (originalReferrer) {
-                payload.referrer = originalReferrer;
+            if (document.referrer) {
+                payload.referrer = document.referrer;
             }
 
             navigator.sendBeacon(
