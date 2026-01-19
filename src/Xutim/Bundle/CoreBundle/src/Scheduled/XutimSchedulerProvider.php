@@ -13,18 +13,25 @@ use Symfony\Component\Scheduler\Trigger\PeriodicalTrigger;
 use Symfony\Contracts\Cache\CacheInterface;
 use Xutim\CoreBundle\Message\Command\Article\PublishScheduledArticlesCommand;
 use Xutim\CoreBundle\Message\Command\GenerateSitemapCommand;
+use Xutim\CoreBundle\Scheduler\ScheduleContributorInterface;
 use Xutim\SecurityBundle\Console\CreateUserCliCommand;
 
 final class XutimSchedulerProvider implements ScheduleProviderInterface
 {
+    /**
+     * @param iterable<ScheduleContributorInterface> $contributors
+     */
     public function __construct(
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
+        private readonly iterable $contributors = [],
     ) {
     }
 
     public function getSchedule(): Schedule
     {
-        return new Schedule()
+        $schedule = new Schedule();
+
+        $schedule
             ->add(
                 RecurringMessage::trigger(
                     new PeriodicalTrigger(60),
@@ -33,10 +40,19 @@ final class XutimSchedulerProvider implements ScheduleProviderInterface
             )
             ->add(
                 RecurringMessage::trigger(
-                    new CronExpressionTrigger(new CronExpression('0 2 * * *')), // daily at 2 AM
+                    new CronExpressionTrigger(new CronExpression('0 2 * * *')),
                     new GenerateSitemapCommand()
                 )
             )
+        ;
+
+        foreach ($this->contributors as $contributor) {
+            foreach ($contributor->getScheduledMessages() as $message) {
+                $schedule->add($message);
+            }
+        }
+
+        return $schedule
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
         ;
