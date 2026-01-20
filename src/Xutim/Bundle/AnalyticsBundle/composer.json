@@ -70,6 +70,7 @@
         "symfony/maker-bundle": "^1.62",
         "symfony/phpunit-bridge": "7.3.*",
         "symfony/stopwatch": "7.3.*",
+        "symfony/ux-chartjs": "^2.32",
         "symfony/web-profiler-bundle": "7.3.*",
         "symplify/easy-coding-standard": "^12.5",
         "vincentlanglet/twig-cs-fixer": "^3.5"
