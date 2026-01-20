@@ -26,9 +26,13 @@ export default class extends Controller {
                 text: (el.textContent || '').trim().slice(0, 64) || undefined,
             });
         };
+        this._onBeforeVisit = () => {
+            sessionStorage.setItem('xutim_prev_path', location.href);
+        };
 
         window.addEventListener('scroll', this._onScroll, { passive: true });
         document.addEventListener('click', this._onClick);
+        document.addEventListener('turbo:before-visit', this._onBeforeVisit);
 
         this._timer = setTimeout(() => {
             const payload = {
@@ -39,7 +43,17 @@ export default class extends Controller {
                 clicks: this.clicked,
             };
 
-            if (document.referrer) {
+            const prevPath = sessionStorage.getItem('xutim_prev_path');
+            if (prevPath) {
+                try {
+                    const prevUrl = new URL(prevPath);
+                    if (prevUrl.pathname !== location.pathname) {
+                        payload.referrer = prevPath;
+                    }
+                } catch {
+                    // Invalid URL, skip
+                }
+            } else if (document.referrer) {
                 payload.referrer = document.referrer;
             }
 
@@ -60,5 +74,6 @@ export default class extends Controller {
         clearTimeout(this._timer);
         window.removeEventListener('scroll', this._onScroll);
         document.removeEventListener('click', this._onClick);
+        document.removeEventListener('turbo:before-visit', this._onBeforeVisit);
     }
 }
