@@ -59,6 +59,8 @@ class CollectAnalyticsAction
             $referrerDomain = is_string($host) ? $host : null;
         }
 
+        $queryString = isset($data['queryString']) && is_string($data['queryString']) ? $data['queryString'] : null;
+
         $this->bus->dispatch(new CollectAnalyticsMessage(
             path: $path,
             screenSize: $screenSize,
@@ -72,6 +74,7 @@ class CollectAnalyticsAction
             country: $country,
             hostname: $hostname,
             referrerDomain: $referrerDomain,
+            queryString: $queryString,
         ));
 
         return new JsonResponse(

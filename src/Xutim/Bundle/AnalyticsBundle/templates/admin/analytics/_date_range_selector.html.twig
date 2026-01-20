@@ -1,0 +1,55 @@
+<twig:Xutim:Admin:Button
+    tag="a"
+    variant="nav"
+    class="{{ preset == 'today' ? 'active' : '' }}"
+    href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({preset: 'today'})) }}"
+>
+    {{ 'Today'|trans({}, 'admin') }}
+</twig:Xutim:Admin:Button>
+<twig:Xutim:Admin:Button
+    tag="a"
+    variant="nav"
+    class="{{ preset == '7d' ? 'active' : '' }}"
+    href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({preset: '7d'})) }}"
+>
+    {{ '7 days'|trans({}, 'admin') }}
+</twig:Xutim:Admin:Button>
+<twig:Xutim:Admin:Button
+    tag="a"
+    variant="nav"
+    class="{{ preset == '30d' ? 'active' : '' }}"
+    href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({preset: '30d'})) }}"
+>
+    {{ '30 days'|trans({}, 'admin') }}
+</twig:Xutim:Admin:Button>
+<div class="dropdown d-inline-block">
+    <twig:Xutim:Admin:Button
+        tag="button"
+        variant="nav"
+        class="dropdown-toggle {{ preset == 'custom' ? 'active' : '' }}"
+        data-bs-toggle="dropdown"
+    >
+        {% if preset == 'custom' %}
+            {{ range.from|date('Y-m-d') }} – {{ range.to|date('Y-m-d') }}
+        {% else %}
+            {{ 'Custom'|trans({}, 'admin') }}
+        {% endif %}
+    </twig:Xutim:Admin:Button>
+    <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 280px;">
+        <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.query.all|filter((v, k) => k not in ['preset', 'from', 'to'])) }}">
+            <input type="hidden" name="preset" value="custom">
+            {% for key, value in app.request.query.all|filter((v, k) => k not in ['preset', 'from', 'to']) %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endfor %}
+            <div class="mb-3">
+                <label class="form-label">{{ 'From'|trans({}, 'admin') }}</label>
+                <input type="date" name="from" class="form-control" value="{{ range.from|date('Y-m-d') }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">{{ 'To'|trans({}, 'admin') }}</label>
+                <input type="date" name="to" class="form-control" value="{{ range.to|date('Y-m-d') }}">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">{{ 'Apply'|trans({}, 'admin') }}</button>
+        </form>
+    </div>
+</div>

@@ -65,6 +65,8 @@ final class CollectAnalyticsMessageHandler
             $this->appSecret
         );
 
+        $utmParams = $this->extractUtmParams($mes->queryString);
+
         $this->repo->save(
             $this->factory->create(
                 path: $mes->path,
@@ -78,9 +80,44 @@ final class CollectAnalyticsMessageHandler
                 country: $mes->country,
                 isBot: $isBot,
                 anonymizedIp: $anonymizedIp,
-                sessionBucket: $sessionBucket
+                sessionBucket: $sessionBucket,
+                utmSource: $utmParams['utm_source'],
+                utmMedium: $utmParams['utm_medium'],
+                utmCampaign: $utmParams['utm_campaign']
             ),
             true
         );
+    }
+
+    /**
+     * @return array{utm_source: ?string, utm_medium: ?string, utm_campaign: ?string}
+     */
+    private function extractUtmParams(?string $queryString): array
+    {
+        $result = [
+            'utm_source' => null,
+            'utm_medium' => null,
+            'utm_campaign' => null,
+        ];
+
+        if ($queryString === null || $queryString === '') {
+            return $result;
+        }
+
+        parse_str(ltrim($queryString, '?'), $params);
+
+        if (isset($params['utm_source']) && is_string($params['utm_source']) && $params['utm_source'] !== '') {
+            $result['utm_source'] = mb_substr($params['utm_source'], 0, 255);
+        }
+
+        if (isset($params['utm_medium']) && is_string($params['utm_medium']) && $params['utm_medium'] !== '') {
+            $result['utm_medium'] = mb_substr($params['utm_medium'], 0, 255);
+        }
+
+        if (isset($params['utm_campaign']) && is_string($params['utm_campaign']) && $params['utm_campaign'] !== '') {
+            $result['utm_campaign'] = mb_substr($params['utm_campaign'], 0, 255);
+        }
+
+        return $result;
     }
 }

@@ -1,0 +1,55 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}{{ 'Geography'|trans({}, 'admin') }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item"><a href="{{ path('admin_analytics_dashboard') }}">{{ 'Analytics'|trans({}, 'admin') }}</a></li>
+        <li class="breadcrumb-item active">{{ 'Geography'|trans({}, 'admin') }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    {{ include('@XutimAnalytics/admin/analytics/_date_range_selector.html.twig', {preset: preset, range: range}) }}
+{% endblock %}
+
+{% block body %}
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Visitors by Country'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="table-responsive">
+                    {% set maxCountryCount = countries|map(c => c.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Country'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visitors'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for country in countries %}
+                                <tr>
+                                    <td>{{ country.country|country_name|default(country.country ?: 'Unknown') }}</td>
+                                    <td class="text-secondary">{{ country.visits|number_format }}</td>
+                                    <td class="w-50">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (country.visits / maxCountryCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -32,6 +32,7 @@
         "spatie/image": "^3.8",
         "spatie/image-optimizer": "^1.8",
         "stof/doctrine-extensions-bundle": "^1.13",
+        "symfony-cmf/routing-bundle": "^3.1",
         "symfony/asset": "7.3.*",
         "symfony/asset-mapper": "7.3.*",
         "symfony/console": "7.3.*",
@@ -72,6 +73,7 @@
         "twig/intl-extra": "^3.20",
         "twig/string-extra": "^3.20",
         "twig/twig": "^3.20",
+        "ua-parser/uap-php": "^3.10",
         "webmozart/assert": "^1.11",
         "xutim/domain": "dev-main"
     },
@@ -93,6 +95,7 @@
         "symfony/maker-bundle": "^1.62",
         "symfony/phpunit-bridge": "7.3.*",
         "symfony/stopwatch": "7.3.*",
+        "symfony/ux-chartjs": "^2.32",
         "symfony/web-profiler-bundle": "7.3.*",
         "symplify/easy-coding-standard": "^12.5",
         "symplify/monorepo-builder": "^11.2",

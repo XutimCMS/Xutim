@@ -30,5 +30,8 @@ interface AnalyticsEventFactoryInterface
         bool $isBot,
         ?string $anonymizedIp,
         string $sessionBucket,
+        ?string $utmSource = null,
+        ?string $utmMedium = null,
+        ?string $utmCampaign = null,
     ): AnalyticsEventInterface;
 }

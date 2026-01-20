@@ -43,6 +43,10 @@ export default class extends Controller {
                 payload.referrer = document.referrer;
             }
 
+            if (location.search) {
+                payload.queryString = location.search;
+            }
+
             navigator.sendBeacon(
                 '/_analytics/collect',
                 JSON.stringify(payload),

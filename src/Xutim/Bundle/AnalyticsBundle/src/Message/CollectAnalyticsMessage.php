@@ -25,6 +25,7 @@ final readonly class CollectAnalyticsMessage
         public readonly ?string $country,
         public readonly ?string $hostname = null,
         public readonly ?string $referrerDomain = null,
+        public readonly ?string $queryString = null,
     ) {
     }
 }

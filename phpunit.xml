@@ -6,6 +6,7 @@
         <testsuite name="Xutim Bundles">
             <directory>src/Xutim/Bundle/CoreBundle/tests</directory>
             <directory>src/Xutim/Bundle/EventBundle/tests</directory>
+            <directory>src/Xutim/Bundle/AnalyticsBundle/tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>

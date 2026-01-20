@@ -22,8 +22,10 @@ final class XutimAnalyticsExtension extends Extension implements PrependExtensio
      */
     public function load(array $config, ContainerBuilder $container): void
     {
-        /** @var array{models: array<string, array{class: class-string}>} $configs */
+        /** @var array{models: array<string, array{class: class-string}>, site_host: string|null} $configs */
         $configs = $this->processConfiguration($this->getConfiguration([], $container), $config);
+
+        $container->setParameter('xutim_analytics.site_host', $configs['site_host']);
 
         foreach ($configs['models'] as $alias => $modelConfig) {
             $container->setParameter(sprintf('xutim_analytics.model.%s.class', $alias), $modelConfig['class']);
@@ -35,6 +37,7 @@ final class XutimAnalyticsExtension extends Extension implements PrependExtensio
         $loader->load('factories.php');
         $loader->load('handlers.php');
         $loader->load('actions.php');
+        $loader->load('services.php');
 
         // if ($container->getParameter('kernel.environment') === 'test') {
         //     $loader->load('fixtures.php');

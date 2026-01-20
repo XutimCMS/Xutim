@@ -11,6 +11,8 @@ use Symfony\Component\Scheduler\ScheduleProviderInterface;
 use Symfony\Component\Scheduler\Trigger\CronExpressionTrigger;
 use Symfony\Component\Scheduler\Trigger\PeriodicalTrigger;
 use Symfony\Contracts\Cache\CacheInterface;
+use Xutim\AnalyticsBundle\Message\AggregateAnalyticsMessage;
+use Xutim\AnalyticsBundle\Message\ArchiveAnalyticsMessage;
 use Xutim\CoreBundle\Message\Command\Article\PublishScheduledArticlesCommand;
 use Xutim\CoreBundle\Message\Command\GenerateSitemapCommand;
 use Xutim\CoreBundle\Scheduler\ScheduleContributorInterface;
@@ -46,6 +48,8 @@ final class XutimSchedulerProvider implements ScheduleProviderInterface
             )
         ;
 
+        $this->addAnalyticsSchedule($schedule);
+
         foreach ($this->contributors as $contributor) {
             foreach ($contributor->getScheduledMessages() as $message) {
                 $schedule->add($message);
@@ -56,5 +60,34 @@ final class XutimSchedulerProvider implements ScheduleProviderInterface
             ->stateful($this->cache)
             ->processOnlyLastMissedRun(true)
         ;
+    }
+
+    private function addAnalyticsSchedule(Schedule $schedule): void
+    {
+        if (class_exists(AggregateAnalyticsMessage::class)) {
+            $schedule
+                ->add(
+                    RecurringMessage::trigger(
+                        new CronExpressionTrigger(new CronExpression('0 * * * *')),
+                        new AggregateAnalyticsMessage(new \DateTimeImmutable('today'))
+                    )
+                )
+                ->add(
+                    RecurringMessage::trigger(
+                        new CronExpressionTrigger(new CronExpression('0 2 * * *')),
+                        new AggregateAnalyticsMessage()
+                    )
+                )
+            ;
+        }
+
+        if (class_exists(ArchiveAnalyticsMessage::class)) {
+            $schedule->add(
+                RecurringMessage::trigger(
+                    new CronExpressionTrigger(new CronExpression('0 3 1 * *')),
+                    new ArchiveAnalyticsMessage()
+                )
+            );
+        }
     }
 }

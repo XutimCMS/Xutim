@@ -1,0 +1,129 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}{{ 'Devices'|trans({}, 'admin') }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item"><a href="{{ path('admin_analytics_dashboard') }}">{{ 'Analytics'|trans({}, 'admin') }}</a></li>
+        <li class="breadcrumb-item active">{{ 'Devices'|trans({}, 'admin') }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    {{ include('@XutimAnalytics/admin/analytics/_date_range_selector.html.twig', {preset: preset, range: range}) }}
+{% endblock %}
+
+{% block body %}
+    <div class="row row-cards">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Device Types'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="table-responsive">
+                    {% set maxDeviceCount = devices|map(d => d.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Device'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visitors'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for device in devices %}
+                                <tr>
+                                    <td>{{ device.deviceType }}</td>
+                                    <td class="text-secondary">{{ device.visits|number_format }}</td>
+                                    <td class="w-50">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (device.visits / maxDeviceCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Browsers'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="table-responsive">
+                    {% set maxBrowserCount = browsers|map(b => b.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Browser'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visitors'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for browser in browsers %}
+                                <tr>
+                                    <td>{{ browser.browser }}</td>
+                                    <td class="text-secondary">{{ browser.visits|number_format }}</td>
+                                    <td class="w-50">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (browser.visits / maxBrowserCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Operating Systems'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="table-responsive">
+                    {% set maxOsCount = operatingSystems|map(o => o.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'OS'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visitors'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for os in operatingSystems %}
+                                <tr>
+                                    <td>{{ os.os }}</td>
+                                    <td class="text-secondary">{{ os.visits|number_format }}</td>
+                                    <td class="w-50">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (os.visits / maxOsCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

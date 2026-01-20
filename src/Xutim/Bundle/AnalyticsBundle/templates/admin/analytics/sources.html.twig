@@ -1,0 +1,96 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}{{ 'Traffic Sources'|trans({}, 'admin') }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item"><a href="{{ path('admin_analytics_dashboard') }}">{{ 'Analytics'|trans({}, 'admin') }}</a></li>
+        <li class="breadcrumb-item active">{{ 'Traffic Sources'|trans({}, 'admin') }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    {{ include('@XutimAnalytics/admin/analytics/_date_range_selector.html.twig', {preset: preset, range: range}) }}
+{% endblock %}
+
+{% block body %}
+    <div class="row row-cards">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Sources'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="table-responsive">
+                    {% set maxSourceCount = sources|map(s => s.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Source'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visits'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for source in sources %}
+                                <tr>
+                                    <td>{{ source.source }}</td>
+                                    <td class="text-secondary">{{ source.visits|number_format }}</td>
+                                    <td class="w-50">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (source.visits / maxSourceCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Referrer URLs'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="table-responsive">
+                    {% set maxRefCount = rawReferrers|map(r => r.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'URL'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visits'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for referrer in rawReferrers %}
+                                <tr>
+                                    <td class="text-truncate" style="max-width: 300px;">
+                                        <a href="{{ referrer.referrer }}" target="_blank" rel="noopener noreferrer" title="{{ referrer.referrer }}">
+                                            {{ referrer.referrer|u.truncate(50, '...') }}
+                                        </a>
+                                    </td>
+                                    <td class="text-secondary">{{ referrer.visits|number_format }}</td>
+                                    <td class="w-25">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (referrer.visits / maxRefCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

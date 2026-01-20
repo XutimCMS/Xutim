@@ -1,0 +1,179 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% macro change_indicator(current, previous, invert) %}
+    {% if previous > 0 %}
+        {% set change = ((current - previous) / previous * 100)|round %}
+        {% if change > 0 %}
+            <span class="text-{{ invert ? 'red' : 'green' }} d-inline-flex align-items-center lh-1">
+                {{ change }}% <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 17l6 -6l4 4l8 -8" /><path d="M14 7l7 0l0 7" /></svg>
+            </span>
+        {% elseif change < 0 %}
+            <span class="text-{{ invert ? 'green' : 'red' }} d-inline-flex align-items-center lh-1">
+                {{ change }}% <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7l6 6l4 -4l8 8" /><path d="M21 10l0 7l-7 0" /></svg>
+            </span>
+        {% else %}
+            <span class="text-secondary d-inline-flex align-items-center lh-1">0%</span>
+        {% endif %}
+    {% elseif current > 0 %}
+        <span class="text-{{ invert ? 'red' : 'green' }} d-inline-flex align-items-center lh-1">
+            {{ 'New'|trans({}, 'admin') }}
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{% block pageTitle %}{{ path }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item"><a href="{{ path('admin_analytics_dashboard') }}">{{ 'Analytics'|trans({}, 'admin') }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('admin_analytics_pages', {preset: preset}) }}">{{ 'Pages'|trans({}, 'admin') }}</a></li>
+        <li class="breadcrumb-item active">{{ path|u.truncate(30, '...') }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    {{ include('@XutimAnalytics/admin/analytics/_date_range_selector.html.twig', {preset: preset, range: range}) }}
+{% endblock %}
+
+{% block body %}
+    <div class="row row-deck row-cards">
+        <div class="col-6 col-xl">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Pageviews'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ pageStats.pageviews|default(0)|number_format }}</div>
+                        {{ _self.change_indicator(pageStats.pageviews|default(0), prevPageStats.pageviews|default(0), false) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Visitors'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ pageStats.uniqueVisitors|default(0)|number_format }}</div>
+                        {{ _self.change_indicator(pageStats.uniqueVisitors|default(0), prevPageStats.uniqueVisitors|default(0), false) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Bounce Rate'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ bounceRate ? (bounceRate|number_format(0) ~ '%') : '-' }}</div>
+                        {{ _self.change_indicator(bounceRate, prevBounceRate, true) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Avg. Scroll Depth'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ pageStats.avgScrollDepth ? (pageStats.avgScrollDepth|number_format(0) ~ '%') : '-' }}</div>
+                        {{ _self.change_indicator(pageStats.avgScrollDepth|default(0), prevPageStats.avgScrollDepth|default(0), false) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-xl">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Avg. Load Time'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ pageStats.avgLoadTime ? ((pageStats.avgLoadTime / 1000)|number_format(1) ~ 's') : '-' }}</div>
+                        {{ _self.change_indicator(pageStats.avgLoadTime|default(0), prevPageStats.avgLoadTime|default(0), true) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Pageviews Over Time'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if pageviewsChart %}
+                        <div style="height: 300px;">
+                            {{ render_chart(pageviewsChart) }}
+                        </div>
+                    {% else %}
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>{{ 'Date'|trans({}, 'admin') }}</th>
+                                    <th class="text-end">{{ 'Views'|trans({}, 'admin') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in pageviewsByDay %}
+                                    <tr>
+                                        <td>{{ row.date }}</td>
+                                        <td class="text-end">{{ row.pageviews|number_format }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Referrers'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="table-responsive">
+                    {% set maxRefCount = referrers|map(r => r.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Referrer'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Type'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visits'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for referrer in referrers %}
+                                <tr>
+                                    <td class="text-truncate" style="max-width: 300px;" title="{{ referrer.referrer }}">
+                                        {{ referrer.referrer|u.truncate(50, '...') }}
+                                    </td>
+                                    <td>
+                                        {% if referrer.isExternal %}
+                                            <span class="badge bg-blue-lt">{{ 'External'|trans({}, 'admin') }}</span>
+                                        {% else %}
+                                            <span class="badge bg-green-lt">{{ 'Internal'|trans({}, 'admin') }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-secondary">{{ referrer.visits|number_format }}</td>
+                                    <td class="w-25">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (referrer.visits / maxRefCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

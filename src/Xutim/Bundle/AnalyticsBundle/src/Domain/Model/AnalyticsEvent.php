@@ -64,6 +64,15 @@ class AnalyticsEvent implements AnalyticsEventInterface
     #[Column(type: 'string', length: 128)]
     private readonly string $sessionBucket;
 
+    #[Column(type: 'string', length: 255, nullable: true)]
+    private readonly ?string $utmSource;
+
+    #[Column(type: 'string', length: 255, nullable: true)]
+    private readonly ?string $utmMedium;
+
+    #[Column(type: 'string', length: 255, nullable: true)]
+    private readonly ?string $utmCampaign;
+
     /**
      * @param list<array{
      *     tag: string,
@@ -85,7 +94,10 @@ class AnalyticsEvent implements AnalyticsEventInterface
         ?string $country,
         bool $isBot,
         ?string $anonymizedIp,
-        string $sessionBucket
+        string $sessionBucket,
+        ?string $utmSource = null,
+        ?string $utmMedium = null,
+        ?string $utmCampaign = null
     ) {
         $this->id = Uuid::v4();
         $this->path = $path;
@@ -101,6 +113,9 @@ class AnalyticsEvent implements AnalyticsEventInterface
         $this->recordedAt = new \DateTimeImmutable();
         $this->anonymizedIp = $anonymizedIp;
         $this->sessionBucket = $sessionBucket;
+        $this->utmSource = $utmSource;
+        $this->utmMedium = $utmMedium;
+        $this->utmCampaign = $utmCampaign;
     }
 
     // Getters for the properties
@@ -171,5 +186,20 @@ class AnalyticsEvent implements AnalyticsEventInterface
     public function getSessionBucket(): string
     {
         return $this->sessionBucket;
+    }
+
+    public function getUtmSource(): ?string
+    {
+        return $this->utmSource;
+    }
+
+    public function getUtmMedium(): ?string
+    {
+        return $this->utmMedium;
+    }
+
+    public function getUtmCampaign(): ?string
+    {
+        return $this->utmCampaign;
     }
 }

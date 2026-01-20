@@ -20,6 +20,10 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+            ->scalarNode('site_host')
+            ->info('The site host for internal/external referrer detection. Falls back to Request::getHost() if not set.')
+            ->defaultNull()
+            ->end()
             ->arrayNode('models')
             ->useAttributeAsKey('alias')
             ->prototype('array')

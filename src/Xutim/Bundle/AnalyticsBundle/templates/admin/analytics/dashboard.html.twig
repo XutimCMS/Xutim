@@ -1,0 +1,313 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% macro change_indicator(current, previous, invert) %}
+    {% if previous > 0 %}
+        {% set change = ((current - previous) / previous * 100)|round %}
+        {% if change > 0 %}
+            <span class="text-{{ invert ? 'red' : 'green' }} d-inline-flex align-items-center lh-1">
+                {{ change }}% <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 17l6 -6l4 4l8 -8" /><path d="M14 7l7 0l0 7" /></svg>
+            </span>
+        {% elseif change < 0 %}
+            <span class="text-{{ invert ? 'green' : 'red' }} d-inline-flex align-items-center lh-1">
+                {{ change }}% <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7l6 6l4 -4l8 8" /><path d="M21 10l0 7l-7 0" /></svg>
+            </span>
+        {% else %}
+            <span class="text-secondary d-inline-flex align-items-center lh-1">0%</span>
+        {% endif %}
+    {% elseif current > 0 %}
+        <span class="text-{{ invert ? 'red' : 'green' }} d-inline-flex align-items-center lh-1">
+            {{ 'New'|trans({}, 'admin') }}
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{% block pageTitle %}{{ 'Analytics'|trans({}, 'admin') }}{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item active">{{ 'Analytics'|trans({}, 'admin') }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    {{ include('@XutimAnalytics/admin/analytics/_date_range_selector.html.twig', {preset: preset, range: range}) }}
+{% endblock %}
+
+{% block body %}
+    <div class="row row-deck row-cards">
+        <div class="col-sm-6 col-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Pageviews'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ pageviews|number_format }}</div>
+                        {{ _self.change_indicator(pageviews, prevPageviews, false) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Visitors'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ visitors|number_format }}</div>
+                        {{ _self.change_indicator(visitors, prevVisitors, false) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Views/Visit'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ viewsPerVisit ? viewsPerVisit|number_format(1) : '-' }}</div>
+                        {{ _self.change_indicator(viewsPerVisit, prevViewsPerVisit, false) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Bounce Rate'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ bounceRate ? (bounceRate|number_format(0) ~ '%') : '-' }}</div>
+                        {{ _self.change_indicator(bounceRate, prevBounceRate, true) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Avg. Scroll Depth'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ avgScrollDepth ? (avgScrollDepth|number_format(0) ~ '%') : '-' }}</div>
+                        {{ _self.change_indicator(avgScrollDepth, prevAvgScrollDepth, false) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="subheader">{{ 'Avg. Load Time'|trans({}, 'admin') }}</div>
+                    <div class="d-flex align-items-baseline">
+                        <div class="h1 mb-0 me-2">{{ avgLoadTime ? ((avgLoadTime / 1000)|number_format(1) ~ 's') : '-' }}</div>
+                        {{ _self.change_indicator(avgLoadTime, prevAvgLoadTime, true) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Pageviews'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if pageviewsChart %}
+                        <div style="height: 300px;">
+                            {{ render_chart(pageviewsChart) }}
+                        </div>
+                    {% else %}
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>{{ 'Date'|trans({}, 'admin') }}</th>
+                                    <th class="text-end">{{ 'Views'|trans({}, 'admin') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in pageviewsByDay %}
+                                    <tr>
+                                        <td>{{ row.date }}</td>
+                                        <td class="text-end">{{ row.pageviews|number_format }}</td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="2" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Top Pages'|trans({}, 'admin') }}</h3>
+                    <div class="card-actions">
+                        <a href="{{ path('admin_analytics_pages', {preset: preset}) }}" class="btn btn-link">
+                            {{ 'View all'|trans({}, 'admin') }}
+                        </a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    {% set maxPageViews = topPages|map(p => p.totalPageviews)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Page'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Views'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for page in topPages %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ path('admin_analytics_page', {path: page.path, preset: preset}) }}">
+                                            {{ page.path|u.truncate(40, '...') }}
+                                        </a>
+                                    </td>
+                                    <td class="text-secondary">{{ page.totalPageviews|number_format }}</td>
+                                    <td class="w-50">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (page.totalPageviews / maxPageViews * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Traffic Sources'|trans({}, 'admin') }}</h3>
+                    <div class="card-actions">
+                        <a href="{{ path('admin_analytics_sources', {preset: preset}) }}" class="btn btn-link">
+                            {{ 'View all'|trans({}, 'admin') }}
+                        </a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    {% set maxSourceCount = referrers|map(r => r.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Source'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visits'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for source in referrers %}
+                                <tr>
+                                    <td>{{ source.source }}</td>
+                                    <td class="text-secondary">{{ source.visits|number_format }}</td>
+                                    <td class="w-50">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (source.visits / maxSourceCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Countries'|trans({}, 'admin') }}</h3>
+                    <div class="card-actions">
+                        <a href="{{ path('admin_analytics_geography', {preset: preset}) }}" class="btn btn-link">
+                            {{ 'View all'|trans({}, 'admin') }}
+                        </a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    {% set maxCountryCount = countries|map(c => c.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Country'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visitors'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for country in countries %}
+                                <tr>
+                                    <td>{{ country.country|country_name|default(country.country) }}</td>
+                                    <td class="text-secondary">{{ country.visits|number_format }}</td>
+                                    <td class="w-50">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (country.visits / maxCountryCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ 'Devices'|trans({}, 'admin') }}</h3>
+                    <div class="card-actions">
+                        <a href="{{ path('admin_analytics_devices', {preset: preset}) }}" class="btn btn-link">
+                            {{ 'View all'|trans({}, 'admin') }}
+                        </a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    {% set maxDeviceCount = devices|map(d => d.visits)|sort|last|default(1) %}
+                    <table class="table table-vcenter card-table table-borderless">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Device'|trans({}, 'admin') }}</th>
+                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visitors'|trans({}, 'admin') }}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for device in devices %}
+                                <tr>
+                                    <td>{{ device.deviceType }}</td>
+                                    <td class="text-secondary">{{ device.visits|number_format }}</td>
+                                    <td class="w-50">
+                                        <div class="progress progress-xs">
+                                            <div class="progress-bar bg-warning" style="width: {{ (device.visits / maxDeviceCount * 100)|round }}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
