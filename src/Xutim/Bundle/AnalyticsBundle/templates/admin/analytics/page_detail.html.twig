@@ -149,7 +149,13 @@
                             {% for referrer in referrers %}
                                 <tr>
                                     <td class="text-truncate" style="max-width: 300px;" title="{{ referrer.referrer }}">
-                                        {{ referrer.referrer|u.truncate(50, '...') }}
+                                        {% if referrer.isExternal %}
+                                            {{ referrer.referrer|u.truncate(50, '...') }}
+                                        {% else %}
+                                            <a href="{{ path('admin_analytics_page', {path: referrer.referrer, preset: preset}) }}">
+                                                {{ referrer.referrer|u.truncate(50, '...') }}
+                                            </a>
+                                        {% endif %}
                                     </td>
                                     <td>
                                         {% if referrer.isExternal %}
