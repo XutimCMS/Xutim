@@ -22,11 +22,10 @@
 >
     {{ '30 days'|trans({}, 'admin') }}
 </twig:Xutim:Admin:Button>
-<div class="dropdown d-inline-block">
-    <twig:Xutim:Admin:Button
-        tag="button"
-        variant="nav"
-        class="dropdown-toggle {{ preset == 'custom' ? 'active' : '' }}"
+<li class="nav-item dropdown">
+    <button
+        type="button"
+        class="nav-link dropdown-toggle {{ preset == 'custom' ? 'active' : '' }}"
         data-bs-toggle="dropdown"
     >
         {% if preset == 'custom' %}
@@ -34,7 +33,7 @@
         {% else %}
             {{ 'Custom'|trans({}, 'admin') }}
         {% endif %}
-    </twig:Xutim:Admin:Button>
+    </button>
     <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 280px;">
         <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.query.all|filter((v, k) => k not in ['preset', 'from', 'to'])) }}">
             <input type="hidden" name="preset" value="custom">
@@ -52,4 +51,4 @@
             <button type="submit" class="btn btn-primary w-100">{{ 'Apply'|trans({}, 'admin') }}</button>
         </form>
     </div>
-</div>
+</li>
