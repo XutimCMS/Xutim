@@ -7,6 +7,7 @@ use Xutim\AnalyticsBundle\Action\Admin\DashboardAction;
 use Xutim\AnalyticsBundle\Action\Admin\DevicesAction;
 use Xutim\AnalyticsBundle\Action\Admin\GeographyAction;
 use Xutim\AnalyticsBundle\Action\Admin\PagesListAction;
+use Xutim\AnalyticsBundle\Action\Admin\SidebarWidgetAction;
 use Xutim\AnalyticsBundle\Action\Admin\SinglePageAction;
 use Xutim\AnalyticsBundle\Action\Admin\TrafficSourcesAction;
 use Xutim\AnalyticsBundle\Action\Public\CollectAnalyticsAction;
@@ -39,4 +40,8 @@ return function (RoutingConfigurator $routes) {
     $routes->add('admin_analytics_page', '/admin/analytics/page')
         ->methods(['get'])
         ->controller(SinglePageAction::class);
+
+    $routes->add('admin_analytics_sidebar_widget', '/admin/analytics/sidebar-widget')
+        ->methods(['get'])
+        ->controller(SidebarWidgetAction::class);
 };

@@ -9,6 +9,7 @@ use Symfony\Component\Asset\Context\RequestStackContext;
 use Xutim\CoreBundle\Infra\Doctrine\Type\AbstractEnumType;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\MessageHandler\EventHandlerInterface;
+use Xutim\CoreBundle\Twig\Extension\AnalyticsExtension;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -44,4 +45,8 @@ return static function (ContainerConfigurator $container): void {
     $services->load('Xutim\\CoreBundle\\', '../src/')
         ->exclude('../src/{DependencyInjection,Entity,Kernel.php}');
     $services->alias(FilterService::class, 'liip_imagine.service.filter');
+
+    $services->set(AnalyticsExtension::class)
+        ->arg('$bundles', '%kernel.bundles%')
+        ->tag('twig.extension');
 };

@@ -63,7 +63,29 @@
                     {% endif %}
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
+        </twig:Xutim:Admin:SidebarSection>
 
+        {% if xutim_analytics_enabled() %}
+            {% set analyticsPath = path('tag_translation_show', {
+                slug: translation.slug,
+                _locale: translation.locale,
+            }) %}
+            <turbo-frame
+                id="analytics-sidebar"
+                src="{{ path('admin_analytics_sidebar_widget', {path: analyticsPath}) }}"
+                loading="lazy"
+            >
+                <twig:Xutim:Admin:SidebarSection>
+                    <twig:Xutim:Admin:SidebarItem>
+                        <twig:block name="content">
+                            <span class="text-muted small">{{ 'Loading analytics...'|trans({}, 'admin') }}</span>
+                        </twig:block>
+                    </twig:Xutim:Admin:SidebarItem>
+                </twig:Xutim:Admin:SidebarSection>
+            </turbo-frame>
+        {% endif %}
+
+        <twig:Xutim:Admin:SidebarSection>
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="content">
                     <div class="btn-group">

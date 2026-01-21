@@ -1,0 +1,92 @@
+<turbo-frame id="analytics-sidebar">
+    <twig:Xutim:Admin:SidebarSection>
+        <twig:Xutim:Admin:SidebarItem>
+            <twig:block name="content">
+                <a
+                    href="{{ path('admin_analytics_page', {path: path}) }}"
+                    title="{{ 'View full analytics'|trans({}, 'admin') }}"
+                    data-turbo-frame="_top"
+                >
+                    {{ 'Analytics (30 days)'|trans({}, 'admin') }}
+                </a>
+            </twig:block>
+        </twig:Xutim:Admin:SidebarItem>
+
+        {% if pageStats %}
+            {% if sparklineData|length > 1 %}
+                <twig:Xutim:Admin:SidebarItem>
+                    <twig:block name="header">
+                        {{ 'Trend'|trans({}, 'admin') }}:
+                    </twig:block>
+                    <twig:block name="content">
+                        {% set width = 80 %}
+                        {% set height = 24 %}
+                        {% set padding = 2 %}
+                        {% set effectiveWidth = width - padding * 2 %}
+                        {% set effectiveHeight = height - padding * 2 %}
+                        {% set stepX = effectiveWidth / (sparklineData|length - 1) %}
+                        {% set points = [] %}
+                        {% for i, data in sparklineData %}
+                            {% set x = padding + i * stepX %}
+                            {% set y = padding + effectiveHeight - (data.pageviews / sparklineMax) * effectiveHeight %}
+                            {% set points = points|merge([x ~ ',' ~ y]) %}
+                        {% endfor %}
+                        <svg
+                            width="{{ width }}"
+                            height="{{ height }}"
+                            class="text-primary"
+                            style="overflow: visible"
+                        >
+                            <polyline
+                                points="{{ points|join(' ') }}"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </twig:block>
+                </twig:Xutim:Admin:SidebarItem>
+            {% endif %}
+
+            <twig:Xutim:Admin:SidebarItem>
+                <twig:block name="header">
+                    {{ 'Views'|trans({}, 'admin') }}:
+                </twig:block>
+                <twig:block name="content">
+                    {{ pageStats.pageviews|number_format(0, '.', ',') }}
+                </twig:block>
+            </twig:Xutim:Admin:SidebarItem>
+
+            <twig:Xutim:Admin:SidebarItem>
+                <twig:block name="header">
+                    {{ 'Visitors'|trans({}, 'admin') }}:
+                </twig:block>
+                <twig:block name="content">
+                    {{ pageStats.uniqueVisitors|number_format(0, '.', ',') }}
+                </twig:block>
+            </twig:Xutim:Admin:SidebarItem>
+
+            <twig:Xutim:Admin:SidebarItem>
+                <twig:block name="header">
+                    <span
+                        title="{{ 'Visitors who entered on this page and left without viewing other pages'|trans({}, 'admin') }}"
+                        style="text-decoration: underline dotted; cursor: help;"
+                    >{{ 'Bounce'|trans({}, 'admin') }}</span>:
+                </twig:block>
+                <twig:block name="content">
+                    {{ bounceRate|number_format(0) }}%
+                </twig:block>
+            </twig:Xutim:Admin:SidebarItem>
+        {% else %}
+            <twig:Xutim:Admin:SidebarItem>
+                <twig:block name="content">
+                    <span class="text-muted small">{{
+                        'No analytics data yet'|trans({}, 'admin')
+                    }}</span>
+                </twig:block>
+            </twig:Xutim:Admin:SidebarItem>
+        {% endif %}
+    </twig:Xutim:Admin:SidebarSection>
+</turbo-frame>
