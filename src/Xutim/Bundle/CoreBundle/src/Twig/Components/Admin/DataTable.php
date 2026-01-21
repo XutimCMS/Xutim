@@ -24,6 +24,8 @@ class DataTable
 
     public bool $showChips = true;
 
+    public bool $borderless = false;
+
     public string $filterFormId = '';
 
     /**

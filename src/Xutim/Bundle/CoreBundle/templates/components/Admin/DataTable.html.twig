@@ -2,6 +2,7 @@
     {{ attributes.defaults({}) }}
     id="{{ this.frameId }}-list"
     data-turbo-action="advance"
+    class="{{ this.borderless ? 'd-flex flex-column flex-grow-1' : '' }}"
 >
     {% block filterChips %}
         {% if this.showChips %}
@@ -19,14 +20,14 @@
             {% endfor %}
 
             {% for column in this.columns %}
-                {% set wantChip = column.chip is same as(true) or column.chip is iterable %}
+                {% set wantChip = column.chip|default(false) is same as(true) or column.chip|default(false) is iterable %}
                 {% if wantChip and activeFilters[column.key]|default('') is not empty %}
                     {% set hasActiveFilters = true %}
                 {% endif %}
             {% endfor %}
 
             {% if hasActiveFilters %}
-                <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
+                <div class="d-flex flex-wrap gap-2 align-items-center{{ this.borderless ? ' px-4 py-3 border-bottom' : ' mb-3' }}">
                     <span class="text-muted small">{{ 'Filters:'|trans({}, 'admin') }}</span>
 
                     {% for filter in this.filters %}
@@ -79,11 +80,11 @@
 
                     {% for column in this.columns %}
                         {% set columnKey = column.key %}
-                        {% set wantChip = column.chip is same as(true) or column.chip is iterable %}
+                        {% set wantChip = column.chip|default(false) is same as(true) or column.chip|default(false) is iterable %}
                         {% set filterValue = activeFilters[columnKey]|default('') %}
 
                         {% if wantChip and filterValue is not empty %}
-                            {% set chipConfig = column.chip is iterable ? column.chip : {} %}
+                            {% set chipConfig = column.chip|default(false) is iterable ? column.chip : {} %}
                             {% set chipLabel = chipConfig.label|default(column.label) %}
                             {% set displayValue = filterValue %}
                             {% set formatter = chipConfig.formatter|default(column.filter.formatter|default('')) %}
@@ -127,9 +128,9 @@
             {% endif %}
         {% endif %}
     {% endblock %}
-    <div class="card mb-3">
+    <div class="card {{ this.borderless ? 'border-0 shadow-none d-flex flex-column flex-grow-1' : 'mb-3' }}">
         {% set _formId = this.filterFormId ?: this.frameId ~ '-filters' %}
-        <div class="card-body border-bottom py-3" data-table-target="cardBody">
+        <div class="px-4 border-bottom py-3" data-table-target="cardBody">
             <div class="d-flex align-items-center flex-wrap gap-3">
                 <div class="text-muted">
                     {{ 'show'|trans({}, 'admin')|capitalize }}
@@ -183,7 +184,11 @@
                         {% if selectedValues is not iterable %}
                             {% set selectedValues = [selectedValues] %}
                         {% endif %}
-                        {% set hasActiveFilter = selectedValues|filter(v => v is not empty)|length > 0 %}
+                        {% set selectedValues = selectedValues|filter(v => v is not empty) %}
+                        {% if selectedValues is empty and filter.defaultSelected is defined %}
+                            {% set selectedValues = filter.defaultSelected %}
+                        {% endif %}
+                        {% set hasActiveFilter = selectedValues|length > 0 %}
                         {% set buttonIcon = filterType == 'columnVisibility' ? 'tabler:columns' : 'tabler:filter' %}
 
                         <div class="position-relative" data-controller="dt-filter">
@@ -306,7 +311,7 @@
                     {% endfor %}
                 {% endblock %}
 
-                <div class="ms-auto text-muted">
+                <div class="ms-auto text-muted" data-turbo-permanent id="{{ this.frameId }}-search-container">
                     {{ 'search'|trans({}, 'admin')|capitalize }}:
                     <div class="ms-2 d-inline-block">
                         <form
@@ -314,9 +319,18 @@
                             action=""
                             data-controller="auto-submit"
                         >
+                            {% for key, value in this.filter.cols %}
+                                {% if value is iterable %}
+                                    {% for v in value %}
+                                        <input type="hidden" name="col[{{ key }}][]" value="{{ v }}">
+                                    {% endfor %}
+                                {% else %}
+                                    <input type="hidden" name="col[{{ key }}]" value="{{ value }}">
+                                {% endif %}
+                            {% endfor %}
                             <input
                                 type="text"
-                                id="searchTerm"
+                                id="{{ this.frameId }}-searchTerm"
                                 name="searchTerm"
                                 autofocus
                                 class="form-control form-control-sm"
@@ -332,12 +346,15 @@
         </div>
         <form id="{{ _formId }}" method="get" action="">
             <input type="hidden" name="page" value="1">
+            {% if filter.searchTerm %}
+                <input type="hidden" name="searchTerm" value="{{ filter.searchTerm }}">
+            {% endif %}
         </form>
 
-        <div class="{{ this.responsive ? 'table-responsive' : '' }}" data-table-target="tableContainer">
+        <div class="{{ this.responsive ? 'table-responsive' : '' }}{{ this.borderless ? ' overflow-auto' : '' }}" data-table-target="tableContainer">
             {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
             {% set colFilters = this.filter.cols %}
-<table class="table card-table table-vcenter text-nowrap datatable">
+<table class="table table-hover card-table table-vcenter text-nowrap datatable">
         <thead>
           <tr>
             {% for column in this.columns %}
@@ -448,7 +465,7 @@
         </tbody>
       </table>
         </div>
-        <div class="card-footer d-flex align-items-center">
+        <div class="card-footer d-flex align-items-center border-top{{ this.borderless ? ' mt-auto' : '' }}">
             <p class="m-0 text-muted">
                 {{ 'page'|trans({}, 'admin')|capitalize }}
                 {{ pager.currentPage }}
