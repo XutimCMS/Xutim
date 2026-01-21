@@ -80,7 +80,7 @@ final class Configuration implements ConfigurationInterface
                     ->scalarPrototype()->defaultValue('async')->end()
                 ->end()
             ->end()
-;
+        ;
 
         return $treeBuilder;
     }

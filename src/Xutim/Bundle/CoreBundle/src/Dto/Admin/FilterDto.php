@@ -9,9 +9,9 @@ use Webmozart\Assert\Assert;
 readonly class FilterDto
 {
     /**
-     * @param int<0,max>                              $page
-     * @param int<1,max>                              $pageLength
-     * @param array<string, string|list<string>>     $cols
+     * @param int<0,max>                         $page
+     * @param int<1,max>                         $pageLength
+     * @param array<string, string|list<string>> $cols
      */
     public function __construct(
         public string $searchTerm = '',

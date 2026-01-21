@@ -124,7 +124,7 @@ class MediaFolderRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<string, array<int, MediaFolderInterface>> $foldersByParent
+     * @param  array<string, array<int, MediaFolderInterface>> $foldersByParent
      * @return array<int, MediaFolderInterface>
      */
     private function addFoldersRecursively(
