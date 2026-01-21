@@ -41,4 +41,24 @@ trait BasicTranslatableTrait
 
         return $translation;
     }
+
+
+    /**
+     * @return T
+     */
+    public function getTranslationByLocaleOrFallback(string $locale, string $altLocale)
+    {
+        $trans = $this->translations
+            ->filter(fn ($trans) => $trans->getLocale() === $locale);
+
+        if ($trans->first() === false) {
+            $fallbackTrans = $this->getTranslationByLocale($altLocale);
+            if ($fallbackTrans !== null) {
+                return $fallbackTrans;
+            }
+            return $this->defaultTranslation;
+        }
+
+        return $trans->first();
+    }
 }
