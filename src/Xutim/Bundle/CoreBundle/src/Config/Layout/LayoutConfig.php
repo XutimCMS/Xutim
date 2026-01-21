@@ -32,7 +32,7 @@ readonly class LayoutConfig
         /**
          * Cache Time To Live (in seconds).
          */
-        public int $cacheTtl = 604800, // 1 week
+        public int $cacheTtl = 21600, // 6 hours
 
         /**
          * Default layout.
