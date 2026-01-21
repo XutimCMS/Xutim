@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200">
+  <!-- Constellation style - scattered dots -->
+  <circle cx="30" cy="40" r="5" fill="black"/>
+  <circle cx="45" cy="28" r="4" fill="black"/>
+  <circle cx="62" cy="42" r="6" fill="black"/>
+  <circle cx="42" cy="62" r="5" fill="black"/>
+  <circle cx="68" cy="68" r="7" fill="black"/>
+</svg>
