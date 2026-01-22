@@ -1,0 +1,66 @@
+{
+    "name": "xutimcms/test-application",
+    "type": "project",
+    "description": "Test application for Xutim CMS bundles",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.4",
+        "xutimcms/core-bundle": "dev-main",
+        "xutimcms/security-bundle": "dev-main",
+        "xutimcms/analytics-bundle": "dev-main",
+        "xutimcms/event-bundle": "dev-main",
+        "xutimcms/media-bundle": "dev-main",
+        "xutimcms/redirect-bundle": "dev-main",
+        "xutimcms/snippet-bundle": "dev-main"
+    },
+    "require-dev": {
+        "dama/doctrine-test-bundle": "^8.2",
+        "doctrine/doctrine-fixtures-bundle": "^4.0",
+        "phpunit/phpunit": "^12.0",
+        "symfony/browser-kit": "7.3.*",
+        "symfony/debug-bundle": "7.3.*",
+        "symfony/phpunit-bridge": "7.3.*",
+        "symfony/stopwatch": "7.3.*",
+        "symfony/ux-chartjs": "^2.32",
+        "symfony/web-profiler-bundle": "7.3.*",
+        "zenstruck/foundry": "^2.0"
+    },
+    "repositories": [
+        {"type": "path", "url": "../../src/Xutim/Domain"},
+        {"type": "path", "url": "../../src/Xutim/Bundle/CoreBundle"},
+        {"type": "path", "url": "../../src/Xutim/Bundle/SecurityBundle"},
+        {"type": "path", "url": "../../src/Xutim/Bundle/AnalyticsBundle"},
+        {"type": "path", "url": "../../src/Xutim/Bundle/EventBundle"},
+        {"type": "path", "url": "../../src/Xutim/Bundle/MediaBundle"},
+        {"type": "path", "url": "../../src/Xutim/Bundle/RedirectBundle"},
+        {"type": "path", "url": "../../src/Xutim/Bundle/SnippetBundle"}
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Xutim\\AnalyticsBundle\\Tests\\": "../../src/Xutim/Bundle/AnalyticsBundle/tests/",
+            "Xutim\\CoreBundle\\Tests\\": "../../src/Xutim/Bundle/CoreBundle/tests/",
+            "Xutim\\EventBundle\\Tests\\": "../../src/Xutim/Bundle/EventBundle/tests/",
+            "Xutim\\MediaBundle\\Tests\\": "../../src/Xutim/Bundle/MediaBundle/tests/",
+            "Xutim\\RedirectBundle\\Tests\\": "../../src/Xutim/Bundle/RedirectBundle/tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/flex": false,
+            "symfony/runtime": true
+        }
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "7.3.*"
+        }
+    }
+}

@@ -1,0 +1,4 @@
+stimulus:
+    controllers_json: '%kernel.project_dir%/assets/controllers.json'
+    controller_paths:
+        - '%kernel.project_dir%/assets/controllers'

@@ -1,0 +1,5 @@
+/vendor/
+/var/
+/public/assets/
+/assets/vendor/
+/composer.lock

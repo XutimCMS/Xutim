@@ -1,0 +1,4 @@
+xutim_redirect:
+    models:
+        redirect:
+            class: App\Entity\Redirect\Redirect

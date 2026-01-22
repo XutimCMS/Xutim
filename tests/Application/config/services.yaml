@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Domain/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Message/'
+            - '../src/Dto/'
+
+    Xutim\CoreBundle\Contract\Block\BlockRendererInterface:
+        alias: Xutim\CoreBundle\Infra\Block\TwigBlockRenderer

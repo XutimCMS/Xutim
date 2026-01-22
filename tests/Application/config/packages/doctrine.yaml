@@ -1,0 +1,99 @@
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+        types:
+            publication_status: Xutim\CoreBundle\Infra\Doctrine\Type\PublicationStatusType
+        driver: pdo_pgsql
+        charset: utf8
+
+        # IMPORTANT: You MUST configure your server version,
+        # either here or in the DATABASE_URL env var (see .env file)
+        # server_version: '15'
+
+        profiling_collect_backtrace: '%kernel.debug%'
+
+    orm:
+        auto_generate_proxy_classes: true
+        enable_lazy_ghost_objects: true
+        report_fields_where_declared: true
+        validate_xml_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        enable_native_lazy_objects: true
+        controller_resolver:
+            auto_mapping: false
+        mappings:
+            App:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'
+                alias: App
+            XutimCoreBundle:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/xutimcms/core-bundle/src/Entity'
+                prefix: 'Xutim\CoreBundle\Entity'
+                alias: XutimCoreBundle
+            XutimEventBundle:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/xutimcms/event-bundle/src/Entity'
+                prefix: 'Xutim\EventBundle\Entity'
+                alias: XutimEventBundle
+            XutimSecurityBundle:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/xutimcms/security-bundle/src/Domain/Model'
+                prefix: 'Xutim\SecurityBundle\Domain\Model'
+                alias: XutimSecurityBundle
+            XutimSnippetBundle:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/xutimcms/snippet-bundle/src/Domain/Model'
+                prefix: 'Xutim\SnippetBundle\Domain\Model'
+                alias: XutimSnippetBundle
+            XutimRedirectBundle:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/xutimcms/redirect-bundle/src/Domain/Model'
+                prefix: 'Xutim\RedirectBundle\Domain\Model'
+                alias: XutimRedirectBundle
+            XutimAnalyticsBundle:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/xutimcms/analytics-bundle/src/Domain/Model'
+                prefix: 'Xutim\AnalyticsBundle\Domain\Model'
+                alias: XutimAnalyticsBundle
+            gedmo_tree:
+                type: attribute
+                prefix: Gedmo\Tree\Entity
+                dir: '%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Tree/Entity'
+                is_bundle: false
+
+when@test:
+    doctrine:
+        dbal:
+            # "TEST_TOKEN" is typically set by ParaTest
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+            use_savepoints: true
+
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system

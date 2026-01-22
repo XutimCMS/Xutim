@@ -99,7 +99,8 @@
         "symfony/web-profiler-bundle": "7.3.*",
         "symplify/easy-coding-standard": "^12.5",
         "symplify/monorepo-builder": "^11.2",
-        "vincentlanglet/twig-cs-fixer": "^3.5"
+        "vincentlanglet/twig-cs-fixer": "^3.5",
+        "zenstruck/foundry": "^2.0"
     },
     "replace": {
         "xutim/domain": "self.version",
@@ -151,15 +152,7 @@
             "Xutim\\CoreBundle\\Tests\\": "src/Xutim/Bundle/CoreBundle/tests/",
             "Xutim\\EventBundle\\Tests\\": "src/Xutim/Bundle/EventBundle/tests/",
             "Xutim\\MediaBundle\\Tests\\": "src/Xutim/Bundle/MediaBundle/tests/",
-            "Xutim\\RedirectBundle\\Tests\\": "src/Xutim/Bundle/RedirectBundle/tests/",
-            "Xutim\\RedirectComponent\\Tests\\": "src/Xutim/Component/RedirectComponent/tests/",
-            "Xutim\\ResourceBundle\\Tests\\": "src/Xutim/Bundle/ResourceBundle/tests/",
-            "Xutim\\SecurityBundle\\Tests\\": [
-                "src/Xutim/Bundle/AnalyticsBundle/tests/",
-                "src/Xutim/Bundle/SecurityBundle/tests/"
-            ],
-            "Xutim\\SecurityComponent\\Tests\\": "src/Xutim/Component/SecurityComponent/tests/",
-            "Xutim\\SnippetBundle\\Tests\\": "src/Xutim/Bundle/SnippetBundle/tests/"
+            "Xutim\\RedirectBundle\\Tests\\": "src/Xutim/Bundle/RedirectBundle/tests/"
         }
     },
     "config": {

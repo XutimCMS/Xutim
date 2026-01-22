@@ -1,12 +1,75 @@
-<phpunit bootstrap="vendor/autoload.php"
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
          colors="true"
-         stopOnFailure="false"
-         testdox="false">
+         stopOnFailure="false">
+
+    <php>
+        <ini name="display_errors" value="1"/>
+        <ini name="error_reporting" value="-1"/>
+        <server name="APP_ENV" value="test" force="true"/>
+        <server name="APP_DEBUG" value="0" force="true"/>
+        <server name="KERNEL_CLASS" value="App\Kernel"/>
+        <server name="SHELL_VERBOSITY" value="-1"/>
+        <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
+        <server name="SYMFONY_PHPUNIT_VERSION" value="9.6"/>
+    </php>
+
     <testsuites>
-        <testsuite name="Xutim Bundles">
+        <testsuite name="all">
+            <directory>tests/Unit</directory>
+            <directory>tests/Integration</directory>
+            <directory>tests/Functional</directory>
+            <directory>src/Xutim/Bundle/AnalyticsBundle/tests</directory>
             <directory>src/Xutim/Bundle/CoreBundle/tests</directory>
-            <directory>src/Xutim/Bundle/EventBundle/tests</directory>
+            <exclude>src/Xutim/Bundle/CoreBundle/tests/Stubs</exclude>
+        </testsuite>
+
+        <testsuite name="unit">
+            <directory>tests/Unit</directory>
+            <directory>src/Xutim/Bundle/AnalyticsBundle/tests/Unit</directory>
+            <directory>src/Xutim/Bundle/CoreBundle/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="integration">
+            <directory>tests/Integration</directory>
+            <directory>src/Xutim/Bundle/AnalyticsBundle/tests/Integration</directory>
+        </testsuite>
+
+        <testsuite name="functional">
+            <directory>tests/Functional</directory>
+            <directory>src/Xutim/Bundle/CoreBundle/tests/Application</directory>
+        </testsuite>
+
+        <testsuite name="analytics">
             <directory>src/Xutim/Bundle/AnalyticsBundle/tests</directory>
         </testsuite>
+
+        <testsuite name="core">
+            <directory>src/Xutim/Bundle/CoreBundle/tests</directory>
+            <exclude>src/Xutim/Bundle/CoreBundle/tests/Stubs</exclude>
+        </testsuite>
     </testsuites>
+
+    <coverage>
+        <include>
+            <directory suffix=".php">src/Xutim/Bundle/AnalyticsBundle/src</directory>
+            <directory suffix=".php">src/Xutim/Bundle/CoreBundle/src</directory>
+            <directory suffix=".php">src/Xutim/Bundle/EventBundle/src</directory>
+            <directory suffix=".php">src/Xutim/Bundle/MediaBundle/src</directory>
+            <directory suffix=".php">src/Xutim/Bundle/RedirectBundle/src</directory>
+            <directory suffix=".php">src/Xutim/Bundle/ResourceBundle/src</directory>
+            <directory suffix=".php">src/Xutim/Bundle/SecurityBundle/src</directory>
+            <directory suffix=".php">src/Xutim/Bundle/SnippetBundle/src</directory>
+        </include>
+        <exclude>
+            <directory>src/Xutim/Bundle/*/src/DependencyInjection</directory>
+            <directory>src/Xutim/Bundle/*/src/DataFixtures</directory>
+        </exclude>
+    </coverage>
+
+    <extensions>
+        <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+    </extensions>
 </phpunit>

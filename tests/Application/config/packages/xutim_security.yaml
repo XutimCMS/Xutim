@@ -1,0 +1,6 @@
+xutim_security:
+    models:
+        user:
+            class: App\Entity\Security\User
+        reset_password_request:
+            class: App\Entity\Security\ResetPasswordRequest

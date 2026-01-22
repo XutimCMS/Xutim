@@ -1,0 +1,22 @@
+xutim_redirect:
+    resource: '@XutimRedirectBundle/config/routes.php'
+
+xutim_core:
+    resource: '@XutimCoreBundle/config/routes.php'
+
+xutim_security:
+    resource: '@XutimSecurityBundle/config/routes.php'
+
+xutim_event:
+    resource: '@XutimEventBundle/config/routes.php'
+
+xutim_snippet:
+    resource: '@XutimSnippetBundle/config/routes.php'
+
+controllers:
+    resource: ../src/Action/
+    type: attribute
+    requirements:
+        _content_locale: '[a-z]{2}(?:_[A-Z]{2})?'
+    defaults:
+        _content_locale: '%kernel.default_locale%'

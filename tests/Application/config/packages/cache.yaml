@@ -1,0 +1,14 @@
+framework:
+    cache:
+        pools:
+            site_context.cache:
+                adapter: cache.adapter.filesystem
+            snippets_context.cache:
+                adapter: cache.adapter.filesystem
+            admin_content_context.cache:
+                adapter: cache.adapter.filesystem
+            layout.cache:
+                adapter: cache.adapter.filesystem
+            block_context.cache:
+                adapter: cache.adapter.filesystem
+                default_lifetime: 1

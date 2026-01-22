@@ -1,0 +1,12 @@
+framework:
+    asset_mapper:
+        paths:
+            - '%kernel.project_dir%/assets'
+            - '%kernel.project_dir%/vendor/symfony/stimulus-bundle/assets/dist'
+            - '%kernel.project_dir%/vendor/symfony/ux-chartjs/assets/dist'
+            - '%kernel.project_dir%/vendor/symfony/ux-dropzone/assets/dist'
+            - '%kernel.project_dir%/vendor/symfony/ux-live-component/assets/dist'
+            - '%kernel.project_dir%/vendor/symfony/ux-turbo/assets/dist'
+        importmap_path: '%kernel.project_dir%/importmap.php'
+        importmap_polyfill: false
+        vendor_dir: '%kernel.project_dir%/assets/vendor'

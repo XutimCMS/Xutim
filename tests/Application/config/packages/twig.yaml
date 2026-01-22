@@ -1,0 +1,6 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    form_themes:
+        - '@XutimCore/admin/common/form_layout.html.twig'
+        - '@XutimCore/admin/common/image_choice.html.twig'
+    strict_variables: true

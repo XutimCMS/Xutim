@@ -1,0 +1,6 @@
+xutim_snippet:
+    models:
+        snippet:
+            class: App\Entity\Snippet\Snippet
+        snippet_translation:
+            class: App\Entity\Snippet\SnippetTranslation

@@ -1,0 +1,6 @@
+xutim_event:
+    models:
+        event:
+            class: App\Entity\Event\Event
+        event_translation:
+            class: App\Entity\Event\EventTranslation

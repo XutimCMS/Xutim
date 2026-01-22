@@ -1,0 +1,20 @@
+xutim_analytics:
+    models:
+        analytics_event:
+            class: Xutim\AnalyticsBundle\Domain\Model\AnalyticsEvent
+        analytics_event_archive:
+            class: Xutim\AnalyticsBundle\Domain\Model\AnalyticsEventArchive
+        analytics_daily_summary:
+            class: Xutim\AnalyticsBundle\Domain\Model\AnalyticsDailySummary
+        analytics_daily_page_referrer:
+            class: Xutim\AnalyticsBundle\Domain\Model\AnalyticsDailyPageReferrer
+        analytics_daily_traffic_source:
+            class: Xutim\AnalyticsBundle\Domain\Model\AnalyticsDailyTrafficSource
+        analytics_daily_country:
+            class: Xutim\AnalyticsBundle\Domain\Model\AnalyticsDailyCountry
+        analytics_daily_device:
+            class: Xutim\AnalyticsBundle\Domain\Model\AnalyticsDailyDevice
+        analytics_daily_utm:
+            class: Xutim\AnalyticsBundle\Domain\Model\AnalyticsDailyUtm
+        analytics_daily_session:
+            class: Xutim\AnalyticsBundle\Domain\Model\AnalyticsDailySession
