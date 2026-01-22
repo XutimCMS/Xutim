@@ -1,0 +1,13 @@
+{# Simple block layout for testing #}
+<div class="block block-{{ block.code }}">
+    {% for item in block.items %}
+        <div class="block-item">
+            {% if item.text %}
+                <p>{{ item.text }}</p>
+            {% endif %}
+            {% if item.link %}
+                <a href="{{ item.link }}">Link</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>

@@ -10,7 +10,9 @@ class BlockTest extends AdminApplicationTestCase
 {
     public function testItShowsEmptyList(): void
     {
-        $this->markTestSkipped('Requires theme templates to be created');
+        $uniqueId = uniqid();
+        $blockCode = 'carousel-' . $uniqueId;
+        $blockName = 'Carousel ' . $uniqueId;
 
         $client = $this->createAuthenticatedClient();
         $client->request('GET', '/admin/en/block?searchTerm=');
@@ -19,43 +21,56 @@ class BlockTest extends AdminApplicationTestCase
         $client->clickLink('New block');
         $this->assertResponseIsSuccessful();
 
-        $client->submitForm('submit', [
-            'block[code]' => 'carousel',
-            'block[name]' => 'Carousel',
+        $client->submitForm('block_submit', [
+            'block[code]' => $blockCode,
+            'block[name]' => $blockName,
             'block[description]' => 'This is a carousel block.'
         ]);
 
         $this->assertResponseRedirects('/admin/en/block?searchTerm=');
         $crawler = $client->followRedirect();
         $this->assertResponseIsSuccessful();
-        $this->assertAnySelectorTextContains('td', 'Carousel');
+        $this->assertAnySelectorTextContains('td', $blockName);
 
-        $link = $crawler->filter('tbody')->filter('a')->link();
+        // Find the link for our specific block by searching for the block name in the row
+        $link = $crawler->filter('tbody tr')->reduce(function ($node) use ($blockName) {
+            return str_contains($node->text(), $blockName);
+        })->filter('a')->first()->link();
         $crawler = $client->click($link);
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->filter('form[name="block"]')->form();
-        $this->assertEquals('carousel', $form['block[code]']->getValue());
-        $this->assertEquals('Carousel', $form['block[name]']->getValue());
+        $this->assertEquals($blockCode, $form['block[code]']->getValue());
+        $this->assertEquals($blockName, $form['block[name]']->getValue());
         $this->assertEquals('This is a carousel block.', $form['block[description]']->getValue());
 
         $client->clickLink('Edit');
         $this->assertResponseIsSuccessful();
         $form = $crawler->filter('form[name="block"]')->form();
-        $this->assertEquals('carousel', $form['block[code]']->getValue());
-        $this->assertEquals('Carousel', $form['block[name]']->getValue());
+        $this->assertEquals($blockCode, $form['block[code]']->getValue());
+        $this->assertEquals($blockName, $form['block[name]']->getValue());
         $this->assertEquals('This is a carousel block.', $form['block[description]']->getValue());
 
-        $client->submitForm('submit', [
-            'block[code]' => 'carousel-1',
-            'block[name]' => 'Carousel 1',
-            'block[description]' => 'This is a carousel block. 1'
+        $editedBlockCode = $blockCode . '-edited';
+        $editedBlockName = $blockName . ' Edited';
+        $client->submitForm('block_submit', [
+            'block[code]' => $editedBlockCode,
+            'block[name]' => $editedBlockName,
+            'block[description]' => 'This is an edited carousel block.'
         ]);
         $crawler = $client->followRedirect();
         $this->assertResponseIsSuccessful();
 
-        $this->assertAnySelectorTextContains('td', 'Carousel 1');
-        $link = $crawler->filter('tbody')->filter('a')->link();
+        // Verify the block name in breadcrumb after edit
+        $this->assertAnySelectorTextContains('li.breadcrumb-item', $editedBlockName);
+
+        // Navigate to list page to verify updated name in table
+        $crawler = $client->request('GET', '/admin/en/block?searchTerm=');
+        $this->assertResponseIsSuccessful();
+        $this->assertAnySelectorTextContains('td', $editedBlockName);
+        $link = $crawler->filter('tbody tr')->reduce(function ($node) use ($editedBlockName) {
+            return str_contains($node->text(), $editedBlockName);
+        })->filter('a')->first()->link();
         $crawler = $client->click($link);
         $this->assertResponseIsSuccessful();
 

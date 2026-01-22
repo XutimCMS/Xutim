@@ -10,8 +10,6 @@ class HomepageTest extends WebTestCase
 {
     public function testItDisplayHomepage(): void
     {
-        $this->markTestSkipped('Requires theme templates to be created');
-
         $client = static::createClient();
 
         $client->request('GET', '/');
