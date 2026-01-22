@@ -21,7 +21,7 @@ class FileHasher
 
         $resized = imagecreatetruecolor($size, $size);
         imagecopyresampled($resized, $img, 0, 0, 0, 0, $size, $size, imagesx($img), imagesy($img));
-        imagedestroy($img);
+        unset($img);
 
         $grayscale = [];
         for ($y = 0; $y < $size; $y++) {
@@ -34,7 +34,7 @@ class FileHasher
                 $grayscale[] = $gray;
             }
         }
-        imagedestroy($resized);
+        unset($resized);
 
         $average = array_sum($grayscale) / count($grayscale);
 

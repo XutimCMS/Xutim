@@ -14,12 +14,19 @@ interface MediaFolderInterface
 
     public function getName(): string;
 
+    public function change(string $name, ?MediaFolderInterface $parent): void;
+
     /**
      * @return Collection<int, FileInterface>
      */
     public function getFiles(): Collection;
 
     public function getParent(): ?MediaFolderInterface;
+
+    /**
+     * @return array<int, MediaFolderInterface>
+     */
+    public function getFolderPath(): array;
 
     public function updates(): void;
 

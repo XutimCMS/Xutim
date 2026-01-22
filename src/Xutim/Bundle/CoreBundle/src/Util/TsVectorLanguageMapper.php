@@ -50,6 +50,9 @@ final readonly class TsVectorLanguageMapper
     public static function getDictionary(string $locale): string
     {
         $language = Locale::getPrimaryLanguage($locale);
+        if ($language === null) {
+            return 'simple';
+        }
 
         return self::SUPPORTED_DICTIONARIES[$language] ?? 'simple';
     }

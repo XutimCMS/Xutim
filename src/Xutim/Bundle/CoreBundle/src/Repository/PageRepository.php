@@ -85,8 +85,8 @@ class PageRepository extends ServiceEntityRepository
                 $rootPagesIds[] = $pageId;
             }
 
-            $trans = $page->getTranslations()->get($locale) ?: null;
-            $trans = $trans ?? $page->getDefaultTranslation();
+            $localeTranslation = $page->getTranslations()->get($locale);
+            $trans = $localeTranslation ?? $page->getDefaultTranslation();
 
             $pagesMap[$pageId] = [
                 'page' => $page,
@@ -99,10 +99,13 @@ class PageRepository extends ServiceEntityRepository
             if ($page->getParent() !== null) {
                 $childId = $page->getId()->toRfc4122();
                 $parentId = $page->getParent()->getId()->toRfc4122();
-                $pagesMap[$parentId]['children'][] = $childId;
+                if (array_key_exists($parentId, $pagesMap)) {
+                    $pagesMap[$parentId]['children'][] = $childId;
+                }
             }
         }
 
+        /** @var array{roots: array<string>, pages: array<string, array{page: PageInterface, translation: ContentTranslationInterface, children: list<string>}>} */
         return [
             'roots' => $rootPagesIds,
             'pages' => $pagesMap,

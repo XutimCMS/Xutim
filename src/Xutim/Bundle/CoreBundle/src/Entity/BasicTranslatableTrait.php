@@ -56,7 +56,8 @@ trait BasicTranslatableTrait
             if ($fallbackTrans !== null) {
                 return $fallbackTrans;
             }
-            return $this->defaultTranslation;
+            /** @var T */
+            return $this->translations->first();
         }
 
         return $trans->first();

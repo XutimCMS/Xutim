@@ -47,36 +47,41 @@ final readonly class UserAgentParser
     public function parseBrowser(?string $userAgent): string
     {
         $result = $this->parse($userAgent);
+        $family = $result->ua->family;
 
-        return $result->ua->family ?? 'Unknown';
+        return $family !== '' ? $family : 'Unknown';
     }
 
     public function parseBrowserVersion(?string $userAgent): ?string
     {
         $result = $this->parse($userAgent);
+        $version = $result->ua->toVersion();
 
-        return $result->ua->toVersion() ?: null;
+        return $version !== '' ? $version : null;
     }
 
     public function parseOs(?string $userAgent): string
     {
         $result = $this->parse($userAgent);
+        $family = $result->os->family;
 
-        return $result->os->family ?? 'Unknown';
+        return $family !== '' ? $family : 'Unknown';
     }
 
     public function parseOsVersion(?string $userAgent): ?string
     {
         $result = $this->parse($userAgent);
+        $version = $result->os->toVersion();
 
-        return $result->os->toVersion() ?: null;
+        return $version !== '' ? $version : null;
     }
 
     public function parseDeviceFamily(?string $userAgent): string
     {
         $result = $this->parse($userAgent);
+        $family = $result->device->family;
 
-        return $result->device->family ?? 'Unknown';
+        return $family !== '' ? $family : 'Unknown';
     }
 
     /**
@@ -94,7 +99,7 @@ final readonly class UserAgentParser
         }
 
         $result = $this->parse($userAgent);
-        $deviceFamily = $result->device->family ?? '';
+        $deviceFamily = $result->device->family;
 
         foreach (self::TABLET_DEVICE_FAMILIES as $tablet) {
             if (str_contains($deviceFamily, $tablet)) {

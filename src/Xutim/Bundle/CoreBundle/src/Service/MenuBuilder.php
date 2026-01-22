@@ -49,10 +49,13 @@ final readonly class MenuBuilder
         foreach ($items as $item) {
             if ($item->getParent() !== null) {
                 $parentId = $item->getParent()->getId()->toRfc4122();
-                $itemsMap[$parentId]['children'][] = $item->getId()->toRfc4122();
+                if (array_key_exists($parentId, $itemsMap)) {
+                    $itemsMap[$parentId]['children'][] = $item->getId()->toRfc4122();
+                }
             }
         }
 
+        /** @var array{roots: array<string>, items: array<string, array{item: MenuItemInterface, children: list<string>}>} */
         return [
             'roots' => $rootItemsId,
             'items' => $itemsMap,
@@ -95,10 +98,13 @@ final readonly class MenuBuilder
         foreach ($items as $item) {
             if ($item->getParent() !== null) {
                 $parentId = $item->getParent()->getId()->toRfc4122();
-                $itemsMap[$parentId]['children'][] = $item->getId()->toRfc4122();
+                if (array_key_exists($parentId, $itemsMap)) {
+                    $itemsMap[$parentId]['children'][] = $item->getId()->toRfc4122();
+                }
             }
         }
 
+        /** @var array{roots: array<string>, items: array<string, array{children: list<string>, translations: array<string, array{name: string, route: string, hasLink: bool}>}>} */
         return [
             'roots' => $rootItemsId,
             'items' => $itemsMap,

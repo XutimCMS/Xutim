@@ -15,10 +15,6 @@ use Symfony\Component\Translation\TranslatableMessage;
  */
 class MediaFolderType extends AbstractType
 {
-    public function __construct(private readonly string $mediaFolderClass)
-    {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

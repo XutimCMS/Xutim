@@ -26,7 +26,8 @@ class AdminHomepageRedirectAction extends AbstractController
             $locale = $this->defaultLocale;
         } else {
             $locales = $user->getTranslationLocales();
-            $locale = $locales[array_key_first($user->getTranslationLocales())];
+            $firstKey = array_key_first($locales);
+            $locale = $firstKey !== null ? $locales[$firstKey] : $this->defaultLocale;
         }
 
         return new RedirectResponse($this->router->generate('admin_homepage', ['_content_locale' => $locale]));

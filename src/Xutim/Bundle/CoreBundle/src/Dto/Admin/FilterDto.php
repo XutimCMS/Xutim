@@ -91,7 +91,7 @@ readonly class FilterDto
             return $value !== '' ? [$value] : [];
         }
 
-        /** @var list<string> */
+        /** @var list<non-empty-string> */
         return array_values(array_filter($value, static fn ($v): bool => $v !== ''));
     }
 }

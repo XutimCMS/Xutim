@@ -44,6 +44,5 @@ return static function (ContainerConfigurator $container): void {
         ->tag('form.type');
 
     $services->set(MediaFolderType::class)
-        ->arg('$mediaFolderClass', '%xutim_core.model.media_folder.class%')
         ->tag('form.type');
 };

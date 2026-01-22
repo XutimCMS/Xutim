@@ -51,7 +51,7 @@ class ContentFragmentsExtension extends AbstractExtension
 
     /**
      * @param EditorBlock           $fragments
-     * @param array<string, string> $locale
+     * @param array<string, string> $options
      */
     public function fragmentsToHtml(array $fragments, string $locale, array $options = []): string
     {

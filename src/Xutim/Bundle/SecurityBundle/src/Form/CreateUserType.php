@@ -62,12 +62,13 @@ class CreateUserType extends AbstractType implements DataMapperInterface
                 'choices' => $this->rolesProvider->getAvailableRoles(),
                 'choice_label' => function ($choice, string $key, mixed $value): string {
                     $descriptions = $this->roleDescriptorProvider->getRoleDescriptions();
+                    $valueKey = is_scalar($value) ? (string) $value : '';
 
                     $desc = '';
-                    if (isset($descriptions[$value]) === true) {
-                        $desc = ' (' . $descriptions[$value] . ')';
+                    if ($valueKey !== '' && isset($descriptions[$valueKey]) === true) {
+                        $desc = ' (' . $descriptions[$valueKey] . ')';
                     }
-                    
+
                     return sprintf('%s%s', $key, $desc);
                 },
                 'multiple' => true,

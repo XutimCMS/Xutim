@@ -32,6 +32,9 @@ class ListSnippetsAction
     ) {
     }
 
+    /**
+     * @param array<string, list<string>|string> $col
+     */
     public function __invoke(
         Request $request,
         #[MapQueryParameter]

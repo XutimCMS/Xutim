@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\EventSubscriber;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Xutim\CoreBundle\Context\PageTreeContext;
@@ -20,14 +21,25 @@ final class PageTreeInvalidatorSubscriber
     {
     }
 
+    /**
+     * @param LifecycleEventArgs<EntityManagerInterface> $args
+     */
     public function postPersist(LifecycleEventArgs $args): void
     {
         $this->invalidate($args->getObject());
     }
+
+    /**
+     * @param LifecycleEventArgs<EntityManagerInterface> $args
+     */
     public function postUpdate(LifecycleEventArgs $args): void
     {
         $this->invalidate($args->getObject());
     }
+
+    /**
+     * @param LifecycleEventArgs<EntityManagerInterface> $args
+     */
     public function postRemove(LifecycleEventArgs $args): void
     {
         $this->invalidate($args->getObject());

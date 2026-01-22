@@ -35,7 +35,9 @@ class RedirectWithLanguageContextAction extends AbstractController
         $user = $this->userStorage->getUserWithException();
         $canTranslate = $user->canTranslate($locale);
         if ($canTranslate === false) {
-            $locale = $user->getTranslationLocales()[array_key_first($user->getTranslationLocales())];
+            $locales = $user->getTranslationLocales();
+            $firstKey = array_key_first($locales);
+            $locale = $firstKey !== null ? $locales[$firstKey] : $locale;
         }
         $this->transAuthChecker->denyUnlessCanTranslate($locale);
         $url = $this->router->generate('admin_homepage');

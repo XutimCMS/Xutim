@@ -29,15 +29,15 @@ final class UserAgentParserTest extends TestCase
         $client = new Client('');
 
         $ua = new UserAgent();
-        $ua->family = $browser;
+        $ua->family = $browser ?? '';
         $client->ua = $ua;
 
         $osObj = new OperatingSystem();
-        $osObj->family = $os;
+        $osObj->family = $os ?? '';
         $client->os = $osObj;
 
         $device = new Device();
-        $device->family = $deviceFamily;
+        $device->family = $deviceFamily ?? '';
         $client->device = $device;
 
         return $client;
