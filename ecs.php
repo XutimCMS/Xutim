@@ -19,7 +19,6 @@ return ECSConfig::configure()
         __DIR__ . '/src/Xutim/Bundle/SnippetBundle/src',
         __DIR__ . '/src/Xutim/Bundle/ResourceBundle/src',
         __DIR__ . '/src/Xutim/Bundle/CoreBundle/tests',
-        __DIR__ . '/src/Xutim/Bundle/EventBundle/tests',
     ])
     ->withSets([
         SetList::CLEAN_CODE,

@@ -57,6 +57,11 @@ jobs:
       - name: Install dependencies
         uses: ramsey/composer-install@v3
 
+      - name: Install test application dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          working-directory: tests/Application
+
       - name: Install web assets
         run: tests/Application/bin/console importmap:install
 
