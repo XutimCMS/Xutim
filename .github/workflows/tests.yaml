@@ -1,0 +1,82 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  APP_ENV: test
+  APP_SECRET: test_secret_key_for_ci
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/xutim_test?serverVersion=17
+  MAILER_DSN: "null://null"
+  MERCURE_URL: http://localhost:3000/.well-known/mercure
+  MERCURE_PUBLIC_URL: http://localhost:3000/.well-known/mercure
+  MERCURE_JWT_SECRET: test_mercure_secret
+
+jobs:
+  test:
+    name: PHP ${{ matrix.php }} / Symfony ${{ matrix.symfony }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.5'
+            symfony: '7.4.*'
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd "pg_isready"
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_pgsql, pgsql, gd, intl
+          coverage: pcov
+
+      - name: Lock Symfony version
+        run: composer config extra.symfony.require "${{ matrix.symfony }}"
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Install web assets
+        run: tests/Application/bin/console importmap:install
+
+      - name: Compile web assets
+        run: tests/Application/bin/console asset-map:compile
+
+      - name: Create database
+        run: tests/Application/bin/console doctrine:database:create
+
+      - name: Create schema
+        run: tests/Application/bin/console doctrine:schema:create
+
+      - name: Load fixtures
+        run: tests/Application/bin/console doctrine:fixtures:load --append
+
+      - name: Run tests
+        run: vendor/bin/simple-phpunit -c tests/phpunit.xml.dist --coverage-clover=coverage.xml
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-php${{ matrix.php }}-symfony${{ matrix.symfony }}
+          path: coverage.xml
