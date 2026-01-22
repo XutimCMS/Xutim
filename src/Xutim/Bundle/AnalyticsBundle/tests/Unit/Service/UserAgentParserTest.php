@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\AnalyticsBundle\Tests\Unit\Service;
 
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use UAParser\Parser;
 use UAParser\Result\Client;
@@ -16,11 +16,11 @@ use Xutim\AnalyticsBundle\Service\UserAgentParser;
 final class UserAgentParserTest extends TestCase
 {
     private UserAgentParser $parser;
-    private Parser&MockObject $uaParser;
+    private Parser&Stub $uaParser;
 
     protected function setUp(): void
     {
-        $this->uaParser = $this->createMock(Parser::class);
+        $this->uaParser = $this->createStub(Parser::class);
         $this->parser = new UserAgentParser($this->uaParser);
     }
 

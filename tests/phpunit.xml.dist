@@ -1,55 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="Application/vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="Application/bootstrap.php"
-         colors="true"
-         executionOrder="depends,defects"
-         failOnRisky="true"
-         failOnWarning="true"
-         stopOnFailure="false">
-
-    <php>
-        <ini name="display_errors" value="1"/>
-        <ini name="error_reporting" value="-1"/>
-        <server name="APP_ENV" value="test" force="true"/>
-        <server name="APP_DEBUG" value="0" force="true"/>
-        <server name="KERNEL_CLASS" value="App\Kernel"/>
-        <server name="SHELL_VERBOSITY" value="-1"/>
-        <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
-        <server name="SYMFONY_PHPUNIT_VERSION" value="12"/>
-    </php>
-
-    <testsuites>
-        <testsuite name="all">
-            <directory>./Unit</directory>
-            <directory>./Integration</directory>
-            <directory>./Functional</directory>
-            <directory>../src/Xutim/Bundle/AnalyticsBundle/tests/Unit</directory>
-            <directory>../src/Xutim/Bundle/AnalyticsBundle/tests/Integration</directory>
-            <directory>../src/Xutim/Bundle/CoreBundle/tests/Unit</directory>
-            <directory>../src/Xutim/Bundle/CoreBundle/tests/Application</directory>
-            <exclude>./Stubs</exclude>
-            <exclude>./Application</exclude>
-        </testsuite>
-    </testsuites>
-
-    <coverage>
-        <include>
-            <directory suffix=".php">../src/Xutim/Bundle/AnalyticsBundle/src</directory>
-            <directory suffix=".php">../src/Xutim/Bundle/CoreBundle/src</directory>
-            <directory suffix=".php">../src/Xutim/Bundle/EventBundle/src</directory>
-            <directory suffix=".php">../src/Xutim/Bundle/MediaBundle/src</directory>
-            <directory suffix=".php">../src/Xutim/Bundle/RedirectBundle/src</directory>
-            <directory suffix=".php">../src/Xutim/Bundle/SecurityBundle/src</directory>
-            <directory suffix=".php">../src/Xutim/Bundle/SnippetBundle/src</directory>
-        </include>
-        <exclude>
-            <directory>../src/Xutim/Bundle/*/src/DependencyInjection</directory>
-            <directory>../src/Xutim/Bundle/*/src/DataFixtures</directory>
-        </exclude>
-    </coverage>
-
-    <extensions>
-        <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
-    </extensions>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Application/vendor/phpunit/phpunit/phpunit.xsd" bootstrap="Application/bootstrap.php" colors="true" executionOrder="depends,defects" failOnRisky="true" failOnWarning="true" stopOnFailure="false" cacheDirectory=".phpunit.cache">
+  <php>
+    <ini name="display_errors" value="1"/>
+    <ini name="error_reporting" value="-1"/>
+    <server name="APP_ENV" value="test" force="true"/>
+    <server name="APP_DEBUG" value="0" force="true"/>
+    <server name="KERNEL_CLASS" value="App\Kernel"/>
+    <server name="SHELL_VERBOSITY" value="-1"/>
+    <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
+    <server name="SYMFONY_PHPUNIT_VERSION" value="12"/>
+  </php>
+  <testsuites>
+    <testsuite name="all">
+      <directory>./Unit</directory>
+      <directory>./Integration</directory>
+      <directory>./Functional</directory>
+      <directory>../src/Xutim/Bundle/AnalyticsBundle/tests/Unit</directory>
+      <directory>../src/Xutim/Bundle/AnalyticsBundle/tests/Integration</directory>
+      <directory>../src/Xutim/Bundle/CoreBundle/tests/Unit</directory>
+      <directory>../src/Xutim/Bundle/CoreBundle/tests/Application</directory>
+      <exclude>./Stubs</exclude>
+      <exclude>./Application</exclude>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">../src/Xutim/Bundle/AnalyticsBundle/src</directory>
+      <directory suffix=".php">../src/Xutim/Bundle/CoreBundle/src</directory>
+      <directory suffix=".php">../src/Xutim/Bundle/EventBundle/src</directory>
+      <directory suffix=".php">../src/Xutim/Bundle/MediaBundle/src</directory>
+      <directory suffix=".php">../src/Xutim/Bundle/RedirectBundle/src</directory>
+      <directory suffix=".php">../src/Xutim/Bundle/SecurityBundle/src</directory>
+      <directory suffix=".php">../src/Xutim/Bundle/SnippetBundle/src</directory>
+    </include>
+    <exclude>
+      <directory>../src/Xutim/Bundle/*/src/DependencyInjection</directory>
+      <directory>../src/Xutim/Bundle/*/src/DataFixtures</directory>
+    </exclude>
+  </source>
+  <extensions>
+    <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+  </extensions>
 </phpunit>
