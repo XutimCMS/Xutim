@@ -24,34 +24,12 @@
             <directory>./Unit</directory>
             <directory>./Integration</directory>
             <directory>./Functional</directory>
-            <directory>../src/Xutim/Bundle/AnalyticsBundle/tests</directory>
-            <directory>../src/Xutim/Bundle/CoreBundle/tests</directory>
+            <directory>../src/Xutim/Bundle/AnalyticsBundle/tests/Unit</directory>
+            <directory>../src/Xutim/Bundle/AnalyticsBundle/tests/Integration</directory>
+            <directory>../src/Xutim/Bundle/CoreBundle/tests/Unit</directory>
+            <directory>../src/Xutim/Bundle/CoreBundle/tests/Application</directory>
             <exclude>./Stubs</exclude>
             <exclude>./Application</exclude>
-        </testsuite>
-
-        <testsuite name="unit">
-            <directory>./Unit</directory>
-            <directory>../src/Xutim/Bundle/AnalyticsBundle/tests/Unit</directory>
-            <directory>../src/Xutim/Bundle/CoreBundle/tests/Unit</directory>
-        </testsuite>
-
-        <testsuite name="integration">
-            <directory>./Integration</directory>
-            <directory>../src/Xutim/Bundle/AnalyticsBundle/tests/Integration</directory>
-        </testsuite>
-
-        <testsuite name="functional">
-            <directory>./Functional</directory>
-            <directory>../src/Xutim/Bundle/CoreBundle/tests/Application</directory>
-        </testsuite>
-
-        <testsuite name="analytics">
-            <directory>../src/Xutim/Bundle/AnalyticsBundle/tests</directory>
-        </testsuite>
-
-        <testsuite name="core">
-            <directory>../src/Xutim/Bundle/CoreBundle/tests</directory>
         </testsuite>
     </testsuites>
 

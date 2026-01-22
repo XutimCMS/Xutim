@@ -5,6 +5,10 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+    'app-admin' => [
+        'path' => './assets/app.js',
+        'entrypoint' => true,
+    ],
     '@xutim/analytics-bundle/dist/analytics_controller.js' => [
         'path' => './vendor/xutimcms/analytics-bundle/assets/dist/analytics_controller.js',
     ],

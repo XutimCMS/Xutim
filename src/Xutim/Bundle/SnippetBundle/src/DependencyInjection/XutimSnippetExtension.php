@@ -43,6 +43,10 @@ final class XutimSnippetExtension extends Extension implements PrependExtensionI
         $loader->load('routing.php');
         $loader->load('twig.php');
         $loader->load('actions.php');
+
+        if ($container->getParameter('kernel.environment') === 'test') {
+            $loader->load('fixtures.php');
+        }
     }
 
     public function prepend(ContainerBuilder $container): void

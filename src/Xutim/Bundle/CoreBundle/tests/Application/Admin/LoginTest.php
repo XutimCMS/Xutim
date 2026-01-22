@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Tests\Application\Admin;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Xutim\CoreBundle\DataFixtures\LoadUserFixture;
+use Xutim\SecurityBundle\DataFixtures\LoadUserFixture;
 
 class LoginTest extends WebTestCase
 {
@@ -24,11 +24,9 @@ class LoginTest extends WebTestCase
         $form['password'] = LoadUserFixture::USER_PASSWD_PLAIN;
         $client->submit($form);
 
-        // redirect to /admin
-        $crawler = $client->followRedirect();
-
-        // redirect to /admin/
-        $crawler = $client->followRedirect();
+        // Follow all redirects after login: /admin -> /admin/ -> /admin/{locale}/
+        $client->followRedirects();
+        $crawler = $client->request('GET', '/admin');
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('div', LoadUserFixture::USER_NAME);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Tests\Unit\Admin\Dto;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Xutim\CoreBundle\Dto\Admin\FilteredResultDto;
 
@@ -21,9 +22,7 @@ class FilteredResultDtoTest extends TestCase
         $this->assertEquals(40, $dto->getLastElementOnCurrentPage());
     }
 
-    /**
-     * @dataProvider firstAndLastPageProvider
-     */
+    #[DataProvider('firstAndLastPageProvider')]
     public function testOnFirstAndLastPage(int $currentPage, bool $onFirst, bool $onLast): void
     {
         $dto = new FilteredResultDto($currentPage, 20, 100, [0, 2]);
@@ -32,12 +31,12 @@ class FilteredResultDtoTest extends TestCase
     }
 
     /**
-     * @dataProvider paginationRangeProvider
      * @param int<0,max> $currentPage
      * @param int<0,max> $pageLength
      * @param int<0,max> $resultLength
      * @param array<int> $expected
      */
+    #[DataProvider('paginationRangeProvider')]
     public function testPaginationRange(
         int $currentPage,
         int $pageLength,
@@ -48,7 +47,7 @@ class FilteredResultDtoTest extends TestCase
         $this->assertEquals($expected, $dto->getPaginationRange());
     }
 
-    public function firstAndLastPageProvider(): array
+    public static function firstAndLastPageProvider(): array
     {
         return [
             [0, true, false],
@@ -58,7 +57,7 @@ class FilteredResultDtoTest extends TestCase
         ];
     }
 
-    public function paginationRangeProvider(): array
+    public static function paginationRangeProvider(): array
     {
         return [
             [0, 1, 1, [0]],

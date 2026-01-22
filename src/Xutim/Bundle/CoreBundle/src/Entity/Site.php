@@ -38,7 +38,7 @@ class Site implements SiteInterface
         $this->id = Uuid::v4();
         $this->locales = ['en', 'fr'];
         $this->extendedContentLocales = ['en', 'fr'];
-        $this->theme = 'tailwind';
+        $this->theme = 'default';
         $this->sender = 'website@example.com';
     }
 

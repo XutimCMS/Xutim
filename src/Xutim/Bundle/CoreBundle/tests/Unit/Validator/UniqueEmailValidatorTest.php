@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Tests\Unit\Validator;
 
+use App\Entity\Security\User;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
-use Xutim\CoreBundle\Repository\UserRepository;
 use Xutim\CoreBundle\Validator\UniqueEmail;
 use Xutim\CoreBundle\Validator\UniqueEmailValidator;
-use Xutim\SecurityBundle\Domain\Model\User;
+use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
 /**
 *
@@ -18,11 +18,11 @@ use Xutim\SecurityBundle\Domain\Model\User;
 */
 class UniqueEmailValidatorTest extends ConstraintValidatorTestCase
 {
-    private MockObject&UserRepository $repo;
+    private MockObject&UserRepositoryInterface $repo;
 
     protected function createValidator(): UniqueEmailValidator
     {
-        $this->repo = $this->createMock(UserRepository::class);
+        $this->repo = $this->createMock(UserRepositoryInterface::class);
         return new UniqueEmailValidator($this->repo);
     }
 

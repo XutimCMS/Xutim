@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Tests\Unit\Config\Layout\Block;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Config\Layout\Block\BlockLayoutChecker;
@@ -20,8 +21,9 @@ use Xutim\CoreBundle\Config\Layout\LayoutConfigItem;
 use Xutim\CoreBundle\Entity\Block;
 use Xutim\CoreBundle\Entity\BlockItem;
 use Xutim\CoreBundle\Entity\File;
-use Xutim\CoreBundle\Entity\Snippet;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
+use Xutim\SnippetBundle\Domain\Model\Snippet;
+use Xutim\SnippetBundle\Domain\Model\SnippetCategory;
 
 class BlockLayoutCheckerTest extends TestCase
 {
@@ -40,9 +42,9 @@ class BlockLayoutCheckerTest extends TestCase
     }
 
     /**
-     * @dataProvider configOptionsProvider
      * @param list<BlockItemOption> $config
      */
+    #[DataProvider('configOptionsProvider')]
     public function testLayoutChecker(array $config, Block $block, bool $result): void
     {
         $checker = $this->getBlockLayoutCheckerForConfig($config);
@@ -52,7 +54,7 @@ class BlockLayoutCheckerTest extends TestCase
     /**
      * @return array<array{0: array<BlockItemOption>, 1: Block, 2: bool}>
      */
-    public function configOptionsProvider(): array
+    public static function configOptionsProvider(): array
     {
         $block = new Block('code', 'name', 'desc', null, 'layout');
         $blockEmpty = new Block('code', 'name', 'desc', null, 'layout');
@@ -64,15 +66,15 @@ class BlockLayoutCheckerTest extends TestCase
 
 
         $block2 = new Block('code', 'name', 'desc', null, 'layout');
-        $snippetItem = new BlockItem($block2, null, null, null, null, new Snippet('code'));
-        $snippetItem = new BlockItem($block2, null, null, null, null, new Snippet('code'));
-        $imageItem = new BlockItem($block2, null, null, null, new File(Uuid::v4(), 'name', 'alt', 'en', 'sldkfsdf.jpg', 'jpg', 'reference'));
+        $snippetItem = new BlockItem($block2, null, null, null, new Snippet('code', 'Test snippet', SnippetCategory::Ui));
+        $snippetItem = new BlockItem($block2, null, null, null, new Snippet('code2', 'Test snippet 2', SnippetCategory::Ui));
+        $imageItem = new BlockItem($block2, null, null, new File(Uuid::v4(), '/path/to/file.jpg', 'jpg', 'ref123', 'hash123', 'Copyright 2024'));
 
         return [
             [[], $blockEmpty, true],
             [[new ArticleBlockItemOption()], $blockEmpty, false],
             [[new BlockItemOptionComposed(new ArticleBlockItemOption())], $blockEmpty, false],
-            [[new BlockItemOptionCollection(new ArticleBlockItemOption())], $blockEmpty, false],
+            [[new BlockItemOptionCollection(new ArticleBlockItemOption())], $blockEmpty, true], // Collections allow 0 or more items
             [[new BlockItemOptionCollection(new LinkBlockItemOption()), new BlockItemOptionCollection(new MapCoordinatesBlockItemOption())], $block, true],
             [[new BlockItemOptionCollection(new LinkBlockItemOption()), new LinkBlockItemOption(), new BlockItemOptionCollection(new MapCoordinatesBlockItemOption()), new MapCoordinatesBlockItemOption()], $block, true],
             [[new BlockItemOptionCollection(new LinkBlockItemOption())], $block, false],

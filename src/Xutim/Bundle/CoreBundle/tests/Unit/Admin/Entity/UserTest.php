@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Tests\Unit\Admin\Entity;
 
+use App\Entity\Security\User;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
-use Xutim\SecurityBundle\Domain\Model\User;
 
 class UserTest extends TestCase
 {

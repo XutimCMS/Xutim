@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\AnalyticsBundle\Tests\Unit\Service;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Xutim\AnalyticsBundle\Service\ReferrerParser;
 
@@ -47,9 +48,7 @@ final class ReferrerParserTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider clickIdSourcesProvider
-     */
+    #[DataProvider('clickIdSourcesProvider')]
     public function testDetectSourceFromUrlDetectsClickIds(string $url, string $expectedSource): void
     {
         $this->assertSame($expectedSource, $this->parser->detectSourceFromUrl($url));
@@ -74,9 +73,7 @@ final class ReferrerParserTest extends TestCase
         yield 'HubSpot _hsenc' => ['https://example.com/?_hsenc=hs123', 'HubSpot'];
     }
 
-    /**
-     * @dataProvider utmSourceProvider
-     */
+    #[DataProvider('utmSourceProvider')]
     public function testDetectSourceFromUrlDetectsUtmSource(string $url, string $expectedSource): void
     {
         $this->assertSame($expectedSource, $this->parser->detectSourceFromUrl($url));
@@ -107,9 +104,7 @@ final class ReferrerParserTest extends TestCase
         $this->assertNull($this->parser->detectSourceFromUrl('https://example.com/?foo=bar&baz=qux'));
     }
 
-    /**
-     * @dataProvider socialReferrerProvider
-     */
+    #[DataProvider('socialReferrerProvider')]
     public function testDetectSourceFromReferrerDetectsSocialPlatforms(string $referrer, string $expectedSource): void
     {
         $this->assertSame($expectedSource, $this->parser->detectSourceFromReferrer($referrer));
@@ -136,9 +131,7 @@ final class ReferrerParserTest extends TestCase
         yield 'Threads' => ['https://threads.net/@user', 'Threads'];
     }
 
-    /**
-     * @dataProvider searchEngineReferrerProvider
-     */
+    #[DataProvider('searchEngineReferrerProvider')]
     public function testDetectSourceFromReferrerDetectsSearchEngines(string $referrer, string $expectedSource): void
     {
         $this->assertSame($expectedSource, $this->parser->detectSourceFromReferrer($referrer));

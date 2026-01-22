@@ -14,7 +14,7 @@ class ContentTranslationTest extends TestCase
 {
     public function testCanInstantiateContentTranslation(): void
     {
-        $page = new Page(null, 'fffeff', ['fr'], null, null);
+        $page = new Page(null, ['fr'], null, null);
         $translation = new ContentTranslation(
             'pretitle',
             'Title',
@@ -40,7 +40,7 @@ class ContentTranslationTest extends TestCase
 
     public function testCanChangeContentTranslation(): void
     {
-        $page = new Page(null, 'fffeff', ['fr'], null, null);
+        $page = new Page(null, ['fr'], null, null);
         $translation = new ContentTranslation(
             'pretitle',
             'Title',
