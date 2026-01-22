@@ -62,6 +62,15 @@ jobs:
         with:
           working-directory: tests/Application
 
+      - name: Cache PHPUnit
+        uses: actions/cache@v4
+        with:
+          path: vendor/bin/.phpunit
+          key: phpunit-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+
+      - name: Install PHPUnit
+        run: vendor/bin/simple-phpunit install
+
       - name: Install web assets
         run: tests/Application/bin/console importmap:install
 
