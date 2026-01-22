@@ -29,6 +29,7 @@ jobs:
         include:
           - php: '8.5'
             symfony: '7.4.*'
+            symfony-label: '7.4'
 
     services:
       postgres:
@@ -92,5 +93,5 @@ jobs:
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-php${{ matrix.php }}-symfony${{ matrix.symfony }}
+          name: coverage-php${{ matrix.php }}-symfony${{ matrix.symfony-label }}
           path: coverage.xml
