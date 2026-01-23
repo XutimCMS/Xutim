@@ -1,0 +1,8 @@
+<div class="content-block content-block--quote" data-block-id="{{ block.id }}">
+    <blockquote>
+        {{ block.html|raw }}
+        {% if block.attribution %}
+            <cite>— {{ block.attribution }}</cite>
+        {% endif %}
+    </blockquote>
+</div>

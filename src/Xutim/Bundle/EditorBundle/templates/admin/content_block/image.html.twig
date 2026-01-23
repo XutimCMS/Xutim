@@ -1,0 +1,14 @@
+<div class="content-block content-block--image" data-block-id="{{ block.id }}">
+    {% if block.hasFile %}
+        <figure>
+            <img src="{{ block.file.path }}" alt="{{ block.caption ?? '' }}">
+            {% if block.caption %}
+                <figcaption>{{ block.caption }}</figcaption>
+            {% endif %}
+        </figure>
+    {% else %}
+        <div class="content-block__image-placeholder">
+            No image selected
+        </div>
+    {% endif %}
+</div>

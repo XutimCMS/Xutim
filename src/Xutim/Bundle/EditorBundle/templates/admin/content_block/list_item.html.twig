@@ -1,0 +1,12 @@
+<div class="content-block content-block--list-item content-block--list-item-{{ block.listType }}" data-block-id="{{ block.id }}" data-indent="{{ block.indent }}">
+    {% if block.isChecklist %}
+        <label class="content-block__checklist-label">
+            <input type="checkbox" {% if block.checked %}checked{% endif %} disabled>
+            <span>{{ block.html|raw }}</span>
+        </label>
+    {% else %}
+        <div class="content-block__list-content" style="margin-left: {{ block.indent * 1.5 }}rem;">
+            {{ block.html|raw }}
+        </div>
+    {% endif %}
+</div>

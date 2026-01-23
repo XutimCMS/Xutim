@@ -1,0 +1,14 @@
+<div class="content-block content-block--embed content-block--embed-{{ block.service }}" data-block-id="{{ block.id }}">
+    <div class="content-block__embed-wrapper">
+        {% if block.isYoutube %}
+            <iframe src="https://www.youtube.com/embed/{{ block.source }}" frameborder="0" allowfullscreen></iframe>
+        {% elseif block.isVimeo %}
+            <iframe src="https://player.vimeo.com/video/{{ block.source }}" frameborder="0" allowfullscreen></iframe>
+        {% else %}
+            <div class="content-block__embed-source">{{ block.source }}</div>
+        {% endif %}
+    </div>
+    {% if block.caption %}
+        <div class="content-block__embed-caption">{{ block.caption }}</div>
+    {% endif %}
+</div>

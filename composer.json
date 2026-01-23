@@ -107,6 +107,7 @@
         "xutimcms/analytics-bundle": "self.version",
         "xutimcms/core-bundle": "self.version",
         "xutimcms/domain": "self.version",
+        "xutimcms/editor-bundle": "self.version",
         "xutimcms/event-bundle": "self.version",
         "xutimcms/media-bundle": "self.version",
         "xutimcms/redirect-bundle": "self.version",
@@ -124,6 +125,7 @@
             "Xutim\\AnalyticsBundle\\": "src/Xutim/Bundle/AnalyticsBundle/src/",
             "Xutim\\CoreBundle\\": "src/Xutim/Bundle/CoreBundle/src/",
             "Xutim\\Domain\\": "src/Xutim/Domain/src/",
+            "Xutim\\EditorBundle\\": "src/Xutim/Bundle/EditorBundle/src/",
             "Xutim\\EventBundle\\": "src/Xutim/Bundle/EventBundle/src/",
             "Xutim\\MediaBundle\\": "src/Xutim/Bundle/MediaBundle/src/",
             "Xutim\\RedirectBundle\\": "src/Xutim/Bundle/RedirectBundle/src/",
@@ -136,6 +138,7 @@
         "exclude-from-classmap": [
             "src/Xutim/Bundle/AnalyticsBundle/Tests/",
             "src/Xutim/Bundle/CoreBundle/Tests/",
+            "src/Xutim/Bundle/EditorBundle/Tests/",
             "src/Xutim/Bundle/EventBundle/Tests/",
             "src/Xutim/Bundle/MediaBundle/Tests/",
             "src/Xutim/Bundle/RedirectBundle/Tests/",
@@ -150,9 +153,13 @@
         "psr-4": {
             "Xutim\\AnalyticsBundle\\Tests\\": "src/Xutim/Bundle/AnalyticsBundle/tests/",
             "Xutim\\CoreBundle\\Tests\\": "src/Xutim/Bundle/CoreBundle/tests/",
+            "Xutim\\EditorBundle\\Tests\\": "src/Xutim/Bundle/EditorBundle/tests/",
             "Xutim\\EventBundle\\Tests\\": "src/Xutim/Bundle/EventBundle/tests/",
             "Xutim\\MediaBundle\\Tests\\": "src/Xutim/Bundle/MediaBundle/tests/",
-            "Xutim\\RedirectBundle\\Tests\\": "src/Xutim/Bundle/RedirectBundle/tests/"
+            "Xutim\\RedirectBundle\\Tests\\": "src/Xutim/Bundle/RedirectBundle/tests/",
+            "Xutim\\ResourceBundle\\Tests\\": "src/Xutim/Bundle/ResourceBundle/tests/",
+            "Xutim\\SecurityBundle\\Tests\\": "src/Xutim/Bundle/SecurityBundle/tests/",
+            "Xutim\\SnippetBundle\\Tests\\": "src/Xutim/Bundle/SnippetBundle/tests/"
         }
     },
     "config": {

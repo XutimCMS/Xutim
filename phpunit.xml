@@ -23,6 +23,7 @@
             <directory>tests/Functional</directory>
             <directory>src/Xutim/Bundle/AnalyticsBundle/tests</directory>
             <directory>src/Xutim/Bundle/CoreBundle/tests</directory>
+            <directory>src/Xutim/Bundle/EditorBundle/tests</directory>
             <exclude>src/Xutim/Bundle/CoreBundle/tests/Stubs</exclude>
         </testsuite>
 
@@ -30,6 +31,11 @@
             <directory>tests/Unit</directory>
             <directory>src/Xutim/Bundle/AnalyticsBundle/tests/Unit</directory>
             <directory>src/Xutim/Bundle/CoreBundle/tests/Unit</directory>
+            <directory>src/Xutim/Bundle/EditorBundle/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="editor">
+            <directory>src/Xutim/Bundle/EditorBundle/tests</directory>
         </testsuite>
 
         <testsuite name="integration">
@@ -62,6 +68,7 @@
             <directory suffix=".php">src/Xutim/Bundle/ResourceBundle/src</directory>
             <directory suffix=".php">src/Xutim/Bundle/SecurityBundle/src</directory>
             <directory suffix=".php">src/Xutim/Bundle/SnippetBundle/src</directory>
+            <directory suffix=".php">src/Xutim/Bundle/EditorBundle/src</directory>
         </include>
         <exclude>
             <directory>src/Xutim/Bundle/*/src/DependencyInjection</directory>

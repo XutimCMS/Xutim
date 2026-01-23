@@ -19,6 +19,7 @@
       <directory>../src/Xutim/Bundle/AnalyticsBundle/tests/Integration</directory>
       <directory>../src/Xutim/Bundle/CoreBundle/tests/Unit</directory>
       <directory>../src/Xutim/Bundle/CoreBundle/tests/Application</directory>
+      <directory>../src/Xutim/Bundle/EditorBundle/tests/Unit</directory>
       <exclude>./Stubs</exclude>
       <exclude>./Application</exclude>
     </testsuite>
@@ -32,6 +33,7 @@
       <directory suffix=".php">../src/Xutim/Bundle/RedirectBundle/src</directory>
       <directory suffix=".php">../src/Xutim/Bundle/SecurityBundle/src</directory>
       <directory suffix=".php">../src/Xutim/Bundle/SnippetBundle/src</directory>
+      <directory suffix=".php">../src/Xutim/Bundle/EditorBundle/src</directory>
     </include>
     <exclude>
       <directory>../src/Xutim/Bundle/*/src/DependencyInjection</directory>

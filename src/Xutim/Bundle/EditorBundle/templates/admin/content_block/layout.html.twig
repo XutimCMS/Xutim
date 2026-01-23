@@ -1,0 +1,12 @@
+<div class="content-block content-block--layout content-block--layout-{{ block.template }}" data-block-id="{{ block.id }}">
+    <div class="content-block__layout-grid">
+        {% for slotIndex, slotBlocks in slots %}
+            {% set slotDef = template.getSlot(slotIndex) %}
+            <div class="content-block__layout-slot" style="{% if slotDef and slotDef.width %}width: {{ slotDef.width }};{% endif %}">
+                {% for childBlock in slotBlocks %}
+                    {{ include('@XutimEditor/admin/content_block/' ~ childBlock.type ~ '.html.twig', {block: childBlock, locale: locale}) }}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,5 @@
+<div class="content-blocks">
+    {% for block in blocks %}
+        {{ include('@XutimEditor/admin/content_block/' ~ block.type ~ '.html.twig', {block: block, locale: locale}) }}
+    {% endfor %}
+</div>

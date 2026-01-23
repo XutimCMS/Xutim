@@ -8,6 +8,7 @@
     "require": {
         "php": ">=8.4",
         "xutimcms/core-bundle": "dev-main",
+        "xutimcms/editor-bundle": "dev-main",
         "xutimcms/security-bundle": "dev-main",
         "xutimcms/analytics-bundle": "dev-main",
         "xutimcms/event-bundle": "dev-main",
@@ -30,6 +31,7 @@
     "repositories": [
         {"type": "path", "url": "../../src/Xutim/Domain"},
         {"type": "path", "url": "../../src/Xutim/Bundle/CoreBundle"},
+        {"type": "path", "url": "../../src/Xutim/Bundle/EditorBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/SecurityBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/AnalyticsBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/EventBundle"},
@@ -46,6 +48,7 @@
         "psr-4": {
             "Xutim\\AnalyticsBundle\\Tests\\": "../../src/Xutim/Bundle/AnalyticsBundle/tests/",
             "Xutim\\CoreBundle\\Tests\\": "../../src/Xutim/Bundle/CoreBundle/tests/",
+            "Xutim\\EditorBundle\\Tests\\": "../../src/Xutim/Bundle/EditorBundle/tests/",
             "Xutim\\EventBundle\\Tests\\": "../../src/Xutim/Bundle/EventBundle/tests/",
             "Xutim\\MediaBundle\\Tests\\": "../../src/Xutim/Bundle/MediaBundle/tests/",
             "Xutim\\RedirectBundle\\Tests\\": "../../src/Xutim/Bundle/RedirectBundle/tests/"
