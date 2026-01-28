@@ -13,12 +13,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Model\ContentDraftInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
 use Xutim\CoreBundle\Form\Admin\ContentTranslationType;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\CreateContentTranslationCommand;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
+use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
@@ -39,6 +41,7 @@ class EditPageAction extends AbstractController
         private readonly TranslatorAuthChecker $transAuthChecker,
         private readonly LogEventRepository $eventRepo,
         private readonly AdminUrlGenerator $router,
+        private readonly ContentDraftRepository $draftRepo,
     ) {
     }
 
@@ -51,7 +54,9 @@ class EditPageAction extends AbstractController
         $contentLocale = $this->contentContext->getLanguage();
         $translation = $page->getTranslationByLocale($contentLocale);
 
-        $form = $this->createTranslationForm($page, $translation, $contentLocale, $locale);
+        $draft = $this->findDraft($translation);
+
+        $form = $this->createTranslationForm($page, $translation, $contentLocale, $locale, $draft);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var ContentTranslationDto $data */
@@ -84,8 +89,15 @@ class EditPageAction extends AbstractController
             $lastRevision = $this->eventRepo->findLastByTranslation($translation);
         }
 
+        $currentUser = $this->userStorage->getUser();
+        $editingUser = ($translation !== null && $translation->isPublished() && $translation->isBeingEditedBy($currentUser))
+            ? $translation->getEditingUser()
+            : null;
+
         return $this->render('@XutimCore/admin/page/page_edit.html.twig', [
             'form' => $form,
+            'draft' => $draft,
+            'editingUser' => $editingUser,
             'page' => $page,
             'revisionsCount' => $revisionsCount,
             'lastRevision' => $lastRevision,
@@ -95,10 +107,19 @@ class EditPageAction extends AbstractController
         ]);
     }
 
+    private function findDraft(?ContentTranslationInterface $translation): ?ContentDraftInterface
+    {
+        if ($translation === null || !$translation->isPublished()) {
+            return null;
+        }
+
+        return $this->draftRepo->findDraft($translation);
+    }
+
     /**
      * @return FormInterface<ContentTranslationDto>
      */
-    private function createTranslationForm(PageInterface $page, ?ContentTranslationInterface $translation, string $contentLocale, string $locale): FormInterface
+    private function createTranslationForm(PageInterface $page, ?ContentTranslationInterface $translation, string $contentLocale, string $locale, ?ContentDraftInterface $draft = null): FormInterface
     {
         $existingTranslation = $translation;
         if (strlen(trim($locale)) > 0) {
@@ -123,6 +144,17 @@ class EditPageAction extends AbstractController
         } elseif ($translation === null) {
             $this->transAuthChecker->denyUnlessCanTranslate($contentLocale);
             $data = new ContentTranslationDto('', '', '', '', [], '', $contentLocale);
+        } elseif ($draft !== null) {
+            $this->transAuthChecker->denyUnlessCanTranslate($translation->getLocale());
+            $data = new ContentTranslationDto(
+                $draft->getPreTitle(),
+                $draft->getTitle(),
+                $draft->getSubTitle(),
+                $draft->getSlug(),
+                $draft->getContent(),
+                $draft->getDescription(),
+                $translation->getLocale(),
+            );
         } else {
             $this->transAuthChecker->denyUnlessCanTranslate($translation->getLocale());
             $data = ContentTranslationDto::fromTranslation($translation);

@@ -10,6 +10,7 @@ use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\ArticleRepository;
+use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
 class ShowArticlePreviewAction extends AbstractController
@@ -19,6 +20,7 @@ class ShowArticlePreviewAction extends AbstractController
         private readonly LayoutLoader $layoutLoader,
         private readonly ContentContext $contentContext,
         private readonly ArticleRepository $articleRepo,
+        private readonly ContentDraftRepository $draftRepo,
     ) {
     }
 
@@ -31,17 +33,22 @@ class ShowArticlePreviewAction extends AbstractController
         $locale = $this->contentContext->getLanguage();
         $translation = $article->getTranslationByLocaleOrDefault($locale);
 
+        $draft = null;
+        if ($translation->isPublished()) {
+            $draft = $this->draftRepo->findDraft($translation);
+        }
+
         return $this->render($this->themeFinder->getActiveThemePath('/article/base_frame.html.twig'), [
             'article' => $article,
             'translation' => $translation,
             'color' => Color::DEFAULT_VALUE_HEX,
             'layout' => $this->layoutLoader->getArticleLayoutTemplate($article->getLayout()),
             'locale' => $translation->getLocale(),
-            'preTitle' => $translation->getPreTitle(),
-            'title' => $translation->getTitle(),
-            'subTitle' => $translation->getSubTitle(),
+            'preTitle' => $draft?->getPreTitle() ?? $translation->getPreTitle(),
+            'title' => $draft?->getTitle() ?? $translation->getTitle(),
+            'subTitle' => $draft?->getSubTitle() ?? $translation->getSubTitle(),
             'featuredImage' => $article->getFeaturedImage(),
-            'contentFragments' => $translation->getContent(),
+            'contentFragments' => $draft?->getContent() ?? $translation->getContent(),
             'isPublished' => $translation->isPublished()
         ]);
     }
