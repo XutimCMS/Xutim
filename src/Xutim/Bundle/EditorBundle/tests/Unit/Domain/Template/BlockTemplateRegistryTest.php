@@ -75,7 +75,7 @@ final class BlockTemplateRegistryTest extends TestCase
 
     private function createTemplate(string $name): BlockTemplateInterface
     {
-        $template = $this->createMock(BlockTemplateInterface::class);
+        $template = $this->createStub(BlockTemplateInterface::class);
         $template->method('getName')->willReturn($name);
         $template->method('getLabel')->willReturn(ucfirst(str_replace('_', ' ', $name)));
         $template->method('getDescription')->willReturn('Test template');

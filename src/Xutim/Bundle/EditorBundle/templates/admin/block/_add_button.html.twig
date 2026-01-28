@@ -1,0 +1,59 @@
+<div class="add-block-menu"
+     id="add-block-{{ draft.id }}"
+     data-controller="add-block-menu"
+     data-add-block-menu-create-url-value="{{ path('admin_editor_block_create_inline', {draftId: draft.id}) }}">
+
+    <div class="add-block-menu__empty-state">
+        <div class="add-block-menu__empty-icon">
+            <twig:ux:icon name="tabler:file-text" />
+        </div>
+        <div class="add-block-menu__empty-text">No content yet</div>
+    </div>
+
+    <button type="button"
+            class="add-block-menu__trigger"
+            data-add-block-menu-target="trigger"
+            data-action="add-block-menu#toggle"
+            title="Add block">
+        <twig:ux:icon name="tabler:plus" class="icon" />
+        <span class="add-block-menu__trigger-text">Add first block</span>
+    </button>
+
+    <div class="add-block-menu__dropdown d-none" data-add-block-menu-target="menu">
+        <div class="add-block-menu__section">
+            <div class="add-block-menu__section-title">Text</div>
+            <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="paragraph">
+                <twig:ux:icon name="tabler:align-left" class="add-block-menu__icon" />
+                <span>Paragraph</span>
+            </button>
+            <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="heading">
+                <twig:ux:icon name="tabler:h-1" class="add-block-menu__icon" />
+                <span>Heading</span>
+            </button>
+            <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="quote">
+                <twig:ux:icon name="tabler:blockquote" class="add-block-menu__icon" />
+                <span>Quote</span>
+            </button>
+        </div>
+
+        <div class="add-block-menu__section">
+            <div class="add-block-menu__section-title">Media</div>
+            <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="image">
+                <twig:ux:icon name="tabler:photo" class="add-block-menu__icon" />
+                <span>Image</span>
+            </button>
+            <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="embed">
+                <twig:ux:icon name="tabler:brand-youtube" class="add-block-menu__icon" />
+                <span>Video/Embed</span>
+            </button>
+        </div>
+
+        <div class="add-block-menu__section">
+            <div class="add-block-menu__section-title">Layout</div>
+            <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="layout">
+                <twig:ux:icon name="tabler:columns" class="add-block-menu__icon" />
+                <span>Columns</span>
+            </button>
+        </div>
+    </div>
+</div>

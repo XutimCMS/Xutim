@@ -1,0 +1,90 @@
+<turbo-frame id="block-picker">
+    <div class="block-picker" data-controller="block-picker">
+        <div class="block-picker__header">
+            <h4 class="block-picker__title">Add Block</h4>
+            <button type="button" class="btn-close" data-action="block-picker#close"></button>
+        </div>
+
+        <div class="block-picker__search">
+            <input type="text"
+                   class="form-control"
+                   placeholder="Search blocks..."
+                   data-action="input->block-picker#filter"
+                   data-block-picker-target="search">
+        </div>
+
+        <div class="block-picker__categories">
+            <h5 class="block-picker__category-title">Text</h5>
+            <div class="block-picker__grid" data-block-picker-target="grid">
+                {% for blockType in blockTypes|filter(b => b.category == 'text') %}
+                    <a href="{{ path('admin_editor_block_add', {draftId: draft.id, type: blockType.type, position: position, parent: parentId, slot: slot}) }}"
+                       class="block-picker__item"
+                       data-turbo-stream
+                       data-block-type="{{ blockType.type }}"
+                       data-block-label="{{ blockType.label }}">
+                        <div class="block-picker__item-icon">
+                            <twig:ux:icon name="tabler:{{ blockType.icon }}" class="icon" />
+                        </div>
+                        <div class="block-picker__item-label">{{ blockType.label }}</div>
+                        <div class="block-picker__item-description">{{ blockType.description }}</div>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <h5 class="block-picker__category-title">Media</h5>
+            <div class="block-picker__grid" data-block-picker-target="grid">
+                {% for blockType in blockTypes|filter(b => b.category == 'media') %}
+                    <a href="{{ path('admin_editor_block_add', {draftId: draft.id, type: blockType.type, position: position, parent: parentId, slot: slot}) }}"
+                       class="block-picker__item"
+                       data-turbo-stream
+                       data-block-type="{{ blockType.type }}"
+                       data-block-label="{{ blockType.label }}">
+                        <div class="block-picker__item-icon">
+                            <twig:ux:icon name="tabler:{{ blockType.icon }}" class="icon" />
+                        </div>
+                        <div class="block-picker__item-label">{{ blockType.label }}</div>
+                        <div class="block-picker__item-description">{{ blockType.description }}</div>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <h5 class="block-picker__category-title">Layout</h5>
+            <div class="block-picker__grid" data-block-picker-target="grid">
+                {% for blockType in blockTypes|filter(b => b.category == 'layout') %}
+                    <a href="{{ path('admin_editor_block_add', {draftId: draft.id, type: blockType.type, position: position, parent: parentId, slot: slot}) }}"
+                       class="block-picker__item"
+                       data-turbo-stream
+                       data-block-type="{{ blockType.type }}"
+                       data-block-label="{{ blockType.label }}">
+                        <div class="block-picker__item-icon">
+                            <twig:ux:icon name="tabler:{{ blockType.icon }}" class="icon" />
+                        </div>
+                        <div class="block-picker__item-label">{{ blockType.label }}</div>
+                        <div class="block-picker__item-description">{{ blockType.description }}</div>
+                    </a>
+                {% endfor %}
+            </div>
+
+            {% if templates|length > 0 %}
+                <h5 class="block-picker__category-title">Layout Templates</h5>
+                <div class="block-picker__grid block-picker__grid--templates" data-block-picker-target="grid">
+                    {% for template in templates %}
+                        <a href="{{ path('admin_editor_block_add', {draftId: draft.id, type: 'layout', position: position, parent: parentId, slot: slot}) }}?template={{ template.name }}"
+                           class="block-picker__item block-picker__item--template"
+                           data-turbo-stream
+                           data-block-type="layout"
+                           data-block-label="{{ template.label }}">
+                            <div class="block-picker__item-label">{{ template.label }}</div>
+                            <div class="block-picker__item-description">{{ template.description }}</div>
+                            <div class="block-picker__item-slots">
+                                {% for templateSlot in template.slots %}
+                                    <span class="badge bg-secondary">{{ templateSlot.label }}</span>
+                                {% endfor %}
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</turbo-frame>

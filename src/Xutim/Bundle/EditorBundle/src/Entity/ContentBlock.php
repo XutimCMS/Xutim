@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\TimestampableTrait;
+use Xutim\CoreBundle\Domain\Model\ContentDraftInterface as BaseContentDraftInterface;
 use Xutim\EditorBundle\Domain\Model\ContentBlockInterface;
 use Xutim\EditorBundle\Domain\Model\ContentDraftInterface;
 
@@ -29,7 +30,7 @@ abstract class ContentBlock implements ContentBlockInterface
     #[Column(type: 'uuid')]
     private Uuid $id;
 
-    #[ManyToOne(targetEntity: ContentDraftInterface::class, inversedBy: 'blocks')]
+    #[ManyToOne(targetEntity: BaseContentDraftInterface::class, inversedBy: 'blocks')]
     #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ContentDraftInterface $draft;
 

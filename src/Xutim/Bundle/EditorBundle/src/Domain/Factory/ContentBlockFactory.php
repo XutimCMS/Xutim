@@ -126,4 +126,24 @@ class ContentBlockFactory
     {
         return $this->blockTypes;
     }
+
+    public function create(
+        string $type,
+        ContentDraftInterface $draft,
+        ?ContentBlockInterface $parent = null,
+        ?int $slot = null,
+        int $position = 0,
+    ): ContentBlockInterface {
+        return match ($type) {
+            ParagraphBlock::TYPE => $this->createParagraph($draft, '', $parent, $slot, $position),
+            HeadingBlock::TYPE => $this->createHeading($draft, '', 2, $parent, $slot, $position),
+            ListItemBlock::TYPE => $this->createListItem($draft, '', ListItemBlock::LIST_TYPE_UNORDERED, 0, false, $parent, $slot, $position),
+            QuoteBlock::TYPE => $this->createQuote($draft, '', null, $parent, $slot, $position),
+            ImageBlock::TYPE => $this->createImage($draft, null, null, $parent, $slot, $position),
+            EmbedBlock::TYPE => $this->createEmbed($draft, EmbedBlock::SERVICE_OTHER, '', null, $parent, $slot, $position),
+            CodeBlock::TYPE => $this->createCode($draft, '', null, $parent, $slot, $position),
+            LayoutBlock::TYPE => $this->createLayout($draft, 'two_columns', null, $parent, $slot, $position),
+            default => throw new \InvalidArgumentException(sprintf('Unknown block type: %s', $type)),
+        };
+    }
 }

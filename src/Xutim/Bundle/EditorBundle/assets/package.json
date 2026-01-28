@@ -1,0 +1,66 @@
+{
+    "name": "@xutim/editor-bundle",
+    "version": "1.0.0",
+    "symfony": {
+        "controllers": {
+            "editor": {
+                "main": "dist/editor_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "editor-block": {
+                "main": "dist/editor-block_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "tiptap-block": {
+                "main": "dist/tiptap-block_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "add-block-menu": {
+                "main": "dist/add-block-menu_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "block-menu": {
+                "main": "dist/block-menu_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "block-picker": {
+                "main": "dist/block-picker_controller.js",
+                "fetch": "lazy",
+                "enabled": true
+            },
+            "block-form": {
+                "main": "dist/block-form_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "inline-edit": {
+                "main": "dist/inline-edit_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "layout-slots": {
+                "main": "dist/layout-slots_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            },
+            "sortable": {
+                "main": "dist/sortable_controller.js",
+                "fetch": "eager",
+                "enabled": true
+            }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.2.0",
+            "sortablejs": "^1.15.0"
+        }
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.2.0",
+        "sortablejs": "^1.15.0"
+    }
+}

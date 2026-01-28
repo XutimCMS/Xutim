@@ -6,7 +6,7 @@ namespace Xutim\EditorBundle\Tests\Unit\Entity;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Xutim\EditorBundle\Entity\DraftStatus;
+use Xutim\CoreBundle\Entity\DraftStatus;
 
 final class DraftStatusTest extends TestCase
 {

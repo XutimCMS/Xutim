@@ -16,13 +16,13 @@ final class ImageBlockTest extends TestCase
 
     protected function setUp(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
         $this->draft = new ContentDraft($translation);
     }
 
     public function testCanInstantiate(): void
     {
-        $file = $this->createMock(FileInterface::class);
+        $file = $this->createStub(FileInterface::class);
         $block = new ImageBlock($this->draft, $file, 'Image caption');
 
         $this->assertSame('image', $block->getType());
@@ -43,7 +43,7 @@ final class ImageBlockTest extends TestCase
     public function testSetFile(): void
     {
         $block = new ImageBlock($this->draft);
-        $file = $this->createMock(FileInterface::class);
+        $file = $this->createStub(FileInterface::class);
 
         $block->setFile($file);
 
@@ -53,7 +53,7 @@ final class ImageBlockTest extends TestCase
 
     public function testClearFile(): void
     {
-        $file = $this->createMock(FileInterface::class);
+        $file = $this->createStub(FileInterface::class);
         $block = new ImageBlock($this->draft, $file);
 
         $block->setFile(null);

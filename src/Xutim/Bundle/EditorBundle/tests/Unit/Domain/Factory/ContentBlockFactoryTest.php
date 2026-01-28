@@ -26,7 +26,7 @@ final class ContentBlockFactoryTest extends TestCase
     protected function setUp(): void
     {
         $this->factory = new ContentBlockFactory();
-        $translation = $this->createMock(ContentTranslationInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
         $this->draft = new ContentDraft($translation);
     }
 
@@ -118,7 +118,7 @@ final class ContentBlockFactoryTest extends TestCase
 
     public function testCreateImage(): void
     {
-        $file = $this->createMock(FileInterface::class);
+        $file = $this->createStub(FileInterface::class);
 
         $block = $this->factory->createImage($this->draft, $file, 'Caption');
 

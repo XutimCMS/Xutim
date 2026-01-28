@@ -1,0 +1,30 @@
+<turbo-frame id="block-{{ block.id }}">
+    <div class="editor-block editor-block--{{ block.type }} editor-block--editing"
+         data-controller="editor-block"
+         data-editor-block-id-value="{{ block.id }}"
+         data-editor-block-type-value="{{ block.type }}">
+        {{ form_start(form, {
+            action: path('admin_editor_block_edit', {id: block.id}),
+            attr: {
+                'data-turbo-frame': 'block-' ~ block.id,
+                'data-controller': 'block-form',
+                'data-action': 'submit->block-form#save'
+            }
+        }) }}
+        <div class="editor-block__form-content">
+            {{ form_widget(form) }}
+        </div>
+        <div class="editor-block__form-actions">
+            <button type="submit" class="btn btn-sm btn-primary">
+                <twig:ux:icon name="tabler:check" class="icon" />
+                Save
+            </button>
+            <a href="{{ path('admin_editor_block_view', {id: block.id}) }}"
+               class="btn btn-sm btn-secondary"
+               data-turbo-frame="block-{{ block.id }}">
+                Cancel
+            </a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+</turbo-frame>

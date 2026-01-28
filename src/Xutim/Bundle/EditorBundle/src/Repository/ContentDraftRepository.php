@@ -8,7 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\EditorBundle\Domain\Model\ContentDraftInterface;
-use Xutim\EditorBundle\Entity\DraftStatus;
+use Xutim\CoreBundle\Entity\DraftStatus;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 /**
@@ -89,5 +89,28 @@ class ContentDraftRepository extends ServiceEntityRepository
             ->getResult();
 
         return $drafts;
+    }
+
+    public function save(ContentDraftInterface $draft, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($draft);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(ContentDraftInterface $draft, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($draft);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function flush(): void
+    {
+        $this->getEntityManager()->flush();
     }
 }

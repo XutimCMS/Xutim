@@ -1,0 +1,146 @@
+{% set isTextBlock = block.type in ['paragraph', 'heading', 'quote', 'list_item'] %}
+
+<turbo-frame id="block-{{ block.id }}">
+    <div class="editor-block editor-block--{{ block.type }}"
+         data-controller="editor-block{% if isTextBlock %} tiptap-block{% endif %}"
+         data-editor-block-id-value="{{ block.id }}"
+         data-editor-block-type-value="{{ block.type }}"
+         data-editor-block-delete-url-value="{{ path('admin_editor_block_delete', {id: block.id}) }}"
+         {% if isTextBlock %}
+         data-tiptap-block-block-id-value="{{ block.id }}"
+         data-tiptap-block-block-type-value="{{ block.type }}"
+         data-tiptap-block-save-url-value="{{ path('admin_editor_block_patch', {id: block.id}) }}"
+         data-tiptap-block-create-url-value="{{ path('admin_editor_block_create_inline', {draftId: block.draft.id}) }}"
+         data-tiptap-block-delete-url-value="{{ path('admin_editor_block_delete', {id: block.id}) }}"
+         {% else %}
+         data-action="click->editor-block#select"
+         {% endif %}>
+
+        <div class="editor-block__controls-left">
+            <div class="editor-block__add-menu"
+                 data-controller="add-block-menu"
+                 data-add-block-menu-create-url-value="{{ path('admin_editor_block_create_inline', {draftId: block.draft.id}) }}"
+                 data-add-block-menu-after-block-id-value="{{ block.id }}">
+                <button type="button"
+                        class="editor-block__control"
+                        data-add-block-menu-target="trigger"
+                        data-action="add-block-menu#toggle"
+                        title="Add block below">
+                    <twig:ux:icon name="tabler:plus" />
+                </button>
+                <div class="add-block-menu__dropdown d-none" data-add-block-menu-target="menu">
+                    <div class="add-block-menu__section">
+                        <div class="add-block-menu__section-title">Text</div>
+                        <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="paragraph">
+                            <twig:ux:icon name="tabler:align-left" class="add-block-menu__icon" />
+                            <span>Paragraph</span>
+                        </button>
+                        <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="heading">
+                            <twig:ux:icon name="tabler:h-1" class="add-block-menu__icon" />
+                            <span>Heading</span>
+                        </button>
+                        <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="quote">
+                            <twig:ux:icon name="tabler:blockquote" class="add-block-menu__icon" />
+                            <span>Quote</span>
+                        </button>
+                    </div>
+                    <div class="add-block-menu__section">
+                        <div class="add-block-menu__section-title">Media</div>
+                        <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="image">
+                            <twig:ux:icon name="tabler:photo" class="add-block-menu__icon" />
+                            <span>Image</span>
+                        </button>
+                        <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="embed">
+                            <twig:ux:icon name="tabler:brand-youtube" class="add-block-menu__icon" />
+                            <span>Video/Embed</span>
+                        </button>
+                    </div>
+                    <div class="add-block-menu__section">
+                        <div class="add-block-menu__section-title">Layout</div>
+                        <button type="button" class="add-block-menu__item" data-action="add-block-menu#addBlock" data-block-type="layout">
+                            <twig:ux:icon name="tabler:columns" class="add-block-menu__icon" />
+                            <span>Columns</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="editor-block__block-menu"
+                 data-controller="block-menu"
+                 data-block-menu-block-id-value="{{ block.id }}"
+                 data-block-menu-block-type-value="{{ block.type }}"
+                 data-block-menu-convert-url-value="{{ path('admin_editor_block_convert', {id: block.id}) }}"
+                 data-block-menu-delete-url-value="{{ path('admin_editor_block_delete', {id: block.id}) }}">
+                <button type="button"
+                        class="editor-block__control editor-block__drag-handle"
+                        data-block-menu-target="trigger"
+                        data-action="block-menu#toggle"
+                        title="Drag to reorder or click for options">
+                    <twig:ux:icon name="tabler:grip-vertical" />
+                </button>
+                <div class="block-menu__dropdown d-none" data-block-menu-target="menu">
+                    {% if block.type in ['paragraph', 'heading', 'quote'] %}
+                    <div class="block-menu__section">
+                        <div class="block-menu__item block-menu__item--has-submenu"
+                             data-action="mouseenter->block-menu#showTurnIntoSubmenu mouseleave->block-menu#closeTurnIntoSubmenu">
+                            <twig:ux:icon name="tabler:transform" class="block-menu__icon" />
+                            <span>Turn into</span>
+                            <twig:ux:icon name="tabler:chevron-right" class="block-menu__chevron" />
+                            <div class="block-menu__submenu d-none" data-block-menu-target="turnIntoSubmenu">
+                                {% if block.type != 'paragraph' %}
+                                <button type="button" class="block-menu__item" data-action="block-menu#convertTo" data-block-type="paragraph">
+                                    <twig:ux:icon name="tabler:align-left" class="block-menu__icon" />
+                                    <span>Paragraph</span>
+                                </button>
+                                {% endif %}
+                                {% if block.type != 'heading' %}
+                                <button type="button" class="block-menu__item" data-action="block-menu#convertTo" data-block-type="heading">
+                                    <twig:ux:icon name="tabler:h-1" class="block-menu__icon" />
+                                    <span>Heading</span>
+                                </button>
+                                {% endif %}
+                                {% if block.type != 'quote' %}
+                                <button type="button" class="block-menu__item" data-action="block-menu#convertTo" data-block-type="quote">
+                                    <twig:ux:icon name="tabler:blockquote" class="block-menu__icon" />
+                                    <span>Quote</span>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="block-menu__section">
+                        <button type="button" class="block-menu__item block-menu__item--danger" data-action="block-menu#delete">
+                            <twig:ux:icon name="tabler:trash" class="block-menu__icon" />
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="editor-block__controls-right">
+            {% if not isTextBlock %}
+            <a href="{{ path('admin_editor_block_edit', {id: block.id}) }}"
+               class="editor-block__control"
+               data-turbo-frame="block-{{ block.id }}"
+               title="Edit">
+                <twig:ux:icon name="tabler:edit" />
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="editor-block__body">
+            {% if isTextBlock %}
+                <div class="editor-block__preview"
+                     data-tiptap-block-target="preview"
+                     data-action="click->tiptap-block#startEdit"
+                >{% if block.type == 'heading' %}<h{{ block.level|default(2) }}>{{ block.html|raw }}</h{{ block.level|default(2) }}>{% elseif block.type == 'quote' %}<blockquote>{{ block.html|raw }}</blockquote>{% else %}<p>{{ block.html|raw }}</p>{% endif %}</div>
+                <div class="editor-block__content d-none" data-tiptap-block-target="content"></div>
+            {% else %}
+                <div class="editor-block__content">
+                    {% include '@XutimEditor/admin/content_block/' ~ block.type ~ '.html.twig' with {block: block} %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</turbo-frame>

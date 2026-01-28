@@ -1,0 +1,47 @@
+<div
+    class="content-editor"
+    data-controller="editor"
+    data-editor-draft-id-value="{{ draft.id }}"
+    data-editor-move-url-value="{{ path('admin_editor_block_move', {id: '__ID__', position: '__POSITION__'}) }}"
+>
+    <div class="content-editor__toolbar">
+        <div class="content-editor__toolbar-left">
+            <span class="text-muted">
+                {% if draft.status.isEditing %}
+                    <twig:ux:icon name="tabler:pencil" class="me-1" />
+                    Editing draft
+                {% elseif draft.status.isStale %}
+                    <twig:ux:icon
+                        name="tabler:alert-triangle"
+                        class="me-1 text-warning"
+                    />
+                    Draft is stale - content has changed
+                {% elseif draft.status.isLive %}
+                    <twig:ux:icon
+                        name="tabler:check"
+                        class="me-1 text-success"
+                    />
+                    Published
+                {% endif %}
+            </span>
+        </div>
+        <div class="content-editor__toolbar-right">
+            <span class="text-muted small">
+                Last saved: {{ draft.updatedAt|date('H:i') }}
+            </span>
+        </div>
+    </div>
+
+    <div
+        id="editor-blocks-{{ draft.id }}"
+        class="content-editor__blocks{% if blocks is empty %} content-editor__blocks--empty{% endif %}"
+        data-controller="sortable"
+        data-sortable-handle-value=".editor-block__drag-handle"
+        data-action="sortable:end->editor#onSortEnd"
+    >
+        {% for block in blocks %}
+            {% include '@XutimEditor/admin/block/_block.html.twig' with {block: block, draft: draft} %}
+        {% endfor %}
+        {% include '@XutimEditor/admin/block/_add_button.html.twig' with {draft: draft} %}
+    </div>
+</div>

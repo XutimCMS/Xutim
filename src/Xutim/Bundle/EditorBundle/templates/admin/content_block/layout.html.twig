@@ -1,12 +1,53 @@
-<div class="content-block content-block--layout content-block--layout-{{ block.template }}" data-block-id="{{ block.id }}">
-    <div class="content-block__layout-grid">
-        {% for slotIndex, slotBlocks in slots %}
-            {% set slotDef = template.getSlot(slotIndex) %}
-            <div class="content-block__layout-slot" style="{% if slotDef and slotDef.width %}width: {{ slotDef.width }};{% endif %}">
-                {% for childBlock in slotBlocks %}
-                    {{ include('@XutimEditor/admin/content_block/' ~ childBlock.type ~ '.html.twig', {block: childBlock, locale: locale}) }}
-                {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
+{% set template = editor_block_template(block.template) %}
+{% set slots = slots is defined ? slots : editor_block_slots(block) %}
+<div class="content-block content-block--layout content-block--layout-{{ block.template }}"
+     data-block-id="{{ block.id }}"
+     data-controller="layout-slots"
+     data-layout-slots-block-id-value="{{ block.id }}"
+     data-layout-slots-create-url-value="{{ path('admin_editor_block_create_inline', {draftId: block.draft.id}) }}">
+
+    {% if template %}
+        <div class="content-block__layout-header">
+            <span class="badge bg-secondary">{{ template.label }}</span>
+        </div>
+
+        <div class="content-block__layout-grid" style="display: grid; grid-template-columns: {{ template.slots|map(s => s.width ?? '1fr')|join(' ') }}; gap: 1rem;">
+            {% for slotDef in template.slots %}
+                {% set slotBlocks = slots[slotDef.index] ?? [] %}
+                <div class="content-block__slot"
+                     data-slot-index="{{ slotDef.index }}"
+                     data-layout-slots-target="slot">
+                    <div class="content-block__slot-header">
+                        <span class="text-muted small">{{ slotDef.label }}</span>
+                    </div>
+                    <div class="content-block__slot-content"
+                         id="slot-content-{{ block.id }}-{{ slotDef.index }}"
+                         data-controller="sortable"
+                         data-sortable-handle-value=".editor-block__drag-handle">
+                        {% for slotBlock in slotBlocks %}
+                            {% include '@XutimEditor/admin/block/_block.html.twig' with {block: slotBlock, draft: block.draft} %}
+                        {% else %}
+                            <div id="slot-empty-{{ block.id }}-{{ slotDef.index }}"
+                                 class="content-block__slot-empty text-muted text-center py-3">
+                                <small>Empty slot</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="content-block__slot-add">
+                        <button type="button"
+                                class="btn btn-sm btn-ghost-secondary w-100"
+                                data-action="layout-slots#addBlock"
+                                data-slot-index="{{ slotDef.index }}">
+                            <twig:ux:icon name="tabler:plus" class="icon" />
+                            Add to {{ slotDef.label }}
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            Unknown template: {{ block.template }}
+        </div>
+    {% endif %}
 </div>

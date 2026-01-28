@@ -16,7 +16,7 @@ final class HeadingBlockTest extends TestCase
 
     protected function setUp(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
         $this->draft = new ContentDraft($translation);
     }
 

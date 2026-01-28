@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\EditorBundle\DependencyInjection;
 
+use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -61,5 +62,41 @@ final class XutimEditorExtension extends Extension implements PrependExtensionIn
                 'resolve_target_entities' => $mapping,
             ],
         ]);
+
+        $this->prependAssetMapper($container);
+    }
+
+    private function prependAssetMapper(ContainerBuilder $container): void
+    {
+        if (!$this->isAssetMapperAvailable($container)) {
+            return;
+        }
+
+        $container->prependExtensionConfig('framework', [
+            'asset_mapper' => [
+                'paths' => [
+                    __DIR__ . '/../../assets' => '@xutim/editor-bundle',
+                ],
+            ],
+        ]);
+    }
+
+    private function isAssetMapperAvailable(ContainerBuilder $container): bool
+    {
+        if (!interface_exists(AssetMapperInterface::class)) {
+            return false;
+        }
+
+        $bundlesMetadata = $container->getParameter('kernel.bundles_metadata');
+        if (!isset($bundlesMetadata['FrameworkBundle'])) {
+            return false;
+        }
+        /** @var array<string> $frameworkConfig */
+        $frameworkConfig = $bundlesMetadata['FrameworkBundle'];
+
+        /** @var string $frameworkPath */
+        $frameworkPath = $frameworkConfig['path'];
+
+        return is_file($frameworkPath . '/Resources/config/asset_mapper.php');
     }
 }

@@ -8,14 +8,14 @@ use PHPUnit\Framework\TestCase;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\EditorBundle\Domain\Model\ContentDraftInterface;
 use Xutim\EditorBundle\Entity\ContentDraft;
-use Xutim\EditorBundle\Entity\DraftStatus;
+use Xutim\CoreBundle\Entity\DraftStatus;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 final class ContentDraftTest extends TestCase
 {
     public function testCanInstantiateLiveDraft(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
 
         $draft = new ContentDraft($translation);
 
@@ -30,8 +30,8 @@ final class ContentDraftTest extends TestCase
 
     public function testCanInstantiateUserDraft(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
-        $user = $this->createMock(UserInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
+        $user = $this->createStub(UserInterface::class);
 
         $draft = new ContentDraft($translation, $user);
 
@@ -43,8 +43,8 @@ final class ContentDraftTest extends TestCase
 
     public function testCanInstantiateUserDraftBasedOnLive(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
-        $user = $this->createMock(UserInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
+        $user = $this->createStub(UserInterface::class);
         $liveDraft = new ContentDraft($translation);
 
         $userDraft = new ContentDraft($translation, $user, $liveDraft);
@@ -55,7 +55,7 @@ final class ContentDraftTest extends TestCase
 
     public function testChangeStatus(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
         $draft = new ContentDraft($translation);
 
         $draft->changeStatus(DraftStatus::STALE);
@@ -65,8 +65,8 @@ final class ContentDraftTest extends TestCase
 
     public function testMarkAsLive(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
-        $user = $this->createMock(UserInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
+        $user = $this->createStub(UserInterface::class);
         $draft = new ContentDraft($translation, $user);
 
         $this->assertSame(DraftStatus::EDITING, $draft->getStatus());
@@ -78,8 +78,8 @@ final class ContentDraftTest extends TestCase
 
     public function testMarkAsStale(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
-        $user = $this->createMock(UserInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
+        $user = $this->createStub(UserInterface::class);
         $draft = new ContentDraft($translation, $user);
 
         $draft->markAsStale();
@@ -89,8 +89,8 @@ final class ContentDraftTest extends TestCase
 
     public function testMarkAsDiscarded(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
-        $user = $this->createMock(UserInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
+        $user = $this->createStub(UserInterface::class);
         $draft = new ContentDraft($translation, $user);
 
         $draft->markAsDiscarded();
@@ -100,7 +100,7 @@ final class ContentDraftTest extends TestCase
 
     public function testGetTopLevelBlocksReturnsOnlyBlocksWithoutParent(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
         $draft = new ContentDraft($translation);
 
         $this->assertCount(0, $draft->getTopLevelBlocks());
@@ -108,7 +108,7 @@ final class ContentDraftTest extends TestCase
 
     public function testUpdatesTimestamp(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
         $draft = new ContentDraft($translation);
 
         $originalUpdatedAt = $draft->getUpdatedAt();

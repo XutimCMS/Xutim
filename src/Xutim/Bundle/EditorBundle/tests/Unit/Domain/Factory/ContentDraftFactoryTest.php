@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\EditorBundle\Domain\Factory\ContentDraftFactory;
 use Xutim\EditorBundle\Entity\ContentDraft;
-use Xutim\EditorBundle\Entity\DraftStatus;
+use Xutim\CoreBundle\Entity\DraftStatus;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 final class ContentDraftFactoryTest extends TestCase
@@ -22,7 +22,7 @@ final class ContentDraftFactoryTest extends TestCase
 
     public function testCreate(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
 
         $draft = $this->factory->create($translation);
 
@@ -34,8 +34,8 @@ final class ContentDraftFactoryTest extends TestCase
 
     public function testCreateWithUser(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
-        $user = $this->createMock(UserInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
+        $user = $this->createStub(UserInterface::class);
 
         $draft = $this->factory->create($translation, $user);
 
@@ -45,8 +45,8 @@ final class ContentDraftFactoryTest extends TestCase
 
     public function testCreateWithBasedOnDraft(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
-        $user = $this->createMock(UserInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
+        $user = $this->createStub(UserInterface::class);
         $basedOn = new ContentDraft($translation);
 
         $draft = $this->factory->create($translation, $user, $basedOn);
@@ -56,7 +56,7 @@ final class ContentDraftFactoryTest extends TestCase
 
     public function testCreateLiveVersion(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
 
         $draft = $this->factory->createLiveVersion($translation);
 
@@ -67,8 +67,8 @@ final class ContentDraftFactoryTest extends TestCase
 
     public function testCreateUserDraft(): void
     {
-        $translation = $this->createMock(ContentTranslationInterface::class);
-        $user = $this->createMock(UserInterface::class);
+        $translation = $this->createStub(ContentTranslationInterface::class);
+        $user = $this->createStub(UserInterface::class);
         $liveDraft = new ContentDraft($translation);
 
         $userDraft = $this->factory->createUserDraft($translation, $user, $liveDraft);

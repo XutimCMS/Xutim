@@ -1,0 +1,22 @@
+{% if afterBlockId %}
+<turbo-stream action="after" target="block-{{ afterBlockId }}">
+    <template>
+        {% include '@XutimEditor/admin/block/_block.html.twig' with {block: block, draft: draft} %}
+    </template>
+</turbo-stream>
+{% elseif parentBlockId is defined and parentBlockId %}
+{# Block being added to a layout slot - append to the slot content, remove empty placeholder #}
+<turbo-stream action="remove" target="slot-empty-{{ parentBlockId }}-{{ slot }}">
+</turbo-stream>
+<turbo-stream action="append" target="slot-content-{{ parentBlockId }}-{{ slot }}">
+    <template>
+        {% include '@XutimEditor/admin/block/_block.html.twig' with {block: block, draft: draft} %}
+    </template>
+</turbo-stream>
+{% else %}
+<turbo-stream action="before" target="add-block-{{ draft.id }}">
+    <template>
+        {% include '@XutimEditor/admin/block/_block.html.twig' with {block: block, draft: draft} %}
+    </template>
+</turbo-stream>
+{% endif %}

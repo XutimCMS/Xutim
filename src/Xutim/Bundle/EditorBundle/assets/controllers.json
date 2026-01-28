@@ -1,4 +1,37 @@
 {
-    "controllers": {},
+    "controllers": {
+        "@xutimcms/editor-bundle": {
+            "editor": {
+                "enabled": true,
+                "fetch": "eager",
+                "autoimport": {}
+            },
+            "editor-block": {
+                "enabled": true,
+                "fetch": "eager",
+                "autoimport": {}
+            },
+            "block-menu": {
+                "enabled": true,
+                "fetch": "eager",
+                "autoimport": {}
+            },
+            "block-picker": {
+                "enabled": true,
+                "fetch": "lazy",
+                "autoimport": {}
+            },
+            "block-form": {
+                "enabled": true,
+                "fetch": "eager",
+                "autoimport": {}
+            },
+            "sortable": {
+                "enabled": true,
+                "fetch": "eager",
+                "autoimport": {}
+            }
+        }
+    },
     "entrypoints": []
 }
