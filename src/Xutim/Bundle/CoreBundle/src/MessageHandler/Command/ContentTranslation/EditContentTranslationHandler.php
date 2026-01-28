@@ -84,6 +84,18 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
             $cmd->description,
         );
 
+        $object = $translation->getObject();
+        $refLocale = $this->siteContext->getReferenceLocale();
+        $isReferenceTranslation = $translation->getLocale() === $refLocale;
+
+        if (!$isReferenceTranslation) {
+            $refTrans = $object->getTranslationByLocale($refLocale);
+            if ($refTrans !== null) {
+                $translation->changeReferenceSyncedAt($refTrans->getUpdatedAt());
+                $this->contentTransRepo->save($translation);
+            }
+        }
+
         $this->draftRepo->save($draft, true);
 
         $event = $isNew
@@ -105,22 +117,16 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
         EditContentTranslationCommand $cmd,
     ): void {
         $object = $translation->getObject();
-        if ($translation->getId() === $object->getDefaultTranslation()->getId() &&
-            (
-                $translation->getPreTitle() !== $cmd->preTitle ||
-                $translation->getTitle() !== $cmd->title ||
-                $translation->getSubTitle() !== $cmd->subTitle ||
-                $translation->getContent() !== $cmd->content ||
-                $translation->getDescription() !== $cmd->description
-            )
-        ) {
-            foreach ($object->getTranslations() as $trans) {
-                if ($trans->getId() === $object->getDefaultTranslation()->getId()) {
-                    continue;
-                }
-                $trans->newTranslationChange();
+        $refLocale = $this->siteContext->getReferenceLocale();
+        $isReferenceTranslation = $translation->getLocale() === $refLocale;
+
+        if (!$isReferenceTranslation) {
+            $refTrans = $object->getTranslationByLocale($refLocale);
+            if ($refTrans !== null) {
+                $translation->changeReferenceSyncedAt($refTrans->getUpdatedAt());
             }
         }
+
         $translation->change(
             $cmd->preTitle,
             $cmd->title,

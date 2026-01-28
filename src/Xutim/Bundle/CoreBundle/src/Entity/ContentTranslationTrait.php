@@ -39,8 +39,8 @@ trait ContentTranslationTrait
     #[Column(type: 'text', nullable: false)]
     private string $description;
 
-    #[Column(type: 'boolean', nullable: false, options: ['comment' => 'True when referenced translation has changed while a translation was already published.'])]
-    private bool $hasUntranslatedChange;
+    #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true, options: ['comment' => 'Reference translation updatedAt at last save of this translation.'])]
+    private ?DateTimeImmutable $referenceSyncedAt = null;
 
     #[Column(type: 'text', nullable: true)]
     private ?string $searchContent = null;
@@ -139,14 +139,14 @@ trait ContentTranslationTrait
         return true;
     }
 
-    public function hasUntranslatedChange(): bool
+    public function getReferenceSyncedAt(): ?DateTimeImmutable
     {
-        return $this->hasUntranslatedChange;
+        return $this->referenceSyncedAt;
     }
 
-    public function newTranslationChange(): void
+    public function changeReferenceSyncedAt(?DateTimeImmutable $at): void
     {
-        $this->hasUntranslatedChange = true;
+        $this->referenceSyncedAt = $at;
     }
 
     public function changeSearchContent(string $content): void

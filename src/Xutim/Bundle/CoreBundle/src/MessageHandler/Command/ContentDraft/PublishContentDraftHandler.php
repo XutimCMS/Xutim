@@ -45,12 +45,13 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
         $draft->applyToTranslation();
 
         $object = $translation->getObject();
-        if ($translation->getId() === $object->getDefaultTranslation()->getId()) {
-            foreach ($object->getTranslations() as $trans) {
-                if ($trans->getId() === $object->getDefaultTranslation()->getId()) {
-                    continue;
-                }
-                $trans->newTranslationChange();
+        $refLocale = $this->siteContext->getReferenceLocale();
+        $isReferenceTranslation = $translation->getLocale() === $refLocale;
+
+        if (!$isReferenceTranslation) {
+            $refTrans = $object->getTranslationByLocale($refLocale);
+            if ($refTrans !== null) {
+                $translation->changeReferenceSyncedAt($refTrans->getUpdatedAt());
             }
         }
 

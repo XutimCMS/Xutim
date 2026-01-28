@@ -49,9 +49,9 @@ interface ContentTranslationInterface
 
     public function hasContent(): bool;
 
-    public function hasUntranslatedChange(): bool;
+    public function getReferenceSyncedAt(): ?DateTimeImmutable;
 
-    public function newTranslationChange(): void;
+    public function changeReferenceSyncedAt(?DateTimeImmutable $at): void;
 
     public function changeSearchContent(string $content): void;
 

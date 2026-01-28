@@ -1,10 +1,10 @@
-{% macro publicationStatusBadge(object, extraClass) %}
-    {% if object.hasUntranslatedChange() and object.status == constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published').value %}
+{% macro publicationStatusBadge(object, extraClass, referenceHasChanged) %}
+    {% if referenceHasChanged|default(false) and object.isPublished() %}
         <span class="badge text-bg-green"></span>
         <span
             class="badge text-bg-yellow"
             style="margin-left: -6px"
-            title="{{ 'Untranslated changes'|trans({}, 'admin') }}"
+            title="{{ 'Reference has changed'|trans({}, 'admin') }}"
             data-controller="tooltip"
         ></span>
     {% else %}
@@ -124,16 +124,16 @@
     ></span>
 {% endmacro %}
 
-{% macro translationStatusBadge(status, extraClass) %}
+{% macro translationStatusBadge(status, extraClass, referenceHasChanged) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 
     {% if status.isPublished %}
         {{ badges.translatedBadge(extraClass) }}
     {% endif %}
-    {% if status.hasUntranslatedChange %}
+    {% if referenceHasChanged|default(false) %}
         {{ badges.untranslatedChangeBadge(extraClass) }}
     {% endif %}
-    {% if not status.hasUntranslatedChange and not status.isPublished %}
+    {% if not referenceHasChanged|default(false) and not status.isPublished %}
         {{ badges.untranslatedBadge(extraClass) }}
     {% endif %}
 {% endmacro %}

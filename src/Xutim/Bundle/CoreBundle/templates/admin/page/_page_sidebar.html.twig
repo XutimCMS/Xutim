@@ -33,7 +33,7 @@
             }}
 
             {%
-                if translation is defined and translation is not same as(null) and translation.untranslatedChange()
+                if referenceHasChanged|default(false) and translation is defined and translation is not same as(null)
             %}
                 <twig:Xutim:Admin:SidebarItem>
                     <a
