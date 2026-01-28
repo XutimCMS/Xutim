@@ -1,0 +1,26 @@
+{% if draft is defined and draft is not null %}
+    <div class="alert alert-warning d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <strong>{{ 'Unpublished changes'|trans({}, 'admin') }}</strong>
+            <span class="text-body-secondary ms-1">{{ 'Last updated %date%'|trans({'%date%': draft.updatedAt|date('Y-m-d H:i')}, 'admin') }}</span>
+        </div>
+        <div class="d-flex gap-2">
+            <twig:Xutim:Admin:ModalDialog
+                class="btn btn-sm btn-success"
+                modalDialogColor="success"
+                action="{{ admin_path('admin_content_draft_publish', {draftId: draft.id}) }}"
+                confirmActionLabel="{{ 'Publish'|trans({}, 'admin') }}"
+            >
+                {{ 'Publish'|trans({}, 'admin') }}
+            </twig:Xutim:Admin:ModalDialog>
+            <twig:Xutim:Admin:ModalDialog
+                class="btn btn-sm btn-outline-danger"
+                modalDialogColor="danger"
+                action="{{ admin_path('admin_content_draft_discard', {draftId: draft.id}) }}"
+                confirmActionLabel="{{ 'Discard'|trans({}, 'admin') }}"
+            >
+                {{ 'Discard'|trans({}, 'admin') }}
+            </twig:Xutim:Admin:ModalDialog>
+        </div>
+    </div>
+{% endif %}

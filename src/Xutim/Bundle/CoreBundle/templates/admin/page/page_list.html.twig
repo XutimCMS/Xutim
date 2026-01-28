@@ -311,6 +311,7 @@
         </div>
         {% if selectedPage %}
             <div class="col-md-8">
+                {{ include('@XutimCore/admin/content_draft/_draft_banner.html.twig') }}
                 <div class="row">
                     {{
                         include('@XutimCore/admin/page/_page_show_body.html.twig', {page: selectedPage})

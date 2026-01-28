@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\ArticleRepository;
+use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
@@ -19,6 +20,7 @@ class ShowArticleAction extends AbstractController
         private readonly SiteContext $siteContext,
         private readonly ContentContext $contentContext,
         private readonly ArticleRepository $articleRepo,
+        private readonly ContentDraftRepository $draftRepo,
         private readonly LogEventRepository $eventRepo,
         private readonly TagRepository $tagRepo
     ) {
@@ -54,6 +56,11 @@ class ShowArticleAction extends AbstractController
             $lastRevision = $this->eventRepo->findLastByTranslation($currentTrans);
         }
 
+        $draft = null;
+        if ($currentTrans !== null && $currentTrans->isPublished()) {
+            $draft = $this->draftRepo->findDraft($currentTrans);
+        }
+
         return $this->render('@XutimCore/admin/article/article_show.html.twig', [
             'article' => $article,
             'currentTranslation' => $currentTrans,
@@ -62,7 +69,8 @@ class ShowArticleAction extends AbstractController
             'contextTranslation' => $contextTranslation,
             'totalTranslations' => $totalTranslations,
             'translatedTranslations' => $translatedArticles,
-            'allTags' => $this->tagRepo->findAllSorted($locale)
+            'allTags' => $this->tagRepo->findAllSorted($locale),
+            'draft' => $draft,
         ]);
     }
 }
