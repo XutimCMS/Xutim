@@ -94,6 +94,9 @@ class EditPageAction extends AbstractController
             ? $translation->getEditingUser()
             : null;
 
+        $refLocale = $this->siteContext->getReferenceLocale();
+        $referenceTranslation = $page->getTranslationByLocale($refLocale);
+
         return $this->render('@XutimCore/admin/page/page_edit.html.twig', [
             'form' => $form,
             'draft' => $draft,
@@ -103,7 +106,10 @@ class EditPageAction extends AbstractController
             'lastRevision' => $lastRevision,
             'translation' => $translation,
             'totalTranslations' => $totalTranslations,
-            'translatedTranslations' => $translatedPages
+            'translatedTranslations' => $translatedPages,
+            'referenceTranslation' => $referenceTranslation,
+            'referenceLocale' => $refLocale,
+            'referenceExists' => $referenceTranslation !== null,
         ]);
     }
 

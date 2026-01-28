@@ -14,7 +14,8 @@ final readonly class SiteDto
         public array $locales,
         public array $extendedContentLocales,
         public string $theme,
-        public string $sender
+        public string $sender,
+        public string $referenceLocale
     ) {
     }
 }

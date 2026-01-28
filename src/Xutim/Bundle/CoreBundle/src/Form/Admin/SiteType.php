@@ -54,6 +54,11 @@ class SiteType extends AbstractType implements DataMapperInterface
             ->add('sender', TextType::class, [
                 'label' => new TranslatableMessage('mail sender', [], 'admin'),
             ])
+            ->add('referenceLocale', LocaleType::class, [
+                'label' => new TranslatableMessage('reference language', [], 'admin'),
+                'required' => false,
+                'placeholder' => 'Select reference language',
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => new TranslatableMessage('submit', [], 'admin')
             ])
@@ -78,6 +83,7 @@ class SiteType extends AbstractType implements DataMapperInterface
         $forms['extendedLanguages']->setData($viewData->extendedContentLocales);
         $forms['theme']->setData($viewData->theme);
         $forms['sender']->setData($viewData->sender);
+        $forms['referenceLocale']->setData($viewData->referenceLocale);
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
@@ -92,7 +98,9 @@ class SiteType extends AbstractType implements DataMapperInterface
         $theme = $forms['theme']->getData();
         /** @var string $sender */
         $sender = $forms['sender']->getData();
+        /** @var string $referenceLocale */
+        $referenceLocale = $forms['referenceLocale']->getData() ?? 'en';
 
-        $viewData = new SiteDto($languages, $extendedLanguages, $theme, $sender);
+        $viewData = new SiteDto($languages, $extendedLanguages, $theme, $sender, $referenceLocale);
     }
 }

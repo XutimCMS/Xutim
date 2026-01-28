@@ -117,4 +117,9 @@ class SiteContext
     {
         return $this->getDefaultSite()->sender;
     }
+
+    public function getReferenceLocale(): string
+    {
+        return $this->getDefaultSite()->referenceLocale;
+    }
 }

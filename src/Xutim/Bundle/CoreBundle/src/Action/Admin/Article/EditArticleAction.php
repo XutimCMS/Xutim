@@ -94,6 +94,9 @@ class EditArticleAction extends AbstractController
             ? $translation->getEditingUser()
             : null;
 
+        $refLocale = $this->siteContext->getReferenceLocale();
+        $referenceTranslation = $article->getTranslationByLocale($refLocale);
+
         return $this->render('@XutimCore/admin/article/article_edit.html.twig', [
             'form' => $form,
             'draft' => $draft,
@@ -104,7 +107,10 @@ class EditArticleAction extends AbstractController
             'translation' => $translation,
             'totalTranslations' => $totalTranslations,
             'translatedTranslations' => $translatedArticles,
-            'allTags' => $this->tagRepo->findAllSorted($contentLocale)
+            'allTags' => $this->tagRepo->findAllSorted($contentLocale),
+            'referenceTranslation' => $referenceTranslation,
+            'referenceLocale' => $refLocale,
+            'referenceExists' => $referenceTranslation !== null,
         ]);
     }
 

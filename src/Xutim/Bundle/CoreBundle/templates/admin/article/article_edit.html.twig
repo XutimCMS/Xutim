@@ -100,10 +100,15 @@
     </div>
     {% endif %}
     {{ include('@XutimCore/admin/content_draft/_draft_banner.html.twig') }}
+    {% if not referenceExists %}
+    <div class="alert alert-warning mb-3">
+        {{ 'Reference translation ({locale}) is missing for this content.'|trans({'{locale}': referenceLocale|upper}, 'admin') }}
+    </div>
+    {% endif %}
     <div
         data-controller="split-view"
         data-split-view-target="root"
-        data-split-view-reference-url-value="{{ admin_path('admin_json_content_translation_show', {id: article.defaultTranslation.id}) }}"
+        data-split-view-reference-url-value="{{ referenceTranslation ? admin_path('admin_json_content_translation_show', {id: referenceTranslation.id}) : (article.translations|length > 0 ? admin_path('admin_json_content_translation_show', {id: article.translations|first.id}) : '') }}"
         data-split-view-current-translation-id-value="{{ translation ? translation.id : '' }}"
         class="card mb-3"
         data-split-view-block-codes-value="{{ fetch_block_codes()|json_encode }}"
@@ -136,12 +141,12 @@
                     {% for tr in article.translations %}
                         <option
                             value="{{ admin_path('admin_json_content_translation_show', {id: tr.id}) }}"
-                            {% if article.defaultTranslation.id == tr.id %}
+                            {% if referenceTranslation and referenceTranslation.id == tr.id %}
                                 selected
                             {% endif %}
                         >
                             {{ tr.locale|locale_name }}{%
-                                if article.defaultTranslation.id == tr.id
+                                if referenceTranslation and referenceTranslation.id == tr.id
                             %}
                                 — {{
                                     'reference for translations'|trans({}, 'admin')
@@ -219,7 +224,7 @@
                             type="text"
                             class="form-control text-bg-light"
                             readonly
-                            value="{{ article.defaultTranslation.pretitle }}"
+                            value="{{ referenceTranslation ? referenceTranslation.pretitle : '' }}"
                             data-split-view-target="metaPretitle"
                         />
                     </div>
@@ -230,7 +235,7 @@
                             type="text"
                             class="form-control text-bg-light"
                             readonly
-                            value="{{ article.defaultTranslation.title }}"
+                            value="{{ referenceTranslation ? referenceTranslation.title : '' }}"
                             data-split-view-target="metaTitle"
                         />
                     </div>
@@ -241,7 +246,7 @@
                             type="text"
                             class="form-control text-bg-light"
                             readonly
-                            value="{{ article.defaultTranslation.subtitle }}"
+                            value="{{ referenceTranslation ? referenceTranslation.subtitle : '' }}"
                             data-split-view-target="metaSubtitle"
                         />
                     </div>
@@ -252,7 +257,7 @@
                             type="text"
                             class="form-control text-bg-light"
                             readonly
-                            value="{{ article.defaultTranslation.slug }}"
+                            value="{{ referenceTranslation ? referenceTranslation.slug : '' }}"
                             data-split-view-target="metaSlug"
                         />
                     </div>
@@ -264,7 +269,7 @@
                             rows="2"
                             readonly
                             data-split-view-target="metaDescription"
-                        >{{ article.defaultTranslation.description|striptags }}</textarea>
+                        >{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</textarea>
                         <div
                             id="content_translation_description_help"
                             class="form-text mb-0 help-text"

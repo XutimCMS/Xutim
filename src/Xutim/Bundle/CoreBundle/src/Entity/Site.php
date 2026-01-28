@@ -33,6 +33,9 @@ class Site implements SiteInterface
     #[Column(type: 'string', length: 255, nullable: false, options: ['comment' => 'Site\'s sender\'s email address.'])]
     private string $sender;
 
+    #[Column(type: 'string', length: 10, nullable: false, options: ['comment' => 'Site\'s reference locale for translations.'])]
+    private string $referenceLocale;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
@@ -40,13 +43,14 @@ class Site implements SiteInterface
         $this->extendedContentLocales = ['en', 'fr'];
         $this->theme = 'default';
         $this->sender = 'website@example.com';
+        $this->referenceLocale = 'en';
     }
 
     /**
      * @param array<string> $locales
      * @param array<string> $extendedContentLocales
      */
-    public function change(array $locales, array $extendedContentLocales, string $theme, string $sender): void
+    public function change(array $locales, array $extendedContentLocales, string $theme, string $sender, string $referenceLocale): void
     {
         usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
         usort($extendedContentLocales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
@@ -54,6 +58,12 @@ class Site implements SiteInterface
         $this->extendedContentLocales = $extendedContentLocales;
         $this->theme = $theme;
         $this->sender = $sender;
+        $this->referenceLocale = $referenceLocale;
+    }
+
+    public function getReferenceLocale(): string
+    {
+        return $this->referenceLocale;
     }
 
     /**
@@ -79,6 +89,6 @@ class Site implements SiteInterface
 
     public function toDto(): SiteDto
     {
-        return new SiteDto($this->locales, $this->extendedContentLocales, $this->theme, $this->sender);
+        return new SiteDto($this->locales, $this->extendedContentLocales, $this->theme, $this->sender, $this->referenceLocale);
     }
 }

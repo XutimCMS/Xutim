@@ -12,7 +12,9 @@ interface SiteInterface
      * @param array<string> $locales
      * @param array<string> $extendedContentLocales
      */
-    public function change(array $locales, array $extendedContentLocales, string $theme, string $sender): void;
+    public function change(array $locales, array $extendedContentLocales, string $theme, string $sender, string $referenceLocale): void;
+
+    public function getReferenceLocale(): string;
 
     /**
      * @return array<string>
