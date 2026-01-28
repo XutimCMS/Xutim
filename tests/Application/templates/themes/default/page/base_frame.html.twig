@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>{{ title }}</title></head>
+<body>
+    <div class="page">
+        {% if preTitle %}<span class="pre-title">{{ preTitle }}</span>{% endif %}
+        <h1>{{ title }}</h1>
+        {% if subTitle %}<span class="sub-title">{{ subTitle }}</span>{% endif %}
+        {% if layout %}
+            {% include layout %}
+        {% endif %}
+    </div>
+</body>
+</html>
