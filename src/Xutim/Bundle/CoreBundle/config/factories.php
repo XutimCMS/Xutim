@@ -7,6 +7,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Xutim\CoreBundle\Domain\Factory\ArticleFactory;
 use Xutim\CoreBundle\Domain\Factory\BlockFactory;
 use Xutim\CoreBundle\Domain\Factory\BlockItemFactory;
+use Xutim\CoreBundle\Domain\Factory\ContentDraftFactory;
 use Xutim\CoreBundle\Domain\Factory\ContentTranslationFactory;
 use Xutim\CoreBundle\Domain\Factory\FileFactory;
 use Xutim\CoreBundle\Domain\Factory\FileTranslationFactory;
@@ -64,4 +65,7 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(TagTranslationFactory::class)
         ->arg('$entityClass', '%xutim_core.model.tag_translation.class%');
+
+    $services->set(ContentDraftFactory::class)
+        ->arg('$entityClass', '%xutim_core.model.content_draft.class%');
 };

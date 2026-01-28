@@ -26,6 +26,8 @@ xutim_core:
             class: App\Entity\Core\File
         media_folder:
             class: App\Entity\Core\MediaFolder
+        content_draft:
+            class: App\Entity\Core\ContentDraft
 
     filter_sets:
         front_thumb_16_9:
