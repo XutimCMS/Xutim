@@ -81,7 +81,7 @@
             variant="primary"
             id="content_translation_submit"
             form="{{ form.vars.id }}"
-            disabled="{{ form.vars.disabled }}"
+            :disabled="form.vars.disabled"
             data-action="click->editorjs-form#save:prevent"
         >
             {{ 'submit'|trans({}, 'admin') }}

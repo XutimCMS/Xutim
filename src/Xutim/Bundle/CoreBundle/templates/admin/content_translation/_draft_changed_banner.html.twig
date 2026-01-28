@@ -1,0 +1,16 @@
+<div data-editing-presence-target="contentChangedBanner"
+     class="alert alert-info d-flex align-items-center justify-content-between mb-3 d-none">
+    <div>
+        <twig:ux:icon name="tabler:refresh-alert" class="w-4 h-4 me-2 flex-shrink-0" />
+        <strong data-editing-presence-target="contentChangedUserName"></strong>
+        {{ 'has saved new changes to the content'|trans({}, 'admin') }}
+    </div>
+    <twig:Xutim:Admin:Button
+        tag="button"
+        variant="default"
+        class="btn-sm"
+        data-action="editing-presence#reloadPage"
+    >
+        {{ 'Reload'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
+</div>

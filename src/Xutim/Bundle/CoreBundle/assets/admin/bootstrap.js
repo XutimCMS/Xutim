@@ -35,6 +35,7 @@ import SnippetEditor from './controllers/snippet-editor_controller.js';
 import Draggable from './controllers/draggable_controller.js';
 import DropTarget from './controllers/drop-target_controller.js';
 import SplitView from './controllers/split-view_controller.js';
+import EditingPresence from './controllers/editing-presence_controller.js';
 
 app.register('sidebar', Sidebar);
 app.register('article-preview', ArticlePreview);
@@ -65,3 +66,4 @@ app.register('snippet-editor', SnippetEditor);
 app.register('draggable', Draggable);
 app.register('drop-target', DropTarget);
 app.register('split-view', SplitView);
+app.register('editing-presence', EditingPresence);

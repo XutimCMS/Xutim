@@ -7,7 +7,10 @@ namespace Xutim\CoreBundle\Entity;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\UniqueConstraint;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 #[UniqueConstraint(columns: ['locale', 'slug'])]
 trait ContentTranslationTrait
@@ -47,6 +50,13 @@ trait ContentTranslationTrait
 
     #[Column(type: 'text', nullable: true, options: ['default' => null, 'comment' => 'tsvector for fulltext search'], insertable: false, updatable: false)]
     private ?string $searchVector = null;
+
+    #[ManyToOne(targetEntity: UserInterface::class)]
+    #[JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?UserInterface $editingUser = null;
+
+    #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $editingHeartbeatAt = null;
 
     /**
      * @param EditorBlock $content
@@ -147,5 +157,50 @@ trait ContentTranslationTrait
     public function changeSearchTagContent(string $content): void
     {
         $this->searchTagContent = $content;
+    }
+
+    public function startEditing(UserInterface $user): void
+    {
+        $this->editingUser = $user;
+        $this->editingHeartbeatAt = new DateTimeImmutable();
+    }
+
+    public function heartbeat(): void
+    {
+        $this->editingHeartbeatAt = new DateTimeImmutable();
+    }
+
+    public function stopEditing(): void
+    {
+        $this->editingUser = null;
+        $this->editingHeartbeatAt = null;
+    }
+
+    public function getEditingUser(): ?UserInterface
+    {
+        return $this->editingUser;
+    }
+
+    public function getEditingHeartbeatAt(): ?DateTimeImmutable
+    {
+        return $this->editingHeartbeatAt;
+    }
+
+    public function isBeingEditedBy(?UserInterface $excludeUser = null, int $timeoutSeconds = 30): bool
+    {
+        if ($this->editingUser === null || $this->editingHeartbeatAt === null) {
+            return false;
+        }
+
+        $elapsed = time() - $this->editingHeartbeatAt->getTimestamp();
+        if ($elapsed > $timeoutSeconds) {
+            return false;
+        }
+
+        if ($excludeUser !== null && $this->editingUser->getId()->equals($excludeUser->getId())) {
+            return false;
+        }
+
+        return true;
     }
 }

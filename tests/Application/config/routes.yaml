@@ -1,3 +1,6 @@
+xutim_analytics:
+    resource: '@XutimAnalyticsBundle/config/routes.php'
+
 xutim_redirect:
     resource: '@XutimRedirectBundle/config/routes.php'
 

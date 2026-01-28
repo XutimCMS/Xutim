@@ -19,6 +19,11 @@ return function (RoutingConfigurator $routes) {
         ->defaults($defaults)
     ;
 
+    $routes->import('routes/content_draft_routes.php')
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
+
     $routes->import('routes/content_translation_routes.php')
         ->requirements($requirements)
         ->defaults($defaults)

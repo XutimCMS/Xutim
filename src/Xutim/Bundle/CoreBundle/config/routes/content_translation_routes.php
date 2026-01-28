@@ -5,8 +5,10 @@ declare(strict_types=1);
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\DeleteTranslationAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\EditTranslationAction;
+use Xutim\CoreBundle\Action\Admin\ContentTranslation\HeartbeatAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\JsonGenerateSlugAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\ShowTranslationRevisionsAction;
+use Xutim\CoreBundle\Action\Admin\ContentTranslation\StopEditingAction;
 
 return function (RoutingConfigurator $routes) {
     $routes
@@ -35,5 +37,17 @@ return function (RoutingConfigurator $routes) {
             'oldId' => '[0-9a-fA-F-]{36}',
             'newId' => '[0-9a-fA-F-]{36}'
         ])
+    ;
+
+    $routes
+        ->add('admin_content_translation_heartbeat', '/admin/{_content_locale}/content-translation/{id}/heartbeat')
+        ->methods(['post'])
+        ->controller(HeartbeatAction::class)
+    ;
+
+    $routes
+        ->add('admin_content_translation_stop_editing', '/admin/{_content_locale}/content-translation/{id}/stop-editing')
+        ->methods(['post'])
+        ->controller(StopEditingAction::class)
     ;
 };

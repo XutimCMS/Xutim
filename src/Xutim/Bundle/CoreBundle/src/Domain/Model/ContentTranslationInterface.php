@@ -7,6 +7,7 @@ namespace Xutim\CoreBundle\Domain\Model;
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\PublicationStatus;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 interface ContentTranslationInterface
 {
@@ -75,4 +76,16 @@ interface ContentTranslationInterface
     public function getCreatedAt(): DateTimeImmutable;
 
     public function getUpdatedAt(): DateTimeImmutable;
+
+    public function startEditing(UserInterface $user): void;
+
+    public function heartbeat(): void;
+
+    public function stopEditing(): void;
+
+    public function getEditingUser(): ?UserInterface;
+
+    public function getEditingHeartbeatAt(): ?DateTimeImmutable;
+
+    public function isBeingEditedBy(?UserInterface $excludeUser = null, int $timeoutSeconds = 30): bool;
 }
