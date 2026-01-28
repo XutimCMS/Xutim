@@ -12,10 +12,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\UX\Turbo\TurboBundle;
 use Twig\Environment;
-use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\EditorBundle\Domain\Factory\ContentBlockFactory;
 use Xutim\EditorBundle\Form\BlockFormFactory;
 use Xutim\EditorBundle\Repository\ContentBlockRepository;
+use Xutim\EditorBundle\Repository\ContentDraftRepository;
 use Xutim\SecurityBundle\Security\UserRoles;
 
 final class BlockAddAction

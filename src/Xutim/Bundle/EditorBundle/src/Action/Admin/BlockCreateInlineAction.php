@@ -14,7 +14,7 @@ use Symfony\UX\Turbo\TurboBundle;
 use Twig\Environment;
 use Xutim\EditorBundle\Domain\Factory\ContentBlockFactory;
 use Xutim\EditorBundle\Repository\ContentBlockRepository;
-use Xutim\CoreBundle\Repository\ContentDraftRepository;
+use Xutim\EditorBundle\Repository\ContentDraftRepository;
 use Xutim\SecurityBundle\Security\UserRoles;
 
 final class BlockCreateInlineAction

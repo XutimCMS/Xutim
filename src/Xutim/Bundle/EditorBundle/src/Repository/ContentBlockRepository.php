@@ -168,25 +168,6 @@ class ContentBlockRepository extends ServiceEntityRepository
         $em = $this->getEntityManager();
         $connection = $em->getConnection();
 
-        // Get table name from metadata first for debug
-        $metadata = $em->getClassMetadata($this->getEntityName());
-        $tableName = $metadata->getTableName();
-
-        // Debug: what is blockId and what's in the DB?
-        $row = $connection->fetchAssociative(
-            sprintf('SELECT * FROM %s WHERE id = :id', $tableName),
-            ['id' => $blockId]
-        );
-        throw new \RuntimeException(sprintf(
-            'Debug blockId: value=%s, type=%s, entityName=%s, tableName=%s, dbRow=%s',
-            $blockId,
-            gettype($blockId),
-            $this->getEntityName(),
-            $tableName,
-            json_encode($row)
-        ));
-
-        // Get table name from metadata
         $metadata = $em->getClassMetadata($this->getEntityName());
         $tableName = $metadata->getTableName();
 
