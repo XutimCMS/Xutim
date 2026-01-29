@@ -26,7 +26,7 @@
             href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
         >
             <twig:Xutim:Admin:Icon name="history" class="me-1" />
-            History
+            {{ 'History'|trans({}, 'admin') }}
         </twig:Xutim:Admin:Button>
     {% endif %}
 
@@ -71,9 +71,24 @@
                         aria-controls="general-tab"
                         aria-selected="true"
                     >
-                        General
+                        {{ 'General'|trans({}, 'admin') }}
                     </twig:Xutim:Admin:Button>
                 </twig:Xutim:Admin:SidebarTab>
+                {% if translation is not same as(null) %}
+                <twig:Xutim:Admin:SidebarTab target="history-tab">
+                    <twig:Xutim:Admin:Button
+                        variant="tab"
+                        type="a"
+                        data-bs-toggle="tab"
+                        href="#history-tab"
+                        role="tab"
+                        aria-controls="history-tab"
+                        aria-selected="false"
+                    >
+                        {{ 'History'|trans({}, 'admin') }}
+                    </twig:Xutim:Admin:Button>
+                </twig:Xutim:Admin:SidebarTab>
+                {% endif %}
             </twig:Xutim:Admin:SidebarTabs>
         </twig:block>
         <twig:block name="content">
@@ -83,6 +98,17 @@
                         include('@XutimCore/admin/article/_article_sidebar.html.twig', {referenceHasChanged: referenceHasChanged})
                     }}
                 </div>
+                {% if translation is not same as(null) %}
+                <div id="history-tab" class="tab-pane" role="tabpanel">
+                    <turbo-frame
+                        id="sidebar-history"
+                        src="{{ admin_path('admin_content_translation_sidebar_history', {id: translation.id}) }}"
+                        loading="lazy"
+                    >
+                        <div class="p-3 text-muted small">{{ 'Loading...'|trans({}, 'admin') }}</div>
+                    </turbo-frame>
+                </div>
+                {% endif %}
             </div>
         </twig:block>
     </twig:Xutim:Admin:Sidebar>
