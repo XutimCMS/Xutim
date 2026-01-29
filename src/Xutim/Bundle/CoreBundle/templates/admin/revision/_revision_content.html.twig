@@ -1,0 +1,179 @@
+<div class="row"
+     data-controller="revision-filter"
+     data-revision-filter-base-url-value="{{ path('admin_content_translation_revisions', {id: translation.id}) }}">
+    <div class="col-md-3">
+        {% if (events|length) > 0 %}
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {{ 'Revisions'|trans({}, 'admin') }}
+                    </h3>
+                </div>
+
+                <div class="px-3 pt-3">
+                    <div class="small text-muted mb-1">
+                        {{ 'Comparing'|trans({}, 'admin') }}
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-secondary text-white">
+                            {{ selectedOld.recordedAt|date('d M Y H:i') }}
+                        </span>
+                        <span class="text-muted">→</span>
+                        <span class="badge bg-primary text-white">
+                            {{ selectedNew.recordedAt|date('d M Y H:i') }}
+                        </span>
+                    </div>
+                    {% if changeSummary is defined %}
+                    <div class="d-flex flex-wrap gap-1 mt-2">
+                        {% if changeSummary.preTitleChanged %}
+                            <span class="badge bg-warning-lt">{{ 'pretitle'|trans({}, 'admin') }}</span>
+                        {% endif %}
+                        {% if changeSummary.titleChanged %}
+                            <span class="badge bg-warning-lt">{{ 'title'|trans({}, 'admin') }}</span>
+                        {% endif %}
+                        {% if changeSummary.subTitleChanged %}
+                            <span class="badge bg-warning-lt">{{ 'subtitle'|trans({}, 'admin') }}</span>
+                        {% endif %}
+                        {% if changeSummary.descriptionChanged %}
+                            <span class="badge bg-warning-lt">{{ 'description'|trans({}, 'admin') }}</span>
+                        {% endif %}
+                        {% if changeSummary.blocksAdded > 0 %}
+                            <span class="badge bg-success-lt">+{{ changeSummary.blocksAdded }} {{ 'blocks'|trans({}, 'admin') }}</span>
+                        {% endif %}
+                        {% if changeSummary.blocksRemoved > 0 %}
+                            <span class="badge bg-danger-lt">-{{ changeSummary.blocksRemoved }} {{ 'blocks'|trans({}, 'admin') }}</span>
+                        {% endif %}
+                        {% if changeSummary.blocksModified > 0 %}
+                            <span class="badge bg-warning-lt">{{ changeSummary.blocksModified }} {{ 'modified'|trans({}, 'admin') }}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="small text-muted mt-2 mb-4">
+                        {{ 'Select 2 revisions to compare'|trans({}, 'admin') }}
+                    </div>
+                </div>
+
+                <div class="list-group list-group-flush">
+                    {% set total = events|length %}
+                    {% for event in events %}
+                        {% set userData = usersData[event.userIdentifier]|default({}) %}
+                        <label class="list-group-item d-flex align-items-center gap-2 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                class="form-check-input m-0"
+                                value="{{ event.id }}"
+                                data-revision-filter-target="checkbox"
+                                data-action="revision-filter#selectRevision"
+                                data-index="{{ loop.index0 }}"
+                                {{ selectedOld.id == event.id or selectedNew.id == event.id ? 'checked' : '' }}
+                            />
+                            <div class="text-muted" style="width: 1.5rem">
+                                {{ total - loop.index0 }}
+                            </div>
+                            <span
+                                class="avatar avatar-sm"
+                                {% if userData.avatar|default('') %}
+                                style="background-image: url({{ userData.avatar }})"
+                                {% endif %}
+                            ></span>
+                            <div class="flex-fill">
+                                <div class="fw-semibold">
+                                    {{ event.recordedAt|date('d M Y H:i') }}
+                                </div>
+                                <div class="small text-secondary">
+                                    {{ userData.name|default(event.userIdentifier) }}
+                                </div>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-title">{{ 'No revision'|trans({}, 'admin') }}</h4>
+                <div class="text-secondary">
+                    {{ 'There is no revision to compare.'|trans({}, 'admin') }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">
+                    {{ 'Revision comparison'|trans({}, 'admin') }}
+                </h3>
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    data-action="revision-filter#toggle"
+                >
+                    <twig:ux:icon name="tabler:filter" class="icon" />
+                    <span data-revision-filter-target="showAllText">
+                        {{ 'Show All'|trans({}, 'admin') }}
+                    </span>
+                    <span data-revision-filter-target="onlyChangedText" class="d-none">
+                        {{ 'Only Changed'|trans({}, 'admin') }}
+                    </span>
+                </button>
+            </div>
+            <div class="card-body">
+                <h2>{{ 'Intro title'|trans({}, 'admin') }}</h2>
+                <p>
+                    {% if preTitleDiff is defined and preTitleDiff %}
+                        {{ preTitleDiff|raw }}
+                    {% else %}
+                        {{ translation.preTitle|default('-') }}
+                    {% endif %}
+                </p>
+
+                <h2>{{ 'Title'|trans({}, 'admin') }}</h2>
+                <p>
+                    {% if titleDiff is defined and titleDiff %}
+                        {{ titleDiff|raw }}
+                    {% else %}
+                        {{ translation.title|default('-') }}
+                    {% endif %}
+                </p>
+
+                <h2>{{ 'Subtitle'|trans({}, 'admin') }}</h2>
+                <p>
+                    {% if subTitleDiff is defined and subTitleDiff %}
+                        {{ subTitleDiff|raw }}
+                    {% else %}
+                        {{ translation.subTitle|default('-') }}
+                    {% endif %}
+                </p>
+
+                <h2 class="mt-4">{{ 'Description'|trans({}, 'admin') }}</h2>
+                <p>
+                    {% if descriptionDiff is defined %}
+                        {{ descriptionDiff|raw }}
+                    {% else %}
+                        {{ translation.description }}
+                    {% endif %}
+                </p>
+
+                <h2 class="mt-4">{{ 'Content'|trans({}, 'admin') }}</h2>
+                {% if contentRows is defined %}
+                    {{
+                        include('@XutimCore/admin/content_fragment/content_diff.html.twig', {
+                            rows: contentRows,
+                            locale: content_context_language(),
+                            blockAuthors: blockAuthors|default({}),
+                            usersData: usersData|default({}),
+                        })
+                    }}
+                {% else %}
+                    {{
+                        include('@XutimCore/admin/content_fragment/content.html.twig', {
+                            fragments: translation.content,
+                            locale: content_context_language(),
+                        })
+                    }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

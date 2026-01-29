@@ -1,0 +1,34 @@
+{% extends '@XutimCore/admin/page/page_edit.html.twig' %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ admin_path('admin_page_edit', {id: page.id}) }}"
+    >
+        <twig:Xutim:Admin:Icon name="edit" class="me-1" />
+        {{ 'Edit'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
+
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ admin_path('admin_page_list', {id: page.id}) }}"
+    >
+        <twig:Xutim:Admin:Icon name="search" class="me-1" />
+        {{ 'Show'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
+
+    <twig:Xutim:Admin:Button
+        tag="button"
+        id="sidebar-toggle"
+        variant="nav"
+    >
+        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        {{ 'Sidebar'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block body %}
+    {{ include('@XutimCore/admin/revision/_revision_content.html.twig') }}
+{% endblock %}
