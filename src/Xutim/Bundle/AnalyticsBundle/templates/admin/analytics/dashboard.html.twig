@@ -38,7 +38,14 @@
         <div class="col-sm-6 col-lg-2">
             <div class="card">
                 <div class="card-body">
-                    <div class="subheader">{{ 'Pageviews'|trans({}, 'admin') }}</div>
+                    <div class="subheader">
+                        <span
+                            class="help-hint"
+                            title="{{ 'Total number of times pages were loaded'|trans({}, 'admin') }}"
+                        >
+                            {{ 'Pageviews'|trans({}, 'admin') }}
+                        </span>
+                    </div>
                     <div class="d-flex align-items-baseline">
                         <div class="h1 mb-0 me-2">{{ pageviews|number_format }}</div>
                         {{ _self.change_indicator(pageviews, prevPageviews, false) }}
@@ -49,7 +56,14 @@
         <div class="col-sm-6 col-lg-2">
             <div class="card">
                 <div class="card-body">
-                    <div class="subheader">{{ 'Visitors'|trans({}, 'admin') }}</div>
+                    <div class="subheader">
+                        <span
+                            class="help-hint"
+                            title="{{ 'Unique visitors identified by browser session'|trans({}, 'admin') }}"
+                        >
+                            {{ 'Visitors'|trans({}, 'admin') }}
+                        </span>
+                    </div>
                     <div class="d-flex align-items-baseline">
                         <div class="h1 mb-0 me-2">{{ visitors|number_format }}</div>
                         {{ _self.change_indicator(visitors, prevVisitors, false) }}
@@ -60,7 +74,14 @@
         <div class="col-sm-6 col-lg-2">
             <div class="card">
                 <div class="card-body">
-                    <div class="subheader">{{ 'Views/Visit'|trans({}, 'admin') }}</div>
+                    <div class="subheader">
+                        <span
+                            class="help-hint"
+                            title="{{ 'Average number of pages viewed per session'|trans({}, 'admin') }}"
+                        >
+                            {{ 'Views/Visit'|trans({}, 'admin') }}
+                        </span>
+                    </div>
                     <div class="d-flex align-items-baseline">
                         <div class="h1 mb-0 me-2">{{ viewsPerVisit ? viewsPerVisit|number_format(1) : '-' }}</div>
                         {{ _self.change_indicator(viewsPerVisit, prevViewsPerVisit, false) }}
@@ -71,7 +92,14 @@
         <div class="col-sm-6 col-lg-2">
             <div class="card">
                 <div class="card-body">
-                    <div class="subheader">{{ 'Bounce Rate'|trans({}, 'admin') }}</div>
+                    <div class="subheader">
+                        <span
+                            class="help-hint"
+                            title="{{ 'Visitors who left after viewing only one page'|trans({}, 'admin') }}"
+                        >
+                            {{ 'Bounce Rate'|trans({}, 'admin') }}
+                        </span>
+                    </div>
                     <div class="d-flex align-items-baseline">
                         <div class="h1 mb-0 me-2">{{ bounceRate ? (bounceRate|number_format(0) ~ '%') : '-' }}</div>
                         {{ _self.change_indicator(bounceRate, prevBounceRate, true) }}
@@ -82,7 +110,14 @@
         <div class="col-sm-6 col-lg-2">
             <div class="card">
                 <div class="card-body">
-                    <div class="subheader">{{ 'Avg. Scroll Depth'|trans({}, 'admin') }}</div>
+                    <div class="subheader">
+                        <span
+                            class="help-hint"
+                            title="{{ 'Average percentage of page content scrolled'|trans({}, 'admin') }}"
+                        >
+                            {{ 'Avg. Scroll Depth'|trans({}, 'admin') }}
+                        </span>
+                    </div>
                     <div class="d-flex align-items-baseline">
                         <div class="h1 mb-0 me-2">{{ avgScrollDepth ? (avgScrollDepth|number_format(0) ~ '%') : '-' }}</div>
                         {{ _self.change_indicator(avgScrollDepth, prevAvgScrollDepth, false) }}
@@ -93,7 +128,14 @@
         <div class="col-sm-6 col-lg-2">
             <div class="card">
                 <div class="card-body">
-                    <div class="subheader">{{ 'Avg. Load Time'|trans({}, 'admin') }}</div>
+                    <div class="subheader">
+                        <span
+                            class="help-hint"
+                            title="{{ 'Average time for page to fully load'|trans({}, 'admin') }}"
+                        >
+                            {{ 'Avg. Load Time'|trans({}, 'admin') }}
+                        </span>
+                    </div>
                     <div class="d-flex align-items-baseline">
                         <div class="h1 mb-0 me-2">{{ avgLoadTime ? ((avgLoadTime / 1000)|number_format(1) ~ 's') : '-' }}</div>
                         {{ _self.change_indicator(avgLoadTime, prevAvgLoadTime, true) }}

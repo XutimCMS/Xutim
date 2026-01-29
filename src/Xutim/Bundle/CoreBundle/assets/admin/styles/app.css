@@ -79,6 +79,11 @@ th[title] {
     cursor: help;
 }
 
+.help-hint {
+    text-decoration: underline dotted;
+    cursor: help;
+}
+
 .btn-link {
     text-decoration: none;
 }

@@ -18,7 +18,14 @@
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{ 'Sources'|trans({}, 'admin') }}</h3>
+                    <h3 class="card-title">
+                        <span
+                            class="help-hint"
+                            title="{{ 'Categorized traffic origin (e.g., google, direct)'|trans({}, 'admin') }}"
+                        >
+                            {{ 'Sources'|trans({}, 'admin') }}
+                        </span>
+                    </h3>
                 </div>
                 <div class="table-responsive">
                     {% set maxSourceCount = sources|map(s => s.visits)|sort|last|default(1) %}
@@ -55,7 +62,14 @@
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{ 'Referrer URLs'|trans({}, 'admin') }}</h3>
+                    <h3 class="card-title">
+                        <span
+                            class="help-hint"
+                            title="{{ 'Full URLs that referred traffic to your site'|trans({}, 'admin') }}"
+                        >
+                            {{ 'Referrer URLs'|trans({}, 'admin') }}
+                        </span>
+                    </h3>
                 </div>
                 <div class="table-responsive">
                     {% set maxRefCount = rawReferrers|map(r => r.visits)|sort|last|default(1) %}

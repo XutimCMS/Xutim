@@ -52,7 +52,12 @@
 
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="header">
-                    {{ 'Views'|trans({}, 'admin') }}:
+                    <span
+                        class="help-hint"
+                        title="{{ 'Total number of times pages were loaded'|trans({}, 'admin') }}"
+                    >
+                        {{ 'Views'|trans({}, 'admin') }}
+                    </span>:
                 </twig:block>
                 <twig:block name="content">
                     {{ pageStats.pageviews|number_format(0, '.', ',') }}
@@ -61,7 +66,12 @@
 
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="header">
-                    {{ 'Visitors'|trans({}, 'admin') }}:
+                    <span
+                        class="help-hint"
+                        title="{{ 'Unique visitors identified by browser session'|trans({}, 'admin') }}"
+                    >
+                        {{ 'Visitors'|trans({}, 'admin') }}
+                    </span>:
                 </twig:block>
                 <twig:block name="content">
                     {{ pageStats.uniqueVisitors|number_format(0, '.', ',') }}
@@ -71,9 +81,11 @@
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="header">
                     <span
+                        class="help-hint"
                         title="{{ 'Visitors who entered on this page and left without viewing other pages'|trans({}, 'admin') }}"
-                        style="text-decoration: underline dotted; cursor: help;"
-                    >{{ 'Bounce'|trans({}, 'admin') }}</span>:
+                    >
+                        {{ 'Bounce'|trans({}, 'admin') }}
+                    </span>:
                 </twig:block>
                 <twig:block name="content">
                     {{ bounceRate|number_format(0) }}%
