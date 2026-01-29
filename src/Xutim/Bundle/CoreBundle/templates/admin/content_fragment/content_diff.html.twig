@@ -51,6 +51,22 @@
                     'Unchanged'|trans({}, 'admin')
                 }}</span>
             {% endif %}
+
+            {% if blockAuthors is defined and fragment.id is defined and blockAuthors[fragment.id] is defined and blockAuthors[fragment.id]|length > 0 %}
+                <div class="d-inline-flex align-items-center gap-1 ms-2 small text-muted">
+                    {% for email in blockAuthors[fragment.id] %}
+                        {% set user = usersData[email]|default({}) %}
+                        <span
+                            class="avatar avatar-xs"
+                            {% if user.avatar|default('') %}
+                            style="background-image: url({{ user.avatar }})"
+                            {% endif %}
+                            title="{{ user.name|default(email) }}"
+                        ></span>
+                    {% endfor %}
+                    <span>{{ blockAuthors[fragment.id]|map(e => usersData[e].name|default(e))|join(', ') }}</span>
+                </div>
+            {% endif %}
         </div>
 
         {% if fragment.type == 'paragraph' %}
