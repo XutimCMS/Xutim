@@ -181,10 +181,15 @@
                     class="btn-sm"
                     data-split-view-target="scrollLockBtn"
                     data-action="split-view#toggleScrollLock"
-                    title="{{ 'Lock reference scroll'|trans({}, 'admin') }}"
+                    title="{{ 'Toggle reference scroll'|trans({}, 'admin') }}"
                     hidden
                 >
-                    <twig:ux:icon name="tabler:lock" class="w-3 h-3" />
+                    <span data-split-view-target="scrollLockIconLocked">
+                        <twig:ux:icon name="tabler:lock" class="w-3 h-3" />
+                    </span>
+                    <span data-split-view-target="scrollLockIconUnlocked" class="d-none">
+                        <twig:ux:icon name="tabler:lock-open" class="w-3 h-3" />
+                    </span>
                 </twig:Xutim:Admin:Button>
 
                 <twig:Xutim:Admin:Button

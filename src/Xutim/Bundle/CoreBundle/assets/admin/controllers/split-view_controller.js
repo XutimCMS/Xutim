@@ -25,6 +25,8 @@ export default class extends Controller {
         'referenceContainer',
         'changedBanner',
         'scrollLockBtn',
+        'scrollLockIconLocked',
+        'scrollLockIconUnlocked',
         'diffToggleBtn',
         'diffToggleBtnShowText',
         'diffToggleBtnHideText',
@@ -48,8 +50,8 @@ export default class extends Controller {
 
     connect() {
         this.isOn = localStorage.getItem('xutim.splitView') === '1';
-        this.scrollLocked =
-            localStorage.getItem('xutim.splitViewScrollLock') === '1';
+        const stored = localStorage.getItem('xutim.splitViewScrollLock');
+        this.scrollLocked = stored === null || stored === '1';
 
         if (this.isOn) {
             this.enable();
@@ -442,6 +444,18 @@ export default class extends Controller {
             this.scrollLockBtnTarget.classList.add('active');
         } else {
             this.scrollLockBtnTarget.classList.remove('active');
+        }
+        if (this.hasScrollLockIconLockedTarget) {
+            this.scrollLockIconLockedTarget.classList.toggle(
+                'd-none',
+                !this.scrollLocked,
+            );
+        }
+        if (this.hasScrollLockIconUnlockedTarget) {
+            this.scrollLockIconUnlockedTarget.classList.toggle(
+                'd-none',
+                this.scrollLocked,
+            );
         }
     }
 }
