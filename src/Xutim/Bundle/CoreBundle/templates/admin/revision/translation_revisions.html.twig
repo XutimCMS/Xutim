@@ -5,7 +5,9 @@
     }}{% endblock %}
 
 {% block body %}
-    <div class="row">
+    <div class="row"
+         data-controller="revision-filter"
+         data-revision-filter-base-url-value="{{ path('admin_content_translation_revisions', {id: translation.id}) }}">
         <div class="col-md-3">
             {% if (events|length) > 0 %}
                 <div class="card">
@@ -17,30 +19,20 @@
 
                     <div class="px-3 pt-3">
                         <div class="small text-muted mb-1">
-                            {{ 'You are comparing'|trans({}, 'admin') }}
+                            {{ 'Comparing'|trans({}, 'admin') }}
                         </div>
-                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <div class="d-flex align-items-center gap-2">
                             <span class="badge bg-secondary text-white">
-                                {{ 'Old'|trans({}, 'admin') }} •
                                 {{ selectedOld.recordedAt|date('d M Y H:i') }}
                             </span>
                             <span class="text-muted">→</span>
                             <span class="badge bg-primary text-white">
-                                {{ 'New'|trans({}, 'admin') }} •
                                 {{ selectedNew.recordedAt|date('d M Y H:i') }}
                             </span>
-                            <a
-                                class="btn btn-outline-secondary btn-sm ms-auto"
-                                href="{{ path('admin_content_translation_revisions', {
-                                id: translation.id,
-                                oldId: selectedNew.id,
-                                newId: selectedOld.id,
-                            }) }}"
-                            >
-                                {{ 'Swap'|trans({}, 'admin') }}
-                            </a>
                         </div>
-                        <hr class="my-2" />
+                        <div class="small text-muted mt-2 mb-4">
+                            {{ 'Select 2 revisions to compare'|trans({}, 'admin') }}
+                        </div>
                     </div>
 
                     <div class="list-group list-group-flush">
@@ -49,7 +41,16 @@
                             {%
                                 set author = usernames[event.userIdentifier].name is defined ? usernames[event.userIdentifier].name : event.userIdentifier
                             %}
-                            <div class="list-group-item d-flex align-items-center gap-2">
+                            <label class="list-group-item d-flex align-items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input m-0"
+                                    value="{{ event.id }}"
+                                    data-revision-filter-target="checkbox"
+                                    data-action="revision-filter#selectRevision"
+                                    data-index="{{ loop.index0 }}"
+                                    {{ selectedOld.id == event.id or selectedNew.id == event.id ? 'checked' : '' }}
+                                />
                                 <div class="text-muted" style="width: 1.5rem">
                                     {{ total - loop.index0 }}
                                 </div>
@@ -61,35 +62,7 @@
                                         {{ author }}
                                     </div>
                                 </div>
-                                <div
-                                    class="btn-group btn-group-sm"
-                                    role="group"
-                                    aria-label="Choose side"
-                                >
-                                    <a
-                                        class="btn btn-outline-secondary {{ selectedOld.id == event.id ? 'active' }}"
-                                        href="{{ path('admin_content_translation_revisions', {
-                                            id: translation.id,
-                                            oldId: event.id,
-                                            newId: selectedNew.id,
-                                        }) }}"
-                                        title="{{ 'Set as Old'|trans({}, 'admin') }}"
-                                    >
-                                        {{ 'Old'|trans({}, 'admin') }}
-                                    </a>
-                                    <a
-                                        class="btn btn-outline-primary {{ selectedNew.id == event.id ? 'active' }}"
-                                        title="{{ 'Set as New'|trans({}, 'admin') }}"
-                                        href="{{ path('admin_content_translation_revisions', {
-                                            id: translation.id,
-                                            oldId: selectedOld.id,
-                                            newId: event.id,
-                                        }) }}"
-                                    >
-                                        {{ 'New'|trans({}, 'admin') }}
-                                    </a>
-                                </div>
-                            </div>
+                            </label>
                         {% endfor %}
                     </div>
                 </div>
@@ -105,10 +78,8 @@
             {% endif %}
         </div>
 
-        <div class="col-md-9" data-controller="revision-filter">
+        <div class="col-md-9">
             <div class="d-flex justify-content-end align-items-center mb-3">
-                <div></div>
-
                 <button
                     type="button"
                     class="btn btn-sm btn-outline-primary"
