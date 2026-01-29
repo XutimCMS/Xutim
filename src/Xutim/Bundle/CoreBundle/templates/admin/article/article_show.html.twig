@@ -35,6 +35,21 @@
                         General
                     </twig:Xutim:Admin:Button>
                 </twig:Xutim:Admin:SidebarTab>
+                {% if contextTranslation is not same as(null) %}
+                    <twig:Xutim:Admin:SidebarTab target="history-tab">
+                        <twig:Xutim:Admin:Button
+                            variant="tab"
+                            type="a"
+                            data-bs-toggle="tab"
+                            href="#history-tab"
+                            role="tab"
+                            aria-controls="history-tab"
+                            aria-selected="false"
+                        >
+                            History
+                        </twig:Xutim:Admin:Button>
+                    </twig:Xutim:Admin:SidebarTab>
+                {% endif %}
             </twig:Xutim:Admin:SidebarTabs>
         </twig:block>
         <twig:block name="content">
@@ -44,6 +59,17 @@
                         include('@XutimCore/admin/article/_article_sidebar.html.twig', {translation: currentTranslation})
                     }}
                 </div>
+                {% if contextTranslation is not same as(null) %}
+                    <div id="history-tab" class="tab-pane" role="tabpanel">
+                        <turbo-frame
+                            id="sidebar-history"
+                            src="{{ admin_path('admin_content_translation_sidebar_history', {id: contextTranslation.id}) }}"
+                            loading="lazy"
+                        >
+                            <div class="p-3 text-muted small">{{ 'Loading...'|trans({}, 'admin') }}</div>
+                        </turbo-frame>
+                    </div>
+                {% endif %}
             </div>
         </twig:block>
     </twig:Xutim:Admin:Sidebar>
