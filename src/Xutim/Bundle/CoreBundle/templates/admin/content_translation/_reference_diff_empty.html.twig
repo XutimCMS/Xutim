@@ -1,0 +1,11 @@
+<div class="alert alert-secondary">
+    {% if reason == 'no_snapshot' %}
+        {{ 'No reference snapshot available. Save this translation to start tracking changes.'|trans({}, 'admin') }}
+    {% elseif reason == 'no_reference' %}
+        {{ 'Reference translation does not exist.'|trans({}, 'admin') }}
+    {% elseif reason == 'no_history' %}
+        {{ 'No historical data available for the reference translation.'|trans({}, 'admin') }}
+    {% else %}
+        {{ 'Unable to show reference changes.'|trans({}, 'admin') }}
+    {% endif %}
+</div>

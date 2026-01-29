@@ -8,6 +8,7 @@ use Xutim\CoreBundle\Action\Admin\ContentTranslation\EditTranslationAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\HeartbeatAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\JsonGenerateSlugAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\ShowTranslationRevisionsAction;
+use Xutim\CoreBundle\Action\Admin\ContentTranslation\ShowReferenceDiffAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\StopEditingAction;
 
 return function (RoutingConfigurator $routes) {
@@ -49,5 +50,11 @@ return function (RoutingConfigurator $routes) {
         ->add('admin_content_translation_stop_editing', '/admin/{_content_locale}/content-translation/{id}/stop-editing')
         ->methods(['post'])
         ->controller(StopEditingAction::class)
+    ;
+
+    $routes
+        ->add('admin_content_translation_reference_diff', '/admin/{_content_locale}/content-translation/{id}/reference-diff')
+        ->methods(['get'])
+        ->controller(ShowReferenceDiffAction::class)
     ;
 };

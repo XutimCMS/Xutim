@@ -20,6 +20,7 @@ class Button
             'primary' => 'btn btn-primary',
             'success' => 'btn btn-success',
             'danger' => 'btn btn-danger',
+            'warning' => 'btn btn-warning',
             'default' => 'btn btn-default',
             'secondary' => 'btn btn-secondary',
             'dropdown' => 'dropdown-item',

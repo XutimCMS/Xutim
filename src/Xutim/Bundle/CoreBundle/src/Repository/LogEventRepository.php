@@ -80,6 +80,33 @@ class LogEventRepository extends ServiceEntityRepository
         return $this->findOneBy(['objectId' => $object->getId()], ['recordedAt' => 'asc']);
     }
 
+    public function findRevisionAtOrBefore(
+        ContentTranslationInterface $translation,
+        \DateTimeImmutable $before,
+    ): ?LogEventInterface {
+        /** @var array<LogEventInterface> */
+        $events = $this->createQueryBuilder('e')
+            ->where('e.objectId = :id')
+            ->andWhere('e.recordedAt <= :before')
+            ->setParameter('id', $translation->getId())
+            ->setParameter('before', $before)
+            ->orderBy('e.recordedAt', 'DESC')
+            ->setMaxResults(20)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        foreach ($events as $event) {
+            $domainEvent = $event->getEvent();
+            if ($domainEvent instanceof ContentTranslationCreatedEvent
+                || $domainEvent instanceof ContentTranslationUpdatedEvent) {
+                return $event;
+            }
+        }
+
+        return null;
+    }
+
     public function eventsCountPerTranslation(ContentTranslationInterface|TagTranslationInterface $translation): int
     {
         /** @var int */

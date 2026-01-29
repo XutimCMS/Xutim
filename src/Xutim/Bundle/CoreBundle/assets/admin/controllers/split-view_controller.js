@@ -21,6 +21,9 @@ export default class extends Controller {
         'metaTitle',
         'metaSubtitle',
         'metaDescription',
+        'diffContainer',
+        'referenceContainer',
+        'changedBanner',
     ];
     static values = {
         referenceUrl: String,
@@ -35,6 +38,8 @@ export default class extends Controller {
         fetchAllFilesUrl: String,
         fetchFileUrl: String,
         fetchAnchorSnippetsUrl: String,
+        referenceDiffUrl: String,
+        referenceHasChanged: Boolean,
     };
 
     connect() {
@@ -340,5 +345,36 @@ export default class extends Controller {
         const alphabet =
             'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('');
+    }
+
+    async showDiff() {
+        if (!this.referenceDiffUrlValue) return;
+        if (!this.hasDiffContainerTarget || !this.hasReferenceContainerTarget)
+            return;
+
+        const res = await fetch(this.referenceDiffUrlValue);
+        if (!res.ok) return;
+
+        this.diffContainerTarget.innerHTML = await res.text();
+        this.referenceContainerTarget.classList.add('d-none');
+        this.diffContainerTarget.classList.remove('d-none');
+    }
+
+    showCurrent() {
+        if (!this.hasDiffContainerTarget || !this.hasReferenceContainerTarget)
+            return;
+
+        this.diffContainerTarget.classList.add('d-none');
+        this.referenceContainerTarget.classList.remove('d-none');
+    }
+
+    toggleDiff() {
+        if (!this.hasDiffContainerTarget) return;
+
+        if (this.diffContainerTarget.classList.contains('d-none')) {
+            this.showDiff();
+        } else {
+            this.showCurrent();
+        }
     }
 }

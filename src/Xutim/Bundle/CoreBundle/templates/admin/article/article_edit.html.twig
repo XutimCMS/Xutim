@@ -121,6 +121,10 @@
         data-split-view-article-ids-url-value="{{ admin_path('admin_json_article_list') }}"
         data-split-view-tag-ids-url-value="{{ admin_path('admin_json_tag_list') }}"
         data-split-view-fetch-anchor-snippets-url-value="{{ admin_path('admin_json_snippet_list', {type: 'anchor'}) }}"
+        {% if translation %}
+        data-split-view-reference-diff-url-value="{{ admin_path('admin_content_translation_reference_diff', {id: translation.id}) }}"
+        data-split-view-reference-has-changed-value="{{ referenceHasChanged ? 'true' : 'false' }}"
+        {% endif %}
     >
         <div class="card-header d-flex align-items-center justify-content-between">
             <div class="fw-bold">
@@ -218,72 +222,94 @@
                     class="col-12 col-lg-6 border-start d-none p-4"
                     data-split-view-target="right"
                 >
-                    <div class="mb-3">
-                        <label class="form-label">Intro title</label>
-                        <input
-                            type="text"
-                            class="form-control text-bg-light"
-                            readonly
-                            value="{{ referenceTranslation ? referenceTranslation.pretitle : '' }}"
-                            data-split-view-target="metaPretitle"
-                        />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Title</label>
-                        <input
-                            type="text"
-                            class="form-control text-bg-light"
-                            readonly
-                            value="{{ referenceTranslation ? referenceTranslation.title : '' }}"
-                            data-split-view-target="metaTitle"
-                        />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Subtitle</label>
-                        <input
-                            type="text"
-                            class="form-control text-bg-light"
-                            readonly
-                            value="{{ referenceTranslation ? referenceTranslation.subtitle : '' }}"
-                            data-split-view-target="metaSubtitle"
-                        />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Slug</label>
-                        <input
-                            type="text"
-                            class="form-control text-bg-light"
-                            readonly
-                            value="{{ referenceTranslation ? referenceTranslation.slug : '' }}"
-                            data-split-view-target="metaSlug"
-                        />
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="form-label">Description</label>
-                        <textarea
-                            class="form-control text-bg-light"
-                            rows="2"
-                            readonly
-                            data-split-view-target="metaDescription"
-                        >{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</textarea>
-                        <div
-                            id="content_translation_description_help"
-                            class="form-text mb-0 help-text"
-                        >
-                            &ensp;<br>
-                            &ensp;
+                    {% if referenceHasChanged %}
+                    <div class="alert alert-warning d-flex align-items-center justify-content-between mb-3"
+                         data-split-view-target="changedBanner">
+                        <div>
+                            <twig:ux:icon name="tabler:alert-triangle" class="w-4 h-4 me-2" />
+                            {{ 'Reference has changed since your last save'|trans({}, 'admin') }}
                         </div>
-                    </div>
-
-                    <div class="ms-4 mt-3">
-                        <div
-                            id="reference-editor"
-                            data-split-view-target="reference"
+                        <twig:Xutim:Admin:Button
+                            tag="button"
+                            variant="warning"
+                            class="btn-sm"
+                            data-action="split-view#toggleDiff"
                         >
+                            {{ 'Show changes'|trans({}, 'admin') }}
+                        </twig:Xutim:Admin:Button>
+                    </div>
+                    {% endif %}
+
+                    <div data-split-view-target="diffContainer" class="d-none"></div>
+
+                    <div data-split-view-target="referenceContainer">
+                        <div class="mb-3">
+                            <label class="form-label">Intro title</label>
+                            <input
+                                type="text"
+                                class="form-control text-bg-light"
+                                readonly
+                                value="{{ referenceTranslation ? referenceTranslation.pretitle : '' }}"
+                                data-split-view-target="metaPretitle"
+                            />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input
+                                type="text"
+                                class="form-control text-bg-light"
+                                readonly
+                                value="{{ referenceTranslation ? referenceTranslation.title : '' }}"
+                                data-split-view-target="metaTitle"
+                            />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Subtitle</label>
+                            <input
+                                type="text"
+                                class="form-control text-bg-light"
+                                readonly
+                                value="{{ referenceTranslation ? referenceTranslation.subtitle : '' }}"
+                                data-split-view-target="metaSubtitle"
+                            />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Slug</label>
+                            <input
+                                type="text"
+                                class="form-control text-bg-light"
+                                readonly
+                                value="{{ referenceTranslation ? referenceTranslation.slug : '' }}"
+                                data-split-view-target="metaSlug"
+                            />
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="form-label">Description</label>
+                            <textarea
+                                class="form-control text-bg-light"
+                                rows="2"
+                                readonly
+                                data-split-view-target="metaDescription"
+                            >{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</textarea>
+                            <div
+                                id="content_translation_description_help"
+                                class="form-text mb-0 help-text"
+                            >
+                                &ensp;<br>
+                                &ensp;
+                            </div>
+                        </div>
+
+                        <div class="ms-4 mt-3">
+                            <div
+                                id="reference-editor"
+                                data-split-view-target="reference"
+                            >
+                            </div>
                         </div>
                     </div>
                 </div>
