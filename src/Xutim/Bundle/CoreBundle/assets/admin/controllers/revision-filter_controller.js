@@ -1,19 +1,17 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['toggleBtn', 'checkbox'];
+    static targets = ['checkbox', 'showAllText', 'onlyChangedText'];
     static values = {
         baseUrl: String,
     };
 
     connect() {
         const params = new URLSearchParams(window.location.search);
-        this.filterEnabled = params.get('filter') === 'changed';
+        this.filterEnabled = params.get('filter') !== 'all';
 
-        if (this.filterEnabled) {
-            this.#applyFilter();
-            this.#updateToggleButton();
-        }
+        this.#applyFilter();
+        this.#updateToggleButton();
     }
 
     toggle() {
@@ -49,8 +47,8 @@ export default class extends Controller {
         const newId = sorted[1].value;
 
         let url = `${this.baseUrlValue}/${oldId}/${newId}`;
-        if (this.filterEnabled) {
-            url += '?filter=changed';
+        if (!this.filterEnabled) {
+            url += '?filter=all';
         }
         window.location.href = url;
     }
@@ -65,24 +63,20 @@ export default class extends Controller {
     }
 
     #updateToggleButton() {
-        if (!this.hasToggleBtnTarget) return;
-
-        this.toggleBtnTarget.classList.toggle(
-            'btn-outline-primary',
-            !this.filterEnabled,
-        );
-        this.toggleBtnTarget.classList.toggle(
-            'btn-primary',
-            this.filterEnabled,
-        );
+        if (this.hasShowAllTextTarget) {
+            this.showAllTextTarget.classList.toggle('d-none', !this.filterEnabled);
+        }
+        if (this.hasOnlyChangedTextTarget) {
+            this.onlyChangedTextTarget.classList.toggle('d-none', this.filterEnabled);
+        }
     }
 
     #updateFilterUrl() {
         const url = new URL(window.location.href);
         if (this.filterEnabled) {
-            url.searchParams.set('filter', 'changed');
-        } else {
             url.searchParams.delete('filter');
+        } else {
+            url.searchParams.set('filter', 'all');
         }
         window.history.replaceState({}, '', url.toString());
     }
