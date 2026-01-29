@@ -24,6 +24,10 @@ export default class extends Controller {
         'diffContainer',
         'referenceContainer',
         'changedBanner',
+        'scrollLockBtn',
+        'diffToggleBtn',
+        'diffToggleBtnShowText',
+        'diffToggleBtnHideText',
     ];
     static values = {
         referenceUrl: String,
@@ -44,11 +48,15 @@ export default class extends Controller {
 
     connect() {
         this.isOn = localStorage.getItem('xutim.splitView') === '1';
+        this.scrollLocked =
+            localStorage.getItem('xutim.splitViewScrollLock') === '1';
 
         if (this.isOn) {
             this.enable();
             this.localeSelectTarget.hidden = false;
             this.localeSelectClipboardTarget.hidden = false;
+            if (this.hasScrollLockBtnTarget)
+                this.scrollLockBtnTarget.hidden = false;
         } else {
             this.leftTarget.classList.remove('col-lg-6');
             this.rightTarget.classList.add('d-none');
@@ -62,7 +70,11 @@ export default class extends Controller {
 
             this.localeSelectTarget.hidden = true;
             this.localeSelectClipboardTarget.hidden = true;
+            if (this.hasScrollLockBtnTarget)
+                this.scrollLockBtnTarget.hidden = true;
         }
+
+        this.#updateScrollLockButton();
     }
 
     async toggle() {
@@ -70,10 +82,14 @@ export default class extends Controller {
             this.disable();
             this.localeSelectTarget.hidden = true;
             this.localeSelectClipboardTarget.hidden = true;
+            if (this.hasScrollLockBtnTarget)
+                this.scrollLockBtnTarget.hidden = true;
         } else {
             await this.enable();
             this.localeSelectTarget.hidden = false;
             this.localeSelectClipboardTarget.hidden = false;
+            if (this.hasScrollLockBtnTarget)
+                this.scrollLockBtnTarget.hidden = false;
         }
     }
 
@@ -90,6 +106,8 @@ export default class extends Controller {
 
         this.iconOnTarget.classList.add('d-none');
         this.iconOffTarget.classList.remove('d-none');
+
+        this.#applyScrollLock();
     }
 
     disable() {
@@ -270,13 +288,15 @@ export default class extends Controller {
     #updateReferenceMeta(meta = {}) {
         const get = (k) => meta[k] ?? '';
         if (this.hasMetaPretitleTarget)
-            this.metaPretitleTarget.value = get('pretitle');
-        if (this.hasMetaSlugTarget) this.metaSlugTarget.value = get('slug');
-        if (this.hasMetaTitleTarget) this.metaTitleTarget.value = get('title');
+            this.metaPretitleTarget.textContent = get('pretitle');
+        if (this.hasMetaSlugTarget)
+            this.metaSlugTarget.textContent = get('slug');
+        if (this.hasMetaTitleTarget)
+            this.metaTitleTarget.textContent = get('title');
         if (this.hasMetaSubtitleTarget)
-            this.metaSubtitleTarget.value = get('subtitle');
+            this.metaSubtitleTarget.textContent = get('subtitle');
         if (this.hasMetaDescriptionTarget) {
-            this.metaDescriptionTarget.value = this.#asPlain(
+            this.metaDescriptionTarget.textContent = this.#asPlain(
                 get('description'),
             );
         }
@@ -358,6 +378,7 @@ export default class extends Controller {
         this.diffContainerTarget.innerHTML = await res.text();
         this.referenceContainerTarget.classList.add('d-none');
         this.diffContainerTarget.classList.remove('d-none');
+        this.#updateDiffButtonText(true);
     }
 
     showCurrent() {
@@ -366,6 +387,22 @@ export default class extends Controller {
 
         this.diffContainerTarget.classList.add('d-none');
         this.referenceContainerTarget.classList.remove('d-none');
+        this.#updateDiffButtonText(false);
+    }
+
+    #updateDiffButtonText(showingDiff) {
+        if (this.hasDiffToggleBtnShowTextTarget) {
+            this.diffToggleBtnShowTextTarget.classList.toggle(
+                'd-none',
+                showingDiff,
+            );
+        }
+        if (this.hasDiffToggleBtnHideTextTarget) {
+            this.diffToggleBtnHideTextTarget.classList.toggle(
+                'd-none',
+                !showingDiff,
+            );
+        }
     }
 
     toggleDiff() {
@@ -375,6 +412,36 @@ export default class extends Controller {
             this.showDiff();
         } else {
             this.showCurrent();
+        }
+    }
+
+    toggleScrollLock() {
+        this.scrollLocked = !this.scrollLocked;
+        localStorage.setItem(
+            'xutim.splitViewScrollLock',
+            this.scrollLocked ? '1' : '0',
+        );
+        this.#applyScrollLock();
+        this.#updateScrollLockButton();
+    }
+
+    #applyScrollLock() {
+        if (!this.hasRightTarget) return;
+        if (this.scrollLocked) {
+            this.rightTarget.style.overflow = 'hidden';
+            this.rightTarget.style.position = 'static';
+        } else {
+            this.rightTarget.style.overflow = '';
+            this.rightTarget.style.position = '';
+        }
+    }
+
+    #updateScrollLockButton() {
+        if (!this.hasScrollLockBtnTarget) return;
+        if (this.scrollLocked) {
+            this.scrollLockBtnTarget.classList.add('active');
+        } else {
+            this.scrollLockBtnTarget.classList.remove('active');
         }
     }
 }

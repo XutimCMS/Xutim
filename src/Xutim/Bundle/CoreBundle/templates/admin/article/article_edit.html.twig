@@ -165,7 +165,7 @@
                     class="btn-sm"
                     data-split-view-target="localeSelectClipboard"
                     data-action="split-view#copyAllBlocks"
-                    title="Copy all blocks"
+                    title="{{ 'Copy all blocks'|trans({}, 'admin') }}"
                     hidden
                 >
                     <twig:ux:icon name="tabler:clipboard" class="w-3 h-3" />
@@ -174,9 +174,21 @@
                 <twig:Xutim:Admin:Button
                     tag="button"
                     variant="default"
+                    class="btn-sm"
+                    data-split-view-target="scrollLockBtn"
+                    data-action="split-view#toggleScrollLock"
+                    title="{{ 'Lock reference scroll'|trans({}, 'admin') }}"
+                    hidden
+                >
+                    <twig:ux:icon name="tabler:lock" class="w-3 h-3" />
+                </twig:Xutim:Admin:Button>
+
+                <twig:Xutim:Admin:Button
+                    tag="button"
+                    variant="default"
                     class="text-dark d-flex align-items-center text-nowrap btn-sm"
                     data-action="split-view#toggle"
-                    title="Toggle split view"
+                    title="{{ 'Toggle split view'|trans({}, 'admin') }}"
                 >
                     <span
                         data-split-view-target="iconOn"
@@ -233,9 +245,15 @@
                             tag="button"
                             variant="warning"
                             class="btn-sm"
+                            data-split-view-target="diffToggleBtn"
                             data-action="split-view#toggleDiff"
                         >
-                            {{ 'Show changes'|trans({}, 'admin') }}
+                            <span data-split-view-target="diffToggleBtnShowText">
+                                {{ 'Show changes'|trans({}, 'admin') }}
+                            </span>
+                            <span data-split-view-target="diffToggleBtnHideText" class="d-none">
+                                {{ 'Show current'|trans({}, 'admin') }}
+                            </span>
                         </twig:Xutim:Admin:Button>
                     </div>
                     {% endif %}
@@ -244,64 +262,35 @@
 
                     <div data-split-view-target="referenceContainer">
                         <div class="mb-3">
-                            <label class="form-label">Intro title</label>
-                            <input
-                                type="text"
-                                class="form-control text-bg-light"
-                                readonly
-                                value="{{ referenceTranslation ? referenceTranslation.pretitle : '' }}"
-                                data-split-view-target="metaPretitle"
-                            />
+                            <span class="badge bg-primary-lt">
+                                {{ referenceLocale|upper }}
+                            </span>
+                            <span class="text-muted small ms-2">{{ 'Reference'|trans({}, 'admin') }}</span>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Title</label>
-                            <input
-                                type="text"
-                                class="form-control text-bg-light"
-                                readonly
-                                value="{{ referenceTranslation ? referenceTranslation.title : '' }}"
-                                data-split-view-target="metaTitle"
-                            />
+                            <div class="text-muted small">{{ 'Intro title'|trans({}, 'admin') }}</div>
+                            <div data-split-view-target="metaPretitle">{{ referenceTranslation ? referenceTranslation.pretitle : '' }}</div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Subtitle</label>
-                            <input
-                                type="text"
-                                class="form-control text-bg-light"
-                                readonly
-                                value="{{ referenceTranslation ? referenceTranslation.subtitle : '' }}"
-                                data-split-view-target="metaSubtitle"
-                            />
+                            <div class="text-muted small">{{ 'Title'|trans({}, 'admin') }}</div>
+                            <div class="fw-semibold" data-split-view-target="metaTitle">{{ referenceTranslation ? referenceTranslation.title : '' }}</div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Slug</label>
-                            <input
-                                type="text"
-                                class="form-control text-bg-light"
-                                readonly
-                                value="{{ referenceTranslation ? referenceTranslation.slug : '' }}"
-                                data-split-view-target="metaSlug"
-                            />
+                            <div class="text-muted small">{{ 'Subtitle'|trans({}, 'admin') }}</div>
+                            <div data-split-view-target="metaSubtitle">{{ referenceTranslation ? referenceTranslation.subtitle : '' }}</div>
                         </div>
 
-                        <div class="mb-6">
-                            <label class="form-label">Description</label>
-                            <textarea
-                                class="form-control text-bg-light"
-                                rows="2"
-                                readonly
-                                data-split-view-target="metaDescription"
-                            >{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</textarea>
-                            <div
-                                id="content_translation_description_help"
-                                class="form-text mb-0 help-text"
-                            >
-                                &ensp;<br>
-                                &ensp;
-                            </div>
+                        <div class="mb-3">
+                            <div class="text-muted small">{{ 'Slug'|trans({}, 'admin') }}</div>
+                            <code data-split-view-target="metaSlug">{{ referenceTranslation ? referenceTranslation.slug : '' }}</code>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="text-muted small">{{ 'Description'|trans({}, 'admin') }}</div>
+                            <div class="text-secondary" data-split-view-target="metaDescription">{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</div>
                         </div>
 
                         <div class="ms-4 mt-3">
