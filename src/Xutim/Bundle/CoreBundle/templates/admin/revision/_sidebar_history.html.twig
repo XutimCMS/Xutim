@@ -1,10 +1,12 @@
 <turbo-frame id="sidebar-history">
     <div class="list-group list-group-flush">
+        {% set latestEvent = events|first %}
         {% for event in events|slice(0, 10) %}
             {% set userData = usersData[event.userIdentifier]|default({}) %}
             <a
-                href="{{ admin_path('admin_content_translation_revisions', {id: translationId}) }}"
+                href="{{ admin_path('admin_content_translation_revisions', {id: translationId, oldId: event.id, newId: latestEvent.id}) }}"
                 class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2"
+                data-turbo-frame="_top"
             >
                 <span
                     class="avatar avatar-xs"
@@ -31,6 +33,7 @@
         <a
             href="{{ admin_path('admin_content_translation_revisions', {id: translationId}) }}"
             class="small d-block text-center py-2 border-top"
+            data-turbo-frame="_top"
         >
             {{ 'View all {count} revisions'|trans({'{count}': events|length}, 'admin') }}
         </a>
