@@ -60,6 +60,26 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $emails;
     }
 
+    /**
+     * @return array<string, array{name: string, email: string, avatar: string}>
+     */
+    public function findAllUsersWithAvatars(): array
+    {
+        /** @var array<array{name: string, email: string, avatar: string}> $users */
+        $users = $this->createQueryBuilder('user')
+            ->select('user.name', 'user.email', 'user.avatar')
+            ->getQuery()
+            ->getArrayResult()
+        ;
+
+        $result = [];
+        foreach ($users as $user) {
+            $result[$user['email']] = $user;
+        }
+
+        return $result;
+    }
+
     public function save(UserInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
