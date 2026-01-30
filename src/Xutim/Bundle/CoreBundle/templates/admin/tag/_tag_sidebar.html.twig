@@ -63,6 +63,20 @@
                     {% endif %}
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
+
+            <twig:Xutim:Admin:SidebarItem>
+                <twig:block name="header">
+                    {{ 'updated at'|trans({}, 'admin')|capitalize }}:
+                </twig:block>
+                <twig:block name="content">
+                    <span
+                        title="{{ tag.updatedAt|date('d/m/Y H:i') }}"
+                        data-controller="tooltip"
+                    >
+                        {{ tag.updatedAt|time_ago }}
+                    </span>
+                </twig:block>
+            </twig:Xutim:Admin:SidebarItem>
         </twig:Xutim:Admin:SidebarSection>
 
         {% if xutim_analytics_enabled() %}
