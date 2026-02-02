@@ -91,7 +91,7 @@
             }}
         {% elseif fragment.type == 'xutimFile' %}
             {{
-                include('@XutimCore/admin/content_fragment/diff/xutim_file_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
+                include('@XutimCore/admin/content_fragment/diff/xutim_file_diff.html.twig', {fragment: fragment, meta: meta, op: opEff, locale: locale})
             }}
         {% elseif fragment.type == 'imageRow' %}
             {{
