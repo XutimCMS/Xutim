@@ -80,7 +80,7 @@ class EventType extends AbstractType implements DataMapperInterface
                 'label' => new TranslatableMessage('title', [], 'admin'),
                 'required' => true,
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(['min' => 1]),
                     new NotNull()
                 ]
             ])

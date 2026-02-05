@@ -59,7 +59,7 @@ class PageType extends AbstractType implements DataMapperInterface
             ->add('title', TextType::class, [
                 'label' => new TranslatableMessage('title', [], 'admin'),
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(['min' => 1]),
                 ]
             ])
             ->add('subTitle', TextType::class, [

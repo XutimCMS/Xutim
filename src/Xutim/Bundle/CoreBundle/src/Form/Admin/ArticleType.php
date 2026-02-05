@@ -71,7 +71,7 @@ class ArticleType extends AbstractType implements DataMapperInterface
                 'required' => true,
                 'label' => new TranslatableMessage('title', [], 'admin'),
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(['min' => 1]),
                     new NotNull(),
                 ]
             ])
