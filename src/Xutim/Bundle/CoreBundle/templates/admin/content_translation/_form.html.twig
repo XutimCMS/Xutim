@@ -16,6 +16,8 @@
                 'data-editorjs-form-article-ids-url-value': admin_path('admin_json_article_list'),
                 'data-editorjs-form-tag-ids-url-value': admin_path('admin_json_tag_list'),
                 'data-editorjs-form-disable-editing-value': disableEditing is defined ? disableEditing : false,
+                'data-editorjs-form-publish-label-value': 'Save and publish'|trans({}, 'admin'),
+                'data-editorjs-form-draft-label-value': 'Save as draft'|trans({}, 'admin'),
                 'data-slug-generator-url-value': admin_path('admin_json_content_translation_generate_slug'),
                 'data-slug-generator-enabled-value': translation == null ? 'true' : 'false',
                 'data-slug-generator-locale-value': content_context_language(),
@@ -76,6 +78,8 @@
         <div data-editorjs-form-target="editorHolder"></div>
     </div>
 
+    <input type="hidden" name="_save_action" value="publish" data-editorjs-form-target="saveAction">
+
     <div class="d-none">
         <button type="submit" id="content_translation_submit"></button>
     </div>
@@ -86,5 +90,33 @@
             },
         })
     }}
+
+    {% if form.vars.disabled == false %}
+    <div class="py-3 bg-white border-top mt-4" style="position: sticky; bottom: 0; z-index: 10;">
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary" data-editorjs-form-target="primaryBtn">
+                {{ 'Save and publish'|trans({}, 'admin') }}
+            </button>
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">{{ 'Toggle dropdown'|trans({}, 'admin') }}</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end">
+                <button type="button" class="dropdown-item"
+                    data-action="click->editorjs-form#chooseSaveAction"
+                    data-editorjs-form-action-param="publish"
+                >
+                    {{ 'Save and publish'|trans({}, 'admin') }}
+                </button>
+                <button type="button" class="dropdown-item"
+                    data-action="click->editorjs-form#chooseSaveAction"
+                    data-editorjs-form-action-param="draft"
+                >
+                    {{ 'Save as draft'|trans({}, 'admin') }}
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     {{ form_end(form) }}
 </turbo-frame>

@@ -4,7 +4,7 @@ import { buildEditorTools } from '../lib/build_tools.js';
 import { decorateInternalLinks } from '../lib/editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
 
 export default class extends Controller {
-    static targets = ['editorHolder', 'contentInput'];
+    static targets = ['editorHolder', 'contentInput', 'saveAction', 'primaryBtn'];
     static values = {
         blockCodes: Array,
         tags: Array,
@@ -17,6 +17,8 @@ export default class extends Controller {
         fetchFileUrl: String,
         fetchAnchorSnippetsUrl: String,
         disableEditing: Boolean,
+        publishLabel: String,
+        draftLabel: String,
     };
 
     #editor;
@@ -48,6 +50,11 @@ export default class extends Controller {
                 decorateInternalLinks(this.editorHolderTarget);
             },
         });
+
+        if (this.hasPrimaryBtnTarget) {
+            const action = localStorage.getItem('xutim.saveAction') || 'publish';
+            this.primaryBtnTarget.textContent = this.#labelFor(action);
+        }
     }
 
     save(event) {
@@ -55,10 +62,23 @@ export default class extends Controller {
             .save()
             .then((outputData) => {
                 this.contentInputTarget.value = JSON.stringify(outputData);
+                if (this.hasSaveActionTarget) {
+                    this.saveActionTarget.value = localStorage.getItem('xutim.saveAction') || 'publish';
+                }
                 this.element.submit();
             })
             .catch((error) => {
                 console.warn('Saving failed: ', error);
             });
+    }
+
+    chooseSaveAction(event) {
+        const action = event.params.action;
+        localStorage.setItem('xutim.saveAction', action);
+        this.primaryBtnTarget.textContent = this.#labelFor(action);
+    }
+
+    #labelFor(action) {
+        return action === 'publish' ? this.publishLabelValue : this.draftLabelValue;
     }
 }

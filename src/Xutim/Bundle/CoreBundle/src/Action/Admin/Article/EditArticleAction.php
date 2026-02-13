@@ -17,9 +17,12 @@ use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\ContentDraftInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Dto\Admin\ContentTranslation\ContentTranslationDto;
+use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\CoreBundle\Form\Admin\ContentTranslationType;
+use Xutim\CoreBundle\Message\Command\ContentDraft\PublishContentDraftCommand;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\CreateContentTranslationCommand;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\EditContentTranslationCommand;
+use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCommand;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
@@ -68,6 +71,10 @@ class EditArticleAction extends AbstractController
 
             $command = $this->createTranslationCommand($translation, $data, $article);
             $this->commandBus->dispatch($command);
+
+            if ($request->request->get('_save_action') === 'publish') {
+                $this->publishAfterSave($translation, $article, $data->locale);
+            }
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 
@@ -173,6 +180,36 @@ class EditArticleAction extends AbstractController
             'disabled' => $this->transAuthChecker->canTranslate($data->locale) === false,
             'existing_translation' => $existingTranslation
         ]);
+    }
+
+    private function publishAfterSave(?ContentTranslationInterface $translation, ArticleInterface $article, string $locale): void
+    {
+        $userIdentifier = $this->userStorage->getUserWithException()->getUserIdentifier();
+
+        if ($translation === null) {
+            $newTranslation = $this->contentTransRepo->findOneBy(['article' => $article, 'locale' => $locale]);
+            if ($newTranslation !== null) {
+                $this->commandBus->dispatch(new ChangePublicationStatusCommand(
+                    $newTranslation->getId(),
+                    PublicationStatus::Published,
+                    $userIdentifier,
+                ));
+            }
+        } elseif (!$translation->isPublished()) {
+            $this->commandBus->dispatch(new ChangePublicationStatusCommand(
+                $translation->getId(),
+                PublicationStatus::Published,
+                $userIdentifier,
+            ));
+        } else {
+            $draft = $this->draftRepo->findDraft($translation);
+            if ($draft !== null) {
+                $this->commandBus->dispatch(new PublishContentDraftCommand(
+                    $draft->getId(),
+                    $userIdentifier,
+                ));
+            }
+        }
     }
 
     private function createTranslationCommand(?ContentTranslationInterface $translation, ContentTranslationDto $data, ArticleInterface $article): CreateContentTranslationCommand|EditContentTranslationCommand
