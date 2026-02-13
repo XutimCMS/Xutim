@@ -152,7 +152,7 @@
         data-split-view-reference-has-changed-value="{{ referenceHasChanged ? 'true' : 'false' }}"
         {% endif %}
     >
-        <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="card-header d-flex align-items-center justify-content-between bg-white" style="position: sticky; top: 0; z-index: 10;">
             <div class="fw-bold">
                 {% if translation is null %}
                     Translate into {{ content_context_language()|upper }}
