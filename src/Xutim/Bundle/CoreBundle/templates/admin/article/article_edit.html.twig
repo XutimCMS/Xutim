@@ -153,15 +153,16 @@
         {% endif %}
     >
         <div class="card-header d-flex align-items-center justify-content-between bg-white" style="position: sticky; top: 0; z-index: 10;">
-            <div class="fw-bold">
-                {% if translation is null %}
-                    Translate into {{ content_context_language()|upper }}
+            <div class="d-flex align-items-center gap-2 text-truncate">
+                {% if translation is not null %}
+                    {{ badges.publicationStatusBadge(translation, '', referenceHasChanged) }}
+                    <span class="fw-bold text-truncate">{{ translation.title }}</span>
                 {% else %}
-                    {{ translation.locale|upper }} translation
+                    <span class="fw-bold">{{ 'Translate into'|trans({}, 'admin') }} {{ content_context_language()|upper }}</span>
                 {% endif %}
             </div>
 
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-none d-md-flex align-items-center gap-2">
                 <select
                     class="form-select form-select-sm"
                     data-split-view-target="localeSelect"
