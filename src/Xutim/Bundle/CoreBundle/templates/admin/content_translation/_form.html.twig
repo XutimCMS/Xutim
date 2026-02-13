@@ -4,6 +4,7 @@
             attr: {
                 id: form.vars.id,
                 'data-controller': 'editorjs-form slug-generator',
+                'data-action': 'submit->editorjs-form#save:prevent',
                 'data-editorjs-form-block-codes-value': fetch_block_codes()|json_encode,
                 'data-editorjs-form-tags-value': fetch_tags()|json_encode,
                 'data-editorjs-form-fetch-files-url-value': admin_path('admin_json_file_list'),
@@ -75,17 +76,8 @@
         <div data-editorjs-form-target="editorHolder"></div>
     </div>
 
-    <div class="mb-3">
-        <twig:Xutim:Admin:Button
-            type="submit"
-            variant="primary"
-            id="content_translation_submit"
-            form="{{ form.vars.id }}"
-            :disabled="form.vars.disabled"
-            data-action="click->editorjs-form#save:prevent"
-        >
-            {{ 'submit'|trans({}, 'admin') }}
-        </twig:Xutim:Admin:Button>
+    <div class="d-none">
+        <button type="submit" id="content_translation_submit"></button>
     </div>
     {{
         form_widget(form.content, {
