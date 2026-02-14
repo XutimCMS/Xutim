@@ -303,6 +303,28 @@ export default class extends Controller {
                         duration: 100,
                         placement: 'top',
                         appendTo: () => document.body,
+                        getReferenceClientRect: () => {
+                            const { state, view } = this.editor;
+                            const { from, to } = state.selection;
+
+                            if (from === to) {
+                                return null;
+                            }
+
+                            const start = view.coordsAtPos(from);
+                            const end = view.coordsAtPos(to);
+
+                            return {
+                                top: Math.min(start.top, end.top),
+                                bottom: Math.max(start.bottom, end.bottom),
+                                left: Math.min(start.left, end.left),
+                                right: Math.max(start.right, end.right),
+                                width: Math.abs(end.right - start.left),
+                                height: Math.abs(end.bottom - start.top),
+                                x: Math.min(start.left, end.left),
+                                y: Math.min(start.top, end.top),
+                            };
+                        },
                     },
                 }),
                 ArticleLink,

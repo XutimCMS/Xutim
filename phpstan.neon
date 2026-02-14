@@ -16,7 +16,7 @@ parameters:
     excludePaths:
         - src/Xutim/Bundle/CoreBundle/src/Infra/Doctrine/TreeObjectHydrator.php
     bootstrapFiles:
-        - vendor/bin/.phpunit/phpunit/vendor/autoload.php
+        - vendor/autoload.php
     stubFiles:
         - tests/Stubs/DataMapperInterface.stub
     typeAliases:
