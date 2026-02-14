@@ -1,11 +1,11 @@
 {% set childrenCnt = folder.children|length %}
-{% set filesCnt = folder.files|length %}
+{% set mediaCnt = folder.media|length %}
 <div
     class="col"
     id="folder-{{ folder.id }}"
     data-controller="drop-target"
     data-drop-target-id-value="{{ folder.id }}"
-    data-drop-target-move-url-value="{{ path('admin_media_move_file_to_folder') }}"
+    data-drop-target-move-url-value="{{ admin_path('admin_media_move_file_to_folder') }}"
     data-action="dragover->drop-target#over dragleave->drop-target#leave drop->drop-target#drop"
 >
     <a
@@ -26,7 +26,7 @@
             <div class="text-secondary small">
                 {{ childrenCnt|default(0) }}
                 {{ 'folders'|trans({}, 'admin') }},
-                {{ filesCnt|default(0) }}
+                {{ mediaCnt|default(0) }}
                 {{ 'files'|trans({}, 'admin') }}
             </div>
         </div>

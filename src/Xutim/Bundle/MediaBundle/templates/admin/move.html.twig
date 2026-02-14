@@ -1,0 +1,82 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+
+{% set title = 'Move file'|trans({}, 'admin') %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">
+                    {{ 'Select destination folder'|trans({}, 'admin') }}
+                </label>
+                <div class="list-group">
+                    <a
+                        href="{{ admin_path('admin_media_move', {id: media.id, folderId: ''}) }}"
+                        class="list-group-item list-group-item-action {% if currentFolder is null %}active{% endif %}"
+                        data-turbo-method="post"
+                    >
+                        <div class="d-flex align-items-center">
+                            <twig:Xutim:Admin:Icon name="home" class="me-2" />
+                            <div>
+                                <div class="fw-medium">
+                                    {{ 'Root'|trans({}, 'admin') }}
+                                </div>
+                                <div class="text-secondary small">
+                                    {{ 'No folder'|trans({}, 'admin') }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% for folder in folders %}
+                        <a
+                            href="{{ admin_path('admin_media_move', {id: media.id, folderId: folder.id}) }}"
+                            class="list-group-item list-group-item-action {% if currentFolder and currentFolder.id == folder.id %}active{% endif %}"
+                            data-turbo-method="post"
+                        >
+                            <div class="d-flex align-items-center">
+                                <twig:Xutim:Admin:Icon name="folder" class="me-2" />
+                                <div class="flex-fill">
+                                    <div class="fw-medium">
+                                        {{ folder.name }}
+                                    </div>
+                                    <div class="text-secondary small">
+                                        {% set path = folder.folderPath %}
+                                        {% if path|length > 1 %}
+                                            {% for pathFolder in path %}
+                                                {{ pathFolder.name }}{% if not loop.last %}
+                                                    /{% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {{ 'Root'|trans({}, 'admin') }}
+                                            / {{ folder.name }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_remove_file %}
+    <turbo-stream action="remove" target="media-{{ media.id }}">
+    </turbo-stream>
+{% endblock %}
+
+{% block stream_update_folder %}
+    <turbo-stream action="replace" target="folder-{{ folder.id }}">
+        <template>
+            {{ include('@XutimMedia/admin/_folder_card.html.twig', {folder: folder}) }}
+        </template>
+    </turbo-stream>
+{% endblock %}

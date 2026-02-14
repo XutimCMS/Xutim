@@ -1,3 +1,8 @@
+xutim_media:
+    resource: '@XutimMediaBundle/config/routes.php'
+    defaults:
+        _content_locale: '%kernel.default_locale%'
+
 xutim_analytics:
     resource: '@XutimAnalyticsBundle/config/routes.php'
 

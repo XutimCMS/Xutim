@@ -1,0 +1,263 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}
+    <h1 class="page-title">
+        {{ media.originalPath|split('/')|last }}
+    </h1>
+{% endblock %}
+
+{% block sidebar %}
+    <twig:Xutim:Admin:Sidebar :title="">
+        <twig:block name="header">
+            <twig:Xutim:Admin:SidebarTabs>
+                <twig:Xutim:Admin:SidebarTab target="general-tab">
+                    <twig:Xutim:Admin:Button
+                        variant="tab"
+                        type="a"
+                        class="active"
+                        data-bs-toggle="tab"
+                        href="#general-tab"
+                        role="tab"
+                        aria-controls="general-tab"
+                        aria-selected="true"
+                    >
+                        General
+                    </twig:Xutim:Admin:Button>
+                </twig:Xutim:Admin:SidebarTab>
+            </twig:Xutim:Admin:SidebarTabs>
+        </twig:block>
+        <twig:block name="content">
+            <div class="tab-content">
+                <div id="general-tab" class="tab-pane active" role="tabpanel">
+                    <div class="mb-3">
+                        <twig:Xutim:Admin:SidebarSection>
+                            <twig:Xutim:Admin:SidebarItem>
+                                <twig:block name="header">
+                                    {{ 'copyright'|trans({}, 'admin')|capitalize }}:
+                                </twig:block>
+                                <twig:block name="content">
+                                    {{ media.copyright ?? '-' }}
+                                </twig:block>
+                            </twig:Xutim:Admin:SidebarItem>
+                        </twig:Xutim:Admin:SidebarSection>
+                        <twig:Xutim:Admin:SidebarSection>
+                            <twig:Xutim:Admin:SidebarHeader>
+                                {{ 'original file'|trans({}, 'admin')|capitalize }}
+                            </twig:Xutim:Admin:SidebarHeader>
+                            <twig:Xutim:Admin:SidebarItem>
+                                <twig:block name="header">
+                                    {{ 'file size'|trans({}, 'admin')|capitalize }}:
+                                </twig:block>
+                                <twig:block name="content">
+                                    {{ (media.sizeBytes / 1024)|round(0) }} KB
+                                </twig:block>
+                            </twig:Xutim:Admin:SidebarItem>
+                            <twig:Xutim:Admin:SidebarItem>
+                                <twig:block name="header">
+                                    {{ 'image dimensions'|trans({}, 'admin')|capitalize }}:
+                                </twig:block>
+                                <twig:block name="content">
+                                    {{ media.width }} × {{ media.height }}
+                                </twig:block>
+                            </twig:Xutim:Admin:SidebarItem>
+                            <twig:Xutim:Admin:SidebarItem>
+                                <twig:block name="header">
+                                    {{ 'format'|trans({}, 'admin')|capitalize }}:
+                                </twig:block>
+                                <twig:block name="content">
+                                    {{ media.originalExt|upper }}
+                                </twig:block>
+                            </twig:Xutim:Admin:SidebarItem>
+                            <twig:Xutim:Admin:SidebarItem>
+                                <twig:block name="header">
+                                    {{ 'Focal Point'|trans({}, 'admin') }}:
+                                </twig:block>
+                                <twig:block name="content">
+                                    {% if media.focalX and media.focalY %}
+                                        {{ media.focalX|number_format(2) }}, {{ media.focalY|number_format(2) }}
+                                    {% else %}
+                                        {{ 'Center (default)'|trans({}, 'admin') }}
+                                    {% endif %}
+                                </twig:block>
+                            </twig:Xutim:Admin:SidebarItem>
+                            {% if media.folder %}
+                                <twig:Xutim:Admin:SidebarItem>
+                                    <twig:block name="header">
+                                        {{ 'folder'|trans({}, 'admin')|capitalize }}:
+                                    </twig:block>
+                                    <twig:block name="content">
+                                        {{ media.folder.name }}
+                                    </twig:block>
+                                </twig:Xutim:Admin:SidebarItem>
+                            {% endif %}
+                            <twig:Xutim:Admin:SidebarItem>
+                                <twig:block name="content">
+                                    <twig:Xutim:Admin:Button
+                                        class="btn-link clipboard-input d-flex justify-content-start"
+                                        variant="default"
+                                        data-controller="clipboard"
+                                        data-clipboard-text="/media/{{ media.originalPath }}"
+                                        data-bs-toggle="popover"
+                                        data-bs-container="body"
+                                        data-bs-placement="top"
+                                        data-bs-content="{{ 'message.copied'|trans|capitalize }}!"
+                                    >
+                                        {{ 'copy link to the original file'|trans({}, 'admin')|capitalize }}
+                                    </twig:Xutim:Admin:Button>
+                                </twig:block>
+                            </twig:Xutim:Admin:SidebarItem>
+                        </twig:Xutim:Admin:SidebarSection>
+                    </div>
+                </div>
+            </div>
+        </twig:block>
+    </twig:Xutim:Admin:Sidebar>
+{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">
+            <a href="{{ admin_path('admin_media_list') }}">{{ 'Media'|trans({}, 'admin') }}</a>
+        </li>
+        <li class="breadcrumb-item active">{{ media.originalPath|split('/')|last }}</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:Button
+        tag="button"
+        id="sidebar-toggle"
+        variant="nav"
+    >
+        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        Sidebar
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block body %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 d-flex align-items-center justify-content-center">
+                    <div class="media-container d-flex justify-content-center align-items-center">
+                        <button
+                            data-lightbox-url-value="/media/{{ media.originalPath }}"
+                            data-controller="lightbox"
+                            data-action="click->lightbox#open"
+                            class="btn-link"
+                        >
+                            <twig:XutimMedia:Admin:Picture
+                                :media="media"
+                                preset="thumb_large"
+                                alt=""
+                                class="p-1"
+                                style="max-width: 300px; max-height: 300px"
+                            />
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4">{{ 'Path'|trans({}, 'admin') }}</dt>
+                            <dd class="col-sm-8"><code>{{ media.originalPath }}</code></dd>
+
+                            <dt class="col-sm-4">{{ 'Hash'|trans({}, 'admin') }}</dt>
+                            <dd class="col-sm-8"><code>{{ media.hash|slice(0, 16) }}...</code></dd>
+
+                            <dt class="col-sm-4">{{ 'BlurHash'|trans({}, 'admin') }}</dt>
+                            <dd class="col-sm-8">
+                                {% if media.blurHash %}
+                                    <code>{{ media.blurHash }}</code>
+                                {% else %}
+                                    <span class="text-muted">{{ 'Not generated'|trans({}, 'admin') }}</span>
+                                {% endif %}
+                            </dd>
+
+                            <dt class="col-sm-4">{{ 'Created'|trans({}, 'admin') }}</dt>
+                            <dd class="col-sm-8">{{ media.createdAt|date('Y-m-d H:i') }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header h3">
+            {{ 'Generated image sizes'|trans({}, 'admin') }}
+        </div>
+        <div class="card-body d-flex flex-column align-items-start p-0">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'Preset'|trans({}, 'admin') }}</th>
+                        <th>{{ 'Max Size'|trans({}, 'admin') }}</th>
+                        <th>{{ 'Fit Mode'|trans({}, 'admin') }}</th>
+                        <th>{{ 'Quality'|trans({}, 'admin') }}</th>
+                        <th>{{ 'Variants'|trans({}, 'admin') }}</th>
+                        <th>{{ 'Preview'|trans({}, 'admin') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in previewData %}
+                        <tr>
+                            <td><strong>{{ data.preset.name }}</strong></td>
+                            <td>{{ data.preset.maxWidth }}×{{ data.preset.maxHeight }}</td>
+                            <td><span class="badge bg-green-lt">{{ data.preset.fitMode.value }}</span></td>
+                            <td>{% for fmt, q in data.preset.quality %}{{ fmt }} {{ q }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                            <td>
+                                {% if data.variants is empty %}
+                                    <span class="badge bg-warning">{{ 'Not generated'|trans({}, 'admin') }}</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ data.variants|length }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if data.variants is not empty %}
+                                    <button
+                                        data-lightbox-url-value="{{ data.variants|first.url }}"
+                                        data-controller="lightbox"
+                                        data-action="click->lightbox#open"
+                                        class="btn-link"
+                                    >
+                                        <twig:ux:icon name="tabler:search" class="w-3 h-3" />
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% for data in previewData %}
+        {% if data.variants is not empty %}
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h3 class="card-title">{{ data.preset.name }} - {{ 'All widths'|trans({}, 'admin') }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        {% for item in data.variants %}
+                            <div class="col-md-4 col-lg-3">
+                                <div class="card card-sm">
+                                    <a href="{{ item.url }}" target="_blank">
+                                        <img src="{{ item.url }}" alt="{{ data.preset.name }}" class="card-img-top">
+                                    </a>
+                                    <div class="card-body">
+                                        <p class="text-muted mb-0 small">
+                                            {{ item.variant.width }}×{{ item.variant.height }}
+                                            <span class="badge bg-secondary">{{ item.variant.format }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

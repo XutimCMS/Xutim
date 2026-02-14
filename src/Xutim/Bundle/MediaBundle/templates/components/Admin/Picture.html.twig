@@ -1,0 +1,18 @@
+<picture>
+    {% if this.avifSrcset %}
+        <source srcset="{{ this.avifSrcset }}" sizes="{{ this.sizes }}" type="image/avif">
+    {% endif %}
+    {% if this.webpSrcset %}
+        <source srcset="{{ this.webpSrcset }}" sizes="{{ this.sizes }}" type="image/webp">
+    {% endif %}
+    <img
+        {{ attributes }}
+        src="{{ this.fallbackUrl }}"
+        {% if this.jpgSrcset %}srcset="{{ this.jpgSrcset }}"{% endif %}
+        sizes="{{ this.sizes }}"
+        alt="{{ this.alt }}"
+        loading="{{ this.loading }}"
+        {% if this.class %}class="{{ this.class }}"{% endif %}
+        {% if this.blurHash %}data-blurhash="{{ this.blurHash }}"{% endif %}
+    >
+</picture>

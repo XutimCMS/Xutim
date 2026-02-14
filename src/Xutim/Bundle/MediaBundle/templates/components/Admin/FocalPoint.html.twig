@@ -1,0 +1,43 @@
+<div
+    class="focal-point-editor position-relative d-inline-block"
+    data-controller="xutim-media--focal-point"
+    data-xutim-media--focal-point-active-zone-value="{{ this.activeZone }}"
+    data-xutim-media--focal-point-save-url-value="{{ saveUrl }}"
+>
+    <img
+        src="{{ this.imageUrl }}"
+        alt="Focal point editor"
+        class="img-fluid"
+        style="display: block; max-height: 400px;"
+    >
+    <div
+        class="position-absolute top-0 start-0 w-100 h-100"
+        style="display: grid; grid-template-columns: repeat({{ this.gridSize }}, 1fr); grid-template-rows: repeat({{ this.gridSize }}, 1fr);"
+    >
+        {% for i in 0..(this.totalZones - 1) %}
+            <button
+                type="button"
+                class="focal-point-zone border-0 p-0{{ this.activeZone == i ? ' active' : '' }}"
+                data-xutim-media--focal-point-target="zone"
+                data-zone-index="{{ i }}"
+                data-action="click->xutim-media--focal-point#select"
+                style="
+                    background: transparent;
+                    cursor: pointer;
+                    outline: 1px solid rgba(255, 255, 255, 0.2);
+                    transition: background 0.15s;
+                "
+            ></button>
+        {% endfor %}
+    </div>
+
+    <style>
+        .focal-point-zone:hover {
+            background: rgba(59, 130, 246, 0.25) !important;
+        }
+        .focal-point-zone.active {
+            background: rgba(59, 130, 246, 0.4) !important;
+            outline: 2px solid rgba(59, 130, 246, 0.8) !important;
+        }
+    </style>
+</div>

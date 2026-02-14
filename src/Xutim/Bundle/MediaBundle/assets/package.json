@@ -1,0 +1,20 @@
+{
+    "name": "@xutim/media-bundle",
+    "version": "1.0.0",
+    "symfony": {
+        "controllers": {
+            "focal-point": {
+                "main": "dist/focal-point_controller.js",
+                "name": "xutim-media/focal-point",
+                "fetch": "eager",
+                "enabled": true
+            }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.2.0"
+        }
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.2.0"
+    }
+}

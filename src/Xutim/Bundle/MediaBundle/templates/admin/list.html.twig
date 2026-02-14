@@ -1,0 +1,292 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}
+    {{ include('@XutimMedia/admin/_title.html.twig') }}
+{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">
+            <a href="{{ admin_path('admin_media_list') }}">{{
+                'Media'|trans({}, 'admin')
+            }}</a>
+        </li>
+
+        {% if currentFolder %}
+            <li class="breadcrumb-item active" aria-current="page">
+                {{ currentFolder.name() }}
+            </li>
+        {% endif %}
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    <div class="d-flex align-items-center">
+        <div class="me-3 align-items-center">
+            <div class="input-icon">
+                <form method="GET" action="" data-controller="auto-submit">
+                    <input
+                        type="text"
+                        id="searchTerm"
+                        name="searchTerm"
+                        autofocus
+                        class="form-control"
+                        aria-label="{{ 'search'|trans({}, 'admin')|capitalize }}"
+                        value="{{ searchTerm }}"
+                        data-action="auto-submit#debouncedSubmit"
+                        onfocus="var temp_value=this.value; this.value=''; this.value=temp_value"
+                    />
+                    <span class="input-icon-addon">
+                        <twig:Xutim:Admin:Icon name="search" />
+                    </span>
+                </form>
+            </div>
+        </div>
+    </div>
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        data-turbo-frame="modal"
+        href="{{ admin_path('admin_media_folder_new', {id: currentFolder.id()|default(null)}) }}"
+    >
+        <twig:Xutim:Admin:Icon name="folder" class="me-1" />
+        {{ 'New folder'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
+
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        data-turbo-frame="modal"
+        href="{{ admin_path('admin_media_upload', {id: currentFolder.id()|default(null)}) }}"
+    >
+        <twig:Xutim:Admin:Icon name="photo" class="me-1" />
+        {{ 'New file'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block body %}
+    {% if not searchTerm %}
+        {% if folders is not empty %}
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h2 class="h3 m-0">
+                    {{ 'Folders'|trans({}, 'admin') }}
+                </h2>
+            </div>
+        {% endif %}
+
+        <div
+            class="row row-cards row-cols-lg-6 g-3 row-cols-md-4 row-cols-sm-3 row-cols-2 mb-4"
+            id="media-folder-list"
+        >
+            {% for folder in folders %}
+                <div
+                    class="col"
+                    id="folder-{{ folder.id() }}"
+                    data-controller="drop-target"
+                    data-drop-target-id-value="{{ folder.id() }}"
+                    data-drop-target-move-url-value="{{ admin_path('admin_media_move_file_to_folder') }}"
+                    data-action="dragover->drop-target#over dragleave->drop-target#leave drop->drop-target#drop"
+                >
+                    <a
+                        class="card card-link"
+                        href="{{ admin_path('admin_media_list', {id: folder.id()}) }}"
+                        data-drop-target-target="folderCard"
+                    >
+                        <div
+                            class="card-body"
+                            data-drop-target-target="folderCard"
+                        >
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <twig:Xutim:Admin:Icon name="folder" />
+                                <div class="flex-fill text-truncate fw-medium" title="{{ folder.name() }}">
+                                    {{ folder.name() }}
+                                </div>
+                            </div>
+                            <div class="text-secondary small">
+                                {{ folder.children()|length }}
+                                {{ 'folders'|trans({}, 'admin') }},
+                                {{ folder.media()|length }}
+                                {{ 'files'|trans({}, 'admin') }}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+            <div class="col">
+                <twig:Xutim:Admin:Button
+                    tag="a"
+                    variant="card-link"
+                    style="border-style: dashed"
+                    data-turbo-frame="modal"
+                    href="{{ admin_path('admin_media_folder_new', {id: currentFolder.id()|default(null)}) }}"
+                >
+                    <div
+                        class="card-body d-flex align-items-center gap-2 text-black text-opacity-25"
+                        data-drop-target-target="folderCard"
+                    >
+                        <twig:Xutim:Admin:Icon name="plus" />
+                        <div class="flex-fill">
+                            <div class="fw-medium text-truncate">
+                                {{ 'New folder'|trans({}, 'admin') }}
+                            </div>
+                        </div>
+                    </div>
+                </twig:Xutim:Admin:Button>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if media is not empty %}
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h3 m-0">
+                {{ 'Files'|trans({}, 'admin') }}
+            </h2>
+        </div>
+    {% endif %}
+    <div
+        class="row row-cards row-cols-lg-6 g-3 row-cols-md-4 row-cols-sm-3 row-cols-2"
+        id="media-list"
+    >
+        {% for item in media %}
+            <div
+                class="col"
+                id="media-{{ item.id() }}"
+                data-controller="draggable"
+                data-draggable-id-value="{{ item.id() }}"
+                data-draggable-name-value="{{ item.originalPath() }}"
+                draggable="true"
+                data-action="dragstart->draggable#start dragend->draggable#end"
+            >
+                <div class="card card-sm">
+                    <div class="position-relative">
+                        <a
+                            href="{{ admin_path('admin_media_edit', {id: item.id()}) }}"
+                            class="d-block"
+                        >
+                            {% if item.isImage() %}
+                                <twig:XutimMedia:Admin:Picture
+                                    :media="item"
+                                    preset="thumb_small"
+                                    alt=""
+                                    class="card-img-top"
+                                />
+                            {% else %}
+                                <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="aspect-ratio: 1; min-height: 120px;">
+                                    {% if item.mime() starts with 'application/pdf' %}
+                                        <twig:ux:Icon name="tabler:file-type-pdf" class="text-danger" style="width: 3rem; height: 3rem;" />
+                                    {% elseif item.mime() starts with 'video/' %}
+                                        <twig:ux:Icon name="tabler:file-type-video" class="text-primary" style="width: 3rem; height: 3rem;" />
+                                    {% elseif item.mime() starts with 'audio/' %}
+                                        <twig:ux:Icon name="tabler:file-music" class="text-info" style="width: 3rem; height: 3rem;" />
+                                    {% elseif item.mime() starts with 'text/' or item.mime() in ['application/json', 'application/xml'] %}
+                                        <twig:ux:Icon name="tabler:file-text" class="text-secondary" style="width: 3rem; height: 3rem;" />
+                                    {% else %}
+                                        <twig:ux:Icon name="tabler:file" class="text-secondary" style="width: 3rem; height: 3rem;" />
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </a>
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <div class="dropdown">
+                                <button
+                                    class="btn btn-sm btn-icon p-2 btn-white"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                >
+                                    <twig:ux:Icon
+                                        name="tabler:dots-vertical"
+                                        class="w-3 h-3"
+                                    />
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a
+                                        class="dropdown-item"
+                                        href="{{ admin_path('admin_media_edit', {id: item.id()}) }}"
+                                    >
+                                        <twig:Xutim:Admin:Icon name="edit" class="me-2" />
+                                        {{ 'Edit'|trans({}, 'admin') }}
+                                    </a>
+                                    <a
+                                        class="dropdown-item"
+                                        href="{{ admin_path('admin_media_move', {id: item.id()}) }}"
+                                        data-turbo-frame="modal"
+                                    >
+                                        <twig:Xutim:Admin:Icon name="folder" class="me-2" />
+                                        {{ 'Move to folder'|trans({}, 'admin') }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body border-top">
+                        {% set trans = item.getTranslationByLocale(app.request.get('_content_locale')) %}
+                        <div
+                            class="d-flex align-items-center text-truncate"
+                            title="{{ trans ? trans.name() : item.originalPath()|split('/')|last }}"
+                            data-controller="tooltip"
+                        >
+                            {{ trans ? trans.name() : item.originalPath()|split('/')|last }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+        {% set pages = media.nbPages %}
+        {% if pages > 1 %}
+            {% if media.currentPage - 3 > 0 %}
+                <span class="text-black p-2 px-3 inline-block rounded-1">
+                    ...
+                </span>
+            {% endif %}
+            {% if media.currentPage - 2 > 0 %}
+                <a
+                    href="{{ admin_path('admin_media_list', {id: currentFolder.id()|default(null), searchTerm: searchTerm, page: media.currentPage - 2}) }}"
+                    class="text-black p-2 px-3 inline-block rounded-1"
+                >
+                    {{ media.currentPage - 2 }}
+                </a>
+            {% endif %}
+            {% if media.currentPage - 1 > 0 %}
+                <a
+                    href="{{ admin_path('admin_media_list', {id: currentFolder.id()|default(null), searchTerm: searchTerm, page: media.currentPage - 1}) }}"
+                    class="text-black p-2 px-3 inline-block rounded-1"
+                >
+                    {{ media.currentPage - 1 }}
+                </a>
+            {% endif %}
+            <a
+                href="{{ admin_path('admin_media_list', {id: currentFolder.id()|default(null), searchTerm: searchTerm, page: media.currentPage}) }}"
+                disabled="disabled"
+                class="bg-gray-200 text-black p-2 px-3 inline-block rounded-1"
+            >
+                {{ media.currentPage }}
+            </a>
+            {% if media.currentPage + 1 <= pages %}
+                <a
+                    href="{{ admin_path('admin_media_list', {id: currentFolder.id()|default(null), searchTerm: searchTerm, page: media.currentPage + 1}) }}"
+                    class="text-black p-2 px-3 inline-block rounded-1"
+                >
+                    {{ media.currentPage + 1 }}
+                </a>
+            {% endif %}
+            {% if media.currentPage + 2 <= pages %}
+                <a
+                    href="{{ admin_path('admin_media_list', {id: currentFolder.id()|default(null), searchTerm: searchTerm, page: media.currentPage + 2}) }}"
+                    class="text-black p-2 px-3 inline-block rounded-1"
+                >
+                    {{ media.currentPage + 2 }}
+                </a>
+            {% endif %}
+
+            {% if media.currentPage + 3 <= pages %}
+                <span class="text-black p-2 px-3 inline-block rounded-1">
+                    ...
+                </span>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

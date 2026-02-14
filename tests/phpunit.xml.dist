@@ -20,6 +20,8 @@
       <directory>../src/Xutim/Bundle/CoreBundle/tests/Unit</directory>
       <directory>../src/Xutim/Bundle/CoreBundle/tests/Application</directory>
       <directory>../src/Xutim/Bundle/EditorBundle/tests/Unit</directory>
+      <directory>../src/Xutim/Bundle/MediaBundle/tests/Unit</directory>
+      <directory>../src/Xutim/Bundle/MediaBundle/tests/Application</directory>
       <exclude>./Stubs</exclude>
       <exclude>./Application</exclude>
     </testsuite>

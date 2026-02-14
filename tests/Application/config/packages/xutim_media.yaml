@@ -1,0 +1,14 @@
+xutim_media:
+    models:
+        media:
+            class: App\Entity\Media\Media
+        media_folder:
+            class: App\Entity\Media\MediaFolder
+        media_translation:
+            class: App\Entity\Media\MediaTranslation
+        media_variant:
+            class: App\Entity\Media\MediaVariant
+
+    processing:
+        driver: gd
+        optimize: false

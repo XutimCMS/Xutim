@@ -3,48 +3,80 @@
 declare(strict_types=1);
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-
-// use Symfony\Component\Routing\Requirement\EnumRequirement;
-// use Xutim\CoreBundle\Entity\PublicationStatus;
-// use Xutim\EventBundle\Action\Admin\CreateEventAction;
-// use Xutim\EventBundle\Action\Admin\DeleteEventAction;
-// use Xutim\EventBundle\Action\Admin\EditEventAction;
-// use Xutim\EventBundle\Action\Admin\EditEventArticleAction;
-// use Xutim\EventBundle\Action\Admin\EditEventDatesAction;
-// use Xutim\EventBundle\Action\Admin\EditEventPageAction;
-// use Xutim\EventBundle\Action\Admin\EditEventStatusAction;
-// use Xutim\EventBundle\Action\Admin\ListEventsAction;
+use Xutim\MediaBundle\Action\Admin\EditCopyrightAction;
+use Xutim\MediaBundle\Action\Admin\JsonListAllFilesAction;
+use Xutim\MediaBundle\Action\Admin\ListMediaAction;
+use Xutim\MediaBundle\Action\Admin\CreateFolderAction;
+use Xutim\MediaBundle\Action\Admin\DeleteMediaAction;
+use Xutim\MediaBundle\Action\Admin\EditFolderAction;
+use Xutim\MediaBundle\Action\Admin\EditMediaAction;
+use Xutim\MediaBundle\Action\Admin\MoveMediaAction;
+use Xutim\MediaBundle\Action\Admin\MoveMediaToFolderAction;
+use Xutim\MediaBundle\Action\Admin\PresetPreviewAction;
+use Xutim\MediaBundle\Action\Admin\RegenerateVariantsAction;
+use Xutim\MediaBundle\Action\Admin\ShowMediaTranslationAction;
+use Xutim\MediaBundle\Action\Admin\EditFocalPointAction;
+use Xutim\MediaBundle\Action\Admin\UpdateFocalPointAction;
+use Xutim\MediaBundle\Action\Admin\UploadMediaAction;
 
 return function (RoutingConfigurator $routes) {
-    // $routes->add('admin_event_new', '/event/new/{id?null}')
-    //     ->methods(['get', 'post'])
-    //     ->controller(CreateEventAction::class);
-    //
-    // $routes->add('admin_event_delete', '/event/delete/{id}')
-    //     ->controller(DeleteEventAction::class);
-    //
-    // $routes->add('admin_event_edit', '/event/edit/{id}/{locale? }')
-    //     ->methods(['get', 'post'])
-    //     ->controller(EditEventAction::class);
-    //
-    // $routes->add('admin_event_article_edit', '/event/edit-article/{id}')
-    //     ->methods(['get', 'post'])
-    //     ->controller(EditEventArticleAction::class);
-    //
-    // $routes->add('admin_event_dates_edit', '/event/edit-dates/{id}')
-    //     ->methods(['get', 'post'])
-    //     ->controller(EditEventDatesAction::class);
-    //
-    // $routes->add('admin_event_page_edit', '/event/edit-page/{id}')
-    //     ->methods(['get', 'post'])
-    //     ->controller(EditEventPageAction::class);
-    //
-    // $routes->add('admin_event_list', '/admin/event')
-    //     ->methods(['get'])
-    //     ->controller(ListEventsAction::class);
-    //
-    // $routes->add('admin_event_publication_status_edit', '/publication-status/event/edit/{id}/{status}')
-    //     ->methods(['post'])
-    //     ->requirements(['status' => new EnumRequirement(PublicationStatus::class)])
-    //     ->controller(EditEventStatusAction::class);
+    $routes->add('admin_media_focal_point', '/media/{id}/focal-point')
+        ->methods(['POST'])
+        ->controller(UpdateFocalPointAction::class);
+
+    $routes->add('admin_media_focal_point_edit', '/media/{id}/focal-point/edit')
+        ->methods(['GET'])
+        ->controller(EditFocalPointAction::class);
+
+    $routes->add('admin_media_regenerate_variants', '/media/{id}/regenerate-variants')
+        ->methods(['POST'])
+        ->controller(RegenerateVariantsAction::class);
+
+    $routes->add('admin_media_preset_preview', '/media/{id}/presets')
+        ->methods(['GET'])
+        ->controller(PresetPreviewAction::class);
+
+    $routes->add('admin_media_edit', '/media/{id}/edit')
+        ->methods(['GET', 'POST'])
+        ->controller(EditMediaAction::class);
+
+    $routes->add('admin_media_upload', '/media/upload/{id?}')
+        ->methods(['GET', 'POST'])
+        ->controller(UploadMediaAction::class);
+
+    $routes->add('admin_media_delete', '/media/{id}/delete')
+        ->methods(['GET', 'POST'])
+        ->controller(DeleteMediaAction::class);
+
+    $routes->add('admin_media_folder_new', '/media/folder/new/{id?}')
+        ->methods(['GET', 'POST'])
+        ->controller(CreateFolderAction::class);
+
+    $routes->add('admin_media_folder_edit', '/media/folder/{id}/edit')
+        ->methods(['GET', 'POST'])
+        ->controller(EditFolderAction::class);
+
+    $routes->add('admin_media_move', '/media/{id}/move/{folderId?}')
+        ->methods(['GET', 'POST'])
+        ->controller(MoveMediaAction::class);
+
+    $routes->add('admin_media_move_file_to_folder', '/media/move-to-folder')
+        ->methods(['POST'])
+        ->controller(MoveMediaToFolderAction::class);
+
+    $routes->add('admin_media_copyright_edit', '/media/{id}/copyright')
+        ->methods(['GET', 'POST'])
+        ->controller(EditCopyrightAction::class);
+
+    $routes->add('admin_json_file_all_list', '/json/file/all-list')
+        ->methods(['GET'])
+        ->controller(JsonListAllFilesAction::class);
+
+    $routes->add('admin_media_translation_show', '/media/show-translation/{id}')
+        ->methods(['GET'])
+        ->controller(ShowMediaTranslationAction::class);
+
+    $routes->add('admin_media_list', '/media/{id?}')
+        ->methods(['GET'])
+        ->controller(ListMediaAction::class);
 };

@@ -13,7 +13,7 @@
         <server name="KERNEL_CLASS" value="App\Kernel"/>
         <server name="SHELL_VERBOSITY" value="-1"/>
         <server name="SYMFONY_PHPUNIT_REMOVE" value=""/>
-        <server name="SYMFONY_PHPUNIT_VERSION" value="9.6"/>
+        <server name="SYMFONY_PHPUNIT_VERSION" value="12"/>
     </php>
 
     <testsuites>
@@ -24,6 +24,7 @@
             <directory>src/Xutim/Bundle/AnalyticsBundle/tests</directory>
             <directory>src/Xutim/Bundle/CoreBundle/tests</directory>
             <directory>src/Xutim/Bundle/EditorBundle/tests</directory>
+            <directory>src/Xutim/Bundle/MediaBundle/tests</directory>
             <exclude>src/Xutim/Bundle/CoreBundle/tests/Stubs</exclude>
         </testsuite>
 
@@ -32,6 +33,7 @@
             <directory>src/Xutim/Bundle/AnalyticsBundle/tests/Unit</directory>
             <directory>src/Xutim/Bundle/CoreBundle/tests/Unit</directory>
             <directory>src/Xutim/Bundle/EditorBundle/tests/Unit</directory>
+            <directory>src/Xutim/Bundle/MediaBundle/tests/Unit</directory>
         </testsuite>
 
         <testsuite name="editor">
@@ -46,6 +48,7 @@
         <testsuite name="functional">
             <directory>tests/Functional</directory>
             <directory>src/Xutim/Bundle/CoreBundle/tests/Application</directory>
+            <directory>src/Xutim/Bundle/MediaBundle/tests/Application</directory>
         </testsuite>
 
         <testsuite name="analytics">
@@ -56,9 +59,13 @@
             <directory>src/Xutim/Bundle/CoreBundle/tests</directory>
             <exclude>src/Xutim/Bundle/CoreBundle/tests/Stubs</exclude>
         </testsuite>
+
+        <testsuite name="media">
+            <directory>src/Xutim/Bundle/MediaBundle/tests</directory>
+        </testsuite>
     </testsuites>
 
-    <coverage>
+    <source>
         <include>
             <directory suffix=".php">src/Xutim/Bundle/AnalyticsBundle/src</directory>
             <directory suffix=".php">src/Xutim/Bundle/CoreBundle/src</directory>
@@ -74,9 +81,9 @@
             <directory>src/Xutim/Bundle/*/src/DependencyInjection</directory>
             <directory>src/Xutim/Bundle/*/src/DataFixtures</directory>
         </exclude>
-    </coverage>
+    </source>
 
     <extensions>
-        <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
     </extensions>
 </phpunit>

@@ -65,6 +65,12 @@ doctrine:
                 dir: '%kernel.project_dir%/vendor/xutimcms/analytics-bundle/src/Domain/Model'
                 prefix: 'Xutim\AnalyticsBundle\Domain\Model'
                 alias: XutimAnalyticsBundle
+            XutimMediaBundle:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/xutimcms/media-bundle/src/Domain/Model'
+                prefix: 'Xutim\MediaBundle\Domain\Model'
+                alias: XutimMediaBundle
             gedmo_tree:
                 type: attribute
                 prefix: Gedmo\Tree\Entity

@@ -1,0 +1,26 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+
+{% set title = 'New media folder'|trans({}, 'admin') %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="prepend" targets="#media-folder-list">
+        <template>
+            {{ include('@XutimMedia/admin/_folder_card.html.twig', {folder: folder}) }}
+        </template>
+    </turbo-stream>
+{% endblock %}

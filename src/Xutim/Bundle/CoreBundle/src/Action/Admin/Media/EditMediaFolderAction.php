@@ -36,7 +36,7 @@ class EditMediaFolderAction extends AbstractController
             $this->repo->save($folder, true);
 
             if ($request->headers->has('turbo-frame')) {
-                $stream = $this->renderBlockView('@XutimCore/admin/media/media_folder_edit.html.twig', 'stream_success', [
+                $stream = $this->renderBlockView('@XutimMedia/admin/folder_edit.html.twig', 'stream_success', [
                     'folder' => $folder
                 ]);
 
@@ -50,7 +50,7 @@ class EditMediaFolderAction extends AbstractController
             );
         }
 
-        return $this->render('@XutimCore/admin/media/media_folder_edit.html.twig', [
+        return $this->render('@XutimMedia/admin/folder_edit.html.twig', [
             'form' => $form,
             'folder' => $folder
         ]);

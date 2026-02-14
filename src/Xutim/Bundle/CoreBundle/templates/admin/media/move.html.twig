@@ -76,7 +76,7 @@
 {% block stream_update_folder %}
     <turbo-stream action="replace" target="folder-{{ folder.id }}">
         <template>
-            {{ include('@XutimCore/admin/media/_folder_card.html.twig', {folder: folder}) }}
+            {{ include('@XutimMedia/admin/_folder_card.html.twig', {folder: folder}) }}
         </template>
     </turbo-stream>
 {% endblock %}

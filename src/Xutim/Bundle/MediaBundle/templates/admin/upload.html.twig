@@ -1,0 +1,62 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% set title = 'New media file'|trans({}, 'admin') %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.file) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.alt) }}
+            {{ form_row(form.copyright) }}
+            {{ form_row(form.locale) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="prepend" targets="#media-list">
+        <template>
+            <div
+                class="col"
+                id="media-{{ media.id }}"
+            >
+                <div class="card card-sm">
+                    <div class="position-relative">
+                        <a
+                            href="{{ admin_path('admin_media_edit', {id: media.id}) }}"
+                            class="d-block"
+                        >
+                            {% if media.isImage %}
+                                <twig:XutimMedia:Admin:Picture
+                                    :media="media"
+                                    preset="thumb_small"
+                                    alt=""
+                                    class="card-img-top"
+                                />
+                            {% else %}
+                                <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 120px;">
+                                    <twig:Xutim:Admin:Icon name="file" />
+                                </div>
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="card-body border-top">
+                        {% set trans = media.getTranslationByLocale(content_context_language()) %}
+                        <div class="d-flex align-items-center" title="{{ trans ? trans.name : media.originalPath|split('/')|last }}">
+                            {{ trans ? trans.name : media.originalPath|split('/')|last }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </turbo-stream>
+{% endblock %}

@@ -88,7 +88,7 @@
         id="media-folder-list"
     >
         {% for folder in folders %}
-            {{ include('@XutimCore/admin/media/_folder_card.html.twig', {folder: folder}) }}
+            {{ include('@XutimMedia/admin/_folder_card.html.twig', {folder: folder}) }}
         {% endfor %}
         <div class="col">
             <twig:Xutim:Admin:Button

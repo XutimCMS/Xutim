@@ -1,0 +1,52 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% set title = 'Are you sure you want to delete this file?'|trans({}, 'admin') %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card mt-np1">
+        <div class="card-status-top bg-danger"></div>
+        <div class="card-body">
+            <div class="text-center">
+                <p>
+                    <twig:Xutim:Admin:Icon name="alert-triangle" class="mb-2 text-danger icon-lg" />
+                </p>
+                <h3>{{ title }}</h3>
+            </div>
+        </div>
+        <div class="card-body">
+            {% set trans = media.getTranslationByLocale(content_context_language()) %}
+            <p>
+                <strong>{{ trans ? trans.name : media.originalPath|split('/')|last }}</strong>
+                ({{ media.originalExt|upper }}, {{ (media.sizeBytes / 1024)|round(0) }} KB)
+            </p>
+        </div>
+
+        <div class="card-footer">
+            {{ form_start(form, {attr: {class: 'd-flex align-items-center'}}) }}
+            <a
+                href="{{ admin_path('admin_media_edit', {id: media.id}) }}"
+                class="text-sm font-medium me-auto"
+            >
+                {{ 'Back to list'|trans({}, 'admin') }}
+            </a>
+
+            <twig:Xutim:Admin:Button
+                variant="danger"
+                tag="button"
+                id="{{ form.delete.vars.id }}"
+                name="{{ form.delete.vars.full_name }}"
+                class="btn btn-danger ms-auto"
+                type="submit"
+                data-turbo-frame="{{ app.request.headers.get('turbo-frame') ? '_top' : '' }}"
+            >
+                <twig:Xutim:Admin:Icon name="trash" />
+                {{ 'delete'|trans({}, 'admin')|capitalize }}
+            </twig:Xutim:Admin:Button>
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}
