@@ -65,12 +65,6 @@ final class XutimMediaExtension extends Extension implements PrependExtensionInt
 
     public function prepend(ContainerBuilder $container): void
     {
-        $container->prependExtensionConfig('doctrine_migrations', [
-            'migrations_paths' => [
-                'Xutim\MediaBundle\Migrations' => __DIR__ . '/../Migrations',
-            ],
-        ]);
-
         $bundleConfigs = $container->getExtensionConfig($this->getAlias());
         /** @var array{models: array<string, array{class: class-string}>} $config */
         $config = $this->processConfiguration(
