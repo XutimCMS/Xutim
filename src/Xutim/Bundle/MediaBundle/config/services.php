@@ -33,11 +33,9 @@ return static function (ContainerConfigurator $container): void {
             service(StorageAdapterInterface::class),
             service(MediaRepositoryInterface::class),
             service(MediaTranslationRepositoryInterface::class),
-            service(MediaVariantRepositoryInterface::class),
-            service(VariantGenerator::class),
             service(BlurHashGenerator::class),
+            service('messenger.default_bus'),
             '%xutim_media.model.media.class%',
             '%xutim_media.model.media_translation.class%',
-            '%xutim_media.model.media_variant.class%',
         ]);
 };

@@ -5,33 +5,30 @@ declare(strict_types=1);
 namespace Xutim\MediaBundle\Service;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Uid\Uuid;
 use Xutim\MediaBundle\Domain\Model\MediaFolderInterface;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\MediaBundle\Domain\Model\MediaTranslationInterface;
-use Xutim\MediaBundle\Domain\Model\MediaVariantInterface;
 use Xutim\MediaBundle\Infra\Storage\StorageAdapterInterface;
+use Xutim\MediaBundle\Message\RegenerateVariantsMessage;
 use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 use Xutim\MediaBundle\Repository\MediaTranslationRepositoryInterface;
-use Xutim\MediaBundle\Repository\MediaVariantRepositoryInterface;
 
 final class MediaUploader
 {
     /**
      * @param class-string<MediaInterface>            $mediaClass
      * @param class-string<MediaTranslationInterface> $mediaTranslationClass
-     * @param class-string<MediaVariantInterface>     $mediaVariantClass
      */
     public function __construct(
         private readonly StorageAdapterInterface $storage,
         private readonly MediaRepositoryInterface $mediaRepository,
         private readonly MediaTranslationRepositoryInterface $translationRepository,
-        private readonly MediaVariantRepositoryInterface $variantRepository,
-        private readonly VariantGenerator $variantGenerator,
         private readonly BlurHashGenerator $blurHashGenerator,
+        private readonly MessageBusInterface $messageBus,
         private readonly string $mediaClass,
         private readonly string $mediaTranslationClass,
-        private readonly string $mediaVariantClass,
     ) {
     }
 
@@ -110,24 +107,13 @@ final class MediaUploader
             if ($blurHash !== null) {
                 $media->changeBlurHash($blurHash);
             }
-
-            $generatedVariants = $this->variantGenerator->generateAllPresets($media);
-            foreach ($generatedVariants as $generated) {
-                /** @var MediaVariantInterface $variant */
-                $variant = new ($this->mediaVariantClass)(
-                    $media,
-                    $generated->preset,
-                    $generated->format,
-                    $generated->width,
-                    $generated->height,
-                    $generated->path,
-                    $generated->fingerprint,
-                );
-                $this->variantRepository->save($variant);
-            }
         }
 
         $this->mediaRepository->save($media, true);
+
+        if ($isImage) {
+            $this->messageBus->dispatch(new RegenerateVariantsMessage($media->id()));
+        }
 
         return $media;
     }
