@@ -32,6 +32,7 @@ final class MediaImageExtension extends AbstractExtension
         return [
             new TwigFunction('media_url', $this->mediaUrl(...)),
             new TwigFunction('media_srcset', $this->mediaSrcset(...)),
+            new TwigFunction('media_is_portrait', $this->mediaIsPortrait(...)),
         ];
     }
 
@@ -105,6 +106,20 @@ final class MediaImageExtension extends AbstractExtension
         }
 
         return implode(', ', $srcset);
+    }
+
+    /**
+     * @param MediaInterface|string $media MediaInterface or file name
+     */
+    public function mediaIsPortrait(MediaInterface|string $media): bool
+    {
+        $media = $this->resolveMedia($media);
+
+        if ($media === null) {
+            return false;
+        }
+
+        return $media->height() > $media->width();
     }
 
     /**
