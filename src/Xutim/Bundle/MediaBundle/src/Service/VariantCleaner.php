@@ -34,7 +34,7 @@ final class VariantCleaner
 
         foreach ($preset->getEffectiveWidths() as $width) {
             foreach ($preset->formats as $format) {
-                $path = $this->pathResolver->getPath($media, $preset, $width, $format);
+                $path = $this->pathResolver->buildPath($media, $preset, $width, $format);
 
                 if ($this->storage->exists($path)) {
                     $this->storage->delete($path);

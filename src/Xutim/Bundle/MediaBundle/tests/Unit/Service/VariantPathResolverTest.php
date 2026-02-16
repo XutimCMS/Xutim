@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Xutim\MediaBundle\Domain\Data\FitMode;
 use Xutim\MediaBundle\Domain\Data\ImagePreset;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
+use Xutim\MediaBundle\Domain\Model\MediaVariantInterface;
 use Xutim\MediaBundle\Infra\Storage\StorageAdapterInterface;
 use Xutim\MediaBundle\Service\VariantPathResolver;
 
@@ -21,14 +22,14 @@ final class VariantPathResolverTest extends TestCase
         return $media;
     }
 
-    public function testGetPath(): void
+    public function testBuildPath(): void
     {
         $storage = $this->createStub(StorageAdapterInterface::class);
         $resolver = new VariantPathResolver($storage);
         $media = $this->createMediaStub('abcdef1234567890extra');
         $preset = new ImagePreset(name: 'thumb', maxWidth: 300, maxHeight: 200);
 
-        $path = $resolver->getPath($media, $preset, 320, 'webp');
+        $path = $resolver->buildPath($media, $preset, 320, 'webp');
 
         $this->assertSame('variants/thumb/320/webp/abcdef1234567890.webp', $path);
     }
@@ -40,10 +41,12 @@ final class VariantPathResolverTest extends TestCase
             ->willReturnCallback(fn (string $path) => '/media/' . $path);
 
         $resolver = new VariantPathResolver($storage);
-        $media = $this->createMediaStub('abcdef1234567890extra');
-        $preset = new ImagePreset(name: 'thumb', maxWidth: 300, maxHeight: 200);
 
-        $url = $resolver->getUrl($media, $preset, 320, 'webp', 'fingerprint123456');
+        $variant = $this->createStub(MediaVariantInterface::class);
+        $variant->method('path')->willReturn('variants/thumb/320/webp/abcdef1234567890.webp');
+        $variant->method('fingerprint')->willReturn('fingerprint123456');
+
+        $url = $resolver->getUrl($variant);
 
         $this->assertSame('/media/variants/thumb/320/webp/abcdef1234567890.webp?v=fingerpr', $url);
     }

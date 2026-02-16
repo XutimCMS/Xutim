@@ -6,6 +6,7 @@ namespace Xutim\MediaBundle\Service;
 
 use Xutim\MediaBundle\Domain\Data\ImagePreset;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
+use Xutim\MediaBundle\Domain\Model\MediaVariantInterface;
 use Xutim\MediaBundle\Infra\Storage\StorageAdapterInterface;
 
 final class VariantPathResolver
@@ -16,9 +17,27 @@ final class VariantPathResolver
     }
 
     /**
-     * Get storage-relative path for a variant
+     * Get public URL for an existing variant
      */
-    public function getPath(MediaInterface $media, ImagePreset $preset, int $width, string $format): string
+    public function getUrl(MediaVariantInterface $variant): string
+    {
+        return $this->storage->url($variant->path()) . '?v=' . substr($variant->fingerprint(), 0, 8);
+    }
+
+    /**
+     * Get absolute filesystem path for a variant to be generated
+     */
+    public function getAbsolutePath(MediaInterface $media, ImagePreset $preset, int $width, string $format): string
+    {
+        $path = $this->buildPath($media, $preset, $width, $format);
+
+        return $this->storage->absolutePath($path);
+    }
+
+    /**
+     * Build storage-relative path for a variant (used during generation)
+     */
+    public function buildPath(MediaInterface $media, ImagePreset $preset, int $width, string $format): string
     {
         $hash = $this->getMediaHash($media);
 
@@ -30,26 +49,6 @@ final class VariantPathResolver
             $hash,
             $format,
         );
-    }
-
-    /**
-     * Get public URL for a variant
-     */
-    public function getUrl(MediaInterface $media, ImagePreset $preset, int $width, string $format, string $fingerprint): string
-    {
-        $path = $this->getPath($media, $preset, $width, $format);
-
-        return $this->storage->url($path) . '?v=' . substr($fingerprint, 0, 8);
-    }
-
-    /**
-     * Get absolute filesystem path for a variant
-     */
-    public function getAbsolutePath(MediaInterface $media, ImagePreset $preset, int $width, string $format): string
-    {
-        $path = $this->getPath($media, $preset, $width, $format);
-
-        return $this->storage->absolutePath($path);
     }
 
     /**

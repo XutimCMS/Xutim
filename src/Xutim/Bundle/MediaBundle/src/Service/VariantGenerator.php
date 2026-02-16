@@ -88,7 +88,7 @@ final class VariantGenerator
             $focalY,
         );
 
-        $path = $this->pathResolver->getPath($media, $preset, $width, $format);
+        $path = $this->pathResolver->buildPath($media, $preset, $width, $format);
         $fingerprint = $this->pathResolver->calculateFingerprint($media, $preset, $width, $format);
 
         return new GeneratedVariant(

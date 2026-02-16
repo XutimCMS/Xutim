@@ -60,13 +60,7 @@ final class PresetPreviewAction
             ];
 
             foreach ($variants as $variant) {
-                $url = $this->pathResolver->getUrl(
-                    $media,
-                    $preset,
-                    $variant->width(),
-                    $variant->format(),
-                    $variant->fingerprint(),
-                );
+                $url = $this->pathResolver->getUrl($variant);
 
                 $presetData['variants'][] = [
                     'variant' => $variant,

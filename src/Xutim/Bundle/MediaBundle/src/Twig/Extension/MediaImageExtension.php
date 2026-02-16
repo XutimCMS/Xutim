@@ -72,7 +72,7 @@ final class MediaImageExtension extends AbstractExtension
         );
 
         if ($variant !== null) {
-            return $this->pathResolver->getUrl($media, $preset, $width, $format, $variant->fingerprint());
+            return $this->pathResolver->getUrl($variant);
         }
 
         // No variant — fall back to original file
@@ -92,11 +92,6 @@ final class MediaImageExtension extends AbstractExtension
             return '';
         }
 
-        $preset = $this->presetRegistry->get($presetName);
-        if ($preset === null) {
-            return '';
-        }
-
         $variants = $this->variantRepository->findByMediaPresetFormat($media, $presetName, $format);
 
         if ($variants === []) {
@@ -105,13 +100,7 @@ final class MediaImageExtension extends AbstractExtension
 
         $srcset = [];
         foreach ($variants as $variant) {
-            $url = $this->pathResolver->getUrl(
-                $media,
-                $preset,
-                $variant->width(),
-                $format,
-                $variant->fingerprint(),
-            );
+            $url = $this->pathResolver->getUrl($variant);
             $srcset[] = sprintf('%s %dw', $url, $variant->width());
         }
 
