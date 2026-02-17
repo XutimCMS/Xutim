@@ -5,14 +5,6 @@
     display: none !important;
 }
 
-/* Split view scrollable right panel */
-[data-split-view-target='right'] {
-    position: sticky;
-    top: 0;
-    max-height: 100vh;
-    overflow-y: auto;
-}
-
 :root {
     --tblr-font-sans-serif: 'Inter';
 }

@@ -430,11 +430,15 @@ export default class extends Controller {
     #applyScrollLock() {
         if (!this.hasRightTarget) return;
         if (this.scrollLocked) {
-            this.rightTarget.style.overflow = 'hidden';
-            this.rightTarget.style.position = 'static';
-        } else {
-            this.rightTarget.style.overflow = '';
             this.rightTarget.style.position = '';
+            this.rightTarget.style.top = '';
+            this.rightTarget.style.maxHeight = '';
+            this.rightTarget.style.overflowY = '';
+        } else {
+            this.rightTarget.style.position = 'sticky';
+            this.rightTarget.style.top = '0';
+            this.rightTarget.style.maxHeight = '100vh';
+            this.rightTarget.style.overflowY = 'auto';
         }
     }
 
