@@ -290,15 +290,15 @@ export default class extends Controller {
     #updateReferenceMeta(meta = {}) {
         const get = (k) => meta[k] ?? '';
         if (this.hasMetaPretitleTarget)
-            this.metaPretitleTarget.textContent = get('pretitle');
+            this.metaPretitleTarget.value = get('pretitle');
         if (this.hasMetaSlugTarget)
-            this.metaSlugTarget.textContent = get('slug');
+            this.metaSlugTarget.value = get('slug');
         if (this.hasMetaTitleTarget)
-            this.metaTitleTarget.textContent = get('title');
+            this.metaTitleTarget.value = get('title');
         if (this.hasMetaSubtitleTarget)
-            this.metaSubtitleTarget.textContent = get('subtitle');
+            this.metaSubtitleTarget.value = get('subtitle');
         if (this.hasMetaDescriptionTarget) {
-            this.metaDescriptionTarget.textContent = this.#asPlain(
+            this.metaDescriptionTarget.value = this.#asPlain(
                 get('description'),
             );
         }

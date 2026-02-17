@@ -294,38 +294,40 @@
 
                     <div data-split-view-target="referenceContainer">
                         <div class="mb-3">
-                            <span class="badge bg-primary-lt">
-                                {{ referenceLocale|upper }}
-                            </span>
-                            <span class="text-muted small ms-2">{{ 'Reference'|trans({}, 'admin') }}</span>
+                            <label class="form-label">{{ 'Intro title'|trans({}, 'admin') }}</label>
+                            <input type="text" class="form-control" disabled
+                                data-split-view-target="metaPretitle"
+                                value="{{ referenceTranslation ? referenceTranslation.pretitle : '' }}">
                         </div>
 
                         <div class="mb-3">
-                            <div class="text-muted small">{{ 'Intro title'|trans({}, 'admin') }}</div>
-                            <div data-split-view-target="metaPretitle">{{ referenceTranslation ? referenceTranslation.pretitle : '' }}</div>
+                            <label class="form-label">{{ 'Title'|trans({}, 'admin') }}</label>
+                            <input type="text" class="form-control" disabled
+                                data-split-view-target="metaTitle"
+                                value="{{ referenceTranslation ? referenceTranslation.title : '' }}">
                         </div>
 
                         <div class="mb-3">
-                            <div class="text-muted small">{{ 'Title'|trans({}, 'admin') }}</div>
-                            <div class="fw-semibold" data-split-view-target="metaTitle">{{ referenceTranslation ? referenceTranslation.title : '' }}</div>
+                            <label class="form-label">{{ 'Subtitle'|trans({}, 'admin') }}</label>
+                            <input type="text" class="form-control" disabled
+                                data-split-view-target="metaSubtitle"
+                                value="{{ referenceTranslation ? referenceTranslation.subtitle : '' }}">
                         </div>
 
                         <div class="mb-3">
-                            <div class="text-muted small">{{ 'Subtitle'|trans({}, 'admin') }}</div>
-                            <div data-split-view-target="metaSubtitle">{{ referenceTranslation ? referenceTranslation.subtitle : '' }}</div>
+                            <label class="form-label">{{ 'Slug'|trans({}, 'admin') }}</label>
+                            <input type="text" class="form-control" disabled
+                                data-split-view-target="metaSlug"
+                                value="{{ referenceTranslation ? referenceTranslation.slug : '' }}">
                         </div>
 
-                        <div class="mb-3">
-                            <div class="text-muted small">{{ 'Slug'|trans({}, 'admin') }}</div>
-                            <code data-split-view-target="metaSlug">{{ referenceTranslation ? referenceTranslation.slug : '' }}</code>
+                        <div class="mb-6">
+                            <label class="form-label">{{ 'Description'|trans({}, 'admin') }}</label>
+                            <textarea class="form-control" disabled
+                                data-split-view-target="metaDescription">{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</textarea>
                         </div>
 
-                        <div class="mb-4">
-                            <div class="text-muted small">{{ 'Description'|trans({}, 'admin') }}</div>
-                            <div class="text-secondary" data-split-view-target="metaDescription">{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</div>
-                        </div>
-
-                        <div class="ms-4 mt-3">
+                        <div class="pt-6">
                             <div
                                 id="reference-editor"
                                 data-split-view-target="reference"
