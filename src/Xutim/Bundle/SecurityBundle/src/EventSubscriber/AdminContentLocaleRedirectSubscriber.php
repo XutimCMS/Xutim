@@ -35,9 +35,9 @@ final class AdminContentLocaleRedirectSubscriber implements EventSubscriberInter
         }
 
         $request = $event->getRequest();
-        $contentLocale = $request->attributes->getString('_content_locale');
+        $contentLocale = $request->attributes->get('_content_locale');
 
-        if ($contentLocale === '') {
+        if (!is_string($contentLocale) || $contentLocale === '') {
             return;
         }
 
