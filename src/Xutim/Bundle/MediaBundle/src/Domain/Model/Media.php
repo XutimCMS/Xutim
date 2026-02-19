@@ -50,7 +50,6 @@ class Media implements MediaInterface
     #[Column]
     private int $sizeBytes;
 
-    // 0 for non-images
     #[Column(options: ['default' => 0])]
     private int $width = 0;
 
