@@ -24,7 +24,7 @@
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="link"
-                href="{{ impersonation_path(user.email) }}"
+                href="{{ path('admin_homepage_redirect', {_switch_user: user.email}) }}"
                 data-turbo-frame="_top"
                 data-turbo-prefetch="false"
                 class="mt-1 align-text-top pe-1"
