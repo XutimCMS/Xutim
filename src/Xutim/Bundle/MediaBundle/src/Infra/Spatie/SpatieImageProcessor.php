@@ -33,7 +33,7 @@ final class SpatieImageProcessor implements ImageProcessorInterface
         ?float $focalY,
     ): array {
         $destDir = dirname($destPath);
-        if (!is_dir($destDir) && !mkdir($destDir, 0755, true) && !is_dir($destDir)) {
+        if (!is_dir($destDir) && !mkdir($destDir, 0775, true) && !is_dir($destDir)) {
             throw new \RuntimeException(sprintf('Failed to create directory: %s', $destDir));
         }
 

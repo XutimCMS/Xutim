@@ -18,7 +18,7 @@ final class LocalStorageAdapter implements StorageAdapterInterface
         $fullPath = $this->absolutePath($path);
         $dir = dirname($fullPath);
 
-        if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+        if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) {
             throw StorageException::writeFailed($path, 'Failed to create directory');
         }
 
