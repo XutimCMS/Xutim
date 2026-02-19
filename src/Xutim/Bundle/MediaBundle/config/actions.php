@@ -13,6 +13,7 @@ use Xutim\MediaBundle\Action\Admin\EditFocalPointAction;
 use Xutim\MediaBundle\Action\Admin\JsonListAllFilesAction;
 use Xutim\MediaBundle\Action\Admin\ListMediaAction;
 use Xutim\MediaBundle\Action\Admin\CreateFolderAction;
+use Xutim\MediaBundle\Action\Admin\DeleteFolderAction;
 use Xutim\MediaBundle\Action\Admin\DeleteMediaAction;
 use Xutim\MediaBundle\Action\Admin\EditFolderAction;
 use Xutim\MediaBundle\Action\Admin\EditMediaAction;
@@ -148,6 +149,20 @@ return static function (ContainerConfigurator $container): void {
         ->tag('controller.service_arguments');
 
     $services->set(EditFolderAction::class)
+        ->args([
+            service(MediaFolderRepositoryInterface::class),
+            service(LogEventFactory::class),
+            service(LogEventRepository::class),
+            service(UserStorage::class),
+            service('form.factory'),
+            service('twig'),
+            service(AdminUrlGenerator::class),
+            service('security.authorization_checker'),
+            '%xutim_media.model.media_folder.class%',
+        ])
+        ->tag('controller.service_arguments');
+
+    $services->set(DeleteFolderAction::class)
         ->args([
             service(MediaFolderRepositoryInterface::class),
             service(LogEventFactory::class),

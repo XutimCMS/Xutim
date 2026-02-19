@@ -14,5 +14,15 @@
         >
             <twig:Xutim:Admin:Icon name="edit" />
         </a>
+        {% if currentFolder.children() is empty and currentFolder.media() is empty %}
+            <a
+                href="{{ admin_path('admin_media_folder_delete', {id: currentFolder.id()}) }}"
+                data-turbo-frame="modal"
+                aria-label="{{ 'Delete folder'|trans({}, 'admin') }}"
+                class="text-danger"
+            >
+                <twig:Xutim:Admin:Icon name="trash" />
+            </a>
+        {% endif %}
     {% endif %}
 </div>

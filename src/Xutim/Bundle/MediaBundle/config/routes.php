@@ -8,6 +8,7 @@ use Xutim\MediaBundle\Action\Admin\JsonListAllFilesAction;
 use Xutim\MediaBundle\Action\Admin\ListMediaAction;
 use Xutim\MediaBundle\Action\Admin\CreateFolderAction;
 use Xutim\MediaBundle\Action\Admin\DeleteMediaAction;
+use Xutim\MediaBundle\Action\Admin\DeleteFolderAction;
 use Xutim\MediaBundle\Action\Admin\EditFolderAction;
 use Xutim\MediaBundle\Action\Admin\EditMediaAction;
 use Xutim\MediaBundle\Action\Admin\MoveMediaAction;
@@ -55,6 +56,10 @@ return function (RoutingConfigurator $routes) {
     $routes->add('admin_media_folder_edit', '/media/folder/{id}/edit')
         ->methods(['GET', 'POST'])
         ->controller(EditFolderAction::class);
+
+    $routes->add('admin_media_folder_delete', '/media/folder/{id}/delete')
+        ->methods(['GET', 'POST'])
+        ->controller(DeleteFolderAction::class);
 
     $routes->add('admin_media_move', '/media/{id}/move/{folderId?}')
         ->methods(['GET', 'POST'])
