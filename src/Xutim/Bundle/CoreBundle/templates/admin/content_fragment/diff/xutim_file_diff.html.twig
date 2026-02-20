@@ -1,7 +1,7 @@
 {% set curId = fragment.data.file.id ?? '' %}
 {% set curUrl = fragment.data.file.url ?? '' %}
 {% set curFile = curId ? (curId|xutim_image_file_from_id) : null %}
-{% set curTrans = curFile ? curFile.translationByLocaleOrAny(locale) : null %}
+{% set curTrans = curFile ? (curFile.translationByLocale(locale) ?? curFile.translations|first) : null %}
 {% set curName = curTrans ? curTrans.name|striptags|raw : curId %}
 
 {%
@@ -45,10 +45,10 @@
     {% set oldFile = oldId ? (oldId|xutim_image_file_from_id) : null %}
     {% set newFile = newId ? (newId|xutim_image_file_from_id) : null %}
     {%
-        set oldTrans = oldFile ? oldFile.translationByLocaleOrAny(locale) : null
+        set oldTrans = oldFile ? (oldFile.translationByLocale(locale) ?? oldFile.translations|first) : null
     %}
     {%
-        set newTrans = newFile ? newFile.translationByLocaleOrAny(locale) : null
+        set newTrans = newFile ? (newFile.translationByLocale(locale) ?? newFile.translations|first) : null
     %}
     {% set oldName = oldTrans ? oldTrans.name|striptags|raw : oldId %}
     {% set newName = newTrans ? newTrans.name|striptags|raw : newId %}

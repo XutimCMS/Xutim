@@ -16,16 +16,10 @@ xutim_core:
             class: App\Entity\Core\Page
         menu_item:
             class: App\Entity\Core\MenuItem
-        file_translation:
-            class: App\Entity\Core\FileTranslation
         site:
             class: App\Entity\Core\Site
         tag_translation:
             class: App\Entity\Core\TagTranslation
-        file:
-            class: App\Entity\Core\File
-        media_folder:
-            class: App\Entity\Core\MediaFolder
         content_draft:
             class: App\Entity\Core\ContentDraft
 

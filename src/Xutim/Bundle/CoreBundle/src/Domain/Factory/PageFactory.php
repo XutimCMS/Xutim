@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Domain\Factory;
 
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Message\Command\Page\CreatePageCommand;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 class PageFactory
 {
@@ -24,7 +24,7 @@ class PageFactory
         }
     }
 
-    public function create(CreatePageCommand $data, ?FileInterface $featuredImage, ?PageInterface $parent): PageInterface
+    public function create(CreatePageCommand $data, ?MediaInterface $featuredImage, ?PageInterface $parent): PageInterface
     {
         /** @var PageInterface $page */
         $page = new ($this->pageClass)(

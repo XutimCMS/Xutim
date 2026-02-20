@@ -4,34 +4,28 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\MessageHandler\Command\Page;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\Page\PageCreatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Domain\Factory\PageFactory;
-use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Entity\ContentTranslation;
-use Xutim\CoreBundle\Entity\File;
 use Xutim\CoreBundle\Entity\Page;
 use Xutim\CoreBundle\Message\Command\Page\CreatePageCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
-use Xutim\CoreBundle\Service\FragmentsFileExtractor;
 use Xutim\CoreBundle\Service\SearchContentBuilder;
+use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 
 readonly class CreatePageHandler implements CommandHandlerInterface
 {
     public function __construct(
         private readonly LogEventFactory $logEventFactory,
-        private EntityManagerInterface $entityManager,
         private PageRepository $pageRepository,
         private ContentTranslationRepository $contentTransRepo,
         private LogEventRepository $eventRepository,
-        private FileRepository $fileRepository,
-        private FragmentsFileExtractor $fragmentsFileExtractor,
+        private MediaRepositoryInterface $mediaRepository,
         private SearchContentBuilder $searchContentBuilder,
         private PageFactory $pageFactory
     ) {
@@ -41,7 +35,7 @@ readonly class CreatePageHandler implements CommandHandlerInterface
     {
         $file = null;
         if ($cmd->hasFeaturedImage() === true) {
-            $file = $this->fileRepository->find($cmd->featuredImageId);
+            $file = $this->mediaRepository->findById($cmd->featuredImageId);
         }
 
         $parentPage = $cmd->parentId !== null ? $this->pageRepository->find($cmd->parentId) : null;
@@ -55,8 +49,6 @@ readonly class CreatePageHandler implements CommandHandlerInterface
 
         $this->contentTransRepo->save($translation);
         $this->pageRepository->save($page, true);
-
-        $this->connectFiles($cmd->content, $page);
 
         $pageCreatedEvent = new PageCreatedEvent(
             $page->getId(),
@@ -97,24 +89,5 @@ readonly class CreatePageHandler implements CommandHandlerInterface
 
         $this->eventRepository->save($logEntrySec);
         $this->eventRepository->save($logEntryTrans, true);
-    }
-
-    /**
-     * @param EditorBlock $content
-     */
-    private function connectFiles(array $content, PageInterface $page): void
-    {
-        $files = $this->fragmentsFileExtractor->extractFiles($content);
-        foreach ($files as $filename) {
-            /** @var File|null $file */
-            $file = $this->fileRepository->findOneBy(['dataPath' => $filename]);
-            if ($file === null) {
-                continue;
-            }
-
-            $file->addPage($page);
-            $page->addFile($file);
-        }
-        $this->entityManager->flush();
     }
 }

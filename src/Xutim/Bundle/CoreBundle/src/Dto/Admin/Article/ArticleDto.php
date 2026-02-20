@@ -38,7 +38,7 @@ final readonly class ArticleDto
             $translation->getContent(),
             $translation->getDescription(),
             $translation->getLocale(),
-            $article->getFeaturedImage()?->getId()
+            $article->getFeaturedImage()?->id()
         );
     }
 

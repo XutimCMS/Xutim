@@ -6,26 +6,28 @@ namespace Xutim\CoreBundle\Action\Public;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Xutim\CoreBundle\Repository\FileRepository;
-use Xutim\CoreBundle\Service\FileUploader;
+use Symfony\Component\Uid\Uuid;
+use Xutim\MediaBundle\Infra\Storage\StorageAdapterInterface;
+use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 
 class ShowFileAction extends AbstractController
 {
     public function __construct(
-        private readonly FileUploader $fileUploader,
-        private readonly FileRepository $fileRepo
+        private readonly MediaRepositoryInterface $mediaRepo,
+        private readonly StorageAdapterInterface $storage,
     ) {
     }
 
     public function __invoke(string $id): Response
     {
-        $file = $this->fileRepo->find($id);
-        if ($file === null) {
+        $media = $this->mediaRepo->findById(Uuid::fromString($id));
+        if ($media === null) {
             throw $this->createNotFoundException('The file does not exist');
         }
-        $path = sprintf('%s%s', $this->fileUploader->getFilesPath(), $file->getFileName());
 
-        $response = $this->file($path, $file->getFileName());
+        $path = $this->storage->absolutePath($media->originalPath());
+
+        $response = $this->file($path, $media->originalPath());
 
         $response->setPublic();
         $response->setMaxAge(604800); // 1 week

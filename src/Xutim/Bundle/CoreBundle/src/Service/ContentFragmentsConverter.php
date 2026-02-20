@@ -6,14 +6,15 @@ namespace Xutim\CoreBundle\Service;
 
 use Symfony\Component\HttpFoundation\Exception\UnexpectedValueException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Uid\UuidV4;
 use Twig\Environment;
-use Xutim\CoreBundle\Repository\FileRepository;
+use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 
 readonly class ContentFragmentsConverter
 {
     public function __construct(
         private readonly Environment $twig,
-        private readonly FileRepository $fileRepo
+        private readonly MediaRepositoryInterface $mediaRepo
     ) {
     }
 
@@ -162,25 +163,25 @@ readonly class ContentFragmentsConverter
         $copyrights = [];
         foreach ($fragments['blocks'] as $fragment) {
             if ($fragment['type'] === 'xutimImage') {
-                $file = $this->fileRepo->find($fragment['data']['file']['id']);
-                if ($file === null) {
-                    throw new NotFoundHttpException('File with an id ' . $fragment['data']['file']['id'] . ' was not found');
+                $media = $this->mediaRepo->findById(new UuidV4($fragment['data']['file']['id']));
+                if ($media === null) {
+                    throw new NotFoundHttpException('Media with an id ' . $fragment['data']['file']['id'] . ' was not found');
                 }
-                if ($file->getCopyright() !== '') {
-                    $copyrights[$file->getId()->toRfc4122()] = $file->getCopyright();
+                if ($media->copyright() !== null && $media->copyright() !== '') {
+                    $copyrights[$media->id()->toRfc4122()] = $media->copyright();
                 }
             }
 
 
             if ($fragment['type'] === 'imageRow') {
                 foreach ($fragment['data']['images'] as $imageFragment) {
-                    $file = $this->fileRepo->find($imageFragment['id']);
-                    if ($file === null) {
-                        throw new NotFoundHttpException('File with an id ' . $imageFragment['id'] . ' was not found');
+                    $media = $this->mediaRepo->findById(new UuidV4($imageFragment['id']));
+                    if ($media === null) {
+                        throw new NotFoundHttpException('Media with an id ' . $imageFragment['id'] . ' was not found');
                     }
 
-                    if ($file->getCopyright() !== '') {
-                        $copyrights[$file->getId()->toRfc4122()] = $file->getCopyright();
+                    if ($media->copyright() !== null && $media->copyright() !== '') {
+                        $copyrights[$media->id()->toRfc4122()] = $media->copyright();
                     }
                 }
             }

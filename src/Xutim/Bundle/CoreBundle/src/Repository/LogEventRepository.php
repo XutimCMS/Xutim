@@ -10,7 +10,6 @@ use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEv
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\LogEventInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
@@ -74,7 +73,7 @@ class LogEventRepository extends ServiceEntityRepository
         return $this->findOneBy(['objectId' => $translation->getObject()], ['recordedAt' => 'asc']);
     }
 
-    public function findFirstByObject(FileInterface|ArticleInterface|PageInterface|TagInterface $object): LogEventInterface
+    public function findFirstByObject(ArticleInterface|PageInterface|TagInterface $object): LogEventInterface
     {
         /** @var LogEventInterface */
         return $this->findOneBy(['objectId' => $object->getId()], ['recordedAt' => 'asc']);

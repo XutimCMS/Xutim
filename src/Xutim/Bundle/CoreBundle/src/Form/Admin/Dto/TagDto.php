@@ -29,7 +29,7 @@ final readonly class TagDto
             $translation?->getSlug() ?? '',
             $locale,
             $tag->getColor(),
-            $tag->getFeaturedImage()?->getId(),
+            $tag->getFeaturedImage()?->id(),
             $tag->getLayout()
         );
     }

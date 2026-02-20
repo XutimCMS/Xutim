@@ -6,7 +6,7 @@ namespace Xutim\EditorBundle\Tests\Unit\Entity\Block;
 
 use PHPUnit\Framework\TestCase;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\EditorBundle\Entity\Block\ImageBlock;
 use Xutim\EditorBundle\Entity\ContentDraft;
 
@@ -22,7 +22,7 @@ final class ImageBlockTest extends TestCase
 
     public function testCanInstantiate(): void
     {
-        $file = $this->createStub(FileInterface::class);
+        $file = $this->createStub(MediaInterface::class);
         $block = new ImageBlock($this->draft, $file, 'Image caption');
 
         $this->assertSame('image', $block->getType());
@@ -43,7 +43,7 @@ final class ImageBlockTest extends TestCase
     public function testSetFile(): void
     {
         $block = new ImageBlock($this->draft);
-        $file = $this->createStub(FileInterface::class);
+        $file = $this->createStub(MediaInterface::class);
 
         $block->setFile($file);
 
@@ -53,7 +53,7 @@ final class ImageBlockTest extends TestCase
 
     public function testClearFile(): void
     {
-        $file = $this->createStub(FileInterface::class);
+        $file = $this->createStub(MediaInterface::class);
         $block = new ImageBlock($this->draft, $file);
 
         $block->setFile(null);

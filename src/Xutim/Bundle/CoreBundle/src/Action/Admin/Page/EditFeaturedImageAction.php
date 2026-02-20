@@ -13,10 +13,10 @@ use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Page;
 use Xutim\CoreBundle\Form\Admin\Dto\ImageDto;
 use Xutim\CoreBundle\Form\Admin\FeaturedImageType;
-use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
+use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
@@ -27,7 +27,7 @@ class EditFeaturedImageAction extends AbstractController
         private readonly PageRepository $pageRepo,
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
-        private readonly FileRepository $fileRepo,
+        private readonly MediaRepositoryInterface $mediaRepo,
         private readonly BlockContext $blockContext,
         private readonly AdminUrlGenerator $router,
     ) {
@@ -40,7 +40,7 @@ class EditFeaturedImageAction extends AbstractController
             throw $this->createNotFoundException('The page does not exist');
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-        $form = $this->createForm(FeaturedImageType::class, new ImageDto($page->getFeaturedImage()?->getId()), [
+        $form = $this->createForm(FeaturedImageType::class, new ImageDto($page->getFeaturedImage()?->id()), [
             'action' => $this->router->generate('admin_page_featured_image_edit', ['id' => $page->getId()]),
         ]);
         $form->handleRequest($request);
@@ -48,7 +48,7 @@ class EditFeaturedImageAction extends AbstractController
             /** @var ImageDto $data */
             $data = $form->getData();
             
-            $page->changeFeaturedImage($data->id === null ? null : $this->fileRepo->find($data->id));
+            $page->changeFeaturedImage($data->id === null ? null : $this->mediaRepo->findById($data->id));
             $this->pageRepo->save($page, true);
             $this->blockContext->resetBlocksBelongsToPage($page);
 

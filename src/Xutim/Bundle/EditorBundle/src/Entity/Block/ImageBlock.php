@@ -9,26 +9,26 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\EditorBundle\Domain\Model\ContentBlockInterface;
 use Xutim\EditorBundle\Domain\Model\ContentDraftInterface;
 use Xutim\EditorBundle\Entity\ContentBlock;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 #[Entity]
 class ImageBlock extends ContentBlock
 {
     public const string TYPE = 'image';
 
-    #[ManyToOne(targetEntity: FileInterface::class)]
+    #[ManyToOne(targetEntity: MediaInterface::class)]
     #[JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?FileInterface $file = null;
+    private ?MediaInterface $file = null;
 
     #[Column(type: Types::TEXT, nullable: true)]
     private ?string $caption = null;
 
     public function __construct(
         ContentDraftInterface $draft,
-        ?FileInterface $file = null,
+        ?MediaInterface $file = null,
         ?string $caption = null,
         ?ContentBlockInterface $parent = null,
         ?int $slot = null,
@@ -44,12 +44,12 @@ class ImageBlock extends ContentBlock
         return self::TYPE;
     }
 
-    public function getFile(): ?FileInterface
+    public function getFile(): ?MediaInterface
     {
         return $this->file;
     }
 
-    public function setFile(?FileInterface $file): void
+    public function setFile(?MediaInterface $file): void
     {
         $this->file = $file;
         $this->updates();

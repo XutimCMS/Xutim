@@ -11,11 +11,11 @@ use Xutim\CoreBundle\Domain\Factory\TagTranslationFactory;
 use Xutim\CoreBundle\Entity\Tag;
 use Xutim\CoreBundle\Message\Command\Tag\EditTagCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
-use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Repository\TagTranslationRepository;
 use Xutim\CoreBundle\Service\SearchContentBuilder;
+use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 
 readonly class EditTagHandler implements CommandHandlerInterface
 {
@@ -24,7 +24,7 @@ readonly class EditTagHandler implements CommandHandlerInterface
         private TagRepository $tagRepo,
         private TagTranslationRepository $tagTransRepo,
         private LogEventRepository $eventRepository,
-        private FileRepository $fileRepository,
+        private MediaRepositoryInterface $mediaRepository,
         private SearchContentBuilder $searchContentBuilder,
         private TagTranslationFactory $tagTranslationFactory
     ) {
@@ -43,7 +43,7 @@ readonly class EditTagHandler implements CommandHandlerInterface
         $trans = $tag->getTranslationByLocale($cmd->locale);
         $file = null;
         if ($cmd->hasFeaturedImage() === true) {
-            $file = $this->fileRepository->find($cmd->featuredImageId);
+            $file = $this->mediaRepository->findById($cmd->featuredImageId);
         }
 
         $tag->change($cmd->color, $file);
@@ -73,7 +73,7 @@ readonly class EditTagHandler implements CommandHandlerInterface
             $cmd->slug,
             $cmd->locale,
             $cmd->color->getValueOrDefaultHex(),
-            $tag->getFeaturedImage()?->getId()
+            $tag->getFeaturedImage()?->id()
         );
         $logEntry = $this->logEventFactory->create($tag->getId(), $cmd->userIdentifier, Tag::class, $event);
         $this->eventRepository->save($logEntry, true);

@@ -31,5 +31,7 @@ interface MediaRepositoryInterface
 
     public function findByOriginalPath(string $originalPath): ?MediaInterface;
 
+    public function findByHash(string $hash): ?MediaInterface;
+
     public function queryByFolderAndSearch(?MediaFolderInterface $folder, string $searchTerm): QueryBuilder;
 }

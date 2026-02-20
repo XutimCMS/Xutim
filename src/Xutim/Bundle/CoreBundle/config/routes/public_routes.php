@@ -12,7 +12,7 @@ return function (RoutingConfigurator $routes) {
     $routes
         ->add('homepage', '/{_locale?en}/')
         ->methods(['get'])
-        ->requirements(['_locale' => '[a-z]{2}(?:_[A-Z]{2})?'])
+        ->requirements(['_locale' => '[a-z]{2}(?:_[A-Za-z]{2,8})*'])
         ->controller(HomepageAction::class)
     ;
 

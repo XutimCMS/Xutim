@@ -6,7 +6,7 @@ namespace Xutim\EditorBundle\Tests\Unit\Domain\Factory;
 
 use PHPUnit\Framework\TestCase;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\EditorBundle\Domain\Factory\ContentBlockFactory;
 use Xutim\EditorBundle\Entity\Block\CodeBlock;
 use Xutim\EditorBundle\Entity\Block\EmbedBlock;
@@ -118,7 +118,7 @@ final class ContentBlockFactoryTest extends TestCase
 
     public function testCreateImage(): void
     {
-        $file = $this->createStub(FileInterface::class);
+        $file = $this->createStub(MediaInterface::class);
 
         $block = $this->factory->createImage($this->draft, $file, 'Caption');
 

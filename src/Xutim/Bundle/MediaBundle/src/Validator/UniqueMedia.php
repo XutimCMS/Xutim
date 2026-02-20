@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Xutim\CoreBundle\Validator;
+namespace Xutim\MediaBundle\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
 #[\Attribute]
-class UniqueFile extends Constraint
+class UniqueMedia extends Constraint
 {
     public string $message = 'The image already exists.';
 }

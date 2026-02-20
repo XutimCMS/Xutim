@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Domain\Data;
 
-use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 interface ArticleDataInterface
 {
@@ -18,5 +18,5 @@ interface ArticleDataInterface
     public function getDescription(): string;
     public function getDefaultLanguage(): string;
     public function getUserIdentifier(): string;
-    public function getFeaturedImage(): ?FileInterface;
+    public function getFeaturedImage(): ?MediaInterface;
 }

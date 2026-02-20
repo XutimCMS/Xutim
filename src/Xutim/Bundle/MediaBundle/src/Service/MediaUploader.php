@@ -14,6 +14,7 @@ use Xutim\MediaBundle\Infra\Storage\StorageAdapterInterface;
 use Xutim\MediaBundle\Message\RegenerateVariantsMessage;
 use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 use Xutim\MediaBundle\Repository\MediaTranslationRepositoryInterface;
+use Xutim\MediaBundle\Util\FileHasher;
 
 final class MediaUploader
 {
@@ -66,8 +67,9 @@ final class MediaUploader
         $height = 0;
         $isImage = str_starts_with($mime, 'image/');
 
+        $absolutePath = $this->storage->absolutePath($storagePath);
+
         if ($isImage) {
-            $absolutePath = $this->storage->absolutePath($storagePath);
             $size = getimagesize($absolutePath);
             if ($size !== false) {
                 $width = $size[0];
@@ -75,7 +77,9 @@ final class MediaUploader
             }
         }
 
-        $hash = hash('sha256', $contents);
+        $hash = $isImage
+            ? FileHasher::genereatePerceptualHash($absolutePath)
+            : FileHasher::generateSHA256Hash($absolutePath);
 
         /** @var MediaInterface $media */
         $media = new ($this->mediaClass)(

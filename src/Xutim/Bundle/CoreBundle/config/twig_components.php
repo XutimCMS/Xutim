@@ -20,7 +20,6 @@ use Xutim\CoreBundle\Twig\Components\Admin\BreadcrumbsArticle;
 use Xutim\CoreBundle\Twig\Components\Admin\BreadcrumbsPage;
 use Xutim\CoreBundle\Twig\Components\Admin\Button;
 use Xutim\CoreBundle\Twig\Components\Admin\DataTable;
-use Xutim\CoreBundle\Twig\Components\Admin\FileUpload;
 use Xutim\CoreBundle\Twig\Components\Admin\Icon;
 use Xutim\CoreBundle\Twig\Components\Admin\LanguageContextBar;
 use Xutim\CoreBundle\Twig\Components\Admin\ListGroup;
@@ -96,14 +95,6 @@ return static function (ContainerConfigurator $container): void {
         ->tag('twig.component', [
             'key' => 'Xutim:Admin:DataTable',
             'template' => '@XutimCore/components/Admin/DataTable.html.twig'
-        ])
-    ;
-
-    $services
-        ->set(FileUpload::class)
-        ->tag('twig.component', [
-            'key' => 'Xutim:Admin:FileUpload',
-            'template' => '@XutimCore/components/Admin/FileUpload.html.twig'
         ])
     ;
 

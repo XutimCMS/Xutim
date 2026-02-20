@@ -19,9 +19,9 @@ use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Domain\Model\TagTranslationInterface;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 #[MappedSuperclass]
 class Tag implements TagInterface
@@ -36,8 +36,8 @@ class Tag implements TagInterface
     #[Column(type: 'uuid')]
     private Uuid $id;
 
-    #[ManyToOne(targetEntity: FileInterface::class, inversedBy: 'featuredTags')]
-    private ?FileInterface $featuredImage;
+    #[ManyToOne(targetEntity: MediaInterface::class)]
+    private ?MediaInterface $featuredImage;
 
     #[Embedded(class: Color::class)]
     private Color $color;
@@ -52,12 +52,12 @@ class Tag implements TagInterface
     #[OneToMany(mappedBy: 'tag', targetEntity: TagTranslationInterface::class, indexBy: 'locale')]
     #[OrderBy(['locale' => 'ASC'])]
     private Collection $translations;
-    
+
     /** @var Collection<int, ArticleInterface> */
     #[ManyToMany(targetEntity: ArticleInterface::class, mappedBy: 'tags')]
     private Collection $articles;
 
-    public function __construct(Color $color, ?FileInterface $featuredImage, ?string $layout)
+    public function __construct(Color $color, ?MediaInterface $featuredImage, ?string $layout)
     {
         $this->id = Uuid::v4();
         $this->publishedAt = null;
@@ -80,7 +80,7 @@ class Tag implements TagInterface
         return $translation->getName();
     }
 
-    public function change(Color $color, ?FileInterface $image): void
+    public function change(Color $color, ?MediaInterface $image): void
     {
         $this->color = $color;
         $this->featuredImage = $image;
@@ -105,7 +105,7 @@ class Tag implements TagInterface
         return $this->id;
     }
 
-    public function getFeaturedImage(): ?FileInterface
+    public function getFeaturedImage(): ?MediaInterface
     {
         return $this->featuredImage;
     }

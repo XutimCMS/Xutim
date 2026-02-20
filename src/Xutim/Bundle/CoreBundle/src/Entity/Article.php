@@ -24,15 +24,14 @@ use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Exception\LogicException;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 #[MappedSuperclass]
 class Article implements ArticleInterface
 {
     use TimestampableTrait;
-    use FileTrait;
     use ArchiveStatusTrait;
 
     /** @use BasicTranslatableTrait<ContentTranslationInterface> */
@@ -48,8 +47,8 @@ class Article implements ArticleInterface
     #[Column(type: Types::STRING, nullable: true)]
     private ?string $layout;
 
-    #[ManyToOne(targetEntity: FileInterface::class, inversedBy: 'featuredArticles')]
-    private ?FileInterface $featuredImage;
+    #[ManyToOne(targetEntity: MediaInterface::class)]
+    private ?MediaInterface $featuredImage;
 
     /** @var Collection<string, ContentTranslationInterface> */
     #[OneToMany(mappedBy: 'article', targetEntity: ContentTranslationInterface::class, indexBy: 'locale')]
@@ -67,13 +66,6 @@ class Article implements ArticleInterface
     #[InverseJoinColumn(name: 'tag_id')]
     private Collection $tags;
 
-    /**
-     * @var Collection<int, FileInterface>
-     */
-    #[ManyToMany(targetEntity: FileInterface::class, mappedBy: 'articles')]
-    #[OrderBy(['createdAt' => 'ASC'])]
-    private Collection $files;
-
     /** @var Collection<int, BlockItemInterface> */
     #[OneToMany(mappedBy: 'article', targetEntity: BlockItemInterface::class)]
     private Collection $blockItems;
@@ -87,7 +79,7 @@ class Article implements ArticleInterface
     public function __construct(
         ?string $layout,
         Collection $tags,
-        ?FileInterface $featuredImage
+        ?MediaInterface $featuredImage
     ) {
         $this->id = Uuid::v4();
         $this->layout = $layout;
@@ -97,7 +89,6 @@ class Article implements ArticleInterface
         $this->translations = new ArrayCollection();
         $this->archived = false;
         $this->featuredImage = $featuredImage;
-        $this->files = new ArrayCollection();
         $this->scheduledAt = null;
     }
 
@@ -179,7 +170,7 @@ class Article implements ArticleInterface
     {
         return $this->layout;
     }
-    
+
     public function changeLayout(?Layout $layout): void
     {
         $this->layout = $layout?->code;
@@ -199,10 +190,6 @@ class Article implements ArticleInterface
     {
         if ($this->canBeDeleted() === false) {
             return false;
-        }
-        foreach ($this->files as $file) {
-            $file->removeArticle($this);
-            $this->removeFile($file);
         }
 
         return true;
@@ -238,12 +225,12 @@ class Article implements ArticleInterface
         return $this->scheduledAt > $now;
     }
 
-    public function getFeaturedImage(): ?FileInterface
+    public function getFeaturedImage(): ?MediaInterface
     {
         return $this->featuredImage;
     }
 
-    public function changeFeaturedImage(?FileInterface $image): void
+    public function changeFeaturedImage(?MediaInterface $image): void
     {
         $this->featuredImage = $image;
     }

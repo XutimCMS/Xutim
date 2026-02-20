@@ -32,11 +32,11 @@ use Xutim\CoreBundle\Config\Layout\Block\Option\TagBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\TextBlockItemOption;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\Coordinates;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
-use Xutim\CoreBundle\Domain\Model\MediaFolderInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\MediaBundle\Domain\Model\MediaFolderInterface;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 /**
@@ -47,7 +47,7 @@ class BlockItemType extends AbstractType implements DataMapperInterface
 {
     public function __construct(
         private readonly string $articleClass,
-        private readonly string $fileClass,
+        private readonly string $mediaClass,
         private readonly string $snippetClass,
         private readonly string $tagClass,
         private readonly string $mediaFolderClass,
@@ -98,7 +98,7 @@ class BlockItemType extends AbstractType implements DataMapperInterface
         if ($blockOptions->hasOption(FileBlockItemOption::class) || $blockOptions->hasOption(ImageBlockItemOption::class)) {
             $builder
                 ->add('file', EntityType::class, [
-                    'class' => $this->fileClass,
+                    'class' => $this->mediaClass,
                     'choice_label' => 'id',
                     'placeholder' => new TranslatableMessage('select file', [], 'admin'),
                     'required' => false,
@@ -245,7 +245,7 @@ class BlockItemType extends AbstractType implements DataMapperInterface
             $article = $forms['article']->getData();
         }
         if (array_key_exists('file', $forms)) {
-            /** @var FileInterface|null $file */
+            /** @var MediaInterface|null $file */
             $file = $forms['file']->getData();
             /** @var string|null $description */
             $description = $forms['fileDescription']->getData();

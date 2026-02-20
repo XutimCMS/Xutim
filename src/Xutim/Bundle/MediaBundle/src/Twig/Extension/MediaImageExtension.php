@@ -50,7 +50,7 @@ final class MediaImageExtension extends AbstractExtension
 
         if ($media === null) {
             return $originalFileName !== null
-                ? $this->storage->url('uploads/' . $originalFileName)
+                ? $this->storage->url(str_starts_with($originalFileName, 'uploads/') ? $originalFileName : 'uploads/' . $originalFileName)
                 : '';
         }
 
@@ -132,7 +132,7 @@ final class MediaImageExtension extends AbstractExtension
             return $media;
         }
 
-        $originalPath = 'uploads/' . $media;
+        $originalPath = str_starts_with($media, 'uploads/') ? $media : 'uploads/' . $media;
 
         if (!isset($this->resolvedMedia[$originalPath])) {
             $this->resolvedMedia[$originalPath] = $this->mediaRepository->findByOriginalPath($originalPath) ?? false;

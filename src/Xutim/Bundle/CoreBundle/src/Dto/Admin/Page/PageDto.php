@@ -42,7 +42,7 @@ final readonly class PageDto
             $page->getLocales(),
             $translation->getLocale(),
             $page->getParent(),
-            $page->getFeaturedImage()?->getId()
+            $page->getFeaturedImage()?->id()
         );
     }
 }

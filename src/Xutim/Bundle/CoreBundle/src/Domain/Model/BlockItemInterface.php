@@ -8,6 +8,8 @@ use Deprecated;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
+use Xutim\MediaBundle\Domain\Model\MediaFolderInterface;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 interface BlockItemInterface
@@ -15,7 +17,7 @@ interface BlockItemInterface
     public function change(
         ?PageInterface $page,
         ?ArticleInterface $article,
-        ?FileInterface $file,
+        ?MediaInterface $file,
         ?SnippetInterface $snippet,
         ?TagInterface $tag,
         ?MediaFolderInterface $folder,
@@ -34,7 +36,7 @@ interface BlockItemInterface
     public function getPosition(): int;
 
     public function hasFile(): bool;
-    public function getFile(): ?FileInterface;
+    public function getFile(): ?MediaInterface;
     public function getText(): ?string;
     public function hasText(): bool;
     public function getLink(): ?string;
@@ -77,5 +79,5 @@ interface BlockItemInterface
 
     public function getDto(): BlockItemDto;
 
-    public function changeFile(FileInterface $file): void;
+    public function changeFile(MediaInterface $file): void;
 }

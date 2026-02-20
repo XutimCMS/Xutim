@@ -29,7 +29,6 @@ return static function (ContainerConfigurator $container): void {
         ->defaults()
         ->autowire()
         ->autoconfigure()
-        ->bind('string $filesDirectory', '%kernel.project_dir%/public/media/uploads/')
         ->bind('string $sitemapFile', '%kernel.project_dir%/public/sitemap.xml')
         ->bind('string $publicUploadsDirectory', '/media/uploads/')
         ->bind('string $templatesDir', '%kernel.project_dir%/templates')

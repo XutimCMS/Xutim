@@ -11,6 +11,9 @@ use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\MediaBundle\Action\Admin\EditCopyrightAction;
 use Xutim\MediaBundle\Action\Admin\EditFocalPointAction;
 use Xutim\MediaBundle\Action\Admin\JsonListAllFilesAction;
+use Xutim\MediaBundle\Action\Admin\JsonListFilesAction;
+use Xutim\MediaBundle\Action\Admin\JsonListImagesAction;
+use Xutim\MediaBundle\Action\Admin\JsonShowFileAction;
 use Xutim\MediaBundle\Action\Admin\ListMediaAction;
 use Xutim\MediaBundle\Action\Admin\CreateFolderAction;
 use Xutim\MediaBundle\Action\Admin\DeleteFolderAction;
@@ -235,6 +238,31 @@ return static function (ContainerConfigurator $container): void {
     $services->set(JsonListAllFilesAction::class)
         ->args([
             service(MediaRepositoryInterface::class),
+        ])
+        ->tag('controller.service_arguments');
+
+    $services->set(JsonListImagesAction::class)
+        ->args([
+            service(MediaRepositoryInterface::class),
+            service(MediaFolderRepositoryInterface::class),
+            service(MediaVariantRepositoryInterface::class),
+            service(VariantPathResolver::class),
+            service(StorageAdapterInterface::class),
+        ])
+        ->tag('controller.service_arguments');
+
+    $services->set(JsonListFilesAction::class)
+        ->args([
+            service(MediaRepositoryInterface::class),
+            service(MediaFolderRepositoryInterface::class),
+            service(StorageAdapterInterface::class),
+        ])
+        ->tag('controller.service_arguments');
+
+    $services->set(JsonShowFileAction::class)
+        ->args([
+            service(MediaRepositoryInterface::class),
+            service(StorageAdapterInterface::class),
         ])
         ->tag('controller.service_arguments');
 

@@ -16,6 +16,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\UX\Dropzone\Form\DropzoneType;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\MediaBundle\Validator\UniqueMedia;
 
 /**
  * @extends AbstractType<array{file: UploadedFile, name: string, alt: string|null, copyright: string|null, locale: string}>
@@ -38,6 +39,7 @@ final class UploadMediaType extends AbstractType
                     new File([
                         'maxSize' => '20M',
                     ]),
+                    new UniqueMedia(),
                 ],
             ])
             ->add('name', TextType::class, [

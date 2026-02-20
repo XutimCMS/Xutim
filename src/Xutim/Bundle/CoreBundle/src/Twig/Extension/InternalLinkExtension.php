@@ -7,12 +7,13 @@ namespace Xutim\CoreBundle\Twig\Extension;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Uid\UuidV4;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Xutim\CoreBundle\Repository\ArticleRepository;
-use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 
 class InternalLinkExtension extends AbstractExtension
 {
@@ -21,7 +22,7 @@ class InternalLinkExtension extends AbstractExtension
         private readonly PageRepository $pageRepo,
         private readonly ArticleRepository $articleRepo,
         private readonly TagRepository $tagRepo,
-        private readonly FileRepository $fileRepo,
+        private readonly MediaRepositoryInterface $mediaRepo,
         private readonly RequestStack $requestStack
     ) {
     }
@@ -83,10 +84,9 @@ class InternalLinkExtension extends AbstractExtension
             }
 
             if ($type === 'file') {
-                $file = $this->fileRepo->find($id);
-                $trans = $file?->getTranslationByLocale($locale);
-                if ($trans !== null) {
-                    $href = $this->router->generate('file_show', ['id' => $file->getId(), 'extension' => $file->getExtension()]);
+                $media = $this->mediaRepo->findById(new UuidV4($id));
+                if ($media !== null) {
+                    $href = $this->router->generate('file_show', ['id' => $media->id(), 'extension' => $media->originalExt()]);
                 }
             }
 

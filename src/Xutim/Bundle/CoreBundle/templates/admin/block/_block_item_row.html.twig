@@ -74,7 +74,7 @@
         <td class="w-6">
             {% if item.file %}
                 <button
-                    data-lightbox-url-value="{{ uploaded_asset(item.file.fileName) }}"
+                    data-lightbox-url-value="{{ uploaded_asset(item.file.originalPath) }}"
                     data-controller="lightbox"
                     data-action="click->lightbox#open"
                     class="btn-link"

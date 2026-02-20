@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Domain\Data;
 
-use Xutim\CoreBundle\Domain\Model\FileInterface;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 final readonly class ArticleData implements ArticleDataInterface
 {
@@ -21,7 +21,7 @@ final readonly class ArticleData implements ArticleDataInterface
         private string $description,
         private string $defaultLanguage,
         private string $userIdentifier,
-        private ?FileInterface $featuredImage,
+        private ?MediaInterface $featuredImage,
     ) {
     }
 
@@ -72,7 +72,7 @@ final readonly class ArticleData implements ArticleDataInterface
         return $this->userIdentifier;
     }
 
-    public function getFeaturedImage(): ?FileInterface
+    public function getFeaturedImage(): ?MediaInterface
     {
         return $this->featuredImage;
     }

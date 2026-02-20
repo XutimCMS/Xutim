@@ -10,10 +10,10 @@ use Xutim\CoreBundle\Contract\Block\BlockRendererInterface;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Repository\BlockRepository;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 class BlockContext
@@ -69,9 +69,9 @@ class BlockContext
         $this->resetBlocks($blocks);
     }
 
-    public function resetBlocksBelongsToFile(FileInterface $file): void
+    public function resetBlocksBelongsToMedia(MediaInterface $media): void
     {
-        $blocks = $this->blockRepository->findByFile($file);
+        $blocks = $this->blockRepository->findByMedia($media);
         $this->resetBlocks($blocks);
     }
 

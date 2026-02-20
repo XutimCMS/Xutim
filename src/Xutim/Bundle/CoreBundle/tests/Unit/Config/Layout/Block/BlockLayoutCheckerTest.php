@@ -20,8 +20,8 @@ use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Config\Layout\LayoutConfigItem;
 use Xutim\CoreBundle\Entity\Block;
 use Xutim\CoreBundle\Entity\BlockItem;
-use Xutim\CoreBundle\Entity\File;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\SnippetBundle\Domain\Model\Snippet;
 use Xutim\SnippetBundle\Domain\Model\SnippetCategory;
 
@@ -68,7 +68,96 @@ class BlockLayoutCheckerTest extends TestCase
         $block2 = new Block('code', 'name', 'desc', null, 'layout');
         $snippetItem = new BlockItem($block2, null, null, null, new Snippet('code', 'Test snippet', SnippetCategory::Ui));
         $snippetItem = new BlockItem($block2, null, null, null, new Snippet('code2', 'Test snippet 2', SnippetCategory::Ui));
-        $imageItem = new BlockItem($block2, null, null, new File(Uuid::v4(), '/path/to/file.jpg', 'jpg', 'ref123', 'hash123', 'Copyright 2024'));
+        $media = new class() implements MediaInterface {
+            public function id(): Uuid
+            {
+                return Uuid::v4();
+            }
+            public function folder(): ?\Xutim\MediaBundle\Domain\Model\MediaFolderInterface
+            {
+                return null;
+            }
+            public function originalPath(): string
+            {
+                return '/path/to/file.jpg';
+            }
+            public function originalExt(): string
+            {
+                return 'jpg';
+            }
+            public function mime(): string
+            {
+                return 'image/jpeg';
+            }
+            public function hash(): string
+            {
+                return 'hash123';
+            }
+            public function sizeBytes(): int
+            {
+                return 0;
+            }
+            public function width(): int
+            {
+                return 0;
+            }
+            public function height(): int
+            {
+                return 0;
+            }
+            public function copyright(): ?string
+            {
+                return 'Copyright 2024';
+            }
+            public function focalX(): ?float
+            {
+                return null;
+            }
+            public function focalY(): ?float
+            {
+                return null;
+            }
+            public function blurHash(): ?string
+            {
+                return null;
+            }
+            public function isImage(): bool
+            {
+                return true;
+            }
+            public function getCreatedAt(): \DateTimeImmutable
+            {
+                return new \DateTimeImmutable();
+            }
+            public function getUpdatedAt(): \DateTimeImmutable
+            {
+                return new \DateTimeImmutable();
+            }
+            public function change(?string $copyright, ?float $focalX, ?float $focalY, ?\Xutim\MediaBundle\Domain\Model\MediaFolderInterface $folder, ?string $blurHash): void
+            {
+            }
+            public function changeFolder(?\Xutim\MediaBundle\Domain\Model\MediaFolderInterface $folder): void
+            {
+            }
+            public function changeCopyright(string $copyright): void
+            {
+            }
+            public function changeBlurHash(string $blurHash): void
+            {
+            }
+            public function getTranslationByLocale(string $locale): ?\Xutim\MediaBundle\Domain\Model\MediaTranslationInterface
+            {
+                return null;
+            }
+            public function addTranslation(\Xutim\MediaBundle\Domain\Model\MediaTranslationInterface $translation): void
+            {
+            }
+            public function getTranslations(): \Doctrine\Common\Collections\Collection
+            {
+                return new \Doctrine\Common\Collections\ArrayCollection();
+            }
+        };
+        $imageItem = new BlockItem($block2, null, null, $media);
 
         return [
             [[], $blockEmpty, true],

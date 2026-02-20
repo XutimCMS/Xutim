@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Config\Layout\Layout;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 interface ArticleInterface
 {
@@ -34,7 +35,7 @@ interface ArticleInterface
     public function getTitle(): string;
 
     public function getLayout(): ?string;
-    
+
     public function changeLayout(?Layout $layout): void;
 
     /**
@@ -69,9 +70,9 @@ interface ArticleInterface
 
     public function isPublishingScheduled(): bool;
 
-    public function getFeaturedImage(): ?FileInterface;
+    public function getFeaturedImage(): ?MediaInterface;
 
-    public function changeFeaturedImage(?FileInterface $image): void;
+    public function changeFeaturedImage(?MediaInterface $image): void;
 
     public function hasFeaturedImage(): bool;
 
@@ -91,22 +92,6 @@ interface ArticleInterface
     public function getCreatedAt(): DateTimeImmutable;
 
     public function getUpdatedAt(): DateTimeImmutable;
-
-    /**
-     * @return Collection<int, FileInterface>
-     */
-    public function getFiles(): Collection;
-
-    /**
-     * @return Collection<int, FileInterface>
-     */
-    public function getImages(): Collection;
-
-    public function addFile(FileInterface $file): void;
-
-    public function removeFile(FileInterface $file): void;
-
-    public function getImage(): ?FileInterface;
 
     public function isArchived(): bool;
 

@@ -20,11 +20,11 @@ use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\Coordinates;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
-use Xutim\CoreBundle\Domain\Model\MediaFolderInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
+use Xutim\MediaBundle\Domain\Model\MediaFolderInterface;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 #[MappedSuperclass]
@@ -63,9 +63,9 @@ class BlockItem implements BlockItemInterface
     #[JoinColumn(nullable: false)]
     private BlockInterface $block;
 
-    #[ManyToOne(targetEntity: FileInterface::class, inversedBy: 'blockItems')]
+    #[ManyToOne(targetEntity: MediaInterface::class)]
     #[JoinColumn(nullable: true)]
-    private ?FileInterface $file;
+    private ?MediaInterface $file;
 
     #[ManyToOne(targetEntity: PageInterface::class, inversedBy: 'blockItems')]
     #[JoinColumn(nullable: true)]
@@ -91,7 +91,7 @@ class BlockItem implements BlockItemInterface
         BlockInterface $block,
         ?PageInterface $page,
         ?ArticleInterface $article,
-        ?FileInterface $file,
+        ?MediaInterface $file,
         ?SnippetInterface $snippet = null,
         ?TagInterface $tag = null,
         ?MediaFolderInterface $folder = null,
@@ -127,7 +127,7 @@ class BlockItem implements BlockItemInterface
     public function change(
         ?PageInterface $page,
         ?ArticleInterface $article,
-        ?FileInterface $file,
+        ?MediaInterface $file,
         ?SnippetInterface $snippet,
         ?TagInterface $tag,
         ?MediaFolderInterface $folder,
@@ -168,7 +168,7 @@ class BlockItem implements BlockItemInterface
     }
 
     /**
-     * @phpstan-assert-if-true FileInterface $this->file
+     * @phpstan-assert-if-true MediaInterface $this->file
      * @phpstan-assert-if-false null $this->file
      */
     public function hasFile(): bool
@@ -176,7 +176,7 @@ class BlockItem implements BlockItemInterface
         return $this->file !== null;
     }
 
-    public function getFile(): ?FileInterface
+    public function getFile(): ?MediaInterface
     {
         return $this->file;
     }
@@ -349,7 +349,7 @@ class BlockItem implements BlockItemInterface
         );
     }
 
-    public function changeFile(FileInterface $file): void
+    public function changeFile(MediaInterface $file): void
     {
         $this->file = $file;
     }

@@ -5,6 +5,9 @@ declare(strict_types=1);
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Xutim\MediaBundle\Action\Admin\EditCopyrightAction;
 use Xutim\MediaBundle\Action\Admin\JsonListAllFilesAction;
+use Xutim\MediaBundle\Action\Admin\JsonListFilesAction;
+use Xutim\MediaBundle\Action\Admin\JsonListImagesAction;
+use Xutim\MediaBundle\Action\Admin\JsonShowFileAction;
 use Xutim\MediaBundle\Action\Admin\ListMediaAction;
 use Xutim\MediaBundle\Action\Admin\CreateFolderAction;
 use Xutim\MediaBundle\Action\Admin\DeleteMediaAction;
@@ -76,6 +79,18 @@ return function (RoutingConfigurator $routes) {
     $routes->add('admin_json_file_all_list', '/json/file/all-list')
         ->methods(['GET'])
         ->controller(JsonListAllFilesAction::class);
+
+    $routes->add('admin_json_image_list', '/json/image/list')
+        ->methods(['GET'])
+        ->controller(JsonListImagesAction::class);
+
+    $routes->add('admin_json_file_list', '/json/file/list')
+        ->methods(['GET'])
+        ->controller(JsonListFilesAction::class);
+
+    $routes->add('admin_json_file_show', '/json/file/show/{id}')
+        ->methods(['GET'])
+        ->controller(JsonShowFileAction::class);
 
     $routes->add('admin_media_translation_show', '/media/show-translation/{id}')
         ->methods(['GET'])

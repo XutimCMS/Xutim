@@ -10,10 +10,10 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 /**
@@ -145,14 +145,14 @@ class BlockRepository extends ServiceEntityRepository
     /**
      * @return array<BlockInterface>
     */
-    public function findByFile(FileInterface $file): array
+    public function findByMedia(MediaInterface $media): array
     {
         /** @var array<BlockInterface> $blocks */
         $blocks = $this->createQueryBuilder('block')
             ->leftJoin('block.blockItems', 'item')
             ->leftJoin('item.file', 'file')
-            ->where('file = :fileParam')
-            ->setParameter('fileParam', $file)
+            ->where('file = :mediaParam')
+            ->setParameter('mediaParam', $media)
             ->getQuery()
             ->getResult()
         ;

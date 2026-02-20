@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
@@ -24,15 +23,14 @@ use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Exception\LogicException;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 #[MappedSuperclass]
 class Page implements PageInterface
 {
     use TimestampableTrait;
-    use FileTrait;
     use ArchiveStatusTrait;
 
     /** @use BasicTranslatableTrait<ContentTranslationInterface> */
@@ -59,9 +57,9 @@ class Page implements PageInterface
     #[Column(type: Types::INTEGER, nullable: false)]
     private int $position;
 
-    #[ManyToOne(targetEntity: FileInterface::class, inversedBy: 'featuredPages')]
+    #[ManyToOne(targetEntity: MediaInterface::class)]
     #[JoinColumn(name: 'featured_image')]
-    private ?FileInterface $featuredImage;
+    private ?MediaInterface $featuredImage;
 
     #[ManyToOne(targetEntity: PageInterface::class)]
     #[JoinColumn(name: 'root_parent', nullable: false)]
@@ -81,11 +79,6 @@ class Page implements PageInterface
     #[OrderBy(['locale' => 'ASC'])]
     private Collection $translations;
 
-    /** @var Collection<int, FileInterface> */
-    #[ManyToMany(targetEntity: FileInterface::class, mappedBy: 'pages')]
-    #[OrderBy(['createdAt' => 'ASC'])]
-    private Collection $files;
-
     #[OneToOne(targetEntity: ContentTranslationInterface::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[JoinColumn(onDelete: 'SET NULL')]
     private ContentTranslationInterface $defaultTranslation;
@@ -101,7 +94,7 @@ class Page implements PageInterface
         ?string $layout,
         array $locales,
         ?PageInterface $parent,
-        ?FileInterface $featuredImage
+        ?MediaInterface $featuredImage
     ) {
         $this->id = Uuid::v4();
         $this->layout = $layout;
@@ -118,7 +111,6 @@ class Page implements PageInterface
         $this->children = new ArrayCollection();
         $this->translations = new ArrayCollection();
         $this->blockItems = new ArrayCollection();
-        $this->files = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -271,10 +263,6 @@ class Page implements PageInterface
         if ($this->canBeDeleted() === false) {
             return false;
         }
-        foreach ($this->files as $file) {
-            $file->removePage($this);
-            $this->removeFile($file);
-        }
 
         $this->parent = null;
 
@@ -316,12 +304,12 @@ class Page implements PageInterface
         $this->layout = $layout?->code;
     }
 
-    public function getFeaturedImage(): ?FileInterface
+    public function getFeaturedImage(): ?MediaInterface
     {
         return $this->featuredImage;
     }
 
-    public function changeFeaturedImage(?FileInterface $image): void
+    public function changeFeaturedImage(?MediaInterface $image): void
     {
         $this->featuredImage = $image;
     }

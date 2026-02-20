@@ -9,12 +9,13 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Entity\PublicationStatus;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 interface TagInterface
 {
     public function __toString(): string;
 
-    public function change(Color $color, ?FileInterface $image): void;
+    public function change(Color $color, ?MediaInterface $image): void;
 
     public function addTranslation(TagTranslationInterface $trans): void;
 
@@ -22,7 +23,7 @@ interface TagInterface
 
     public function getId(): Uuid;
 
-    public function getFeaturedImage(): ?FileInterface;
+    public function getFeaturedImage(): ?MediaInterface;
 
     public function getColor(): Color;
 

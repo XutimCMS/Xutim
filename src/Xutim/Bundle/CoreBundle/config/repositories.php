@@ -13,10 +13,7 @@ use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\CoreBundle\Repository\BlockRepository;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Repository\FileRepository;
-use Xutim\CoreBundle\Repository\FileTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
-use Xutim\CoreBundle\Repository\MediaFolderRepository;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\SiteRepository;
@@ -72,11 +69,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$entityClass', '%xutim_core.model.menu_item.class%')
         ->tag('doctrine.repository_service');
 
-    $services->set(FileTranslationRepository::class)
-        ->arg('$registry', service(ManagerRegistry::class))
-        ->arg('$entityClass', '%xutim_core.model.file_translation.class%')
-        ->tag('doctrine.repository_service');
-
     $services->set(SiteRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.site.class%')
@@ -86,16 +78,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.tag_translation.class%')
         ->arg('$slugger', service(SluggerInterface::class))
-        ->tag('doctrine.repository_service');
-
-    $services->set(FileRepository::class)
-        ->arg('$registry', service(ManagerRegistry::class))
-        ->arg('$entityClass', '%xutim_core.model.file.class%')
-        ->tag('doctrine.repository_service');
-    
-    $services->set(MediaFolderRepository::class)
-        ->arg('$registry', service(ManagerRegistry::class))
-        ->arg('$entityClass', '%xutim_core.model.media_folder.class%')
         ->tag('doctrine.repository_service');
 
     $services->set(ContentDraftRepository::class)

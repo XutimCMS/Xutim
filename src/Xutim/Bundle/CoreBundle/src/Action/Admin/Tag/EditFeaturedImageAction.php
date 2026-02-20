@@ -14,9 +14,9 @@ use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Form\Admin\Dto\ImageDto;
 use Xutim\CoreBundle\Form\Admin\FeaturedImageType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
-use Xutim\CoreBundle\Repository\FileRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
+use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
@@ -27,7 +27,7 @@ class EditFeaturedImageAction extends AbstractController
         private readonly ArticleRepository $repo,
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
-        private readonly FileRepository $fileRepo,
+        private readonly MediaRepositoryInterface $mediaRepo,
         private readonly BlockContext $blockContext,
         private readonly AdminUrlGenerator $router,
     ) {
@@ -40,7 +40,7 @@ class EditFeaturedImageAction extends AbstractController
             throw $this->createNotFoundException('The article does not exist');
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-        $form = $this->createForm(FeaturedImageType::class, new ImageDto($article->getFeaturedImage()?->getId()), [
+        $form = $this->createForm(FeaturedImageType::class, new ImageDto($article->getFeaturedImage()?->id()), [
             'action' => $this->router->generate('admin_article_featured_image_edit', ['id' => $article->getId()])
         ]);
 
@@ -49,7 +49,7 @@ class EditFeaturedImageAction extends AbstractController
             /** @var ImageDto $data */
             $data = $form->getData();
 
-            $file = $data->id === null ? null : $this->fileRepo->find($data->id);
+            $file = $data->id === null ? null : $this->mediaRepo->findById($data->id);
             $article->changeFeaturedImage($file);
             $this->repo->save($article, true);
 

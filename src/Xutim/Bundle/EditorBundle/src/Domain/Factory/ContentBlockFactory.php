@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\EditorBundle\Domain\Factory;
 
-use Xutim\CoreBundle\Domain\Model\FileInterface;
 use Xutim\EditorBundle\Domain\Model\ContentBlockInterface;
 use Xutim\EditorBundle\Domain\Model\ContentDraftInterface;
 use Xutim\EditorBundle\Entity\Block\CodeBlock;
@@ -15,6 +14,7 @@ use Xutim\EditorBundle\Entity\Block\LayoutBlock;
 use Xutim\EditorBundle\Entity\Block\ListItemBlock;
 use Xutim\EditorBundle\Entity\Block\ParagraphBlock;
 use Xutim\EditorBundle\Entity\Block\QuoteBlock;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 class ContentBlockFactory
 {
@@ -73,7 +73,7 @@ class ContentBlockFactory
 
     public function createImage(
         ContentDraftInterface $draft,
-        ?FileInterface $file = null,
+        ?MediaInterface $file = null,
         ?string $caption = null,
         ?ContentBlockInterface $parent = null,
         ?int $slot = null,

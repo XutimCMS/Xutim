@@ -56,6 +56,12 @@ class MediaRepository extends ServiceEntityRepository implements MediaRepository
         return $this->findOneBy(['originalPath' => $originalPath]);
     }
 
+    public function findByHash(string $hash): ?MediaInterface
+    {
+        /** @var MediaInterface|null */
+        return $this->findOneBy(['hash' => $hash]);
+    }
+
     public function countImages(): int
     {
         /** @var int */

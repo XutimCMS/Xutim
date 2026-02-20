@@ -13,6 +13,7 @@ use Xutim\MediaBundle\Service\BlurHashGenerator;
 use Xutim\MediaBundle\Service\MediaUploader;
 use Xutim\MediaBundle\Service\VariantCleaner;
 use Xutim\MediaBundle\Service\VariantGenerator;
+use Xutim\MediaBundle\Validator\UniqueMediaValidator;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -38,4 +39,10 @@ return static function (ContainerConfigurator $container): void {
             '%xutim_media.model.media.class%',
             '%xutim_media.model.media_translation.class%',
         ]);
+
+    $services->set(UniqueMediaValidator::class)
+        ->args([
+            service(MediaRepositoryInterface::class),
+        ])
+        ->tag('validator.constraint_validator');
 };

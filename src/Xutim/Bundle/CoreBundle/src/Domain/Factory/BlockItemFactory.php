@@ -7,10 +7,10 @@ namespace Xutim\CoreBundle\Domain\Factory;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
-use Xutim\CoreBundle\Domain\Model\MediaFolderInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
+use Xutim\MediaBundle\Domain\Model\MediaFolderInterface;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 class BlockItemFactory
@@ -26,7 +26,7 @@ class BlockItemFactory
         BlockInterface $block,
         ?PageInterface $page,
         ?ArticleInterface $article,
-        ?FileInterface $file,
+        ?MediaInterface $file,
         ?SnippetInterface $snippet = null,
         ?TagInterface $tag = null,
         ?MediaFolderInterface $mediaFolder = null,

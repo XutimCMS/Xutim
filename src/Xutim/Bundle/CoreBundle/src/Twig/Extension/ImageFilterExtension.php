@@ -8,14 +8,14 @@ use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Component\Uid\UuidV4;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
-use Xutim\CoreBundle\Domain\Model\FileInterface;
-use Xutim\CoreBundle\Repository\FileRepository;
+use Xutim\MediaBundle\Domain\Model\MediaInterface;
+use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 
 class ImageFilterExtension extends AbstractExtension
 {
     public function __construct(
         private readonly FilterService $filterService,
-        private readonly FileRepository $fileRepo
+        private readonly MediaRepositoryInterface $mediaRepo
     ) {
     }
     public function getFilters(): array
@@ -26,15 +26,15 @@ class ImageFilterExtension extends AbstractExtension
         ];
     }
 
-    public function fileFromId(string $id): FileInterface
+    public function fileFromId(string $id): MediaInterface
     {
-        $file = $this->fileRepo->find(new UuidV4($id));
+        $media = $this->mediaRepo->findById(new UuidV4($id));
 
-        if ($file === null) {
-            throw new \Exception('File was not found.');
+        if ($media === null) {
+            throw new \Exception('Media was not found.');
         }
 
-        return $file;
+        return $media;
     }
 
     public function filterFromRef(string $url, string $filter): string
@@ -46,13 +46,13 @@ class ImageFilterExtension extends AbstractExtension
 
         $ref = $matches['ref'];
 
-        $file = $this->fileRepo->findOneBy(['reference' => $ref]);
-        if ($file === null) {
+        $media = $this->mediaRepo->findByOriginalPath($ref);
+        if ($media === null) {
             return $url;
         }
 
         $imagePath = $this->filterService->getUrlOfFilteredImage(
-            $file->getFileName(),
+            $media->originalPath(),
             $filter,
             null,
             true
