@@ -8,7 +8,7 @@
                 href="{{ admin_path('admin_media_edit', {id: page.featuredImage.id}) }}"
             >
                 <img
-                    src="{{ path('file_show', {id: page.featuredImage.id, extension: 'image'}) }}"
+                    src="{{ media_url(page.featuredImage, 'thumb_small') }}"
                     alt="Featured Image"
                     class="avatar avatar-1"
                 />

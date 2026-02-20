@@ -81,7 +81,7 @@
                 >
                     <span
                         class="avatar me-2"
-                        style="background-image: url({{ path('file_show', {id: item.file.id, extension: 'image'}) }})"
+                        style="background-image: url({{ media_url(item.file, 'thumb_small') }})"
                     ></span>
                 </button>
             {% endif %}
