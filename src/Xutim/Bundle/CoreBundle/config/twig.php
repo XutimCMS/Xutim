@@ -13,8 +13,6 @@ return static function (ContainerConfigurator $container): void {
     $container->extension('twig', [
         'globals' => [
             'default_locale' => '%kernel.default_locale%',
-            'xutim_core_filter_sets' => '%xutim_core.filter_sets%',
-            'xutim_core_admin_filter_sets' => '%xutim_core.admin_filter_sets%',
             'site_context' => service(SiteContext::class),
             'content_context' => service(ContentContext::class),
             'news_context' => service(NewsContext::class),

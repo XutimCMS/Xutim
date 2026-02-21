@@ -20,7 +20,7 @@ final class XutimSnippetExtension extends Extension implements PrependExtensionI
      */
     public function load(array $config, ContainerBuilder $container): void
     {
-        /** @var array{models: array<string, array{class: class-string}>, filter_sets?: array<string, mixed>} $configs */
+        /** @var array{models: array<string, array{class: class-string}>} $configs */
         $configs = $this->processConfiguration($this->getConfiguration([], $container), $config);
         $container->setParameter('snippet_routes_version_file', '%kernel.cache_dir%/snippet_routes.version');
         /** @var string $versionFile*/
@@ -52,7 +52,7 @@ final class XutimSnippetExtension extends Extension implements PrependExtensionI
     public function prepend(ContainerBuilder $container): void
     {
         $bundleConfigs = $container->getExtensionConfig($this->getAlias());
-        /** @var array{models: array<string, array{class: class-string}>, filter_sets?: array<string, mixed>} $config */
+        /** @var array{models: array<string, array{class: class-string}>} $config */
         $config = $this->processConfiguration(
             $this->getConfiguration([], $container),
             $bundleConfigs

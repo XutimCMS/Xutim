@@ -44,10 +44,17 @@ export default class XutimImageTool {
         img.style.display = 'block';
 
         if (this.data.file && this.data.file.url) {
+            const fallbackUrl = this.data.file.url;
             this.wrapper.classList.remove('border', 'p-3');
-            img.src = this.data.file.url;
+            img.src = this.data.file.thumbnailUrl || fallbackUrl;
+            img.onerror = () => {
+                img.onerror = null;
+                img.src = fallbackUrl;
+            };
             img.dataset.id = this.data.file.id;
-            img.dataset.thumbnailUrl = this.data.file.thumbnailUrl;
+            img.dataset.url = this.data.file.url;
+            img.dataset.thumbnailUrl =
+                this.data.file.thumbnailUrl || fallbackUrl;
             placeholderText.style.display = 'none';
         }
 
@@ -95,7 +102,8 @@ export default class XutimImageTool {
         const placeholderText = this.wrapper.querySelector('span');
 
         this.wrapper.classList.remove('border', 'p-3');
-        imgElement.src = imageUrl;
+        imgElement.src = thumbnailUrl || imageUrl;
+        imgElement.dataset.url = imageUrl;
         imgElement.dataset.thumbnailUrl = thumbnailUrl;
         imgElement.dataset.id = id;
         imgElement.style.maxWidth = '100%';
@@ -179,11 +187,11 @@ export default class XutimImageTool {
         }
         const img = this.wrapper.querySelector('img');
         let data = {};
-        if (img.dataset.thumbnailUrl && img.style.display === 'block') {
+        if (img.dataset.url && img.style.display === 'block') {
             data = {
-                url: img.getAttribute('src'),
+                url: img.dataset.url,
                 id: img.dataset.id,
-                thumbnailUrl: img.dataset.thumbnailUrl,
+                thumbnailUrl: img.dataset.thumbnailUrl || img.dataset.url,
             };
         }
 

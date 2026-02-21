@@ -25,7 +25,7 @@
         "gedmo/doctrine-extensions": "^3.18",
         "jdenticon/jdenticon": "^1.0",
         "jfcherng/php-diff": "^6.16",
-        "liip/imagine-bundle": "^2.13",
+
         "pagerfanta/doctrine-orm-adapter": "^4.7",
         "pagerfanta/twig": "^4.7",
         "php": ">=8.4",

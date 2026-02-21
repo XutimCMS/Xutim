@@ -23,7 +23,7 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
      */
     public function load(array $config, ContainerBuilder $container): void
     {
-        /** @var array{models: array<string, array{class: class-string}>, filter_sets?: array<string, mixed>} $configs */
+        /** @var array{models: array<string, array{class: class-string}>} $configs */
         $configs = $this->processConfiguration($this->getConfiguration([], $container), $config);
 
         foreach ($configs['models'] as $alias => $modelConfig) {
@@ -48,7 +48,6 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
         /**
          * @var array{
          *      models: array<string, array{class: class-string}>,
-         *      filter_sets?: array<string, mixed>,
          *      message_routing?: array<class-string, string>
          * } $config
          */
@@ -57,15 +56,17 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
             $bundleConfigs
         );
 
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
+        $loader->load('twig.php');
+
         $this->prependDoctrineResolveTargets($container, $config);
-        $this->prependLiipImagineFilterSets($container, $config);
         $this->prependMessengerRouting($container, $config);
+        $this->prependMediaPresets($container);
     }
 
     /**
      * @param array{
      *      models: array<string, array{class: class-string}>,
-     *      filter_sets?: array<string, mixed>,
      *      message_routing?: array<class-string, string>
      * } $config
      */
@@ -89,34 +90,6 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
     /**
      * @param array{
      *      models: array<string, array{class: class-string}>,
-     *      filter_sets?: array<string, mixed>,
-     *      message_routing?: array<class-string, string>
-     * } $config
-     */
-    private function prependLiipImagineFilterSets(ContainerBuilder $container, array $config): void
-    {
-        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
-        $loader->load('liip_filters.php');
-
-        /** @var array<string, mixed> $adminFilters */
-        $adminFilters = $container->getParameter('xutim_core.admin_filter_sets');
-
-        $userFilters = $config['filter_sets'] ?? [];
-        $container->setParameter('xutim_core.filter_sets', $userFilters);
-
-        $mergedFilters = array_merge($adminFilters, $userFilters);
-
-        $container->prependExtensionConfig('liip_imagine', [
-            'filter_sets' => $mergedFilters,
-        ]);
-
-        $loader->load('twig.php');
-    }
-
-    /**
-     * @param array{
-     *      models: array<string, array{class: class-string}>,
-     *      filter_sets?: array<string, mixed>,
      *      message_routing?: array<class-string, string>
      * } $config
      */
@@ -143,5 +116,31 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
                 'messenger' => ['routing' => $routing],
             ]);
         }
+    }
+
+    private function prependMediaPresets(ContainerBuilder $container): void
+    {
+        $container->prependExtensionConfig('xutim_media', [
+            'presets' => [
+                'thumb_small' => [
+                    'max_width' => 227,
+                    'max_height' => 227,
+                    'fit_mode' => 'cover',
+                    'quality' => ['avif' => 60, 'webp' => 75, 'jpg' => 80],
+                    'use_focal_point' => true,
+                    'formats' => ['avif', 'webp', 'jpg'],
+                    'responsive_widths' => [227],
+                ],
+                'thumb_large' => [
+                    'max_width' => 300,
+                    'max_height' => 300,
+                    'fit_mode' => 'cover',
+                    'quality' => ['avif' => 60, 'webp' => 75, 'jpg' => 80],
+                    'use_focal_point' => true,
+                    'formats' => ['avif', 'webp', 'jpg'],
+                    'responsive_widths' => [300],
+                ],
+            ],
+        ]);
     }
 }

@@ -82,9 +82,16 @@ export default class ImageRowTool {
             img.style.display = 'none';
 
             if (this.data.images[i] && this.data.images[i].url) {
-                img.src = this.data.images[i].thumbnailUrl;
+                const fallbackUrl = this.data.images[i].url;
+                img.src = this.data.images[i].thumbnailUrl || fallbackUrl;
+                img.onerror = () => {
+                    img.onerror = null;
+                    img.src = fallbackUrl;
+                };
                 img.dataset.id = this.data.images[i].id;
                 img.dataset.url = this.data.images[i].url;
+                img.dataset.thumbnailUrl =
+                    this.data.images[i].thumbnailUrl || fallbackUrl;
                 img.style.display = 'block';
                 placeholderText.style.display = 'none';
             }
@@ -141,7 +148,8 @@ export default class ImageRowTool {
             const placeholderText =
                 this.wrapper.querySelectorAll('span')[this.currentImageIndex];
 
-            imgElement.src = imageUrl;
+            imgElement.src = thumbnailUrl || imageUrl;
+            imgElement.dataset.url = imageUrl;
             imgElement.dataset.thumbnailUrl = thumbnailUrl;
             imgElement.dataset.id = id;
             imgElement.style.display = 'block';
@@ -221,7 +229,7 @@ export default class ImageRowTool {
                 imagesData.push({
                     url: img.dataset.url,
                     id: img.dataset.id,
-                    thumbnailUrl: img.getAttribute('src'),
+                    thumbnailUrl: img.dataset.thumbnailUrl || img.dataset.url,
                 });
             } else {
                 imagesData.push({});

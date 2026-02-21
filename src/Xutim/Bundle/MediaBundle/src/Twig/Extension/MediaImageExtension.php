@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Xutim\MediaBundle\Twig\Extension;
 
+use Symfony\Component\Uid\UuidV4;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
 use Xutim\MediaBundle\Infra\Storage\StorageAdapterInterface;
@@ -27,6 +29,13 @@ final class MediaImageExtension extends AbstractExtension
     ) {
     }
 
+    public function getFilters(): array
+    {
+        return [
+            new TwigFilter('xutim_image_file_from_id', $this->fileFromId(...)),
+        ];
+    }
+
     public function getFunctions(): array
     {
         return [
@@ -34,6 +43,17 @@ final class MediaImageExtension extends AbstractExtension
             new TwigFunction('media_srcset', $this->mediaSrcset(...)),
             new TwigFunction('media_is_portrait', $this->mediaIsPortrait(...)),
         ];
+    }
+
+    public function fileFromId(string $id): MediaInterface
+    {
+        $media = $this->mediaRepository->findById(new UuidV4($id));
+
+        if ($media === null) {
+            throw new \RuntimeException(sprintf('Media with ID "%s" was not found.', $id));
+        }
+
+        return $media;
     }
 
     /**

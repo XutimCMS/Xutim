@@ -1,8 +1,6 @@
 {% block file_widget %}
     {% set data = form.file.vars.data %}
-    {%
-        set previewUrl = data ? uploaded_asset(data.originalPath)|imagine_filter('front_preview') : ''
-    %}
+    {% set previewUrl = data ? media_url(data, 'thumb_small') : '' %}
     <div
         data-controller="media-field"
         data-media-field-url-value="{{ admin_path('admin_json_image_list') }}"

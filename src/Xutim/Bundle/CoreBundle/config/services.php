@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Component\Asset\Context\RequestStackContext;
 use Xutim\CoreBundle\Infra\Doctrine\Type\AbstractEnumType;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
@@ -43,7 +42,6 @@ return static function (ContainerConfigurator $container): void {
 
     $services->load('Xutim\\CoreBundle\\', '../src/')
         ->exclude('../src/{DependencyInjection,Entity,Kernel.php}');
-    $services->alias(FilterService::class, 'liip_imagine.service.filter');
 
     $services->set(AnalyticsExtension::class)
         ->arg('$bundles', '%kernel.bundles%')
