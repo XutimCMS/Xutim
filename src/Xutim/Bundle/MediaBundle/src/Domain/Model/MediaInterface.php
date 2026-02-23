@@ -56,6 +56,8 @@ interface MediaInterface
 
     public function changeBlurHash(string $blurHash): void;
 
+    public function replaceFile(string $mime, string $hash, int $sizeBytes, int $width, int $height): void;
+
     public function getTranslationByLocale(string $locale): ?MediaTranslationInterface;
 
     public function addTranslation(MediaTranslationInterface $translation): void;

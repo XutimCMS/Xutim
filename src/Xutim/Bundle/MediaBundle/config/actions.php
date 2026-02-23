@@ -24,6 +24,7 @@ use Xutim\MediaBundle\Action\Admin\MoveMediaAction;
 use Xutim\MediaBundle\Action\Admin\MoveMediaToFolderAction;
 use Xutim\MediaBundle\Action\Admin\PresetPreviewAction;
 use Xutim\MediaBundle\Action\Admin\RegenerateVariantsAction;
+use Xutim\MediaBundle\Action\Admin\ReplaceMediaAction;
 use Xutim\MediaBundle\Action\Admin\ShowMediaTranslationAction;
 use Xutim\MediaBundle\Action\Admin\UpdateFocalPointAction;
 use Xutim\MediaBundle\Action\Admin\UploadMediaAction;
@@ -200,6 +201,21 @@ return static function (ContainerConfigurator $container): void {
             service(MediaRepositoryInterface::class),
             service(MediaFolderRepositoryInterface::class),
             service('twig'),
+        ])
+        ->tag('controller.service_arguments');
+
+    $services->set(ReplaceMediaAction::class)
+        ->args([
+            service(MediaRepositoryInterface::class),
+            service(MediaUploader::class),
+            service(LogEventFactory::class),
+            service(LogEventRepository::class),
+            service(UserStorage::class),
+            service('form.factory'),
+            service('twig'),
+            service(AdminUrlGenerator::class),
+            service('security.authorization_checker'),
+            '%xutim_media.model.media.class%',
         ])
         ->tag('controller.service_arguments');
 

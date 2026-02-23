@@ -147,6 +147,19 @@ class Media implements MediaInterface
         $this->updatedAt = new DateTimeImmutable();
     }
 
+    public function replaceFile(string $mime, string $hash, int $sizeBytes, int $width, int $height): void
+    {
+        $this->mime = strtolower($mime);
+        $this->hash = $hash;
+        $this->sizeBytes = $sizeBytes;
+        $this->width = max(0, $width);
+        $this->height = max(0, $height);
+        $this->focalX = null;
+        $this->focalY = null;
+        $this->blurHash = null;
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
     public function id(): Uuid
     {
         return $this->id;

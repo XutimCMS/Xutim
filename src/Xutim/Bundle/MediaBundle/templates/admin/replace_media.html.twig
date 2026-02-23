@@ -1,0 +1,24 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% set title = 'replace file'|trans({}, 'admin')|capitalize %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header p-3">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info mb-3">
+                {{ 'Only %ext% files are accepted.'|trans({'%ext%': media.originalExt|upper}, 'admin') }}
+            </div>
+            {{ form_start(form) }}
+            {{ form_row(form.file) }}
+            {{ form_row(form.submit) }}
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}

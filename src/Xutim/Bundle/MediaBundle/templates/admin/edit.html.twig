@@ -145,6 +145,19 @@
                                     </twig:Xutim:Admin:Button>
                                 </twig:block>
                             </twig:Xutim:Admin:SidebarItem>
+                            <twig:Xutim:Admin:SidebarItem>
+                                <twig:block name="content">
+                                    <twig:Xutim:Admin:Button
+                                        tag="a"
+                                        class="btn-link d-flex justify-content-start"
+                                        variant="default"
+                                        data-turbo-frame="modal"
+                                        href="{{ admin_path('admin_media_replace', {id: media.id}) }}"
+                                    >
+                                        <twig:ux:icon name="tabler:upload" class="w-4 h-4" /> {{ 'replace file'|trans({}, 'admin')|capitalize }}
+                                    </twig:Xutim:Admin:Button>
+                                </twig:block>
+                            </twig:Xutim:Admin:SidebarItem>
                         </twig:Xutim:Admin:SidebarSection>
                     </div>
                 </div>

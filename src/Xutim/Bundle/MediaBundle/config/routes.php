@@ -20,6 +20,7 @@ use Xutim\MediaBundle\Action\Admin\PresetPreviewAction;
 use Xutim\MediaBundle\Action\Admin\RegenerateVariantsAction;
 use Xutim\MediaBundle\Action\Admin\ShowMediaTranslationAction;
 use Xutim\MediaBundle\Action\Admin\EditFocalPointAction;
+use Xutim\MediaBundle\Action\Admin\ReplaceMediaAction;
 use Xutim\MediaBundle\Action\Admin\UpdateFocalPointAction;
 use Xutim\MediaBundle\Action\Admin\UploadMediaAction;
 
@@ -71,6 +72,10 @@ return function (RoutingConfigurator $routes) {
     $routes->add('admin_media_move_file_to_folder', '/media/move-to-folder')
         ->methods(['POST'])
         ->controller(MoveMediaToFolderAction::class);
+
+    $routes->add('admin_media_replace', '/media/{id}/replace')
+        ->methods(['GET', 'POST'])
+        ->controller(ReplaceMediaAction::class);
 
     $routes->add('admin_media_copyright_edit', '/media/{id}/copyright')
         ->methods(['GET', 'POST'])
