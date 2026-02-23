@@ -17,6 +17,7 @@ use Symfony\Component\Intl\Languages;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
 use Traversable;
@@ -87,6 +88,7 @@ class ArticleType extends AbstractType implements DataMapperInterface
                     'class' => 'text-bg-light'
                 ],
                 'constraints' => [
+                    new NotBlank(),
                     new Length(['min' => 1]),
                     new NotNull(),
                     new UniqueSlugLocale(),

@@ -17,6 +17,7 @@ use Symfony\Component\Intl\Languages;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Traversable;
@@ -86,6 +87,7 @@ class PageType extends AbstractType implements DataMapperInterface
                     'class' => 'text-bg-light'
                 ],
                 'constraints' => [
+                    new NotBlank(),
                     new Length(['min' => 3]),
                     new UniqueSlugLocale(),
                     new Regex(['pattern' => '/^[a-z0-9]+(-[a-z0-9]+)*$/', 'message' => 'The slug should be written in kebab-case.'])

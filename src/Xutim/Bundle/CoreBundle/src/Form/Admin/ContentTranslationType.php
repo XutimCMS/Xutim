@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
 use Traversable;
@@ -56,6 +57,7 @@ class ContentTranslationType extends AbstractType implements DataMapperInterface
                     'class' => 'text-bg-light'
                 ],
                 'constraints' => [
+                    new NotBlank(),
                     new Length(['min' => 1]),
                     new NotNull(),
                     new UniqueSlugLocale($existingTranslation),
