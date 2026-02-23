@@ -59,6 +59,11 @@ export default class extends Controller {
 
         if (data.success) {
             this.dispatch('saved', { detail: data });
+
+            const frame = this.element.closest('turbo-frame#modal');
+            if (frame) {
+                frame.innerHTML = '';
+            }
         }
     }
 }

@@ -8,6 +8,12 @@
                 "name": "xutim-media/focal-point",
                 "fetch": "eager",
                 "enabled": true
+            },
+            "regenerate-variants": {
+                "main": "dist/regenerate-variants_controller.js",
+                "name": "xutim-media/regenerate-variants",
+                "fetch": "eager",
+                "enabled": true
             }
         },
         "importmap": {

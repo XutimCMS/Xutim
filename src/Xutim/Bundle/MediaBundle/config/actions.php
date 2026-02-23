@@ -35,7 +35,6 @@ use Xutim\MediaBundle\Repository\MediaVariantRepositoryInterface;
 use Xutim\MediaBundle\Service\MediaUploader;
 use Xutim\MediaBundle\Service\PresetRegistry;
 use Xutim\MediaBundle\Service\VariantCleaner;
-use Xutim\MediaBundle\Service\VariantGenerator;
 use Xutim\MediaBundle\Service\VariantPathResolver;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
@@ -59,16 +58,8 @@ return static function (ContainerConfigurator $container): void {
     $services->set(RegenerateVariantsAction::class)
         ->args([
             service(MediaRepositoryInterface::class),
-            service(MediaVariantRepositoryInterface::class),
-            service(VariantGenerator::class),
-            service(VariantCleaner::class),
-            service('doctrine.orm.entity_manager'),
-            service(LogEventFactory::class),
-            service(LogEventRepository::class),
-            service(UserStorage::class),
             service('security.authorization_checker'),
-            '%xutim_media.model.media_variant.class%',
-            '%xutim_media.model.media.class%',
+            service('messenger.default_bus'),
         ])
         ->tag('controller.service_arguments');
 

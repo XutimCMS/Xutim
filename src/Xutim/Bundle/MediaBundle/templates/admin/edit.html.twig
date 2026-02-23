@@ -231,9 +231,21 @@
     </div>
 
     {% if media.isImage %}
-        <div class="card">
-            <div class="card-header h3">
-                {{ 'Generated image sizes'|trans({}, 'admin') }}
+        <div class="card"
+             data-controller="xutim-media--regenerate-variants"
+             data-xutim-media--regenerate-variants-regenerate-url-value="{{ admin_path('admin_media_regenerate_variants', {id: media.id}) }}"
+             data-xutim-media--regenerate-variants-mercure-topic-value="{{ mercure('media/' ~ media.id ~ '/variants', { subscribe: 'media/' ~ media.id ~ '/variants' }) }}"
+        >
+            <div class="card-header d-flex align-items-center">
+                <span class="h3 mb-0">{{ 'Generated image sizes'|trans({}, 'admin') }}</span>
+                <span data-xutim-media--regenerate-variants-target="progress"
+                      class="text-muted small ms-2 d-none"></span>
+                <button data-action="xutim-media--regenerate-variants#regenerate"
+                        data-xutim-media--regenerate-variants-target="button"
+                        class="btn btn-sm btn-outline-primary ms-auto"
+                        type="button">
+                    {{ 'Regenerate'|trans({}, 'admin') }}
+                </button>
             </div>
             <div class="card-body p-0">
                 <div class="accordion accordion-flush" id="presetAccordion">
@@ -255,9 +267,9 @@
                                         <span class="badge bg-green-lt">{{ data.preset.fitMode.value }}</span>
                                         <span class="text-muted small">{% for fmt, q in data.preset.quality %}{{ fmt }} {{ q }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
                                         {% if data.variants is empty %}
-                                            <span class="badge bg-warning">{{ 'Not generated'|trans({}, 'admin') }}</span>
+                                            <span class="badge bg-warning text-white" data-preset-badge="{{ data.preset.name }}">{{ 'Not generated'|trans({}, 'admin') }}</span>
                                         {% else %}
-                                            <span class="badge bg-success">{{ data.variants|length }} {{ 'variants'|trans({}, 'admin') }}</span>
+                                            <span class="badge bg-success text-white" data-preset-badge="{{ data.preset.name }}">{{ data.variants|length }} {{ 'variants'|trans({}, 'admin') }}</span>
                                         {% endif %}
                                     </div>
                                 </button>

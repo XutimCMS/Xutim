@@ -11,8 +11,10 @@ use Xutim\MediaBundle\Repository\MediaTranslationRepositoryInterface;
 use Xutim\MediaBundle\Repository\MediaVariantRepositoryInterface;
 use Xutim\MediaBundle\Service\BlurHashGenerator;
 use Xutim\MediaBundle\Service\MediaUploader;
+use Xutim\MediaBundle\Service\PresetRegistry;
 use Xutim\MediaBundle\Service\VariantCleaner;
 use Xutim\MediaBundle\Service\VariantGenerator;
+use Xutim\MediaBundle\Service\VariantPathResolver;
 use Xutim\MediaBundle\Validator\UniqueMediaValidator;
 
 return static function (ContainerConfigurator $container): void {
@@ -26,6 +28,10 @@ return static function (ContainerConfigurator $container): void {
             service(VariantCleaner::class),
             service('doctrine.orm.entity_manager'),
             '%xutim_media.model.media_variant.class%',
+            service('mercure.hub.default')->nullOnInvalid(),
+            service(PresetRegistry::class),
+            service(VariantPathResolver::class),
+            service('logger'),
         ])
         ->tag('messenger.message_handler');
 

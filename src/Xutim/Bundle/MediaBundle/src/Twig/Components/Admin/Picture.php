@@ -40,6 +40,11 @@ final class Picture
         return $this->buildSrcset('jpg');
     }
 
+    public function hasVariants(): bool
+    {
+        return $this->variantRepository->findByMediaPreset($this->media, $this->preset) !== [];
+    }
+
     public function getFallbackUrl(): string
     {
         $variants = $this->variantRepository->findByMediaPresetFormat($this->media, $this->preset, 'jpg');
