@@ -80,7 +80,7 @@ class MediaRepository extends ServiceEntityRepository implements MediaRepository
 
         if ($searchTerm !== '') {
             $qb->leftJoin('m.translations', 't')
-                ->andWhere('LOWER(t.name) LIKE :search OR LOWER(m.originalPath) LIKE :search')
+                ->andWhere('LOWER(m.innerName) LIKE :search OR LOWER(t.name) LIKE :search OR LOWER(m.originalPath) LIKE :search')
                 ->setParameter('search', '%' . mb_strtolower($searchTerm) . '%');
         } elseif ($folder !== null) {
             $qb->andWhere('m.folder = :folder')

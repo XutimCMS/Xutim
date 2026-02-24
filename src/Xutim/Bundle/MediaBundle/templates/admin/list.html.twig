@@ -221,13 +221,12 @@
                     </div>
 
                     <div class="card-body border-top">
-                        {% set trans = item.getTranslationByLocale(app.request.get('_content_locale')) %}
                         <div
                             class="d-flex align-items-center text-truncate"
-                            title="{{ trans ? trans.name() : item.originalPath()|split('/')|last }}"
+                            title="{{ item.innerName() }}"
                             data-controller="tooltip"
                         >
-                            {{ trans ? trans.name() : item.originalPath()|split('/')|last }}
+                            {{ item.innerName() }}
                         </div>
                     </div>
                 </div>

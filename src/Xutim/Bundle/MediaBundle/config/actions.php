@@ -9,6 +9,7 @@ use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\MediaBundle\Action\Admin\EditCopyrightAction;
+use Xutim\MediaBundle\Action\Admin\EditInnerNameAction;
 use Xutim\MediaBundle\Action\Admin\EditFocalPointAction;
 use Xutim\MediaBundle\Action\Admin\JsonListAllFilesAction;
 use Xutim\MediaBundle\Action\Admin\JsonListFilesAction;
@@ -220,6 +221,20 @@ return static function (ContainerConfigurator $container): void {
         ->tag('controller.service_arguments');
 
     $services->set(EditCopyrightAction::class)
+        ->args([
+            service(MediaRepositoryInterface::class),
+            service(LogEventFactory::class),
+            service(LogEventRepository::class),
+            service(UserStorage::class),
+            service('form.factory'),
+            service('twig'),
+            service(AdminUrlGenerator::class),
+            service('security.authorization_checker'),
+            '%xutim_media.model.media.class%',
+        ])
+        ->tag('controller.service_arguments');
+
+    $services->set(EditInnerNameAction::class)
         ->args([
             service(MediaRepositoryInterface::class),
             service(LogEventFactory::class),

@@ -39,6 +39,7 @@ final class MediaUploader
         string $alt,
         string $locale,
         ?string $copyright = null,
+        string $innerName = '',
         ?MediaFolderInterface $folder = null,
     ): MediaInterface {
         $originalExt = $file->getClientOriginalExtension();
@@ -66,6 +67,7 @@ final class MediaUploader
             $meta['width'],
             $meta['height'],
             $copyright,
+            $innerName,
         );
 
         $this->mediaRepository->save($media);

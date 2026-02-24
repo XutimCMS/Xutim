@@ -28,6 +28,10 @@ interface MediaInterface
 
     public function height(): int;
 
+    public function innerName(): string;
+
+    public function changeInnerName(string $innerName): void;
+
     public function copyright(): ?string;
 
     public function focalX(): ?float;

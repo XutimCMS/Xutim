@@ -20,6 +20,7 @@ final class MediaTranslationType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('name', [], 'admin'),
                 'required' => true,
+                'help' => new TranslatableMessage('The display name for this file in the current language. Can differ per language.', [], 'admin'),
             ])
             ->add('alt', TextType::class, [
                 'label' => new TranslatableMessage('Alternative text', [], 'admin'),

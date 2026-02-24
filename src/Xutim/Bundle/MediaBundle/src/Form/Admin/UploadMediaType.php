@@ -19,7 +19,7 @@ use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\MediaBundle\Validator\UniqueMedia;
 
 /**
- * @extends AbstractType<array{file: UploadedFile, name: string, alt: string|null, copyright: string|null, locale: string}>
+ * @extends AbstractType<array{file: UploadedFile, innerName: string, name: string, alt: string|null, copyright: string|null, locale: string}>
  */
 final class UploadMediaType extends AbstractType
 {
@@ -42,9 +42,15 @@ final class UploadMediaType extends AbstractType
                     new UniqueMedia(),
                 ],
             ])
+            ->add('innerName', TextType::class, [
+                'label' => new TranslatableMessage('inner name', [], 'admin'),
+                'required' => true,
+                'help' => new TranslatableMessage('A language-independent label used internally to identify this file. Not shown on the website.', [], 'admin'),
+            ])
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('name', [], 'admin'),
                 'required' => true,
+                'help' => new TranslatableMessage('The display name for this file in the selected language. Can differ per language.', [], 'admin'),
             ])
             ->add('alt', TextType::class, [
                 'label' => new TranslatableMessage('Alternative text', [], 'admin'),

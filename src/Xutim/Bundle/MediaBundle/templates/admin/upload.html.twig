@@ -13,10 +13,16 @@
         <div class="card-body">
             {{ form_start(form) }}
             {{ form_row(form.file) }}
-            {{ form_row(form.name) }}
-            {{ form_row(form.alt) }}
+            {{ form_row(form.innerName) }}
             {{ form_row(form.copyright) }}
-            {{ form_row(form.locale) }}
+
+            <fieldset class="border rounded p-3 mt-3 mb-3">
+                <legend class="float-none w-auto px-2 fs-5 fw-medium">{{ 'Translation'|trans({}, 'admin') }}</legend>
+                {{ form_row(form.locale) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.alt) }}
+            </fieldset>
+
             {{ form_end(form) }}
         </div>
     </div>
@@ -50,9 +56,8 @@
                         </a>
                     </div>
                     <div class="card-body border-top">
-                        {% set trans = media.getTranslationByLocale(content_context_language()) %}
-                        <div class="d-flex align-items-center" title="{{ trans ? trans.name : media.originalPath|split('/')|last }}">
-                            {{ trans ? trans.name : media.originalPath|split('/')|last }}
+                        <div class="d-flex align-items-center" title="{{ media.innerName }}">
+                            {{ media.innerName }}
                         </div>
                     </div>
                 </div>

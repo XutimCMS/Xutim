@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Xutim\MediaBundle\Action\Admin\EditCopyrightAction;
+use Xutim\MediaBundle\Action\Admin\EditInnerNameAction;
 use Xutim\MediaBundle\Action\Admin\JsonListAllFilesAction;
 use Xutim\MediaBundle\Action\Admin\JsonListFilesAction;
 use Xutim\MediaBundle\Action\Admin\JsonListImagesAction;
@@ -80,6 +81,10 @@ return function (RoutingConfigurator $routes) {
     $routes->add('admin_media_copyright_edit', '/media/{id}/copyright')
         ->methods(['GET', 'POST'])
         ->controller(EditCopyrightAction::class);
+
+    $routes->add('admin_media_inner_name_edit', '/media/{id}/inner-name')
+        ->methods(['GET', 'POST'])
+        ->controller(EditInnerNameAction::class);
 
     $routes->add('admin_json_file_all_list', '/json/file/all-list')
         ->methods(['GET'])

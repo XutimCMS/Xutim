@@ -5,6 +5,8 @@
     <h1 class="page-title">
         {% if translation %}
             {{ translation.name }}
+        {% elseif media.innerName %}
+            {{ media.innerName }}
         {% else %}
             {{ media.originalPath|split('/')|last }}
         {% endif %}
@@ -44,6 +46,26 @@
                 <div id="general-tab" class="tab-pane active" role="tabpanel">
                     <div class="mb-3">
                         <twig:Xutim:Admin:SidebarSection>
+                            <twig:Xutim:Admin:SidebarItem id="media-inner-name-sidebar-item">
+                                <twig:block name="header">
+                                    {{ 'inner name'|trans({}, 'admin')|capitalize }}:
+                                </twig:block>
+                                <twig:block name="content">
+                                    {{ media.innerName ?: '-' }}
+
+                                    <div class="btn-group float-end">
+                                        <twig:Xutim:Admin:Button
+                                            tag="a"
+                                            variant="link"
+                                            class="p-0"
+                                            data-turbo-frame="modal"
+                                            href="{{ admin_path('admin_media_inner_name_edit', {id: media.id}) }}"
+                                        >
+                                            <twig:Xutim:Admin:Icon name="edit" />
+                                        </twig:Xutim:Admin:Button>
+                                    </div>
+                                </twig:block>
+                            </twig:Xutim:Admin:SidebarItem>
                             <twig:Xutim:Admin:SidebarItem id="media-copyright-sidebar-item">
                                 <twig:block name="header">
                                     {{ 'copyright'|trans({}, 'admin')|capitalize }}:
@@ -174,6 +196,8 @@
         <li class="breadcrumb-item active">
             {% if translation %}
                 {{ translation.name }}
+            {% elseif media.innerName %}
+                {{ media.innerName }}
             {% else %}
                 {{ media.originalPath|split('/')|last }}
             {% endif %}
@@ -232,6 +256,7 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
+                        <h3 class="mb-3">{{ 'Translation'|trans({}, 'admin') }}</h3>
                         {{ form_start(form, {attr: {'data-turbo-action': 'advanced'}}) }}
                         {{ form_row(form.name) }}
                         {{ form_row(form.alt) }}

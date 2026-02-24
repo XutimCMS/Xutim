@@ -56,6 +56,9 @@ class Media implements MediaInterface
     #[Column(options: ['default' => 0])]
     private int $height = 0;
 
+    #[Column(length: 255)]
+    private string $innerName;
+
     #[Column(length: 255, nullable: true)]
     private ?string $copyright;
 
@@ -80,6 +83,7 @@ class Media implements MediaInterface
         int $width = 0,
         int $height = 0,
         ?string $copyright = null,
+        string $innerName = '',
         ?float $focalX = null,
         ?float $focalY = null,
         ?string $blurHash = null,
@@ -99,6 +103,7 @@ class Media implements MediaInterface
         $this->width = max(0, $width);
         $this->height = max(0, $height);
         $this->copyright = $copyright;
+        $this->innerName = $innerName;
         $this->focalX = $focalX;
         $this->focalY = $focalY;
         $this->blurHash = $blurHash;
@@ -138,6 +143,17 @@ class Media implements MediaInterface
     public function changeCopyright(string $copyright): void
     {
         $this->copyright = $copyright;
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
+    public function innerName(): string
+    {
+        return $this->innerName;
+    }
+
+    public function changeInnerName(string $innerName): void
+    {
+        $this->innerName = $innerName;
         $this->updatedAt = new DateTimeImmutable();
     }
 

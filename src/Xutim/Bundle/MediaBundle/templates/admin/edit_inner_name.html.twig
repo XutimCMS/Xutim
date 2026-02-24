@@ -1,0 +1,49 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{% import '@XutimCore/admin/common/forms.html.twig' as forms %}
+{% set title = 'edit inner name'|trans({}, 'admin')|capitalize %}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header p-3">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.innerName) }}
+            {{ form_row(form.submit) }}
+            {{ form_row(form._token) }}
+            {{ form_end(form, {render_rest: false}) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#media-inner-name-sidebar-item">
+        <template>
+            <twig:Xutim:Admin:SidebarItem id="media-inner-name-sidebar-item">
+                <twig:block name="header">
+                    {{ 'inner name'|trans({}, 'admin')|capitalize }}:
+                </twig:block>
+                <twig:block name="content">
+                    {{ media.innerName }}
+
+                    <div class="btn-group float-end">
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="link"
+                            class="p-0"
+                            data-turbo-frame="modal"
+                            href="{{ admin_path('admin_media_inner_name_edit', {id: media.id}) }}"
+                        >
+                            <twig:Xutim:Admin:Icon name="edit" />
+                        </twig:Xutim:Admin:Button>
+                    </div>
+                </twig:block>
+            </twig:Xutim:Admin:SidebarItem>
+        </template>
+    </turbo-stream>
+{% endblock %}

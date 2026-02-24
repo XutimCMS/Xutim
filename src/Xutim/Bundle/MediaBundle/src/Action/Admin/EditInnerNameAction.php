@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Xutim\MediaBundle\Action\Admin;
 
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -19,18 +18,16 @@ use Twig\Environment;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
-use Xutim\MediaBundle\Domain\Event\MediaUploadedEvent;
-use Xutim\MediaBundle\Form\Admin\UploadMediaType;
-use Xutim\MediaBundle\Repository\MediaFolderRepositoryInterface;
-use Xutim\MediaBundle\Service\MediaUploader;
+use Xutim\MediaBundle\Domain\Event\MediaInnerNameUpdatedEvent;
+use Xutim\MediaBundle\Form\Admin\MediaInnerNameType;
+use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 
-final class UploadMediaAction
+final class EditInnerNameAction
 {
     public function __construct(
-        private readonly MediaUploader $uploader,
-        private readonly MediaFolderRepositoryInterface $folderRepository,
+        private readonly MediaRepositoryInterface $mediaRepository,
         private readonly LogEventFactory $logEventFactory,
         private readonly LogEventRepository $logEventRepository,
         private readonly UserStorage $userStorage,
@@ -42,45 +39,30 @@ final class UploadMediaAction
     ) {
     }
 
-    public function __invoke(Request $request, ?string $id = null): Response
+    public function __invoke(Request $request, string $id): Response
     {
         if (!$this->authorizationChecker->isGranted(UserRoles::ROLE_EDITOR)) {
             throw new AccessDeniedHttpException();
         }
 
-        $folder = null;
-        if ($id !== null) {
-            $folder = $this->folderRepository->findById(Uuid::fromString($id));
-            if ($folder === null) {
-                throw new NotFoundHttpException('Media folder not found');
-            }
+        $media = $this->mediaRepository->findById(Uuid::fromString($id));
+        if ($media === null) {
+            throw new NotFoundHttpException('Media not found');
         }
 
-        $form = $this->formFactory->create(UploadMediaType::class, null, [
-            'action' => $this->router->generate('admin_media_upload', ['id' => $id]),
+        $form = $this->formFactory->create(MediaInnerNameType::class, ['innerName' => $media->innerName()], [
+            'action' => $this->router->generate('admin_media_inner_name_edit', ['id' => $media->id()]),
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{file: UploadedFile, innerName: string, name: string, alt: string|null, copyright: string|null, locale: string} $data */
+            /** @var array{innerName: string} $data */
             $data = $form->getData();
 
-            $media = $this->uploader->upload(
-                $data['file'],
-                $data['name'],
-                $data['alt'] ?? '',
-                $data['locale'],
-                $data['copyright'],
-                $data['innerName'],
-                $folder,
-            );
+            $media->changeInnerName($data['innerName']);
+            $this->mediaRepository->save($media, true);
 
-            $event = new MediaUploadedEvent(
-                $media->id(),
-                $media->originalPath(),
-                $media->mime(),
-                $media->sizeBytes(),
-            );
+            $event = new MediaInnerNameUpdatedEvent($media->id(), $data['innerName']);
             $logEntry = $this->logEventFactory->create(
                 $media->id(),
                 $this->userStorage->getUserWithException()->getUserIdentifier(),
@@ -89,25 +71,27 @@ final class UploadMediaAction
             );
             $this->logEventRepository->save($logEntry, true);
 
+            /** @var FlashBagAwareSessionInterface $session */
+            $session = $request->getSession();
+            $session->getFlashBag()->add('success', 'flash.changes_made_successfully');
+
             if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
-
-                $stream = $this->twig->load('@XutimMedia/admin/upload.html.twig')
+                $stream = $this->twig->load('@XutimMedia/admin/edit_inner_name.html.twig')
                     ->renderBlock('stream_success', ['media' => $media]);
-
-                /** @var FlashBagInterface $flashBag */
-                $flashBag = $request->getSession()->getBag('flashes');
-                $flashBag->add('stream', $stream);
+                $session->getFlashBag()->add('stream', $stream);
             }
 
-            return new RedirectResponse(
-                $this->router->generate('admin_media_list', ['id' => $folder?->id()->toRfc4122()]),
-                Response::HTTP_SEE_OTHER,
-            );
+            $fallbackUrl = $this->router->generate('admin_media_edit', [
+                'id' => $media->id(),
+            ]);
+
+            return new RedirectResponse($request->headers->get('referer', $fallbackUrl));
         }
 
-        $content = $this->twig->render('@XutimMedia/admin/upload.html.twig', [
+        $content = $this->twig->render('@XutimMedia/admin/edit_inner_name.html.twig', [
             'form' => $form->createView(),
+            'media' => $media,
         ]);
 
         return new Response($content);
