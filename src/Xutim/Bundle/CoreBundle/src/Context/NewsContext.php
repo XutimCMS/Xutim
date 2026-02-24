@@ -21,7 +21,7 @@ class NewsContext
     /**
      * @return Pagerfanta<Article>
      */
-    public function getNews(string $locale, int $page = 1): PagerFanta
+    public function getNews(string $locale, int $page = 1): Pagerfanta
     {
         $filter = $this->filterBuilder->buildFilter('', $page, 12, 'publishedAt', 'desc');
 
