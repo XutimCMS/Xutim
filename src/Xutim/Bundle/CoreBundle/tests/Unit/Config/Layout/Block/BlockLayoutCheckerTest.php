@@ -139,10 +139,20 @@ class BlockLayoutCheckerTest extends TestCase
             public function changeFolder(?\Xutim\MediaBundle\Domain\Model\MediaFolderInterface $folder): void
             {
             }
+            public function innerName(): string
+            {
+                return 'test';
+            }
+            public function changeInnerName(string $innerName): void
+            {
+            }
             public function changeCopyright(string $copyright): void
             {
             }
             public function changeBlurHash(string $blurHash): void
+            {
+            }
+            public function replaceFile(string $mime, string $hash, int $sizeBytes, int $width, int $height): void
             {
             }
             public function getTranslationByLocale(string $locale): ?\Xutim\MediaBundle\Domain\Model\MediaTranslationInterface

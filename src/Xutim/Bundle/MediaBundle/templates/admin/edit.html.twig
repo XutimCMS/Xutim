@@ -272,7 +272,7 @@
         <div class="card"
              data-controller="xutim-media--regenerate-variants"
              data-xutim-media--regenerate-variants-regenerate-url-value="{{ admin_path('admin_media_regenerate_variants', {id: media.id}) }}"
-             data-xutim-media--regenerate-variants-mercure-topic-value="{{ mercure('media/' ~ media.id ~ '/variants', { subscribe: 'media/' ~ media.id ~ '/variants' }) }}"
+             data-xutim-media--regenerate-variants-mercure-topic-value="{{ mercure('media/' ~ media.id ~ '/variants', { subscribe: 'media/' ~ media.id ~ '/variants', hub: 'default' }) }}"
         >
             <div class="card-header d-flex align-items-center">
                 <span class="h3 mb-0">{{ 'Generated image sizes'|trans({}, 'admin') }}</span>

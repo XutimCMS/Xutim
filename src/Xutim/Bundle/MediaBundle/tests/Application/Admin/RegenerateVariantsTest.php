@@ -31,9 +31,7 @@ class RegenerateVariantsTest extends MediaApplicationTestCase
         $this->assertResponseIsSuccessful();
 
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertTrue($data['success']);
-        $this->assertArrayHasKey('deletedVariants', $data);
-        $this->assertArrayHasKey('generatedVariants', $data);
+        $this->assertSame('processing', $data['status']);
     }
 
     public function testRegenerateVariantsRejectsNonImage(): void

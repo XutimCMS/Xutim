@@ -127,6 +127,7 @@ class PageTest extends AdminApplicationTestCase
         $draftTitle = 'Drafted Page Title ' . $uniqueId;
         $form['content_translation[title]'] = $draftTitle;
         $form['content_translation[content]'] = json_encode([], JSON_THROW_ON_ERROR);
+        $form['_save_action'] = 'draft';
         $client->submit($form);
         $this->assertResponseRedirects(message: 'Editing published page should redirect');
 
@@ -220,6 +221,7 @@ class PageTest extends AdminApplicationTestCase
         $form = $crawler->filter('form[name="content_translation"]')->form();
         $form['content_translation[title]'] = 'Should Be Discarded';
         $form['content_translation[content]'] = json_encode([], JSON_THROW_ON_ERROR);
+        $form['_save_action'] = 'draft';
         $client->submit($form);
         $crawler = $client->followRedirect();
 

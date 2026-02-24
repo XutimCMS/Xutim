@@ -22,6 +22,7 @@ abstract class MediaApplicationTestCase extends AdminApplicationTestCase
         int $width = 800,
         int $height = 600,
         ?MediaFolderInterface $folder = null,
+        string $innerName = 'Test Media',
     ): MediaInterface {
         $ext = pathinfo($originalPath, PATHINFO_EXTENSION);
 
@@ -34,6 +35,7 @@ abstract class MediaApplicationTestCase extends AdminApplicationTestCase
             sizeBytes: 1024,
             width: $width,
             height: $height,
+            innerName: $innerName,
         );
 
         $em = $this->getEntityManager();
