@@ -20,7 +20,7 @@ class BlockCacheWarmer implements CacheWarmerInterface
 
     public function warmUp(string $cacheDir, ?string $buildDir = null): array
     {
-        $locales = $this->siteContext->getLocales();
+        $locales = $this->siteContext->getAllLocales();
         $blocks = $this->blockRepository->findAll();
 
         foreach ($blocks as $block) {

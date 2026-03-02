@@ -52,7 +52,7 @@ class BlockContext
 
     public function resetAllLocalesBlockTemplate(string $code): void
     {
-        foreach ($this->siteContext->getLocales() as $locale) {
+        foreach ($this->siteContext->getAllLocales() as $locale) {
             $this->resetBlockTemplate($locale, $code);
         }
     }
