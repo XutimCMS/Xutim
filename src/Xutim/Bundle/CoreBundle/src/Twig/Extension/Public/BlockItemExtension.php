@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Twig\Extension\Public;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\LocaleSwitcher;
 use Twig\Extension\AbstractExtension;
@@ -16,7 +15,6 @@ class BlockItemExtension extends AbstractExtension
 {
     public function __construct(
         private readonly RouterInterface $router,
-        private readonly RequestStack $reqStack,
         private readonly LocaleSwitcher $localeSwitcher,
     ) {
     }
@@ -31,10 +29,8 @@ class BlockItemExtension extends AbstractExtension
 
     public function getTranslation(BlockItemInterface $item): ContentTranslationInterface|null
     {
-        $locale = $this->reqStack->getCurrentRequest()?->getLocale() ?? $this->localeSwitcher->getLocale();
-
         if ($item->hasContentObject() === true) {
-            return $item->getObject()?->getTranslationByLocale($locale);
+            return $item->getObject()?->getTranslationByLocale($this->localeSwitcher->getLocale());
         }
 
         return null;
