@@ -6,7 +6,6 @@ namespace Xutim\CoreBundle\Domain\Model;
 
 use Deprecated;
 use Symfony\Component\Uid\Uuid;
-use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
 use Xutim\MediaBundle\Domain\Model\MediaFolderInterface;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
@@ -14,6 +13,9 @@ use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 interface BlockItemInterface
 {
+    /**
+     * @param array<string, mixed> $extra
+     */
     public function change(
         ?PageInterface $page,
         ?ArticleInterface $article,
@@ -23,10 +25,8 @@ interface BlockItemInterface
         ?MediaFolderInterface $folder,
         ?string $text,
         ?string $link,
-        ?string $colorHex,
         ?string $fileDescription,
-        ?float $latitude,
-        ?float $longitude
+        array $extra = [],
     ): void;
 
     public function getId(): Uuid;
@@ -41,8 +41,6 @@ interface BlockItemInterface
     public function hasText(): bool;
     public function getLink(): ?string;
     public function hasLink(): bool;
-    public function hasColor(): bool;
-    public function getColor(): ?Color;
     public function getFileDescription(): ?string;
     public function getObject(): PageInterface|ArticleInterface|null;
 
@@ -75,7 +73,10 @@ interface BlockItemInterface
 
     public function getBlock(): BlockInterface;
 
-    public function getCoordinates(): ?Coordinates;
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtra(): array;
 
     public function getDto(): BlockItemDto;
 

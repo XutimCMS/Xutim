@@ -57,10 +57,8 @@ class EditBlockItemAction extends AbstractController
                 $data->mediaFolder,
                 $data->text,
                 $data->link,
-                $data->color,
                 $data->fileDescription,
-                $data->coordinates?->latitude,
-                $data->coordinates?->longitude
+                $data->extra,
             );
 
             $this->blockItemRepository->save($item, true);

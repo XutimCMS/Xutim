@@ -5,6 +5,14 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\ArticleBlockItemProvider;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\BlockItemProviderRegistry;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\FileBlockItemProvider;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\ImageBlockItemProvider;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\MediaFolderBlockItemProvider;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\PageBlockItemProvider;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\SnippetBlockItemProvider;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\TagBlockItemProvider;
 use Xutim\CoreBundle\Form\Admin\BlockItemType;
 use Xutim\CoreBundle\Form\Admin\MenuItemType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
@@ -26,13 +34,38 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$tagClass', '%xutim_core.model.tag.class%')
         ->tag('form.type');
 
-    $services->set(BlockItemType::class)
+    $services->set(ArticleBlockItemProvider::class)
         ->arg('$articleClass', '%xutim_core.model.article.class%')
-        ->arg('$mediaClass', '%xutim_media.model.media.class%')
-        ->arg('$snippetClass', '%xutim_snippet.model.snippet.class%')
-        ->arg('$tagClass', '%xutim_core.model.tag.class%')
-        ->arg('$mediaFolderClass', '%xutim_media.model.media_folder.class%')
-        ->arg('$pageRepository', service(PageRepository::class))
-        ->tag('form.type');
+        ->tag('xutim.block_item_provider');
 
+    $services->set(PageBlockItemProvider::class)
+        ->arg('$pageRepository', service(PageRepository::class))
+        ->tag('xutim.block_item_provider');
+
+    $services->set(FileBlockItemProvider::class)
+        ->arg('$mediaClass', '%xutim_media.model.media.class%')
+        ->tag('xutim.block_item_provider');
+
+    $services->set(ImageBlockItemProvider::class)
+        ->arg('$mediaClass', '%xutim_media.model.media.class%')
+        ->tag('xutim.block_item_provider');
+
+    $services->set(SnippetBlockItemProvider::class)
+        ->arg('$snippetClass', '%xutim_snippet.model.snippet.class%')
+        ->tag('xutim.block_item_provider');
+
+    $services->set(TagBlockItemProvider::class)
+        ->arg('$tagClass', '%xutim_core.model.tag.class%')
+        ->tag('xutim.block_item_provider');
+
+    $services->set(MediaFolderBlockItemProvider::class)
+        ->arg('$mediaFolderClass', '%xutim_media.model.media_folder.class%')
+        ->tag('xutim.block_item_provider');
+
+    $services->set(BlockItemProviderRegistry::class)
+        ->arg('$providers', tagged_iterator('xutim.block_item_provider'));
+
+    $services->set(BlockItemType::class)
+        ->arg('$registry', service(BlockItemProviderRegistry::class))
+        ->tag('form.type');
 };

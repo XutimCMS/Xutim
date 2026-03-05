@@ -52,13 +52,6 @@
     {{ badges.squareBadge(color, extraClass) }}
 {% endmacro %}
 
-{% macro blockItemColorBadge(item, extraClass) %}
-    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-    {% set color = item.color ? item.color.HTMLHex : '6c7a91' %}
-
-    {{ badges.squareBadge(color, extraClass) }}
-{% endmacro %}
-
 {% macro pageColorBadge(page, extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 

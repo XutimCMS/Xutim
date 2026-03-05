@@ -7,7 +7,6 @@
     <td style="cursor: grab;" class="draggable-handle w-6">
         <twig:ux:icon name="tabler:grip-vertical" />
     </td>
-    <td class="text-center">{{ badges.blockItemColorBadge(item) }}</td>
     <td>
         <div class="d-flex justify-content-start">
             {% if item.hasArticle %}
@@ -88,7 +87,7 @@
         </td>
     {% endif %}
     <td>
-        {% if item.hasObject() %}
+        {% if item.hasContentObject() %}
             {% set hasUntranslated = false %}
             {% for trans in item.object.translations %}
                 {% if trans.isPublished() == false %}

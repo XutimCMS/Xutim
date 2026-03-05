@@ -14,10 +14,10 @@ use Xutim\CoreBundle\Config\Layout\Block\Option\BlockItemOptionCollection;
 use Xutim\CoreBundle\Config\Layout\Block\Option\BlockItemOptionComposed;
 use Xutim\CoreBundle\Config\Layout\Block\Option\ImageBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\LinkBlockItemOption;
-use Xutim\CoreBundle\Config\Layout\Block\Option\MapCoordinatesBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\SnippetBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Config\Layout\LayoutConfigItem;
+use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Entity\Block;
 use Xutim\CoreBundle\Entity\BlockItem;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
@@ -58,16 +58,27 @@ class BlockLayoutCheckerTest extends TestCase
     {
         $block = new Block('code', 'name', 'desc', null, 'layout');
         $blockEmpty = new Block('code', 'name', 'desc', null, 'layout');
-        $linkItem = new BlockItem($block, null, null, null, null, null, null, null, 'link');
-        $linkItem2 = new BlockItem($block, null, null, null, null, null, null, null, 'link2');
-        $linkItem3 = new BlockItem($block, null, null, null, null, null, null, null, 'link3');
-        $coordItem = new BlockItem($block, null, null, null, null, null, null, null, null, null, null, 1.3, 2.4);
-        $coordItem2 = new BlockItem($block, null, null, null, null, null, null, null, null, null, null, 5.3, 5.4);
+        new BlockItem($block, link: 'link');
+        new BlockItem($block, link: 'link2');
+        new BlockItem($block, link: 'link3');
+        new BlockItem($block, text: 'text1');
+        new BlockItem($block, text: 'text2');
 
+        $textOption = new class() implements BlockItemOption {
+            public function canFullFill(BlockItemInterface $item): bool
+            {
+                return $item->hasText();
+            }
+
+            public function getName(): string
+            {
+                return 'text item';
+            }
+        };
 
         $block2 = new Block('code', 'name', 'desc', null, 'layout');
-        $snippetItem = new BlockItem($block2, null, null, null, new Snippet('code', 'Test snippet', SnippetCategory::Ui));
-        $snippetItem = new BlockItem($block2, null, null, null, new Snippet('code2', 'Test snippet 2', SnippetCategory::Ui));
+        new BlockItem($block2, snippet: new Snippet('code', 'Test snippet', SnippetCategory::Ui));
+        new BlockItem($block2, snippet: new Snippet('code2', 'Test snippet 2', SnippetCategory::Ui));
         $media = new class() implements MediaInterface {
             public function id(): Uuid
             {
@@ -167,17 +178,17 @@ class BlockLayoutCheckerTest extends TestCase
                 return new \Doctrine\Common\Collections\ArrayCollection();
             }
         };
-        $imageItem = new BlockItem($block2, null, null, $media);
+        new BlockItem($block2, file: $media);
 
         return [
             [[], $blockEmpty, true],
             [[new ArticleBlockItemOption()], $blockEmpty, false],
             [[new BlockItemOptionComposed(new ArticleBlockItemOption())], $blockEmpty, false],
             [[new BlockItemOptionCollection(new ArticleBlockItemOption())], $blockEmpty, true], // Collections allow 0 or more items
-            [[new BlockItemOptionCollection(new LinkBlockItemOption()), new BlockItemOptionCollection(new MapCoordinatesBlockItemOption())], $block, true],
-            [[new BlockItemOptionCollection(new LinkBlockItemOption()), new LinkBlockItemOption(), new BlockItemOptionCollection(new MapCoordinatesBlockItemOption()), new MapCoordinatesBlockItemOption()], $block, true],
+            [[new BlockItemOptionCollection(new LinkBlockItemOption()), new BlockItemOptionCollection($textOption)], $block, true],
+            [[new BlockItemOptionCollection(new LinkBlockItemOption()), new LinkBlockItemOption(), new BlockItemOptionCollection($textOption), $textOption], $block, true],
             [[new BlockItemOptionCollection(new LinkBlockItemOption())], $block, false],
-            [[new BlockItemOptionCollection(new LinkBlockItemOption()), new MapCoordinatesBlockItemOption()], $block, false],
+            [[new BlockItemOptionCollection(new LinkBlockItemOption()), $textOption], $block, false],
             [[new SnippetBlockItemOption(), new SnippetBlockItemOption(), new ImageBlockItemOption()], $block2, true]
         ];
     }

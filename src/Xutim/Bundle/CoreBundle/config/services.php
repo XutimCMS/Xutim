@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Symfony\Component\Asset\Context\RequestStackContext;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\BlockItemProviderInterface;
 use Xutim\CoreBundle\Infra\Doctrine\Type\AbstractEnumType;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\MessageHandler\EventHandlerInterface;
@@ -21,6 +22,9 @@ return static function (ContainerConfigurator $container): void {
 
     $services->instanceof(AbstractEnumType::class)
         ->tag('xutim.doctrine_enum_type');
+
+    $services->instanceof(BlockItemProviderInterface::class)
+        ->tag('xutim.block_item_provider');
 
     $services->alias(RequestStackContext::class, 'assets.context');
 

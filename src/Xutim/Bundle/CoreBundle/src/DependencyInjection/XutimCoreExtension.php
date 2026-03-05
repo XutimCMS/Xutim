@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Xutim\CoreBundle\Form\Admin\BlockItemProvider\BlockItemProviderInterface;
 use Xutim\CoreBundle\Message\Command\Article\PublishScheduledArticlesCommand;
 use Xutim\CoreBundle\Message\Command\GenerateSitemapCommand;
 use Xutim\SecurityBundle\Message\SendResetPasswordCommand;
@@ -29,6 +30,9 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
         foreach ($configs['models'] as $alias => $modelConfig) {
             $container->setParameter(sprintf('xutim_core.model.%s.class', $alias), $modelConfig['class']);
         }
+
+        $container->registerForAutoconfiguration(BlockItemProviderInterface::class)
+            ->addTag('xutim.block_item_provider');
 
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
 

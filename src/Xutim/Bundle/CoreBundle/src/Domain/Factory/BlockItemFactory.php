@@ -22,20 +22,21 @@ class BlockItemFactory
         }
     }
 
+    /**
+     * @param array<string, mixed> $extra
+     */
     public function create(
         BlockInterface $block,
-        ?PageInterface $page,
-        ?ArticleInterface $article,
-        ?MediaInterface $file,
+        ?PageInterface $page = null,
+        ?ArticleInterface $article = null,
+        ?MediaInterface $file = null,
         ?SnippetInterface $snippet = null,
         ?TagInterface $tag = null,
         ?MediaFolderInterface $mediaFolder = null,
         ?string $text = null,
         ?string $link = null,
-        ?string $colorHex = null,
         ?string $fileDescription = null,
-        ?float $latitude = null,
-        ?float $longitude = null,
+        array $extra = [],
     ): BlockItemInterface {
         /** @var BlockItemInterface $item */
         $item = new ($this->entityClass)(
@@ -48,10 +49,8 @@ class BlockItemFactory
             $mediaFolder,
             $text,
             $link,
-            $colorHex,
             $fileDescription,
-            $latitude,
-            $longitude,
+            $extra,
         );
 
         return $item;

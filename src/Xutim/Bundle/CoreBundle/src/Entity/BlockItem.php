@@ -8,7 +8,6 @@ use DateTimeImmutable;
 use Deprecated;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
@@ -19,7 +18,6 @@ use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
-use Xutim\CoreBundle\Domain\Model\Coordinates;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
@@ -46,17 +44,12 @@ class BlockItem implements BlockItemInterface
     #[Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $link;
 
-    #[Embedded(class: Color::class)]
-    private Color $color;
-
     #[Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $fileDescription;
 
-    #[Column(type: 'decimal', precision: 10, scale: 6, nullable: true)]
-    private ?string $latitude = null;
-
-    #[Column(type: 'decimal', precision: 10, scale: 6, nullable: true)]
-    private ?string $longitude = null;
+    /** @var array<string, mixed>|null */
+    #[Column(type: Types::JSON, nullable: true)]
+    private ?array $extra = null;
 
     #[SortableGroup]
     #[ManyToOne(targetEntity: BlockInterface::class, inversedBy: 'blockItems')]
@@ -87,20 +80,21 @@ class BlockItem implements BlockItemInterface
     #[JoinColumn(nullable: true)]
     private ?MediaFolderInterface $mediaFolder;
 
+    /**
+     * @param array<string, mixed> $extra
+     */
     public function __construct(
         BlockInterface $block,
-        ?PageInterface $page,
-        ?ArticleInterface $article,
-        ?MediaInterface $file,
+        ?PageInterface $page = null,
+        ?ArticleInterface $article = null,
+        ?MediaInterface $file = null,
         ?SnippetInterface $snippet = null,
         ?TagInterface $tag = null,
         ?MediaFolderInterface $folder = null,
         ?string $text = null,
         ?string $link = null,
-        ?string $colorHex = null,
         ?string $fileDescription = null,
-        ?float $latitude = null,
-        ?float $longitude = null,
+        array $extra = [],
     ) {
         $this->id = Uuid::v4();
         $this->block = $block;
@@ -114,16 +108,17 @@ class BlockItem implements BlockItemInterface
             $folder,
             $text,
             $link,
-            $colorHex,
             $fileDescription,
-            $latitude,
-            $longitude
+            $extra,
         );
         $this->position = -1;
         $this->createdAt = new DateTimeImmutable();
         $this->updatedAt = new DateTimeImmutable();
     }
 
+    /**
+     * @param array<string, mixed> $extra
+     */
     public function change(
         ?PageInterface $page,
         ?ArticleInterface $article,
@@ -133,10 +128,8 @@ class BlockItem implements BlockItemInterface
         ?MediaFolderInterface $folder,
         ?string $text,
         ?string $link,
-        ?string $colorHex,
         ?string $fileDescription,
-        ?float $latitude,
-        ?float $longitude
+        array $extra = [],
     ): void {
         $this->page = $page;
         $this->article = $article;
@@ -146,10 +139,8 @@ class BlockItem implements BlockItemInterface
         $this->mediaFolder = $folder;
         $this->text = $text;
         $this->link = $link;
-        $this->color = new Color($colorHex);
         $this->fileDescription = $fileDescription;
-        $this->latitude = $latitude !== null ? (string)$latitude : null;
-        $this->longitude = $latitude !== null ? (string)$longitude : null;
+        $this->extra = $extra !== [] ? $extra : null;
     }
 
     public function getId(): Uuid
@@ -199,20 +190,6 @@ class BlockItem implements BlockItemInterface
     public function hasLink(): bool
     {
         return $this->link !== null and $this->link !== '';
-    }
-
-    public function hasColor(): bool
-    {
-        return $this->color->isSet();
-    }
-
-    public function getColor(): ?Color
-    {
-        if ($this->color->isSet()) {
-            return $this->color;
-        }
-
-        return null;
     }
 
     public function getFileDescription(): ?string
@@ -322,13 +299,12 @@ class BlockItem implements BlockItemInterface
         return $this->block;
     }
 
-    public function getCoordinates(): ?Coordinates
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtra(): array
     {
-        if ($this->latitude === null || $this->longitude === null) {
-            return null;
-        }
-
-        return new Coordinates((float)$this->latitude, (float)$this->longitude);
+        return $this->extra ?? [];
     }
 
     public function getDto(): BlockItemDto
@@ -343,9 +319,8 @@ class BlockItem implements BlockItemInterface
             $this->position,
             $this->text,
             $this->link,
-            $this->color->getHex(),
             $this->fileDescription,
-            $this->getCoordinates()
+            $this->getExtra(),
         );
     }
 
