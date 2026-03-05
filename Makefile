@@ -51,24 +51,26 @@ init-test-db:
 .PHONY: init-test-db
 
 # Testing
+PHPUNIT_FLAGS=--fail-on-deprecation --fail-on-notice
+
 test: $(TEST_APP)/vendor/
-	cd tests && $(CURDIR)/$(PHPUNIT)
+	cd tests && $(CURDIR)/$(PHPUNIT) $(PHPUNIT_FLAGS)
 .PHONY: test
 
 test-all: $(TEST_APP)/vendor/
-	cd tests && $(CURDIR)/$(PHPUNIT) --testsuite=all
+	cd tests && $(CURDIR)/$(PHPUNIT) $(PHPUNIT_FLAGS) --testsuite=all
 .PHONY: test-all
 
 test-unit: $(TEST_APP)/vendor/
-	cd tests && $(CURDIR)/$(PHPUNIT) --testsuite=unit
+	cd tests && $(CURDIR)/$(PHPUNIT) $(PHPUNIT_FLAGS) --testsuite=unit
 .PHONY: test-unit
 
 test-functional: $(TEST_APP)/vendor/
-	cd tests && $(CURDIR)/$(PHPUNIT) --testsuite=functional
+	cd tests && $(CURDIR)/$(PHPUNIT) $(PHPUNIT_FLAGS) --testsuite=functional
 .PHONY: test-functional
 
 test-core: $(TEST_APP)/vendor/
-	cd tests && $(CURDIR)/$(PHPUNIT) --testsuite=core
+	cd tests && $(CURDIR)/$(PHPUNIT) $(PHPUNIT_FLAGS) --testsuite=core
 .PHONY: test-core
 
 test-coverage: $(TEST_APP)/vendor/
