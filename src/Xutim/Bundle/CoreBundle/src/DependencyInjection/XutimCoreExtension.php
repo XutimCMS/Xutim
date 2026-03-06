@@ -64,6 +64,7 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
         $loader->load('twig.php');
 
         $this->prependDoctrineResolveTargets($container, $config);
+        $this->prependDoctrineDqlFunctions($container);
         $this->prependMessengerRouting($container, $config);
         $this->prependMediaPresets($container);
     }
@@ -120,6 +121,19 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
                 'messenger' => ['routing' => $routing],
             ]);
         }
+    }
+
+    private function prependDoctrineDqlFunctions(ContainerBuilder $container): void
+    {
+        $container->prependExtensionConfig('doctrine', [
+            'orm' => [
+                'dql' => [
+                    'string_functions' => [
+                        'CAST' => \Xutim\CoreBundle\Infra\Doctrine\DQL\Cast::class,
+                    ],
+                ],
+            ],
+        ]);
     }
 
     private function prependMediaPresets(ContainerBuilder $container): void
