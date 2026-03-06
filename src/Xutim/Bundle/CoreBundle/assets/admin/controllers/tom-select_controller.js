@@ -5,11 +5,15 @@ import '../styles/tom-select.css';
 
 export default class extends Controller {
     connect() {
-        new TomSelect(this.element, {
+        const ts = new TomSelect(this.element, {
             maxOptions: null,
             plugins: {
                 remove_button: {},
             },
+        });
+
+        ts.on('item_add', () => {
+            ts.setTextboxValue('');
         });
     }
 }
