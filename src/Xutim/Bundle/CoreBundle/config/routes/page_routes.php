@@ -8,6 +8,7 @@ use Xutim\CoreBundle\Action\Admin\Page\EditFeaturedImageAction;
 use Xutim\CoreBundle\Action\Admin\Page\EditPageAction;
 use Xutim\CoreBundle\Action\Admin\Page\EditPageDetailsAction;
 use Xutim\CoreBundle\Action\Admin\Page\EditPageLayoutAction;
+use Xutim\CoreBundle\Action\Admin\Page\EditPageTranslationLocalesAction;
 use Xutim\CoreBundle\Action\Admin\Page\JsonListPagesAction;
 use Xutim\CoreBundle\Action\Admin\Page\JsonReorderPagesAction;
 use Xutim\CoreBundle\Action\Admin\Page\ListPagesAction;
@@ -40,6 +41,12 @@ return function (RoutingConfigurator $routes) {
         ->add('admin_page_details_edit', '/admin/{_content_locale}/page/details-edit/{id}')
         ->methods(['get', 'post'])
         ->controller(EditPageDetailsAction::class)
+    ;
+
+    $routes
+        ->add('admin_page_translation_locales_edit', '/admin/{_content_locale}/page/translation-locales-edit/{id}')
+        ->methods(['get', 'post'])
+        ->controller(EditPageTranslationLocalesAction::class)
     ;
 
     $routes

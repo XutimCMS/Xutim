@@ -1,0 +1,68 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+{%
+    set title = 'translate into'|trans({}, 'admin')|capitalize ~ ' - ' ~ article.defaultTranslation.title
+%}
+
+{% block pageTitle %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header p-3">
+            <h3 class="card-title">{{ title }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            <div data-controller="translation-locales">
+                {{ form_row(form.allTranslationLocales, {
+                    attr: {
+                        'data-translation-locales-target': 'radioGroup',
+                        'data-action': 'change->translation-locales#toggle',
+                    },
+                }) }}
+
+                <div data-translation-locales-target="localesList" class="mb-3" {% if form.allTranslationLocales.vars.data %}hidden{% endif %}>
+                    {{ form_label(form.translationLocales) }}
+                    {{ form_errors(form.translationLocales) }}
+                    <div class="d-flex flex-wrap gap-1 align-items-center mt-2">
+                        {% set childIndex = 0 %}
+                        {% for group_label, children in form.translationLocales.vars.choices %}
+                            {% if not loop.first %}<span class="border-start align-self-stretch mx-1"></span>{% endif %}
+                            {% for choice in children %}
+                                {% set child = form.translationLocales.children[childIndex] %}
+                                <label class="badge cursor-pointer{{ child.vars.checked ? ' bg-primary text-white' : ' badge-outline text-primary' }}">
+                                    <input type="checkbox" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="d-none" data-action="change->translation-locales#toggleBadge"{{ child.vars.checked ? ' checked' : '' }}>
+                                    {{ child.vars.label }}
+                                </label>
+                                {% set childIndex = childIndex + 1 %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {{ form_row(form.submit) }}
+            {% do form.translationLocales.setRendered %}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stream_success %}
+    <turbo-stream action="replace" targets="#article-translation-locales-item">
+        <template>
+            <span id="article-translation-locales-item">
+                {% if article.allTranslationLocales %}
+                    {{ 'all languages'|trans({}, 'admin') }}
+                {% else %}
+                    {{ article.translationLocales|join(', ') }}
+                {% endif %}
+            </span>
+        </template>
+    </turbo-stream>
+    <turbo-stream action="update" target="language-context-bar">
+        <template>
+            <twig:Xutim:Admin:LanguageContextBar :entity="article" />
+        </template>
+    </turbo-stream>
+{% endblock %}

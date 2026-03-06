@@ -98,6 +98,35 @@
                         }}
 
                         {{ form_row(form.description) }}
+
+                        {% set hasTranslationLocaleError = form.translationLocales.vars.errors|length > 0 %}
+                        <div data-controller="translation-locales" class="p-3 rounded{{ hasTranslationLocaleError ? ' border border-danger bg-danger bg-opacity-10' : '' }}">
+                            {{ form_row(form.allTranslationLocales, {
+                                attr: {
+                                    'data-translation-locales-target': 'radioGroup',
+                                    'data-action': 'change->translation-locales#toggle',
+                                },
+                            }) }}
+
+                            <div data-translation-locales-target="localesList" class="mb-3"{{ form.allTranslationLocales.vars.data is not same as(false) ? ' hidden' : '' }}>
+                                {{ form_label(form.translationLocales) }}
+                                {{ form_errors(form.translationLocales) }}
+                                <div class="d-flex flex-wrap gap-1 align-items-center mt-2">
+                                    {% set childIndex = 0 %}
+                                    {% for group_label, children in form.translationLocales.vars.choices %}
+                                        {% if not loop.first %}<span class="border-start align-self-stretch mx-1"></span>{% endif %}
+                                        {% for choice in children %}
+                                            {% set child = form.translationLocales.children[childIndex] %}
+                                            <label class="badge cursor-pointer{{ child.vars.checked ? ' bg-primary text-white' : ' badge-outline text-primary' }}">
+                                                <input type="checkbox" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="d-none" data-action="change->translation-locales#toggleBadge"{{ child.vars.checked ? ' checked' : '' }}>
+                                                {{ child.vars.label }}
+                                            </label>
+                                            {% set childIndex = childIndex + 1 %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="col-sm-6">

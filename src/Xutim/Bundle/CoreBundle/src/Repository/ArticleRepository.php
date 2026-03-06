@@ -437,8 +437,7 @@ class ArticleRepository extends ServiceEntityRepository
     public function findByChangedDefaultTranslations(array $locales, ?int $limit = null): array
     {
         $qb = $this->createQueryBuilder('article');
-        /** @var list<ArticleInterface> $articles */
-        $articles = $qb
+        $qb
             ->select('article', 'translation')
             ->join(
                 'article.translations',
@@ -451,11 +450,18 @@ class ArticleRepository extends ServiceEntityRepository
             ->andWhere('translation.updatedAt < defaultTranslation.updatedAt')
             ->setParameter('locales', $locales)
             ->orderBy('article.createdAt', 'desc')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
 
-        return $articles;
+        $localeConditions = [$qb->expr()->eq('article.allTranslationLocales', 'true')];
+        foreach ($locales as $i => $locale) {
+            $param = 'localeFilter' . $i;
+            $localeConditions[] = $qb->expr()->like('CAST(article.translationLocales AS TEXT)', ':' . $param);
+            $qb->setParameter($param, '%' . $locale . '%');
+        }
+        $qb->andWhere($qb->expr()->orX(...$localeConditions));
+
+        /** @var list<ArticleInterface> */
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -465,9 +471,7 @@ class ArticleRepository extends ServiceEntityRepository
     public function findByMissingTranslations(array $locales, ?int $limit = null): array
     {
         $qb = $this->createQueryBuilder('article');
-
-        /** @var list<ArticleInterface> $articles */
-        $articles = $qb
+        $qb
             ->select('article')
             ->leftJoin(
                 'article.translations',
@@ -488,11 +492,18 @@ class ArticleRepository extends ServiceEntityRepository
             ->setParameter('locales', $locales)
             ->setParameter('localeCount', count($locales))
             ->orderBy('article.createdAt', 'desc')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
 
-        return $articles;
+        $localeConditions = [$qb->expr()->eq('article.allTranslationLocales', 'true')];
+        foreach ($locales as $i => $locale) {
+            $param = 'localeFilter' . $i;
+            $localeConditions[] = $qb->expr()->like('CAST(article.translationLocales AS TEXT)', ':' . $param);
+            $qb->setParameter($param, '%' . $locale . '%');
+        }
+        $qb->andWhere($qb->expr()->orX(...$localeConditions));
+
+        /** @var list<ArticleInterface> */
+        return $qb->getQuery()->getResult();
     }
 
     /**

@@ -55,6 +55,28 @@ class EditPageAction extends AbstractController
             throw $this->createNotFoundException('The page does not exist');
         }
         $contentLocale = $this->contentContext->getLanguage();
+
+        if (!$page->isLocaleAllowed($contentLocale)) {
+            $this->addFlash('info', 'flash.locale_not_translatable');
+
+            return $this->render('@XutimCore/admin/page/page_edit.html.twig', [
+                'form' => null,
+                'draft' => null,
+                'editingUser' => null,
+                'page' => $page,
+                'revisionsCount' => 0,
+                'lastRevision' => null,
+                'translation' => null,
+                'totalTranslations' => count($page->getTranslationLocales()),
+                'translatedTranslations' => 0,
+                'referenceTranslation' => null,
+                'referenceLocale' => $this->siteContext->getReferenceLocale(),
+                'referenceExists' => false,
+                'referenceHasChanged' => false,
+                'localeBlocked' => true,
+            ]);
+        }
+
         $translation = $page->getTranslationByLocale($contentLocale);
 
         $draft = $this->findDraft($translation);
@@ -81,11 +103,12 @@ class EditPageAction extends AbstractController
             /** @var UserInterface $user */
             $user = $this->getUser();
             $locales = $user->getTranslationLocales();
-            $totalTranslations = count($locales);
         } else {
             $locales = null;
-            $totalTranslations = count($this->siteContext->getLocales());
         }
+        $totalTranslations = $page->hasAllTranslationLocales()
+            ? count($this->siteContext->getLocales())
+            : count($page->getTranslationLocales());
         $translatedPages = $this->pageRepo->countTranslatedTranslations($page, $locales);
 
 

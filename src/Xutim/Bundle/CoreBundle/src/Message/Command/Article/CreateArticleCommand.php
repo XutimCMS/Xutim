@@ -10,7 +10,8 @@ use Xutim\CoreBundle\Form\Admin\Dto\CreateArticleFormData;
 final readonly class CreateArticleCommand
 {
     /**
-     * @param EditorBlock $content
+     * @param EditorBlock  $content
+     * @param list<string> $translationLocales
      */
     public function __construct(
         public ?string $layout,
@@ -22,7 +23,9 @@ final readonly class CreateArticleCommand
         public string $description,
         public string $defaultLanguage,
         public string $userIdentifier,
-        public ?Uuid $featuredImageId
+        public ?Uuid $featuredImageId,
+        public bool $allTranslationLocales = true,
+        public array $translationLocales = [],
     ) {
     }
 
@@ -38,7 +41,9 @@ final readonly class CreateArticleCommand
             $data->getDescription(),
             $data->getLocale(),
             $userIdentifier,
-            $data->getFeaturedImageId()
+            $data->getFeaturedImageId(),
+            $data->allTranslationLocales,
+            $data->translationLocales,
         );
     }
 

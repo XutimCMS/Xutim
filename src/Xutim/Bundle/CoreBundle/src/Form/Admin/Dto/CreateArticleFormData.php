@@ -10,7 +10,8 @@ use Webmozart\Assert\Assert;
 final readonly class CreateArticleFormData
 {
     /**
-     * @param EditorBlock $content
+     * @param EditorBlock  $content
+     * @param list<string> $translationLocales
      */
     public function __construct(
         public ?string $layout,
@@ -21,7 +22,9 @@ final readonly class CreateArticleFormData
         public ?array $content,
         public ?string $description,
         public ?string $locale,
-        public ?Uuid $featuredImageId
+        public ?Uuid $featuredImageId,
+        public ?bool $allTranslationLocales = null,
+        public array $translationLocales = [],
     ) {
     }
 

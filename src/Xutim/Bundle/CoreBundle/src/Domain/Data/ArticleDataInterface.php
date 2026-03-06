@@ -19,4 +19,7 @@ interface ArticleDataInterface
     public function getDefaultLanguage(): string;
     public function getUserIdentifier(): string;
     public function getFeaturedImage(): ?MediaInterface;
+    public function hasAllTranslationLocales(): bool;
+    /** @return list<string> */
+    public function getTranslationLocales(): array;
 }

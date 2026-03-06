@@ -13,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Uid\UuidV4;
@@ -49,6 +52,20 @@ class ArticleType extends AbstractType implements DataMapperInterface
         $preferredLocaleChoices = array_combine($mainLocales, $mainLocales);
         $locales = $this->siteContext->getAllLocales();
         $localeChoices = array_combine(array_map(fn ($locale) => Languages::getName($locale), $locales), $locales);
+
+        $sortedMainLocales = $mainLocales;
+        sort($sortedMainLocales);
+        $sortedExtendedLocales = $this->siteContext->getExtendedContentLocales();
+        sort($sortedExtendedLocales);
+
+        $translationLocaleChoices = [];
+        foreach ($sortedMainLocales as $locale) {
+            $translationLocaleChoices['main languages'][$locale] = $locale;
+        }
+        foreach ($sortedExtendedLocales as $locale) {
+            $translationLocaleChoices['extended languages'][$locale] = $locale;
+        }
+
         $builder
             ->add('featuredImage', HiddenType::class, [
                 'required' => false,
@@ -116,9 +133,42 @@ class ArticleType extends AbstractType implements DataMapperInterface
                 'preferred_choices' => $preferredLocaleChoices,
                 'choice_loader' => null,
                 'disabled' => $update,
+            ])
+            ->add('allTranslationLocales', ChoiceType::class, [
+                'label' => new TranslatableMessage('translate into', [], 'admin'),
+                'choices' => [
+                    'all languages' => true,
+                    'specific languages' => false,
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'placeholder' => false,
+                'constraints' => [new NotNull()],
+            ])
+            ->add('translationLocales', LanguageType::class, [
+                'label' => new TranslatableMessage('select languages this content can be translated into', [], 'admin'),
+                'multiple' => true,
+                'expanded' => true,
+                'choices' => $translationLocaleChoices,
+                'choice_loader' => null,
+                'choice_label' => fn (string $locale) => strtoupper($locale),
             ]);
         $builder
-            ->setDataMapper($this);
+            ->setDataMapper($this)
+            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+                $form = $event->getForm();
+                $allTranslationLocales = $form->get('allTranslationLocales')->getData();
+                if ($allTranslationLocales !== false) {
+                    return;
+                }
+                $locale = $form->get('locale')->getData();
+                $translationLocales = $form->get('translationLocales')->getData();
+                if (!in_array($locale, $translationLocales, true)) {
+                    $form->get('translationLocales')->addError(
+                        new FormError('The translation reference language must be included in the selected languages.')
+                    );
+                }
+            });
     }
 
     public function mapDataToForms(mixed $viewData, Traversable $forms): void
@@ -127,6 +177,8 @@ class ArticleType extends AbstractType implements DataMapperInterface
             $forms = iterator_to_array($forms);
             $locale = $this->contentContext->getLanguage();
             $forms['locale']->setData($locale);
+            $forms['allTranslationLocales']->setData(null);
+            $forms['translationLocales']->setData([]);
             return;
         }
 
@@ -173,6 +225,11 @@ class ArticleType extends AbstractType implements DataMapperInterface
             $imageUuid = new UuidV4($featuredImageId);
         }
 
-        $viewData = new CreateArticleFormData($layoutCode, $preTitle ?? '', $title, $subTitle ?? '', $slug, $content, $description ?? '', $locale, $imageUuid);
+        /** @var ?bool $allTranslationLocales */
+        $allTranslationLocales = $forms['allTranslationLocales']->getData();
+        /** @var list<string> $translationLocales */
+        $translationLocales = $forms['translationLocales']->getData();
+
+        $viewData = new CreateArticleFormData($layoutCode, $preTitle ?? '', $title, $subTitle ?? '', $slug, $content, $description ?? '', $locale, $imageUuid, $allTranslationLocales, $translationLocales);
     }
 }

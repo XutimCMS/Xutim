@@ -102,8 +102,12 @@
                                         <div class="tags-list d-inline">
                                             {% for userLocale in userLocales %}
                                                 {% if article.translations|reduce((carry, translation) => carry == true or userLocale == translation.locale) == false %}
-                                                    <span class="tag">
+                                                    {% set allowed = article.translationLocales is empty or article.isLocaleAllowed(userLocale) %}
+                                                    <span class="tag{{ not allowed ? ' opacity-50' : '' }}" {% if not allowed %}title="{{ 'not translatable'|trans({}, 'admin') }}"{% endif %}>
                                                         {{ userLocale }}
+                                                        {% if not allowed %}
+                                                            <small class="text-muted">&times;</small>
+                                                        {% endif %}
                                                     </span>
                                                 {% endif %}
                                             {% endfor %}

@@ -58,6 +58,29 @@ class EditArticleAction extends AbstractController
             throw $this->createNotFoundException('The article does not exist');
         }
         $contentLocale = $this->contentContext->getLanguage();
+
+        if (!$article->isLocaleAllowed($contentLocale)) {
+            $this->addFlash('info', 'flash.locale_not_translatable');
+
+            return $this->render('@XutimCore/admin/article/article_edit.html.twig', [
+                'form' => null,
+                'draft' => null,
+                'editingUser' => null,
+                'revisionsCount' => 0,
+                'lastRevision' => null,
+                'article' => $article,
+                'translation' => null,
+                'totalTranslations' => count($article->getTranslationLocales()),
+                'translatedTranslations' => 0,
+                'allTags' => [],
+                'referenceTranslation' => null,
+                'referenceLocale' => $this->siteContext->getReferenceLocale(),
+                'referenceExists' => false,
+                'referenceHasChanged' => false,
+                'localeBlocked' => true,
+            ]);
+        }
+
         $translation = $article->getTranslationByLocale($contentLocale);
 
         $draft = $this->findDraft($translation);
@@ -85,11 +108,12 @@ class EditArticleAction extends AbstractController
             /** @var UserInterface $user */
             $user = $this->getUser();
             $locales = $user->getTranslationLocales();
-            $totalTranslations = count($locales);
         } else {
             $locales = null;
-            $totalTranslations = count($this->siteContext->getLocales());
         }
+        $totalTranslations = $article->hasAllTranslationLocales()
+            ? count($this->siteContext->getLocales())
+            : count($article->getTranslationLocales());
         $translatedArticles = $this->articleRepo->countTranslatedTranslations($article, $locales);
 
 

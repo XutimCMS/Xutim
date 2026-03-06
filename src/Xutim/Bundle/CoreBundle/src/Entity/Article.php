@@ -33,6 +33,7 @@ class Article implements ArticleInterface
 {
     use TimestampableTrait;
     use ArchiveStatusTrait;
+    use TranslationLocaleAwareTrait;
 
     /** @use BasicTranslatableTrait<ContentTranslationInterface> */
     use BasicTranslatableTrait;
@@ -70,19 +71,30 @@ class Article implements ArticleInterface
     #[OneToMany(mappedBy: 'article', targetEntity: BlockItemInterface::class)]
     private Collection $blockItems;
 
+    #[Column(type: Types::BOOLEAN)]
+    private bool $allTranslationLocales;
+
+    /** @var list<string> */
+    #[Column(type: Types::JSON, nullable: false)]
+    private array $translationLocales;
+
     #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $scheduledAt;
 
     /**
+     * @param list<string> $translationLocales
      * @param Collection<int, TagInterface> $tags
      */
     public function __construct(
         ?string $layout,
+        array $translationLocales,
         Collection $tags,
         ?MediaInterface $featuredImage
     ) {
         $this->id = Uuid::v4();
         $this->layout = $layout;
+        $this->allTranslationLocales = true;
+        $this->translationLocales = $translationLocales;
         $this->createdAt = $this->updatedAt = new DateTimeImmutable();
         $this->tags = $tags;
         $this->blockItems = new ArrayCollection();
@@ -92,8 +104,10 @@ class Article implements ArticleInterface
         $this->scheduledAt = null;
     }
 
-    public function change(): void
+    /** @param list<string> $translationLocales */
+    public function change(array $translationLocales): void
     {
+        $this->translationLocales = $translationLocales;
         $this->updatedAt = new DateTimeImmutable();
     }
 

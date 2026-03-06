@@ -84,7 +84,7 @@
                             </div>
                             {% if block('languageBar') is defined %}
                                 {% set langBarBlock = block('languageBar') %}
-                                <div class="col">
+                                <div class="col" id="language-context-bar">
                                     {{ langBarBlock|raw }}
                                 </div>
                             {% endif %}

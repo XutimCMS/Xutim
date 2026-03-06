@@ -32,6 +32,7 @@ class Page implements PageInterface
 {
     use TimestampableTrait;
     use ArchiveStatusTrait;
+    use TranslationLocaleAwareTrait;
 
     /** @use BasicTranslatableTrait<ContentTranslationInterface> */
     use BasicTranslatableTrait;
@@ -45,6 +46,9 @@ class Page implements PageInterface
 
     #[Column(type: Types::STRING, nullable: true)]
     private ?string $layout;
+
+    #[Column(type: Types::BOOLEAN)]
+    private bool $allTranslationLocales;
 
     /** @var list<string> */
     #[Column(type: Types::JSON, nullable: false)]
@@ -99,6 +103,7 @@ class Page implements PageInterface
         $this->id = Uuid::v4();
         $this->layout = $layout;
         $this->color = new Color('ef7d01');
+        $this->allTranslationLocales = true;
         $this->translationLocales = $locales;
         $this->parent = $parent;
         $this->setRootParent($parent);
@@ -233,12 +238,10 @@ class Page implements PageInterface
         return $this->children;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public function getLocales(): array
     {
-        return $this->translationLocales;
+        return $this->getTranslationLocales();
     }
 
     /**

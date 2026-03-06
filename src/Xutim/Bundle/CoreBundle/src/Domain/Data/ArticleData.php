@@ -9,8 +9,9 @@ use Xutim\MediaBundle\Domain\Model\MediaInterface;
 final readonly class ArticleData implements ArticleDataInterface
 {
     /**
-     * @param EditorBlock $content
-    */
+     * @param EditorBlock    $content
+     * @param list<string>   $translationLocales
+     */
     public function __construct(
         private ?string $layout,
         private string $preTitle,
@@ -22,6 +23,8 @@ final readonly class ArticleData implements ArticleDataInterface
         private string $defaultLanguage,
         private string $userIdentifier,
         private ?MediaInterface $featuredImage,
+        private bool $allTranslationLocales,
+        private array $translationLocales,
     ) {
     }
 
@@ -75,5 +78,16 @@ final readonly class ArticleData implements ArticleDataInterface
     public function getFeaturedImage(): ?MediaInterface
     {
         return $this->featuredImage;
+    }
+
+    public function hasAllTranslationLocales(): bool
+    {
+        return $this->allTranslationLocales;
+    }
+
+    /** @return list<string> */
+    public function getTranslationLocales(): array
+    {
+        return $this->translationLocales;
     }
 }

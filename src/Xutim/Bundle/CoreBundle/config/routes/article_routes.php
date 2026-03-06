@@ -6,6 +6,7 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Xutim\CoreBundle\Action\Admin\Article\CreateArticleAction;
 use Xutim\CoreBundle\Action\Admin\Article\EditArticleAction;
 use Xutim\CoreBundle\Action\Admin\Article\EditArticleLayoutAction;
+use Xutim\CoreBundle\Action\Admin\Article\EditArticleTranslationLocalesAction;
 use Xutim\CoreBundle\Action\Admin\Article\EditFeaturedImageAction;
 use Xutim\CoreBundle\Action\Admin\Article\EditPublishedDateAction;
 use Xutim\CoreBundle\Action\Admin\Article\EditScheduledPublishedDateAction;
@@ -35,6 +36,12 @@ return function (RoutingConfigurator $routes) {
         ->add('admin_article_layout_edit', '/admin/{_content_locale}/article/layout-edit/{id}')
         ->methods(['get', 'post'])
         ->controller(EditArticleLayoutAction::class)
+    ;
+
+    $routes
+        ->add('admin_article_translation_locales_edit', '/admin/{_content_locale}/article/translation-locales-edit/{id}')
+        ->methods(['get', 'post'])
+        ->controller(EditArticleTranslationLocalesAction::class)
     ;
 
     $routes

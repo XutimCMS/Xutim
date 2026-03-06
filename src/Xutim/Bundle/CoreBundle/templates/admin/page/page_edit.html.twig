@@ -119,6 +119,11 @@
 {% endblock %}
 
 {% block body %}
+    {% if localeBlocked|default(false) %}
+        <div class="alert alert-info mb-3">
+            {{ 'This page is not translatable into the selected locale.'|trans({}, 'admin') }}
+        </div>
+    {% else %}
     {% if translation is not null and translation.published %}
     <div data-controller="editing-presence"
          data-editing-presence-heartbeat-url-value="{{ admin_path('admin_content_translation_heartbeat', {id: translation.id}) }}"
@@ -347,4 +352,5 @@
             }}
         {% endif %}
     </div>
+    {% endif %}
 {% endblock %}

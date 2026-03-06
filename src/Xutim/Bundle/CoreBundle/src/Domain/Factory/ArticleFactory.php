@@ -27,7 +27,8 @@ class ArticleFactory
     public function create(ArticleDataInterface $data): ArticleInterface
     {
         /** @var ArticleInterface $article */
-        $article = new ($this->articleClass)($data->getLayout(), new ArrayCollection(), $data->getFeaturedImage());
+        $article = new ($this->articleClass)($data->getLayout(), $data->getTranslationLocales(), new ArrayCollection(), $data->getFeaturedImage());
+        $article->changeAllTranslationLocales($data->hasAllTranslationLocales());
         /** @var ContentTranslationInterface $translation */
         $translation = new ($this->contentTranslationClass)(
             $data->getPreTitle(),

@@ -13,11 +13,15 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Uid\UuidV4;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Traversable;
@@ -51,6 +55,19 @@ class PageType extends AbstractType implements DataMapperInterface
         $preferredLocaleChoices = array_combine($mainLocales, $mainLocales);
         $locales = $this->siteContext->getAllLocales();
         $localeChoices = array_combine(array_map(fn ($locale) => Languages::getName($locale), $locales), $locales);
+
+        $sortedMainLocales = $mainLocales;
+        sort($sortedMainLocales);
+        $sortedExtendedLocales = $this->siteContext->getExtendedContentLocales();
+        sort($sortedExtendedLocales);
+
+        $translationLocaleChoices = [];
+        foreach ($sortedMainLocales as $locale) {
+            $translationLocaleChoices['main languages'][$locale] = $locale;
+        }
+        foreach ($sortedExtendedLocales as $locale) {
+            $translationLocaleChoices['extended languages'][$locale] = $locale;
+        }
 
         $builder
             ->add('preTitle', TextType::class, [
@@ -123,10 +140,43 @@ class PageType extends AbstractType implements DataMapperInterface
             ->add('featuredImage', HiddenType::class, [
                 'required' => false,
             ])
+            ->add('allTranslationLocales', ChoiceType::class, [
+                'label' => new TranslatableMessage('translate into', [], 'admin'),
+                'choices' => [
+                    'all languages' => true,
+                    'specific languages' => false,
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'placeholder' => false,
+                'constraints' => [new NotNull()],
+            ])
+            ->add('translationLocales', LanguageType::class, [
+                'label' => new TranslatableMessage('select languages this content can be translated into', [], 'admin'),
+                'multiple' => true,
+                'expanded' => true,
+                'choices' => $translationLocaleChoices,
+                'choice_loader' => null,
+                'choice_label' => fn (string $locale) => strtoupper($locale),
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => new TranslatableMessage('submit', [], 'admin')
             ])
-            ->setDataMapper($this);
+            ->setDataMapper($this)
+            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+                $form = $event->getForm();
+                $allTranslationLocales = $form->get('allTranslationLocales')->getData();
+                if ($allTranslationLocales !== false) {
+                    return;
+                }
+                $locale = $form->get('locale')->getData();
+                $translationLocales = $form->get('translationLocales')->getData();
+                if (!in_array($locale, $translationLocales, true)) {
+                    $form->get('translationLocales')->addError(
+                        new FormError('The translation reference language must be included in the selected languages.')
+                    );
+                }
+            });
     }
 
     public function mapDataToForms(mixed $viewData, Traversable $forms): void
@@ -135,6 +185,8 @@ class PageType extends AbstractType implements DataMapperInterface
             $forms = iterator_to_array($forms);
             $locale = $this->contentContext->getLanguage();
             $forms['locale']->setData($locale);
+            $forms['allTranslationLocales']->setData(null);
+            $forms['translationLocales']->setData([]);
             return;
         }
 
@@ -160,19 +212,19 @@ class PageType extends AbstractType implements DataMapperInterface
         /** @var string $preTitle */
         $preTitle = $forms['preTitle']->getData() ?? '';
         /** @var string $title */
-        $title = $forms['title']->getData();
+        $title = $forms['title']->getData() ?? '';
         /** @var string $subTitle */
         $subTitle = $forms['subTitle']->getData() ?? '';
         /** @var string $slug */
-        $slug = $forms['slug']->getData();
+        $slug = $forms['slug']->getData() ?? '';
         /** @var string|null $description */
         $description = $forms['description']->getData();
         /** @var string $jsonContent */
-        $jsonContent = $forms['content']->getData();
+        $jsonContent = $forms['content']->getData() ?? '[]';
         /** @var EditorBlock $content */
         $content = json_decode($jsonContent, true, 512, JSON_THROW_ON_ERROR);
         /** @var string $language */
-        $language = $forms['locale']->getData();
+        $language = $forms['locale']->getData() ?? '';
 
         /** @var ?string $featuredImageId */
         $featuredImageId = $forms['featuredImage']->getData();
@@ -180,6 +232,11 @@ class PageType extends AbstractType implements DataMapperInterface
         if ($featuredImageId !== null) {
             $imageUuid = new UuidV4($featuredImageId);
         }
+
+        /** @var ?bool $allTranslationLocales */
+        $allTranslationLocales = $forms['allTranslationLocales']->getData();
+        /** @var list<string> $translationLocales */
+        $translationLocales = $forms['translationLocales']->getData();
 
         $viewData = new PageDto(
             $layout,
@@ -189,7 +246,8 @@ class PageType extends AbstractType implements DataMapperInterface
             $slug,
             $content,
             $description ?? '',
-            [],
+            $allTranslationLocales,
+            $translationLocales,
             $language,
             $parent,
             $imageUuid

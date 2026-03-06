@@ -48,7 +48,9 @@ readonly class CreateArticleHandler implements CommandHandlerInterface
                 $cmd->description,
                 $cmd->defaultLanguage,
                 $cmd->userIdentifier,
-                $file
+                $file,
+                $cmd->allTranslationLocales,
+                $cmd->translationLocales,
             )
         );
 

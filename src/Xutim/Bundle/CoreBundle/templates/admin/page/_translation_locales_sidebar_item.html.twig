@@ -1,0 +1,25 @@
+<twig:Xutim:Admin:SidebarItem id="translation-locales-sidebar-item">
+    <twig:block name="header">
+        {{ 'translate into'|trans({}, 'admin')|capitalize }}:
+    </twig:block>
+    <twig:block name="content">
+        <span id="page-translation-locales-item">
+            {% if page.allTranslationLocales %}
+                {{ 'all languages'|trans({}, 'admin') }}
+            {% else %}
+                {{ page.translationLocales|join(', ') }}
+            {% endif %}
+        </span>
+        {% if is_granted('ROLE_EDITOR') %}
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                class="p-0"
+                data-turbo-frame="modal"
+                href="{{ admin_path('admin_page_translation_locales_edit', {id: page.id}) }}"
+            >
+                <twig:Xutim:Admin:Icon name="edit" />
+            </twig:Xutim:Admin:Button>
+        {% endif %}
+    </twig:block>
+</twig:Xutim:Admin:SidebarItem>

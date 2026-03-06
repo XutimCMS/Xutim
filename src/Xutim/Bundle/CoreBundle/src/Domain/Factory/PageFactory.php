@@ -33,6 +33,7 @@ class PageFactory
             $parent,
             $featuredImage
         );
+        $page->changeAllTranslationLocales($data->allTranslationLocales);
 
         /** @var ContentTranslationInterface $translation */
         $translation = new ($this->contentTranslationClass)(

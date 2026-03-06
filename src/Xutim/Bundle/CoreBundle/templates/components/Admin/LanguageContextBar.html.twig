@@ -40,18 +40,24 @@
 {%
     macro renderLocale(locale, entity, simpleTranslation, activeLocale, translatedLabel)
 %}
-    <a
-        href="{{ admin_current_path_with({_content_locale: locale}) }}"
-        data-turbo-prefetch="false"
-    >
+    {% set localeAllowed = entity is null or not (entity.translationLocales is defined) or entity.isLocaleAllowed(locale) %}
+
+    {% if localeAllowed %}
+        <a
+            href="{{ admin_current_path_with({_content_locale: locale}) }}"
+            data-turbo-prefetch="false"
+        >
+    {% endif %}
         {% set isActive = locale == activeLocale %}
         {%
             set classes = isActive ? ' bg-outline-primary border-3 border-primary' : ' text-secondary'
         %}
 
-        <twig:Xutim:Admin:Badge class="{{ classes }}">
+        <twig:Xutim:Admin:Badge class="{{ classes }}{{ not localeAllowed ? ' opacity-50' : '' }}">
             {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-            {% if entity is not null %}
+            {% if not localeAllowed %}
+                {{ badges.badge('text-bg-secondary', 'not translatable'|trans({}, 'admin')) }}
+            {% elseif entity is not null %}
                 {% set trans = entity.translationByLocale(locale) %}
                 {% if trans is null %}
                     {{ badges.missingBadge() }}
@@ -65,5 +71,7 @@
             {% endif %}
             {{ locale }}
         </twig:Xutim:Admin:Badge>
-    </a>
+    {% if localeAllowed %}
+        </a>
+    {% endif %}
 {% endmacro %}
