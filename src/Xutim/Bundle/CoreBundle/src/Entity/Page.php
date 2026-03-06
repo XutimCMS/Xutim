@@ -51,7 +51,7 @@ class Page implements PageInterface
     private bool $allTranslationLocales;
 
     /** @var list<string> */
-    #[Column(type: Types::JSON, nullable: false)]
+    #[Column(type: Types::JSON, nullable: false, options: ['jsonb' => true])]
     private array $translationLocales;
 
     #[Embedded(class: Color::class)]

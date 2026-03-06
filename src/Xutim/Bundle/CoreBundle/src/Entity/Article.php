@@ -75,7 +75,7 @@ class Article implements ArticleInterface
     private bool $allTranslationLocales;
 
     /** @var list<string> */
-    #[Column(type: Types::JSON, nullable: false)]
+    #[Column(type: Types::JSON, nullable: false, options: ['jsonb' => true])]
     private array $translationLocales;
 
     #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
