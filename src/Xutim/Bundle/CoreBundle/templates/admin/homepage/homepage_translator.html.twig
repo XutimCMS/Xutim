@@ -45,6 +45,38 @@
         {% endfor %}
     </div>
 
+    {% if latestNotifications is not empty %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3 class="card-title">Latest notifications</h3>
+            <div class="card-actions">
+                <a href="{{ admin_path('admin_notification_list') }}" class="btn btn-link">View all</a>
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            {% for notification in latestNotifications %}
+                <a href="{{ notification.actionUrl ?? admin_path('admin_notification_list') }}" class="list-group-item list-group-item-action">
+                    <div class="d-flex justify-content-between align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="status-dot{{ not notification.read ? ' status-dot-animated' : '' }} status-{{ notification.severity.statusColor() }}"></span>
+                            <div>
+                                <div class="{{ not notification.read ? 'fw-semibold' : 'text-secondary' }}">{{ notification.title }}</div>
+                                <div class="text-secondary small mt-1">{{ notification.body|u.truncate(80, '...') }}</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-secondary text-nowrap small">{{ notification.createdAt|format_datetime('short', 'short') }}</span>
+                            {% if not notification.read %}
+                                <span class="badge bg-danger text-white">new</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <div class="row row-cards mt-4">
         <div class="col-md-12 col-lg-6">
             <div class="card">

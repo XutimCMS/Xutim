@@ -1,0 +1,70 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}Notifications{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item"><a href="{{ admin_path('admin_homepage') }}">Dashboard</a></li>
+        <li class="breadcrumb-item">Notifications</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block pageMenu %}
+    {% set unreadCount = notifications|filter(n => not n.read)|length %}
+    {% if unreadCount > 0 %}
+        <form method="post" action="{{ admin_path('admin_notification_read_all') }}">
+            <twig:Xutim:Admin:Button variant="nav" tag="button" type="submit">
+                <twig:ux:icon name="tabler:checks" class="icon me-1" />
+                Mark all read ({{ unreadCount }})
+            </twig:Xutim:Admin:Button>
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% set unread = notifications|filter(n => not n.read) %}
+    {% set read = notifications|filter(n => n.read) %}
+
+    {% if notifications is empty %}
+        <div class="card">
+            <div class="empty">
+                <div class="empty-icon">
+                    <twig:ux:icon name="tabler:bell-off" style="width: 3rem; height: 3rem;" class="text-muted" />
+                </div>
+                <p class="empty-title">No notifications</p>
+                <p class="empty-subtitle text-secondary">You're all caught up.</p>
+            </div>
+        </div>
+    {% else %}
+        {% if unread is not empty %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Unread
+                        <span class="badge bg-primary text-white rounded-circle ms-2" style="width: 1.2rem; height: 1.2rem; font-size: .65rem; padding: 0; line-height: 1.2rem;">{{ unread|length }}</span>
+                    </h3>
+                </div>
+                <div class="list-group list-group-flush list-group-hoverable">
+                    {% for notification in unread %}
+                        {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if read is not empty %}
+            <div class="card">
+                {% if unread is not empty %}
+                    <div class="card-header">
+                        <h3 class="card-title text-secondary">Earlier</h3>
+                    </div>
+                {% endif %}
+                <div class="list-group list-group-flush list-group-hoverable">
+                    {% for notification in read %}
+                        {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

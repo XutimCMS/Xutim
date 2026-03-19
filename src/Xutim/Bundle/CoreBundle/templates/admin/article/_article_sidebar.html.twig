@@ -157,6 +157,19 @@
             </turbo-frame>
         {% endif %}
 
+        {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
+            <twig:Xutim:Admin:SidebarSection>
+                <twig:Xutim:Admin:SidebarItem>
+                    <twig:block name="content">
+                        <a href="{{ admin_path('admin_article_notify_translators', {id: article.id}) }}" class="btn btn-sm btn-outline-primary w-100" data-turbo-frame="modal">
+                            <twig:Xutim:Admin:Icon name="bell" class="me-1" />
+                            {{ 'Notify translators'|trans({}, 'admin') }}
+                        </a>
+                    </twig:block>
+                </twig:Xutim:Admin:SidebarItem>
+            </twig:Xutim:Admin:SidebarSection>
+        {% endif %}
+
         <twig:Xutim:Admin:SidebarSection>
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="content">

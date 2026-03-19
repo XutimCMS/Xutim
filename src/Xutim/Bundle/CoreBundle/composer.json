@@ -77,7 +77,8 @@
         "symfony/doctrine-messenger": "^7.3",
         "symfony/scheduler": "^7.3",
         "xutimcms/domain": "dev-main",
-        "xutimcms/media-bundle": "dev-main"
+        "xutimcms/media-bundle": "dev-main",
+        "xutimcms/notification-bundle": "dev-main"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",

@@ -44,6 +44,11 @@ return function (RoutingConfigurator $routes) {
         ->defaults($defaults)
     ;
 
+    $routes->import('routes/notification_routes.php')
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
+
     $routes->import('routes/page_routes.php')
         ->requirements($requirements)
         ->defaults($defaults)

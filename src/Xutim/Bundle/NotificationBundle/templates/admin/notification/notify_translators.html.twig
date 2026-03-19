@@ -1,0 +1,54 @@
+{% extends '@XutimCore/admin/modalBase.html.twig' %}
+
+{% set title = 'Notify translators'|trans({}, 'admin') %}
+
+{% block pageTitle %}
+    <twig:Xutim:Admin:Icon name="bell" /> {{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header p-3">
+            <h3 class="card-title">{{ title }} — {{ entityType }}</h3>
+        </div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_row(form.title) }}
+            {{ form_row(form.message) }}
+            {{ form_row(form.severity) }}
+            <div class="mb-3" data-controller="translation-locales">
+                {{ form_label(form.locales) }}
+                {{ form_errors(form.locales) }}
+                <div class="d-flex flex-wrap gap-1 align-items-center mt-2">
+                    {% set childIndex = 0 %}
+                    {% for group_label, children in form.locales.vars.choices %}
+                        {% if not loop.first %}<span
+                                class="border-start align-self-stretch mx-1"
+                            ></span>{% endif %}
+                        {% for choice in children %}
+                            {% set child = form.locales.children[childIndex] %}
+                            <label
+                                class="badge cursor-pointer{{ child.vars.checked ? ' bg-primary text-white' : ' badge-outline text-primary' }}"
+                            >
+                                <input
+                                    type="checkbox"
+                                    name="{{ child.vars.full_name }}"
+                                    value="{{ child.vars.value }}"
+                                    class="d-none"
+                                    data-action="change->translation-locales#toggleBadge"
+                                    {{ child.vars.checked ? ' checked' : '' }}
+                                >
+                                {{ child.vars.label|upper }}
+                            </label>
+                            {% set childIndex = childIndex + 1 %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% do form.locales.setRendered %}
+            {{ form_row(form.submit) }}
+            {% do form.sendEmail.setRendered %}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

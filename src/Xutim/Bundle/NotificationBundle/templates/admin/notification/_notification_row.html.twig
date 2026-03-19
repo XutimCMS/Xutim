@@ -1,0 +1,40 @@
+<div class="list-group-item">
+    <div class="row align-items-center">
+        <div class="col-auto">
+            <span class="status-dot{{ not notification.read ? ' status-dot-animated' : '' }} status-{{ notification.severity.statusColor() }} d-block"></span>
+        </div>
+        <div class="col-auto text-{{ notification.severity.statusColor() }}">
+            <twig:ux:icon name="{{ notification.severity.iconName() }}" class="icon" />
+        </div>
+        <div class="col text-truncate">
+            <div class="d-block text-truncate{{ not notification.read ? ' fw-semibold' : ' text-secondary' }}">
+                {{ notification.title }}
+            </div>
+            <div class="d-block text-secondary text-truncate small mt-1">
+                {{ notification.body }}
+            </div>
+        </div>
+        <div class="col-auto text-secondary text-nowrap">
+            {{ notification.createdAt|format_datetime('short', 'short') }}
+        </div>
+        <div class="col-auto">
+            {% if not notification.read %}
+                <form method="post" action="{{ admin_path('admin_notification_read', {id: notification.id}) }}" class="d-flex gap-1">
+                    {% if notification.actionUrl %}
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            {{ notification.actionLabel ?? 'Open' }}
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn btn-sm btn-ghost-secondary" title="Mark as read">
+                            <twig:ux:icon name="tabler:check" class="icon" />
+                        </button>
+                    {% endif %}
+                </form>
+            {% elseif notification.actionUrl %}
+                <a href="{{ notification.actionUrl }}" class="btn btn-sm btn-outline-primary">
+                    {{ notification.actionLabel ?? 'Open' }}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

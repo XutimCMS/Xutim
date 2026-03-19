@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Repository\ArticleRepository;
+use Xutim\NotificationBundle\Repository\NotificationRepository;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 /**
@@ -18,7 +19,8 @@ class AdminHomepageAction extends AbstractController
 {
     public function __construct(
         private readonly ArticleRepository $articleRepository,
-        private readonly SiteContext $siteContext
+        private readonly SiteContext $siteContext,
+        private readonly NotificationRepository $notificationRepository,
     ) {
     }
 
@@ -59,11 +61,13 @@ class AdminHomepageAction extends AbstractController
             $userLocales,
             10
         );
+        $latestNotifications = $this->notificationRepository->findLatestForRecipient($this->getUser(), 5);
 
         return $this->render('@XutimCore/admin/homepage/homepage_translator.html.twig', [
             'latestArticles' => $latestArticles,
             'latestUntranslatedArticles' => $latestUntranslatedArticles,
             'latestChangedArticles' => $latestChangedArticles,
+            'latestNotifications' => $latestNotifications,
             'articlesCount' => $articlesCount,
             'translatedLocalesCount' => $translatedLocalesCount,
             'userLocales' => $this->getUser()->getTranslationLocales()

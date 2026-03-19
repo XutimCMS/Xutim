@@ -13,6 +13,7 @@
         "xutimcms/analytics-bundle": "dev-main",
         "xutimcms/event-bundle": "dev-main",
         "xutimcms/media-bundle": "dev-main",
+        "xutimcms/notification-bundle": "dev-main",
         "xutimcms/redirect-bundle": "dev-main",
         "xutimcms/snippet-bundle": "dev-main"
     },
@@ -36,6 +37,7 @@
         {"type": "path", "url": "../../src/Xutim/Bundle/AnalyticsBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/EventBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/MediaBundle"},
+        {"type": "path", "url": "../../src/Xutim/Bundle/NotificationBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/RedirectBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/SnippetBundle"}
     ],
@@ -51,6 +53,7 @@
             "Xutim\\EditorBundle\\Tests\\": "../../src/Xutim/Bundle/EditorBundle/tests/",
             "Xutim\\EventBundle\\Tests\\": "../../src/Xutim/Bundle/EventBundle/tests/",
             "Xutim\\MediaBundle\\Tests\\": "../../src/Xutim/Bundle/MediaBundle/tests/",
+            "Xutim\\NotificationBundle\\Tests\\": "../../src/Xutim/Bundle/NotificationBundle/tests/",
             "Xutim\\RedirectBundle\\Tests\\": "../../src/Xutim/Bundle/RedirectBundle/tests/"
         }
     },

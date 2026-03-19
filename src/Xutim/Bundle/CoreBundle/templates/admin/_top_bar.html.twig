@@ -14,16 +14,19 @@
         </twig:Xutim:Admin:Button>
 
         <div class="navbar-nav flex-row order-md-last">
-            <div class="my-2 my-md-0 nav-item dropdown me-1">
-                <div class="button-group d-flex flex-row gap-1">
+            <div class="d-flex align-items-center me-2">
                     {{ publicLinkBlock|raw }}
-                    <a
-                        href="{{ admin_path('admin_article_list', {searchTerm: ''}) }}"
-                        class="btn btn-xs btn-icon"
-                    >
-                        <twig:ux:icon name="tabler:search" class="w-3"/>
+                    <a href="{{ admin_path('admin_article_list', {searchTerm: ''}) }}" class="nav-link px-2" title="Search">
+                        <twig:ux:icon name="tabler:search" class="icon"/>
                     </a>
-                </div>
+                    <a href="{{ admin_path('admin_notification_list') }}" class="nav-link px-2 d-flex align-items-center" title="Notifications">
+                        <twig:ux:icon name="tabler:bell" class="icon"/>
+                        {% if notification_center.unreadCount > 0 %}
+                            <span class="badge bg-danger text-white ms-1" style="font-size: .6rem; min-width: .9rem; height: .9rem; padding: 0; line-height: .9rem; border-radius: 50%;">
+                                {{ notification_center.unreadCount > 99 ? '99+' : notification_center.unreadCount }}
+                            </span>
+                        {% endif %}
+                    </a>
             </div>
             <div class="nav-item dropdown">
                 <a

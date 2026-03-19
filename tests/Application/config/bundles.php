@@ -30,6 +30,7 @@ return [
     Symfony\Bundle\MercureBundle\MercureBundle::class => ['all' => true],
     Xutim\AnalyticsBundle\XutimAnalyticsBundle::class => ['all' => true],
     Xutim\CoreBundle\XutimCoreBundle::class => ['all' => true],
+    Xutim\NotificationBundle\XutimNotificationBundle::class => ['all' => true],
     Xutim\EventBundle\XutimEventBundle::class => ['all' => true],
     Xutim\MediaBundle\XutimMediaBundle::class => ['all' => true],
     Xutim\RedirectBundle\XutimRedirectBundle::class => ['all' => true],

@@ -1,0 +1,4 @@
+xutim_notification:
+    models:
+        notification:
+            class: App\Entity\Core\Notification

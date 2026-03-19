@@ -103,7 +103,7 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
         $messagesToRoute = [
             PublishScheduledArticlesCommand::class,
             SendResetPasswordCommand::class,
-            GenerateSitemapCommand::class
+            GenerateSitemapCommand::class,
         ];
 
         $routing = [];

@@ -1,0 +1,5 @@
+<p>{{ notification.body }}</p>
+
+{% if notification.actionUrl %}
+    <p><a href="{{ notification.actionUrl }}">{{ notification.actionLabel ?? 'Open notification' }}</a></p>
+{% endif %}

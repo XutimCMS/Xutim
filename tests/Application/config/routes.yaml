@@ -9,6 +9,9 @@ xutim_analytics:
 xutim_redirect:
     resource: '@XutimRedirectBundle/config/routes.php'
 
+xutim_notification:
+    resource: '@XutimNotificationBundle/config/routes.php'
+
 xutim_core:
     resource: '@XutimCoreBundle/config/routes.php'
 
