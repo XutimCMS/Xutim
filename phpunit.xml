@@ -72,7 +72,6 @@
             <directory suffix=".php">src/Xutim/Bundle/EventBundle/src</directory>
             <directory suffix=".php">src/Xutim/Bundle/MediaBundle/src</directory>
             <directory suffix=".php">src/Xutim/Bundle/RedirectBundle/src</directory>
-            <directory suffix=".php">src/Xutim/Bundle/ResourceBundle/src</directory>
             <directory suffix=".php">src/Xutim/Bundle/SecurityBundle/src</directory>
             <directory suffix=".php">src/Xutim/Bundle/SnippetBundle/src</directory>
             <directory suffix=".php">src/Xutim/Bundle/EditorBundle/src</directory>

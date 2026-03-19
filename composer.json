@@ -113,7 +113,6 @@
         "xutimcms/notification-bundle": "self.version",
         "xutimcms/redirect-bundle": "self.version",
         "xutimcms/redirect-component": "self.version",
-        "xutimcms/resource-bundle": "self.version",
         "xutimcms/security-bundle": "self.version",
         "xutimcms/security-component": "self.version",
         "xutimcms/snippet-bundle": "self.version"
@@ -132,7 +131,6 @@
             "Xutim\\NotificationBundle\\": "src/Xutim/Bundle/NotificationBundle/src/",
             "Xutim\\RedirectBundle\\": "src/Xutim/Bundle/RedirectBundle/src/",
             "Xutim\\RedirectComponent\\": "src/Xutim/Component/RedirectComponent/src/",
-            "Xutim\\ResourceBundle\\": "src/Xutim/Bundle/ResourceBundle/src/",
             "Xutim\\SecurityBundle\\": "src/Xutim/Bundle/SecurityBundle/src/",
             "Xutim\\SecurityComponent\\": "src/Xutim/Component/SecurityComponent/src/",
             "Xutim\\SnippetBundle\\": "src/Xutim/Bundle/SnippetBundle/src/"
@@ -145,7 +143,6 @@
             "src/Xutim/Bundle/MediaBundle/Tests/",
             "src/Xutim/Bundle/NotificationBundle/Tests/",
             "src/Xutim/Bundle/RedirectBundle/Tests/",
-            "src/Xutim/Bundle/ResourceBundle/Tests/",
             "src/Xutim/Bundle/SecurityBundle/Tests/",
             "src/Xutim/Bundle/SnippetBundle/Tests/",
             "src/Xutim/Component/RedirectComponent/Tests/",
@@ -161,7 +158,6 @@
             "Xutim\\MediaBundle\\Tests\\": "src/Xutim/Bundle/MediaBundle/tests/",
             "Xutim\\NotificationBundle\\Tests\\": "src/Xutim/Bundle/NotificationBundle/tests/",
             "Xutim\\RedirectBundle\\Tests\\": "src/Xutim/Bundle/RedirectBundle/tests/",
-            "Xutim\\ResourceBundle\\Tests\\": "src/Xutim/Bundle/ResourceBundle/tests/",
             "Xutim\\SecurityBundle\\Tests\\": "src/Xutim/Bundle/SecurityBundle/tests/",
             "Xutim\\SnippetBundle\\Tests\\": "src/Xutim/Bundle/SnippetBundle/tests/"
         }

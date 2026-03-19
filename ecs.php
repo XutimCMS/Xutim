@@ -17,7 +17,6 @@ return ECSConfig::configure()
         __DIR__ . '/src/Xutim/Bundle/RedirectBundle/src',
         __DIR__ . '/src/Xutim/Bundle/SecurityBundle/src',
         __DIR__ . '/src/Xutim/Bundle/SnippetBundle/src',
-        __DIR__ . '/src/Xutim/Bundle/ResourceBundle/src',
         __DIR__ . '/src/Xutim/Bundle/CoreBundle/tests',
     ])
     ->withSets([
