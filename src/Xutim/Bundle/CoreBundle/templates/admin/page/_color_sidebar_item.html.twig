@@ -6,14 +6,16 @@
         <div id="page-color-item" class="badge" style="background-color: {{ page.color.HTMLHex }};">
             &ensp;
         </div>
-        <twig:Xutim:Admin:Button
-            tag="a"
-            variant="link"
-            class="p-0"
-            data-turbo-frame="modal"
-            href="{{ admin_path('admin_page_details_edit', {id: page.id}) }}"
-        >
-            <twig:Xutim:Admin:Icon name="edit" />
-        </twig:Xutim:Admin:Button>
+        {% if is_granted('ROLE_EDITOR') %}
+            <twig:Xutim:Admin:Button
+                tag="a"
+                variant="link"
+                class="p-0"
+                data-turbo-frame="modal"
+                href="{{ admin_path('admin_page_details_edit', {id: page.id}) }}"
+            >
+                <twig:Xutim:Admin:Icon name="edit" />
+            </twig:Xutim:Admin:Button>
+        {% endif %}
     </twig:block>
 </twig:Xutim:Admin:SidebarItem>

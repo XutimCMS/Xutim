@@ -5,16 +5,18 @@
     <twig:block name="content">
         {{ page.layout }}
 
-        <div {% if not page.layout %}class="ms-auto"{% endif %}>
-            <twig:Xutim:Admin:Button
-                tag="a"
-                variant="link"
-                class="p-0"
-                data-turbo-frame="modal"
-                href="{{ admin_path('admin_page_layout_edit', {id: page.id}) }}"
-            >
-                <twig:Xutim:Admin:Icon name="edit" />
-            </twig:Xutim:Admin:Button>
-        </div>
+        {% if is_granted('ROLE_EDITOR') %}
+            <div {% if not page.layout %}class="ms-auto"{% endif %}>
+                <twig:Xutim:Admin:Button
+                    tag="a"
+                    variant="link"
+                    class="p-0"
+                    data-turbo-frame="modal"
+                    href="{{ admin_path('admin_page_layout_edit', {id: page.id}) }}"
+                >
+                    <twig:Xutim:Admin:Icon name="edit" />
+                </twig:Xutim:Admin:Button>
+            </div>
+        {% endif %}
     </twig:block>
 </twig:Xutim:Admin:SidebarItem>

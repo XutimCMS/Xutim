@@ -36,7 +36,7 @@
             {{ 'Not yet published'|trans({}, 'admin') }}
         {% endif %}
 
-        {% if translation.isPublished() == true %}
+        {% if translation.isPublished() == true and is_granted('ROLE_EDITOR') %}
             <div class="ms-auto">
                 <twig:Xutim:Admin:Button
                     tag="a"
