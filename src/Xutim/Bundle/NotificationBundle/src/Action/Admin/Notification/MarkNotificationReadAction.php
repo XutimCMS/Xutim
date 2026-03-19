@@ -36,7 +36,9 @@ final class MarkNotificationReadAction extends AbstractController
                 && str_starts_with($payload['routeName'], 'admin_')
                 && is_array($payload['routeParameters'])
             ) {
-                return new RedirectResponse($this->router->generate($payload['routeName'], $payload['routeParameters']));
+                /** @var array<string, mixed> $routeParameters */
+                $routeParameters = $payload['routeParameters'];
+                return new RedirectResponse($this->router->generate($payload['routeName'], $routeParameters));
             }
 
             if ($notification->getActionUrl() !== null && str_starts_with($notification->getActionUrl(), '/')) {

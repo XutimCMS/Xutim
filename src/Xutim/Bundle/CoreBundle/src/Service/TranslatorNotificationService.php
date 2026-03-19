@@ -149,6 +149,9 @@ final readonly class TranslatorNotificationService
         }
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     private function persistAndDispatch(
         UserInterface $recipient,
         string $type,
@@ -161,8 +164,11 @@ final readonly class TranslatorNotificationService
         ?string $deduplicationKey,
         bool $sendEmail,
     ): void {
-        // TODO: email delivery disabled
+        /** @var list<string> $channels */
         $channels = ['database'];
+        if ($sendEmail) {
+            $channels[] = 'email';
+        }
 
         $notification = $this->notificationFactory->create(
             $recipient,

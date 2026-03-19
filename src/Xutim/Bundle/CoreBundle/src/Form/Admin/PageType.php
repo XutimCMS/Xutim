@@ -170,6 +170,7 @@ class PageType extends AbstractType implements DataMapperInterface
                     return;
                 }
                 $locale = $form->get('locale')->getData();
+                /** @var list<string> $translationLocales */
                 $translationLocales = $form->get('translationLocales')->getData();
                 if (!in_array($locale, $translationLocales, true)) {
                     $form->get('translationLocales')->addError(

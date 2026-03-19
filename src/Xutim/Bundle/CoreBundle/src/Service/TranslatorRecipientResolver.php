@@ -24,9 +24,6 @@ final readonly class TranslatorRecipientResolver
         $recipients = [];
 
         foreach ($users as $user) {
-            if (!$user instanceof UserInterface) {
-                continue;
-            }
             if (!$user->isTranslator()) {
                 continue;
             }

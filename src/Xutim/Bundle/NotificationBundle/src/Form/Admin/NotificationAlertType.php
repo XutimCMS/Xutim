@@ -16,11 +16,16 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Xutim\NotificationBundle\Dto\Admin\Notification\NotificationAlertDto;
 use Xutim\NotificationBundle\Entity\NotificationSeverity;
 
+/**
+ * @template-extends AbstractType<NotificationAlertDto>
+ */
 final class NotificationAlertType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var list<string> $mainLocales */
         $mainLocales = $options['main_locales'];
+        /** @var list<string> $extendedLocales */
         $extendedLocales = $options['extended_locales'];
         sort($mainLocales);
         sort($extendedLocales);

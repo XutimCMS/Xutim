@@ -43,6 +43,11 @@ interface UserRepositoryInterface extends PasswordUpgraderInterface
     public function findOneByName(string $name): ?UserInterface;
 
     /**
+     * @return list<UserInterface>
+     */
+    public function findAll(): array;
+
+    /**
      * @return array<string, array{name: string, email: string, avatar: string}>
      */
     public function findAllUsersWithAvatars(): array;

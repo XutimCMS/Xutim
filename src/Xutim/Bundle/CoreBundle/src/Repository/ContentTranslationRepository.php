@@ -15,7 +15,6 @@ use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\TranslationLocaleAwareInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\CoreBundle\Util\TsVectorLanguageMapper;
@@ -135,7 +134,7 @@ class ContentTranslationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleColumnResult();
 
-        $referenceLocales = $object instanceof TranslationLocaleAwareInterface && !$object->hasAllTranslationLocales()
+        $referenceLocales = $object->hasAllTranslationLocales() === false
             ? $object->getTranslationLocales()
             : $this->siteContext->getLocales();
 

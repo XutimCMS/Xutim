@@ -42,7 +42,7 @@ final readonly class CreateArticleCommand
             $data->getLocale(),
             $userIdentifier,
             $data->getFeaturedImageId(),
-            $data->allTranslationLocales,
+            $data->allTranslationLocales ?? true,
             $data->translationLocales,
         );
     }

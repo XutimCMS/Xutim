@@ -40,7 +40,7 @@ final readonly class CreatePageCommand
             $dto->slug,
             $dto->content,
             $dto->description,
-            $dto->allTranslationLocales,
+            $dto->allTranslationLocales ?? true,
             $dto->locales,
             $dto->locale,
             $dto->parent?->getId(),
