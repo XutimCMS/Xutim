@@ -20,7 +20,6 @@ use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Service\SearchContentBuilder;
-use Xutim\CoreBundle\Service\TranslatorNotificationService;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
 readonly class EditContentTranslationHandler implements CommandHandlerInterface
@@ -35,7 +34,6 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
         private ContentDraftRepository $draftRepo,
         private ContentDraftFactory $draftFactory,
         private UserRepositoryInterface $userRepo,
-        private TranslatorNotificationService $translatorNotificationService,
     ) {
     }
 
@@ -168,12 +166,5 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
         );
 
         $this->eventRepository->save($log, true);
-
-        if ($isReferenceTranslation) {
-            $this->translatorNotificationService->notifyReferenceTranslationChanged(
-                $translation,
-                $cmd->userIdentifier,
-            );
-        }
     }
 }

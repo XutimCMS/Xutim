@@ -16,7 +16,6 @@ use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Service\SearchContentBuilder;
-use Xutim\CoreBundle\Service\TranslatorNotificationService;
 
 readonly class PublishContentDraftHandler implements CommandHandlerInterface
 {
@@ -28,7 +27,6 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
         private BlockContext $blockContext,
         private SiteContext $siteContext,
         private SearchContentBuilder $searchContentBuilder,
-        private TranslatorNotificationService $translatorNotificationService,
     ) {
     }
 
@@ -79,12 +77,5 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
         );
 
         $this->eventRepository->save($log, true);
-
-        if ($isReferenceTranslation) {
-            $this->translatorNotificationService->notifyReferenceTranslationChanged(
-                $translation,
-                $cmd->userIdentifier,
-            );
-        }
     }
 }

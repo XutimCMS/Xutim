@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Service;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
-use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\NotificationBundle\Domain\Factory\NotificationFactory;
 use Xutim\NotificationBundle\Entity\NotificationSeverity;
@@ -19,7 +18,6 @@ final readonly class TranslatorNotificationService
 {
     public function __construct(
         private TranslatorRecipientResolver $recipientResolver,
-        private ReferenceTranslationLocaleResolver $referenceTranslationLocaleResolver,
         private NotificationRepository $notificationRepository,
         private MessageBusInterface $commandBus,
         private UrlGeneratorInterface $urlGenerator,
@@ -50,8 +48,9 @@ final readonly class TranslatorNotificationService
         $actionRoute = $this->buildContentRouteData($content);
 
         foreach ($recipients as $recipient) {
+            $recipientLocales = $recipient->getTranslationLocales();
             foreach ($locales as $locale) {
-                if (!$recipient->canTranslate($locale)) {
+                if (!in_array($locale, $recipientLocales, true)) {
                     continue;
                 }
 
@@ -83,67 +82,6 @@ final readonly class TranslatorNotificationService
                     ], $this->buildActionPayload($actionRoute['routeName'], $content, $locale)),
                     $deduplicate ? $deduplicationKey : null,
                     $sendEmail || $severity->shouldEmailByDefault(),
-                );
-            }
-        }
-    }
-
-    public function notifyReferenceTranslationChanged(
-        ContentTranslationInterface $referenceTranslation,
-        ?string $actorIdentifier = null,
-    ): void {
-        $content = $referenceTranslation->getObject();
-        $referenceLocale = $referenceTranslation->getLocale();
-        $staleLocales = $this->referenceTranslationLocaleResolver->resolveStaleLocales($referenceTranslation);
-
-        if ($staleLocales === []) {
-            return;
-        }
-
-        $recipients = $this->recipientResolver->resolveForLocales($staleLocales, $actorIdentifier);
-        $contentType = $content instanceof ArticleInterface ? 'article' : 'page';
-        $contentTitle = $content->getDefaultTranslation()->getTitle();
-        $version = $referenceTranslation->getUpdatedAt()->format('YmdHis');
-        $actionRoute = $this->buildContentRouteData($content);
-
-        foreach ($recipients as $recipient) {
-            foreach ($staleLocales as $locale) {
-                if (!$recipient->canTranslate($locale)) {
-                    continue;
-                }
-
-                $deduplicationKey = sprintf(
-                    'reference_changed:%s:%s:%s:%s',
-                    $contentType,
-                    $content->getId()->toRfc4122(),
-                    $locale,
-                    $version
-                );
-
-                if ($this->notificationRepository->hasDeduplicatedNotification($recipient, $deduplicationKey)) {
-                    continue;
-                }
-
-                $this->persistAndDispatch(
-                    $recipient,
-                    'translation_reference_changed',
-                    NotificationSeverity::Warning,
-                    sprintf('Source translation changed: %s', $contentTitle),
-                    sprintf(
-                        'The reference translation for "%s" changed. Please review the %s translation.',
-                        $contentTitle,
-                        strtoupper($locale)
-                    ),
-                    $this->generateContentEditUrl($actionRoute['routeName'], $content, $locale),
-                    'Review translation',
-                    array_merge([
-                        'contentType' => $contentType,
-                        'contentId' => $content->getId()->toRfc4122(),
-                        'locale' => $locale,
-                        'referenceLocale' => $referenceLocale,
-                    ], $this->buildActionPayload($actionRoute['routeName'], $content, $locale)),
-                    $deduplicationKey,
-                    false,
                 );
             }
         }

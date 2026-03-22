@@ -27,12 +27,16 @@ final readonly class TranslatorRecipientResolver
             if (!$user->isTranslator()) {
                 continue;
             }
+            if ($user->getTranslationLocales() === []) {
+                continue;
+            }
             if ($excludeUserIdentifier !== null && $user->getUserIdentifier() === $excludeUserIdentifier) {
                 continue;
             }
 
+            $userLocales = $user->getTranslationLocales();
             foreach ($locales as $locale) {
-                if ($user->canTranslate($locale)) {
+                if (in_array($locale, $userLocales, true)) {
                     $recipients[$user->getId()->toRfc4122()] = $user;
                     break;
                 }
