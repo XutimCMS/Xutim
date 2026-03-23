@@ -33,6 +33,7 @@ class PageTest extends AdminApplicationTestCase
         $form['page[content]'] = json_encode([], JSON_THROW_ON_ERROR);
         $form['page[description]'] = 'Description ' . $uniqueId;
         $form['page[locale]'] = 'en';
+        $form['page[allTranslationLocales]'] = '1';
         $client->submit($form);
         $this->assertResponseRedirects(message: 'Creating page should redirect');
 
@@ -101,6 +102,7 @@ class PageTest extends AdminApplicationTestCase
         $form['page[content]'] = json_encode([], JSON_THROW_ON_ERROR);
         $form['page[description]'] = 'Description';
         $form['page[locale]'] = 'en';
+        $form['page[allTranslationLocales]'] = '1';
         $client->submit($form);
 
         /** @var ContentTranslationRepository $contentTransRepo */
@@ -201,6 +203,7 @@ class PageTest extends AdminApplicationTestCase
         $form['page[content]'] = json_encode([], JSON_THROW_ON_ERROR);
         $form['page[description]'] = 'Description';
         $form['page[locale]'] = 'en';
+        $form['page[allTranslationLocales]'] = '1';
         $client->submit($form);
 
         /** @var ContentTranslationRepository $contentTransRepo */

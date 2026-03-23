@@ -38,6 +38,7 @@ class ArticleTest extends AdminApplicationTestCase
         $form['article[content]'] = json_encode([], JSON_THROW_ON_ERROR);
         $form['article[description]'] = 'Description ' . $uniqueId;
         $form['article[locale]'] = 'en';
+        $form['article[allTranslationLocales]'] = '1';
         $client->submit($form);
         $this->assertResponseRedirects(message: 'Creating article should redirect to show page');
 
@@ -107,6 +108,7 @@ class ArticleTest extends AdminApplicationTestCase
         $form['article[content]'] = json_encode([], JSON_THROW_ON_ERROR);
         $form['article[description]'] = 'Description';
         $form['article[locale]'] = 'en';
+        $form['article[allTranslationLocales]'] = '1';
         $client->submit($form);
         $client->followRedirect();
 
@@ -221,6 +223,7 @@ class ArticleTest extends AdminApplicationTestCase
         $form['article[content]'] = json_encode([], JSON_THROW_ON_ERROR);
         $form['article[description]'] = 'Description';
         $form['article[locale]'] = 'en';
+        $form['article[allTranslationLocales]'] = '1';
         $client->submit($form);
         $client->followRedirect();
 

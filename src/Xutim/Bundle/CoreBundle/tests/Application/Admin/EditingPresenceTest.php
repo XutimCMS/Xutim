@@ -27,6 +27,7 @@ class EditingPresenceTest extends AdminApplicationTestCase
         $form['article[content]'] = json_encode([], JSON_THROW_ON_ERROR);
         $form['article[description]'] = 'Description';
         $form['article[locale]'] = 'en';
+        $form['article[allTranslationLocales]'] = '1';
         $client->submit($form);
         $client->followRedirect();
 
