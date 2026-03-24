@@ -86,7 +86,7 @@ class BlockContext
                 $tags[] = 'tag.' . $item->getTag()->getId();
             }
             if ($item->hasFile()) {
-                $tags[] = 'media.' . $item->getFile()->getId();
+                $tags[] = 'media.' . $item->getFile()->id();
             }
             if ($item->hasSnippet()) {
                 $tags[] = 'snippet.' . $item->getSnippet()->getCode();
