@@ -200,14 +200,15 @@
                         }}
                     </twig:Xutim:Admin:Button>
                 </td>
-                <td>
-                    {% for tag in article.tags %}
-                        <twig:Xutim:Admin:Tag :color="tag.color">
-                            {{
-                                tag.translationByLocaleOrAny(content_context_language(), default_locale).name
-                            }}
-                        </twig:Xutim:Admin:Tag>
-                    {% endfor %}
+                <td class="text-wrap" style="max-width: 240px;">
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for tag in article.tags %}
+                            {% set tagName = tag.translationByLocaleOrAny(content_context_language(), default_locale).name %}
+                            <twig:Xutim:Admin:Tag :color="tag.color" :title="tagName|length > 30 ? tagName : null">
+                                {{ tagName|u.truncate(30, '...') }}
+                            </twig:Xutim:Admin:Tag>
+                        {% endfor %}
+                    </div>
                 </td>
                 <td>
                     {% set excludeFromNews = false %}
