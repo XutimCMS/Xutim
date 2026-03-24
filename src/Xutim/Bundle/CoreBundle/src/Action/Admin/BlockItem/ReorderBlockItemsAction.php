@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Entity\BlockItem;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\CoreBundle\Repository\BlockRepository;
@@ -20,7 +19,6 @@ class ReorderBlockItemsAction extends AbstractController
     public function __construct(
         private readonly BlockItemRepository $blockItemRepo,
         private readonly BlockRepository $blockRepo,
-        private readonly BlockContext $blockContext
     ) {
     }
 
@@ -40,7 +38,6 @@ class ReorderBlockItemsAction extends AbstractController
             $item = $this->blockItemRepo->findOneBy(['position' => $startPos, 'block' => $block]);
             $item->changePosition($endPos);
             $this->blockItemRepo->save($item, true);
-            $this->blockContext->resetAllLocalesBlockTemplate($block->getCode());
         } catch (Exception) {
             return new JsonResponse(false);
         }

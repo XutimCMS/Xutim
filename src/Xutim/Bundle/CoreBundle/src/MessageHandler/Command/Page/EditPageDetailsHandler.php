@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\MessageHandler\Command\Page;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Xutim\CoreBundle\Context\BlockContext;
-use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Event\Page\PageUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Page;
@@ -21,8 +19,6 @@ readonly class EditPageDetailsHandler implements CommandHandlerInterface
         private readonly LogEventFactory $logEventFactory,
         private PageRepository $pageRepository,
         private LogEventRepository $eventRepository,
-        private BlockContext $blockContext,
-        private SiteContext $siteContext,
     ) {
     }
 
@@ -40,8 +36,6 @@ readonly class EditPageDetailsHandler implements CommandHandlerInterface
         $page->change($cmd->color, $cmd->locales, $parentPage);
 
         $this->pageRepository->save($page, true);
-        $this->siteContext->resetMenu();
-        $this->blockContext->resetBlocksBelongsToPage($page);
 
         $pageUpdatedEvent = new PageUpdatedEvent(
             $page->getId(),

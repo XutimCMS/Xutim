@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\MessageHandler\Command\ContentTranslation;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Event\ContentDraft\ContentDraftCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentDraft\ContentDraftUpdatedEvent;
@@ -28,7 +27,6 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
         private readonly LogEventFactory $logEventFactory,
         private ContentTranslationRepository $contentTransRepo,
         private LogEventRepository $eventRepository,
-        private BlockContext $blockContext,
         private SiteContext $siteContext,
         private SearchContentBuilder $searchContentBuilder,
         private ContentDraftRepository $draftRepo,
@@ -143,8 +141,6 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
         $translation->changeSearchTagContent($searchTagContent);
 
         $this->contentTransRepo->save($translation, true);
-        $this->siteContext->resetMenu();
-        $this->blockContext->resetBlocksBelongsToContentTranslation($translation);
 
         $event = new ContentTranslationUpdatedEvent(
             $translation->getId(),

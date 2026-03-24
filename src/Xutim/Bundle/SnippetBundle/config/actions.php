@@ -11,7 +11,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
@@ -24,7 +23,6 @@ use Xutim\SnippetBundle\Action\EditSnippetAction;
 use Xutim\SnippetBundle\Action\JsonListSnippetsAction;
 use Xutim\SnippetBundle\Action\ListSnippetsAction;
 use Xutim\SnippetBundle\Action\TranslateSnippetAction;
-use Xutim\SnippetBundle\Context\SnippetsContext;
 use Xutim\SnippetBundle\Domain\Factory\SnippetFactoryInterface;
 use Xutim\SnippetBundle\Domain\Factory\SnippetTranslationFactoryInterface;
 use Xutim\SnippetBundle\Domain\Repository\SnippetRepositoryInterface;
@@ -38,9 +36,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$repo', service(SnippetRepositoryInterface::class))
         ->arg('$transRepo', service(SnippetTranslationRepositoryInterface::class))
         ->arg('$context', service(ContentContext::class))
-        ->arg('$snippetsContext', service(SnippetsContext::class))
-        ->arg('$blockContext', service(BlockContext::class))
-        ->arg('$siteContext', service(SiteContext::class))
         ->arg('$snippetFactory', service(SnippetFactoryInterface::class))
         ->arg('$snippetTransFactory', service(SnippetTranslationFactoryInterface::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
@@ -56,9 +51,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$repo', service(SnippetRepositoryInterface::class))
         ->arg('$transRepo', service(SnippetTranslationRepositoryInterface::class))
         ->arg('$context', service(ContentContext::class))
-        ->arg('$snippetsContext', service(SnippetsContext::class))
-        ->arg('$blockContext', service(BlockContext::class))
-        ->arg('$siteContext', service(SiteContext::class))
         ->arg('$snippetTransFactory', service(SnippetTranslationFactoryInterface::class))
         ->arg('$transAuthChecker', service(TranslatorAuthChecker::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
@@ -94,9 +86,6 @@ return static function (ContainerConfigurator $container): void {
     $services->set(TranslateSnippetAction::class)
         ->arg('$repo', service(SnippetRepositoryInterface::class))
         ->arg('$transRepo', service(SnippetTranslationRepositoryInterface::class))
-        ->arg('$snippetsContext', service(SnippetsContext::class))
-        ->arg('$blockContext', service(BlockContext::class))
-        ->arg('$siteContext', service(SiteContext::class))
         ->arg('$snippetTransFactory', service(SnippetTranslationFactoryInterface::class))
         ->arg('$transAuthChecker', service(TranslatorAuthChecker::class))
         ->arg('$csrfTokenChecker', service(CsrfTokenChecker::class))

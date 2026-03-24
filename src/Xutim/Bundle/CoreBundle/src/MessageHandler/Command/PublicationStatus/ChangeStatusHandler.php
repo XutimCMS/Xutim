@@ -7,8 +7,6 @@ namespace Xutim\CoreBundle\MessageHandler\Command\PublicationStatus;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Xutim\CoreBundle\Context\BlockContext;
-use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Event\PublicationStatus\PublicationStatusChangedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\ContentTranslation;
@@ -24,8 +22,6 @@ readonly class ChangeStatusHandler implements CommandHandlerInterface
         private EntityManagerInterface $entityManager,
         private ContentTranslationRepository $contentTransRepo,
         private LogEventRepository $eventRepo,
-        private SiteContext $siteContext,
-        private BlockContext $blockContext
     ) {
     }
 
@@ -52,8 +48,6 @@ readonly class ChangeStatusHandler implements CommandHandlerInterface
             }
         }
         $this->entityManager->flush();
-        $this->siteContext->resetMenu();
-        $this->blockContext->resetBlocksBelongsToContentTranslation($trans);
 
         $event = new PublicationStatusChangedEvent($cmd->objectId, ContentTranslation::class, $cmd->status);
         $logEntry = $this->logEventFactory->create($cmd->objectId, $cmd->userIdentifier, ContentTranslation::class, $event);

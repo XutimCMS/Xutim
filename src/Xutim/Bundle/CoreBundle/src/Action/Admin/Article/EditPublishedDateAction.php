@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleTranslationPublicationDateUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\ContentTranslation;
@@ -25,7 +24,6 @@ class EditPublishedDateAction extends AbstractController
         private readonly ContentTranslationRepository $repo,
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
-        private readonly BlockContext $blockContext,
         private readonly AdminUrlGenerator $router,
     ) {
     }
@@ -61,9 +59,6 @@ class EditPublishedDateAction extends AbstractController
             );
 
             $this->eventRepository->save($logEntry, true);
-
-
-            $this->blockContext->resetBlocksBelongsToArticle($trans->getArticle());
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 

@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Tag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleFeaturedImageUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Article;
@@ -28,7 +27,6 @@ class EditFeaturedImageAction extends AbstractController
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
         private readonly MediaRepositoryInterface $mediaRepo,
-        private readonly BlockContext $blockContext,
         private readonly AdminUrlGenerator $router,
     ) {
     }
@@ -61,7 +59,6 @@ class EditFeaturedImageAction extends AbstractController
                 $event
             );
             $this->eventRepository->save($logEntry, true);
-            $this->blockContext->resetBlocksBelongsToArticle($article);
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 

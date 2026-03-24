@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Form\Admin\DeleteType;
 use Xutim\CoreBundle\Repository\MenuItemRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
@@ -20,7 +19,6 @@ class DeleteMenuItemAction extends AbstractController
     public function __construct(
         private readonly MenuItemRepository $repo,
         private readonly TranslatorInterface $translator,
-        private readonly SiteContext $siteContext,
         private readonly AdminUrlGenerator $router,
     ) {
     }
@@ -39,7 +37,6 @@ class DeleteMenuItemAction extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->repo->remove($item, true);
-            $this->siteContext->resetMenu();
 
             $this->addFlash('success', $this->translator->trans('flash.changes_made_successfully', [], 'admin'));
 

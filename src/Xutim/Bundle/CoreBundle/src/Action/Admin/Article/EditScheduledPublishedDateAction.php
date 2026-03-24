@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleScheduledDateUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Article;
@@ -29,7 +28,6 @@ class EditScheduledPublishedDateAction extends AbstractController
         private readonly ArticleRepository $repo,
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
-        private readonly BlockContext $blockContext,
         private readonly MessageBusInterface $commandBus,
         private readonly ContentContext $contentContext,
         private readonly AdminUrlGenerator $router,
@@ -78,8 +76,6 @@ class EditScheduledPublishedDateAction extends AbstractController
             );
             $this->commandBus->dispatch($command);
             $this->eventRepository->save($logEntry, true);
-
-            $this->blockContext->resetBlocksBelongsToArticle($article);
 
             $this->addFlash('success', 'flash.changes_made_successfully');
 

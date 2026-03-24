@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xutim\CoreBundle\Config\Layout\Block\BlockLayoutChecker;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Form\Admin\BlockItemType;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
@@ -22,7 +21,6 @@ class EditBlockItemAction extends AbstractController
     public function __construct(
         private readonly BlockItemRepository $blockItemRepository,
         private readonly TranslatorInterface $translator,
-        private readonly BlockContext $blockContext,
         private readonly BlockLayoutChecker $blockLayoutChecker,
         private readonly AdminUrlGenerator $router,
     ) {
@@ -62,7 +60,6 @@ class EditBlockItemAction extends AbstractController
             );
 
             $this->blockItemRepository->save($item, true);
-            $this->blockContext->resetAllLocalesBlockTemplate($block->getCode());
 
             $this->addFlash('success', $this->translator->trans('flash.changes_made_successfully', [], 'admin'));
 

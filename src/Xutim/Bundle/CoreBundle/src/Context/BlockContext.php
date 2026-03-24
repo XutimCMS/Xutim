@@ -4,25 +4,19 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Context;
 
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Xutim\CoreBundle\Cache\SnippetUsageTracker;
 use Xutim\CoreBundle\Contract\Block\BlockRendererInterface;
-use Xutim\CoreBundle\Domain\Model\ArticleInterface;
-use Xutim\CoreBundle\Domain\Model\BlockInterface;
-use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Repository\BlockRepository;
-use Xutim\MediaBundle\Domain\Model\MediaInterface;
-use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 class BlockContext
 {
     public function __construct(
-        private readonly CacheInterface $blockContextCache,
-        private readonly SiteContext $siteContext,
+        private readonly TagAwareCacheInterface $blockContextCache,
         private readonly BlockRendererInterface $blockRenderer,
-        private readonly BlockRepository $blockRepository
+        private readonly BlockRepository $blockRepository,
+        private readonly SnippetUsageTracker $snippetUsageTracker
     ) {
     }
 
@@ -42,8 +36,12 @@ class BlockContext
         return $this->blockContextCache->get(
             $key,
             function (ItemInterface $item) use ($blockRenderer, $locale, $code, $options) {
+                $this->snippetUsageTracker->push();
                 $ret = $blockRenderer->renderBlock($locale, $code, $options);
+                $snippetCodes = $this->snippetUsageTracker->pop();
+
                 $item->expiresAfter($ret->cacheTtl);
+                $item->tag($this->buildTagsForBlock($code, $snippetCodes));
 
                 return $ret->html;
             }
@@ -52,59 +50,53 @@ class BlockContext
 
     public function resetAllLocalesBlockTemplate(string $code): void
     {
-        foreach ($this->siteContext->getAllLocales() as $locale) {
-            $this->resetBlockTemplate($locale, $code);
-        }
+        $this->blockContextCache->invalidateTags([$this->blockTag($code)]);
     }
 
-    public function resetBlocksBelongsToArticle(ArticleInterface $article): void
+    public function blockTag(string $code): string
     {
-        $blocks = $this->blockRepository->findByArticle($article);
-        $this->resetBlocks($blocks);
-    }
-
-    public function resetBlocksBelongsToSnippet(SnippetInterface $snippet): void
-    {
-        $blocks = $this->blockRepository->findBySnippet($snippet);
-        $this->resetBlocks($blocks);
-    }
-
-    public function resetBlocksBelongsToMedia(MediaInterface $media): void
-    {
-        $blocks = $this->blockRepository->findByMedia($media);
-        $this->resetBlocks($blocks);
-    }
-
-    public function resetBlocksBelongsToContentTranslation(ContentTranslationInterface $trans): void
-    {
-        if ($trans->hasPage() === true) {
-            $this->resetBlocksBelongsToPage($trans->getPage());
-        }
-        if ($trans->hasArticle() === true) {
-            $this->resetBlocksBelongsToArticle($trans->getArticle());
-        }
-    }
-
-    public function resetBlocksBelongsToTag(TagInterface $tag): void
-    {
-        $blocks = $this->blockRepository->findByTag($tag);
-        $this->resetBlocks($blocks);
-    }
-
-    public function resetBlocksBelongsToPage(PageInterface $page): void
-    {
-        $blocks = $this->blockRepository->findByPage($page);
-        $this->resetBlocks($blocks);
+        return 'block.' . $code;
     }
 
     /**
-     * @param array<BlockInterface> $blocks
-    */
-    private function resetBlocks(array $blocks): void
+     * @param list<string> $snippetCodes
+     * @return list<string>
+     */
+    private function buildTagsForBlock(string $code, array $snippetCodes): array
     {
-        foreach ($blocks as $block) {
-            $this->resetAllLocalesBlockTemplate($block->getCode());
+        $tags = [$this->blockTag($code)];
+
+        foreach ($snippetCodes as $snippetCode) {
+            $tags[] = 'snippet.' . $snippetCode;
         }
+
+        $block = $this->blockRepository->findByCode($code);
+        if ($block === null) {
+            return $tags;
+        }
+
+        foreach ($block->getBlockItems() as $item) {
+            if ($item->hasArticle()) {
+                $tags[] = 'article.' . $item->getArticle()->getId();
+            }
+            if ($item->hasPage()) {
+                $tags[] = 'page.' . $item->getPage()->getId();
+            }
+            if ($item->hasTag()) {
+                $tags[] = 'tag.' . $item->getTag()->getId();
+            }
+            if ($item->hasFile()) {
+                $tags[] = 'media.' . $item->getFile()->getId();
+            }
+            if ($item->hasSnippet()) {
+                $tags[] = 'snippet.' . $item->getSnippet()->getCode();
+            }
+            if ($item->hasMediaFolder()) {
+                $tags[] = 'mediafolder.' . $item->getMediaFolder()->id();
+            }
+        }
+
+        return array_values(array_unique($tags));
     }
 
     private function getCacheKey(string $locale, string $code): string

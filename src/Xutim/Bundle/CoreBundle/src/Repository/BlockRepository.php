@@ -8,13 +8,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
-use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
-use Xutim\MediaBundle\Domain\Model\MediaInterface;
-use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
 /**
  * @extends ServiceEntityRepository<BlockInterface>
@@ -68,96 +63,6 @@ class BlockRepository extends ServiceEntityRepository
         }
 
         return $builder;
-    }
-
-    /**
-     * @return array<BlockInterface>
-    */
-    public function findByArticle(ArticleInterface $article): array
-    {
-        /** @var array<BlockInterface> $blocks */
-        $blocks = $this->createQueryBuilder('block')
-            ->leftJoin('block.blockItems', 'item')
-            ->leftJoin('item.article', 'article')
-            ->where('article = :articleParam')
-            ->setParameter('articleParam', $article)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return $blocks;
-    }
-
-    /**
-     * @return array<BlockInterface>
-    */
-    public function findByPage(PageInterface $page): array
-    {
-        /** @var array<BlockInterface> $blocks */
-        $blocks = $this->createQueryBuilder('block')
-            ->leftJoin('block.blockItems', 'item')
-            ->leftJoin('item.page', 'page')
-            ->where('page = :pageParam')
-            ->setParameter('pageParam', $page)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return $blocks;
-    }
-
-    /**
-     * @return array<BlockInterface>
-    */
-    public function findByTag(TagInterface $tag): array
-    {
-        /** @var array<BlockInterface> $blocks */
-        $blocks = $this->createQueryBuilder('block')
-            ->leftJoin('block.blockItems', 'item')
-            ->leftJoin('item.tag', 'tag')
-            ->where('tag = :tagParam')
-            ->setParameter('tagParam', $tag)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return $blocks;
-    }
-
-    /**
-     * @return array<BlockInterface>
-    */
-    public function findBySnippet(SnippetInterface $snippet): array
-    {
-        /** @var array<BlockInterface> $blocks */
-        $blocks = $this->createQueryBuilder('block')
-            ->leftJoin('block.blockItems', 'item')
-            ->leftJoin('item.snippet', 'snippet')
-            ->where('snippet = :snippetParam')
-            ->setParameter('snippetParam', $snippet)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return $blocks;
-    }
-
-    /**
-     * @return array<BlockInterface>
-    */
-    public function findByMedia(MediaInterface $media): array
-    {
-        /** @var array<BlockInterface> $blocks */
-        $blocks = $this->createQueryBuilder('block')
-            ->leftJoin('block.blockItems', 'item')
-            ->leftJoin('item.file', 'file')
-            ->where('file = :mediaParam')
-            ->setParameter('mediaParam', $media)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return $blocks;
     }
 
     public function save(BlockInterface $entity, bool $flush = false): void

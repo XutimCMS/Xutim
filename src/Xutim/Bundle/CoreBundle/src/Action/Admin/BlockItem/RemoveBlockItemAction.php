@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\BlockItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
 use Xutim\SecurityBundle\Security\UserRoles;
@@ -17,7 +16,6 @@ class RemoveBlockItemAction extends AbstractController
     public function __construct(
         private readonly CsrfTokenChecker $csrfTokenChecker,
         private readonly BlockItemRepository $blockItemRepository,
-        private readonly BlockContext $blockContext
     ) {
     }
 
@@ -29,9 +27,7 @@ class RemoveBlockItemAction extends AbstractController
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
         $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
-        $blockCode = $blockItem->getBlock()->getCode();
         $this->blockItemRepository->remove($blockItem, true);
-        $this->blockContext->resetAllLocalesBlockTemplate($blockCode);
         $this->addFlash('success', 'flash.changes_made_successfully');
 
         return $this->redirect($request->headers->get('referer', ''));

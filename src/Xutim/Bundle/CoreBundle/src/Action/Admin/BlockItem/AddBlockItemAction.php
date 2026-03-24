@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Config\Layout\Block\BlockLayoutChecker;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Factory\BlockItemFactory;
 use Xutim\CoreBundle\Form\Admin\BlockItemType;
 use Xutim\CoreBundle\Repository\BlockItemRepository;
@@ -25,7 +24,6 @@ class AddBlockItemAction extends AbstractController
         private readonly BlockItemRepository $blockItemRepository,
         private readonly BlockRepository $blockRepo,
         private readonly TranslatorInterface $translator,
-        private readonly BlockContext $blockContext,
         private readonly BlockItemFactory $blockItemFactory,
         private readonly BlockLayoutChecker $blockLayoutChecker,
         private readonly AdminUrlGenerator $router
@@ -67,7 +65,6 @@ class AddBlockItemAction extends AbstractController
                 $data->extra,
             );
             $this->blockItemRepository->save($blockItem, true);
-            $this->blockContext->resetAllLocalesBlockTemplate($block->getCode());
 
             $this->addFlash('success', $this->translator->trans('flash.changes_made_successfully', [], 'admin'));
 

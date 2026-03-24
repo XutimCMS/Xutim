@@ -9,11 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Webmozart\Assert\Assert;
-use Xutim\CoreBundle\Context\BlockContext;
-use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
-use Xutim\SnippetBundle\Context\SnippetsContext;
 use Xutim\SnippetBundle\Domain\Factory\SnippetTranslationFactoryInterface;
 use Xutim\SnippetBundle\Domain\Repository\SnippetRepositoryInterface;
 use Xutim\SnippetBundle\Domain\Repository\SnippetTranslationRepositoryInterface;
@@ -23,9 +20,6 @@ class TranslateSnippetAction
     public function __construct(
         private readonly SnippetRepositoryInterface $repo,
         private readonly SnippetTranslationRepositoryInterface $transRepo,
-        private readonly SnippetsContext $snippetsContext,
-        private readonly BlockContext $blockContext,
-        private readonly SiteContext $siteContext,
         private readonly SnippetTranslationFactoryInterface $snippetTransFactory,
         private readonly TranslatorAuthChecker $transAuthChecker,
         private readonly CsrfTokenChecker $csrfTokenChecker,
@@ -62,10 +56,6 @@ class TranslateSnippetAction
         $tokenId = sprintf('translate_snippet_%s_%s', $id, $locale);
         $this->csrfTokenChecker->checkTokenFromRequest($tokenId, $request);
         $this->transRepo->save($trans, true);
-
-        $this->snippetsContext->resetSnippet($snippet->getCode());
-        $this->blockContext->resetBlocksBelongsToSnippet($snippet);
-        $this->siteContext->resetMenu();
         if ($snippet->isRouteType() === true) {
             // Restart the snippet_routes router cache. See
             // CustomRouteLoader for more information

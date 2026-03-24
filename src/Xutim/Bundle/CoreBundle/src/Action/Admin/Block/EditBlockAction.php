@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Block\BlockChangedEvent;
 use Xutim\CoreBundle\Form\Admin\BlockType;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockDto;
@@ -25,7 +24,6 @@ final class EditBlockAction extends AbstractController
         private readonly BlockRepository $blockRepo,
         private readonly UserStorage $userStorage,
         private readonly MessageBusInterface $eventBus,
-        private readonly BlockContext $blockContext,
         private readonly AdminUrlGenerator $router,
     ) {
     }
@@ -45,7 +43,6 @@ final class EditBlockAction extends AbstractController
 
             $block->change($dto->code, $dto->name, $dto->description, $dto->layout);
             $this->blockRepo->save($block, true);
-            $this->blockContext->resetAllLocalesBlockTemplate($block->getCode());
 
             $this->eventBus->dispatch(new DomainEventMessage(
                 $block->getId(),

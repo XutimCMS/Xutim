@@ -7,7 +7,6 @@ namespace Xutim\CoreBundle\Action\Admin\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Page\PageFeaturedImageUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Page;
@@ -28,7 +27,6 @@ class EditFeaturedImageAction extends AbstractController
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepository,
         private readonly MediaRepositoryInterface $mediaRepo,
-        private readonly BlockContext $blockContext,
         private readonly AdminUrlGenerator $router,
     ) {
     }
@@ -50,7 +48,6 @@ class EditFeaturedImageAction extends AbstractController
             
             $page->changeFeaturedImage($data->id === null ? null : $this->mediaRepo->findById($data->id));
             $this->pageRepo->save($page, true);
-            $this->blockContext->resetBlocksBelongsToPage($page);
 
             $event = new PageFeaturedImageUpdatedEvent($page->getId(), $data->id);
             $logEntry = $this->logEventFactory->create(

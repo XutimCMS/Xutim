@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Domain\Event\Block\BlockDeletedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Block;
@@ -28,7 +27,6 @@ class DeleteBlockAction extends AbstractController
         private readonly BlockItemRepository $blockItemRepo,
         private readonly UserStorage $userStorage,
         private readonly LogEventRepository $eventRepo,
-        private readonly BlockContext $blockContext,
         private readonly AdminUrlGenerator $router,
     ) {
     }
@@ -56,7 +54,6 @@ class DeleteBlockAction extends AbstractController
 
             $this->blockRepo->remove($block, true);
             $this->eventRepo->save($logEntry, true);
-            $this->blockContext->resetAllLocalesBlockTemplate($block->getCode());
 
             return new RedirectResponse($this->router->generate('admin_block_list', ['searchTerm' => '']));
         }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\MessageHandler\Command\ContentDraft;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Xutim\CoreBundle\Context\BlockContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
@@ -24,7 +23,6 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
         private ContentTranslationRepository $contentTransRepo,
         private LogEventFactory $logEventFactory,
         private LogEventRepository $eventRepository,
-        private BlockContext $blockContext,
         private SiteContext $siteContext,
         private SearchContentBuilder $searchContentBuilder,
     ) {
@@ -63,9 +61,6 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
         $this->draftRepo->remove($draft);
         $this->contentTransRepo->save($translation);
         $this->draftRepo->flush();
-
-        $this->siteContext->resetMenu();
-        $this->blockContext->resetBlocksBelongsToContentTranslation($translation);
 
         $event = ContentTranslationUpdatedEvent::fromContentTranslation($translation);
 

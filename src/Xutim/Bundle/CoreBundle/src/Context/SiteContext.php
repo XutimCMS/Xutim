@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Context;
 
-use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Xutim\CoreBundle\Dto\SiteDto;
 use Xutim\CoreBundle\Repository\SiteRepository;
 use Xutim\CoreBundle\Service\MenuBuilder;
@@ -15,7 +16,7 @@ class SiteContext
     public const string MAIN_MENU = 'main-menu';
 
     public function __construct(
-        private readonly CacheInterface $siteContextCache,
+        private readonly TagAwareCacheInterface $siteContextCache,
         private readonly SiteRepository $siteRepository,
         private readonly MenuBuilder $menuBuilder
     ) {
@@ -24,7 +25,8 @@ class SiteContext
     public function getDefaultSite(): SiteDto
     {
         $repo = $this->siteRepository;
-        $siteDto = $this->siteContextCache->get(self::DEFAULT_SITE, function () use ($repo) {
+        $siteDto = $this->siteContextCache->get(self::DEFAULT_SITE, function (ItemInterface $item) use ($repo) {
+            $item->tag(['site']);
             $site = $repo->findOneBy([]);
             if ($site === null) {
                 throw new \Exception('There is no default site configuration.');
@@ -38,9 +40,8 @@ class SiteContext
 
     public function resetDefaultSite(): void
     {
-        $this->siteContextCache->delete(self::DEFAULT_SITE);
+        $this->siteContextCache->invalidateTags(['site']);
     }
-
 
     /**
      * @return array{
@@ -55,13 +56,17 @@ class SiteContext
     {
         return $this->siteContextCache->get(
             self::MAIN_MENU,
-            fn () => $this->menuBuilder->buildMenu($this->getAllLocales())
+            function (ItemInterface $item) {
+                $item->tag(['menu']);
+
+                return $this->menuBuilder->buildMenu($this->getAllLocales());
+            }
         );
     }
 
     public function resetMenu(): void
     {
-        $this->siteContextCache->delete(self::MAIN_MENU);
+        $this->siteContextCache->invalidateTags(['menu']);
     }
 
     /**
