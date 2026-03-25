@@ -111,13 +111,21 @@
                         <tbody>
                             {% for article in latestUntranslatedArticles %}
                                 {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
+                                {% set firstMissingLocale = null %}
+                                {% for userLocale in userLocales %}
+                                    {% if firstMissingLocale is null
+                                        and article.translations|reduce((carry, t) => carry == true or userLocale == t.locale) == false
+                                        and (article.translationLocales is empty or article.isLocaleAllowed(userLocale)) %}
+                                        {% set firstMissingLocale = userLocale %}
+                                    {% endif %}
+                                {% endfor %}
                                 <tr>
                                     <td>
                                         {{ badges.publicationStatusBadge(translation) }}
                                     </td>
                                     <td class="text-wrap">
                                         <a
-                                            href="{{ admin_path('admin_article_edit', {id: article.id}) }}"
+                                            href="{{ admin_path('admin_article_edit', {id: article.id, locale: firstMissingLocale}) }}"
                                             data-turbo-frame="_top"
                                             class="btn-link mt-1 text-dark"
                                             aria-label="{{ 'show'|trans({}, 'admin') }}"
@@ -186,13 +194,20 @@
                                 {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
                                 {% set refTrans = article.getTranslationByLocale(referenceLocale) %}
                                 {% set effectiveRef = refTrans ?? article.defaultTranslation %}
+                                {% set firstOutdatedLocale = null %}
+                                {% for t in article.translations %}
+                                    {% if firstOutdatedLocale is null and t.locale in userLocales and t.locale != referenceLocale
+                                        and (t.referenceSyncedAt is null or t.referenceSyncedAt < effectiveRef.updatedAt) %}
+                                        {% set firstOutdatedLocale = t.locale %}
+                                    {% endif %}
+                                {% endfor %}
                                 <tr>
                                     <td>
                                         {{ badges.publicationStatusBadge(translation) }}
                                     </td>
                                     <td class="text-wrap">
                                         <a
-                                            href="{{ admin_path('admin_article_edit', {id: article.id}) }}"
+                                            href="{{ admin_path('admin_article_edit', {id: article.id, locale: firstOutdatedLocale}) }}"
                                             data-turbo-frame="_top"
                                             class="btn-link mt-1 text-dark"
                                             aria-label="{{ 'show'|trans({}, 'admin') }}"
@@ -211,7 +226,7 @@
                                     <td>
                                         <div class="tag-list">
                                             {% for t in article.translations %}
-                                                {% if t.locale in userLocales
+                                                {% if t.locale in userLocales and t.locale != referenceLocale
                                                     and (t.referenceSyncedAt is null or t.referenceSyncedAt < effectiveRef.updatedAt)
                                                 %}
                                                     <span class="tag">{{ t.locale }}</span>
