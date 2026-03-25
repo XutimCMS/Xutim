@@ -438,7 +438,7 @@ class ArticleRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('article');
         $qb
-            ->select('article', 'translation')
+            ->select('article')
             ->join(
                 'article.translations',
                 'translation',
@@ -448,6 +448,7 @@ class ArticleRepository extends ServiceEntityRepository
             ->leftJoin('article.defaultTranslation', 'defaultTranslation')
             ->leftJoin('article.translations', 'refTranslation', 'WITH', 'refTranslation.locale = :refLocale')
             ->where($qb->expr()->in('translation.locale', ':locales'))
+            ->andWhere('translation.locale != :refLocale')
             ->andWhere(<<<DQL
                 translation.referenceSyncedAt IS NULL
                 OR translation.referenceSyncedAt < CASE
