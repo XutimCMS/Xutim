@@ -16,7 +16,7 @@ interface ContentTranslationInterface
     /**
      * @param EditorBlock $content
      */
-    public function change(string $preTitle, string $title, string $subTitle, string $slug, array $content, string $locale, string $description): void;
+    public function change(string $preTitle, string $title, string $subTitle, string $slug, array $content, string $locale, string $description): bool;
 
     public function getId(): Uuid;
 

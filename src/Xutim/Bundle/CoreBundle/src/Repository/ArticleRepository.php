@@ -446,9 +446,18 @@ class ArticleRepository extends ServiceEntityRepository
                 $qb->expr()->in('translation.locale', ':locales')
             )
             ->leftJoin('article.defaultTranslation', 'defaultTranslation')
+            ->leftJoin('article.translations', 'refTranslation', 'WITH', 'refTranslation.locale = :refLocale')
             ->where($qb->expr()->in('translation.locale', ':locales'))
-            ->andWhere('translation.updatedAt < defaultTranslation.updatedAt')
+            ->andWhere(<<<DQL
+                translation.referenceSyncedAt IS NULL
+                OR translation.referenceSyncedAt < CASE
+                    WHEN refTranslation.id IS NOT NULL THEN refTranslation.updatedAt
+                    ELSE defaultTranslation.updatedAt
+                END
+                DQL
+            )
             ->setParameter('locales', $locales)
+            ->setParameter('refLocale', $this->defaultLocale)
             ->orderBy('article.createdAt', 'desc')
             ->setMaxResults($limit);
 

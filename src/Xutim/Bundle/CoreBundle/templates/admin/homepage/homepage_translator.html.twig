@@ -178,6 +178,8 @@
                         <tbody>
                             {% for article in latestChangedArticles %}
                                 {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
+                                {% set refTrans = article.getTranslationByLocale(referenceLocale) %}
+                                {% set effectiveRef = refTrans ?? article.defaultTranslation %}
                                 <tr>
                                     <td>
                                         {{ badges.publicationStatusBadge(translation) }}
@@ -197,15 +199,15 @@
                                         <twig:Xutim:Admin:Icon
                                             name="calendar"
                                         />
-                                        {{ article.defaultTranslation.updatedAt|format_date }}
+                                        {{ effectiveRef.updatedAt|format_date }}
                                     </td>
                                     <td>
                                         <div class="tag-list">
-                                            {% for userLocale in userLocales %}
-                                                {% if article.translations|reduce((carry, translation) => carry == true or (userLocale == translation.locale and translation.updatedAt < article.defaultTranslation.updatedAt), false) == true %}
-                                                    <span class="tag">
-                                                        {{ userLocale }}
-                                                    </span>
+                                            {% for t in article.translations %}
+                                                {% if t.locale in userLocales
+                                                    and (t.referenceSyncedAt is null or t.referenceSyncedAt < effectiveRef.updatedAt)
+                                                %}
+                                                    <span class="tag">{{ t.locale }}</span>
                                                 {% endif %}
                                             {% endfor %}
                                         </div>

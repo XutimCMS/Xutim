@@ -125,7 +125,7 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
             }
         }
 
-        $translation->change(
+        $hasChanges = $translation->change(
             $cmd->preTitle,
             $cmd->title,
             $cmd->subTitle,
@@ -141,6 +141,10 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
         $translation->changeSearchTagContent($searchTagContent);
 
         $this->contentTransRepo->save($translation, true);
+
+        if (!$hasChanges) {
+            return;
+        }
 
         $event = new ContentTranslationUpdatedEvent(
             $translation->getId(),

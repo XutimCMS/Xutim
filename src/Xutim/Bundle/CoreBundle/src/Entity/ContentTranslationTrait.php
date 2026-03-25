@@ -69,8 +69,19 @@ trait ContentTranslationTrait
         array $content,
         string $locale,
         string $description
-    ): void {
-        $this->updatedAt = new DateTimeImmutable();
+    ): bool {
+        $hasChanges = $this->preTitle !== $preTitle
+            || $this->title !== $title
+            || $this->subTitle !== $subTitle
+            || $this->slug !== $slug
+            || ($this->content['blocks'] ?? []) !== ($content['blocks'] ?? [])
+            || $this->locale !== $locale
+            || $this->description !== $description;
+
+        if ($hasChanges) {
+            $this->updatedAt = new DateTimeImmutable();
+        }
+
         $this->preTitle = $preTitle;
         $this->title = $title;
         $this->subTitle = $subTitle;
@@ -78,6 +89,8 @@ trait ContentTranslationTrait
         $this->content = $content;
         $this->locale = $locale;
         $this->description = $description;
+
+        return $hasChanges;
     }
 
     public function getLocale(): string

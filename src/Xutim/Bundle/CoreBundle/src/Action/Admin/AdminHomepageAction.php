@@ -70,7 +70,8 @@ class AdminHomepageAction extends AbstractController
             'latestNotifications' => $latestNotifications,
             'articlesCount' => $articlesCount,
             'translatedLocalesCount' => $translatedLocalesCount,
-            'userLocales' => $this->getUser()->getTranslationLocales()
+            'userLocales' => $this->getUser()->getTranslationLocales(),
+            'referenceLocale' => $this->siteContext->getReferenceLocale(),
         ]);
     }
 
