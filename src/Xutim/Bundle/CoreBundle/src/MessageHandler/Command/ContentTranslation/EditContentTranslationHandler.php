@@ -18,6 +18,7 @@ use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Service\ReferenceSyncService;
 use Xutim\CoreBundle\Service\SearchContentBuilder;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
@@ -32,6 +33,7 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
         private ContentDraftRepository $draftRepo,
         private ContentDraftFactory $draftFactory,
         private UserRepositoryInterface $userRepo,
+        private ReferenceSyncService $referenceSyncService,
     ) {
     }
 
@@ -166,5 +168,9 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
         );
 
         $this->eventRepository->save($log, true);
+
+        if ($isReferenceTranslation) {
+            $this->referenceSyncService->resyncRevertedSiblings($translation);
+        }
     }
 }

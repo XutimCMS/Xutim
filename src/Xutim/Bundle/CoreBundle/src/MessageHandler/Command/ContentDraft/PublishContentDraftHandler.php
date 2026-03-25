@@ -15,6 +15,7 @@ use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Service\ReferenceSyncService;
 use Xutim\CoreBundle\Service\SearchContentBuilder;
 
 readonly class PublishContentDraftHandler implements CommandHandlerInterface
@@ -26,6 +27,7 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
         private LogEventRepository $eventRepository,
         private SiteContext $siteContext,
         private SearchContentBuilder $searchContentBuilder,
+        private ReferenceSyncService $referenceSyncService,
     ) {
     }
 
@@ -77,5 +79,9 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
         );
 
         $this->eventRepository->save($log, true);
+
+        if ($isReferenceTranslation) {
+            $this->referenceSyncService->resyncRevertedSiblings($translation);
+        }
     }
 }
