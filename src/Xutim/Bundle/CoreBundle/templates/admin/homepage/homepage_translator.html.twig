@@ -101,9 +101,11 @@
                                 <th>
                                     {{ 'created at'|trans({}, 'admin')|capitalize }}
                                 </th>
+                                {% if userLocales|length > 1 %}
                                 <th>
                                     {{ 'missing languages'|trans({}, 'admin')|capitalize }}
                                 </th>
+                                {% endif %}
                             </tr>
                         </thead>
                         <tbody>
@@ -130,6 +132,7 @@
                                         />
                                         {{ article.createdAt|format_date }}
                                     </td>
+                                    {% if userLocales|length > 1 %}
                                     <td>
                                         <div class="tags-list d-inline">
                                             {% for userLocale in userLocales %}
@@ -145,6 +148,7 @@
                                             {% endfor %}
                                         </div>
                                     </td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -170,9 +174,11 @@
                                 </th>
                                 <th>{{ 'title'|trans({}, 'admin') }}</th>
                                 <th>{{ 'updated at'|trans({}, 'admin') }}</th>
+                                {% if userLocales|length > 1 %}
                                 <th>
                                     {{ 'languages changed'|trans({}, 'admin') }}
                                 </th>
+                                {% endif %}
                             </tr>
                         </thead>
                         <tbody>
@@ -201,6 +207,7 @@
                                         />
                                         {{ effectiveRef.updatedAt|format_date }}
                                     </td>
+                                    {% if userLocales|length > 1 %}
                                     <td>
                                         <div class="tag-list">
                                             {% for t in article.translations %}
@@ -212,6 +219,7 @@
                                             {% endfor %}
                                         </div>
                                     </td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
                         </tbody>
