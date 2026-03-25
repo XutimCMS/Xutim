@@ -30,6 +30,7 @@ export default class extends Controller {
         'diffToggleBtn',
         'diffToggleBtnShowText',
         'diffToggleBtnHideText',
+        'markReviewedBtn',
     ];
     static values = {
         referenceUrl: String,
@@ -404,6 +405,37 @@ export default class extends Controller {
                 'd-none',
                 !showingDiff,
             );
+        }
+    }
+
+    async markReviewed(event) {
+        const url = event.params.markReviewedUrl;
+        if (!url) return;
+
+        const btn = event.currentTarget;
+        btn.disabled = true;
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        if (res.ok) {
+            if (this.hasChangedBannerTarget) {
+                this.changedBannerTarget.remove();
+            }
+            if (this.hasDiffContainerTarget) {
+                this.diffContainerTarget.classList.add('d-none');
+            }
+            if (this.hasReferenceContainerTarget) {
+                this.referenceContainerTarget.classList.remove('d-none');
+            }
+            this.flash('Marked as reviewed');
+        } else {
+            btn.disabled = false;
+            this.flash('Failed to mark as reviewed');
         }
     }
 

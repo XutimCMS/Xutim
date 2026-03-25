@@ -278,20 +278,32 @@
                             <twig:ux:icon name="tabler:alert-triangle" class="w-4 h-4 me-2" />
                             {{ 'Reference has changed since your last save'|trans({}, 'admin') }}
                         </div>
-                        <twig:Xutim:Admin:Button
-                            tag="button"
-                            variant="warning"
-                            class="btn-sm"
-                            data-split-view-target="diffToggleBtn"
-                            data-action="split-view#toggleDiff"
-                        >
-                            <span data-split-view-target="diffToggleBtnShowText">
-                                {{ 'Show changes'|trans({}, 'admin') }}
-                            </span>
-                            <span data-split-view-target="diffToggleBtnHideText" class="d-none">
-                                {{ 'Show current'|trans({}, 'admin') }}
-                            </span>
-                        </twig:Xutim:Admin:Button>
+                        <div class="d-flex gap-2">
+                            <twig:Xutim:Admin:Button
+                                tag="button"
+                                variant="warning"
+                                class="btn-sm"
+                                data-split-view-target="diffToggleBtn"
+                                data-action="split-view#toggleDiff"
+                            >
+                                <span data-split-view-target="diffToggleBtnShowText">
+                                    {{ 'Show changes'|trans({}, 'admin') }}
+                                </span>
+                                <span data-split-view-target="diffToggleBtnHideText" class="d-none">
+                                    {{ 'Show current'|trans({}, 'admin') }}
+                                </span>
+                            </twig:Xutim:Admin:Button>
+                            <twig:Xutim:Admin:Button
+                                tag="button"
+                                variant="secondary"
+                                class="btn-sm"
+                                data-split-view-target="markReviewedBtn"
+                                data-action="split-view#markReviewed"
+                                data-split-view-mark-reviewed-url-param="{{ admin_path('admin_content_translation_mark_reference_reviewed', {id: translation.id}) }}"
+                            >
+                                {{ 'Mark as reviewed'|trans({}, 'admin') }}
+                            </twig:Xutim:Admin:Button>
+                        </div>
                     </div>
                     {% endif %}
 

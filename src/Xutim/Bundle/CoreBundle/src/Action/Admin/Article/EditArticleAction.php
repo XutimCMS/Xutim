@@ -131,9 +131,9 @@ class EditArticleAction extends AbstractController
         $referenceHasChanged = false;
         if ($translation !== null && $referenceTranslation !== null
             && $translation->getLocale() !== $refLocale
-            && $translation->getReferenceSyncedAt() !== null
         ) {
-            $referenceHasChanged = $referenceTranslation->getUpdatedAt() > $translation->getReferenceSyncedAt();
+            $referenceHasChanged = $translation->getReferenceSyncedAt() === null
+                || $referenceTranslation->getUpdatedAt() > $translation->getReferenceSyncedAt();
         }
 
         return $this->render('@XutimCore/admin/article/article_edit.html.twig', [

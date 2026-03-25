@@ -6,6 +6,7 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\DeleteTranslationAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\EditTranslationAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\HeartbeatAction;
+use Xutim\CoreBundle\Action\Admin\ContentTranslation\MarkReferenceReviewedAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\JsonGenerateSlugAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\ShowTranslationRevisionsAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\ShowReferenceDiffAction;
@@ -63,5 +64,11 @@ return function (RoutingConfigurator $routes) {
         ->add('admin_content_translation_sidebar_history', '/admin/{_content_locale}/content-translation/{id}/sidebar-history')
         ->methods(['get'])
         ->controller(SidebarHistoryAction::class)
+    ;
+
+    $routes
+        ->add('admin_content_translation_mark_reference_reviewed', '/admin/{_content_locale}/content-translation/{id}/mark-reference-reviewed')
+        ->methods(['post'])
+        ->controller(MarkReferenceReviewedAction::class)
     ;
 };
