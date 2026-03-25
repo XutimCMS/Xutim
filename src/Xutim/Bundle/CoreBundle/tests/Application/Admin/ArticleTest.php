@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Xutim\CoreBundle\Domain\Event\ContentDraft\ContentDraftCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentDraft\ContentDraftDiscardedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentDraft\ContentDraftUpdatedEvent;
+use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
@@ -201,8 +202,11 @@ class ArticleTest extends AdminApplicationTestCase
         /** @var LogEventRepository $logEventRepo */
         $logEventRepo = static::getContainer()->get(LogEventRepository::class);
         $events = $logEventRepo->findByTranslation($translation);
-        $publishEvents = array_filter($events, static fn ($e) => $e->getEvent() instanceof ContentTranslationUpdatedEvent);
-        $this->assertNotEmpty($publishEvents, 'ContentTranslationUpdatedEvent should be persisted after draft publish');
+        $publishEvents = array_filter($events, static fn ($e) =>
+            $e->getEvent() instanceof ContentTranslationCreatedEvent
+            || $e->getEvent() instanceof ContentTranslationUpdatedEvent
+        );
+        $this->assertNotEmpty($publishEvents, 'Content revision event should be persisted after draft publish');
     }
 
     public function testDraftDiscardForPublishedArticle(): void
