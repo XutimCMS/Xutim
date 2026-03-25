@@ -6,6 +6,7 @@ namespace Xutim\CoreBundle\MessageHandler\Command\ContentDraft;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\ContentTranslation;
@@ -62,7 +63,11 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
         $this->contentTransRepo->save($translation);
         $this->draftRepo->flush();
 
-        $event = ContentTranslationUpdatedEvent::fromContentTranslation($translation);
+        $hasContentRevisions = count($this->eventRepository->findContentRevisionsByTranslation($translation)) > 0;
+
+        $event = $hasContentRevisions
+            ? ContentTranslationUpdatedEvent::fromContentTranslation($translation)
+            : ContentTranslationCreatedEvent::fromContentTranslation($translation);
 
         $log = $this->logEventFactory->create(
             $translation->getId(),

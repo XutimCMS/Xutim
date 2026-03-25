@@ -6,6 +6,7 @@ namespace Xutim\CoreBundle\Domain\Event\ContentTranslation;
 
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\Domain\DomainEvent;
 
 final readonly class ContentTranslationCreatedEvent implements DomainEvent
@@ -26,5 +27,22 @@ final readonly class ContentTranslationCreatedEvent implements DomainEvent
         public ?Uuid $pageId,
         public ?Uuid $articleId,
     ) {
+    }
+
+    public static function fromContentTranslation(ContentTranslationInterface $trans): self
+    {
+        return new self(
+            $trans->getId(),
+            $trans->getPreTitle(),
+            $trans->getTitle(),
+            $trans->getSubTitle(),
+            $trans->getSlug(),
+            $trans->getContent(),
+            $trans->getDescription(),
+            $trans->getLocale(),
+            $trans->getCreatedAt(),
+            $trans->hasPage() ? $trans->getPage()->getId() : null,
+            $trans->hasArticle() ? $trans->getArticle()->getId() : null,
+        );
     }
 }
