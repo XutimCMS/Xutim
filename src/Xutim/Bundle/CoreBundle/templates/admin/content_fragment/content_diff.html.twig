@@ -5,6 +5,21 @@
     {% else %}block-unchanged{% endif %}
 {% endmacro %}
 
+{% macro tune_changes(meta) %}
+    {% if meta %}
+        {% for key, field in meta %}
+            {% if field.status is defined and field.status == 'changed' %}
+                <div class="small text-muted mt-1">
+                    <span class="badge bg-secondary-lt">{{ key }}</span>
+                    <del class="text-danger">{{ field.old }}</del>
+                    →
+                    <ins class="text-success">{{ field.new }}</ins>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
 {% import _self as diff %}
 
 {% for row in rows %}
@@ -12,19 +27,18 @@
     {% set fragment = row.block_new is defined ? row.block_new : row.block %}
     {% set inlineHtml = row.html is defined ? row.html : null %}
     {% set meta = row.meta is defined ? row.meta : null %}
+    {% set props = row.props is defined ? row.props : meta %}
 
     {% set hasMetaChange = false %}
-    {% if meta %}
-        {% set break = false %}
-        {% for f in meta %}
-            {% if break == false %}
+    {% for source in [meta, props] %}
+        {% if source %}
+            {% for f in source %}
                 {% if f.status is defined and f.status != 'same' %}
                     {% set hasMetaChange = true %}
-                    {% set break = true %}
                 {% endif %}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
     {% set opEff = (op == 'unchanged' and hasMetaChange) ? 'modified' : op %}
 
     {% set wrapperClass = diff.wrapper_class(opEff) %}
@@ -134,5 +148,7 @@
                 {{ 'Unknown block'|trans({}, 'admin') }}
             {% endif %}
         {% endif %}
+
+        {{ diff.tune_changes(props) }}
     </div>
 {% endfor %}

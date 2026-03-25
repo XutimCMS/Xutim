@@ -109,8 +109,16 @@ final class EditorJsDiffRenderer
         if (in_array($typeNew, ['paragraph', 'header', 'quote', 'list', 'foldableStart'], true)) {
             $oldTxt = $this->extractText($oldBlock);
             $newTxt = $this->extractText($newBlock);
+            $propsMeta = $this->diffBlockProperties($oldBlock, $newBlock);
+            $propsChanged = $this->metaHasChange($propsMeta);
+
             if ($oldTxt === $newTxt) {
-                return ['op' => 'unchanged', 'block_new' => $newBlock];
+                return [
+                    'op' => $propsChanged ? 'modified' : 'unchanged',
+                    'block_new' => $newBlock,
+                    'block_old' => $oldBlock,
+                    'meta' => $propsMeta,
+                ];
             }
             $html = $this->inlineDiff($oldTxt, $newTxt);
             return [
@@ -118,6 +126,7 @@ final class EditorJsDiffRenderer
                 'block_new' => $newBlock,
                 'block_old' => $oldBlock,
                 'html' => $html,
+                'meta' => $propsMeta,
             ];
         }
 
@@ -126,13 +135,15 @@ final class EditorJsDiffRenderer
         }
 
         $meta = $this->diffStructuredBlock($typeNew, $oldBlock['data'], $newBlock['data']);
-        $changed = $this->metaHasChange($meta);
+        $propsMeta = $this->diffBlockProperties($oldBlock, $newBlock);
+        $changed = $this->metaHasChange($meta) || $this->metaHasChange($propsMeta);
 
         return [
             'op' => $changed ? 'modified' : 'unchanged',
             'block_new' => $newBlock,
             'block_old' => $oldBlock,
             'meta' => $meta,
+            'props' => $propsMeta,
         ];
     }
 
@@ -370,6 +381,59 @@ final class EditorJsDiffRenderer
         $s = preg_replace('/\n{2,}/u', "\n", $s) ?? $s;
         return trim($s);
     }
+    /**
+     * Compare tunes and non-text data properties (alignment, anchor, level, etc.)
+     * between two blocks of the same type.
+     *
+     * @param EditorBlocksUnion $oldBlock
+     * @param EditorBlocksUnion $newBlock
+     * @return array<string, array{status:'same'|'changed', old?:string, new?:string}>
+     */
+    private function diffBlockProperties(array $oldBlock, array $newBlock): array
+    {
+        $meta = [];
+        $textKeys = ['text', 'caption', 'items', 'content', 'title', 'pretitle', 'subtitle'];
+
+        $encode = static function (mixed $v): string {
+            if (is_string($v)) {
+                return $v;
+            }
+            if (is_scalar($v)) {
+                return (string) $v;
+            }
+            if (is_array($v)) {
+                $enc = json_encode($v, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                return is_string($enc) ? $enc : '';
+            }
+            return '';
+        };
+
+        $diffMap = static function (string $prefix, array $old, array $new, array $skip) use (&$meta, $encode, &$diffMap): void {
+            $allKeys = array_unique(array_merge(array_keys($old), array_keys($new)));
+            foreach ($allKeys as $key) {
+                if (in_array($key, $skip, true)) {
+                    continue;
+                }
+                $ov = $old[$key] ?? null;
+                $nv = $new[$key] ?? null;
+                if ($ov === $nv) {
+                    continue;
+                }
+                $label = $prefix !== '' ? $prefix . '.' . $key : (string) $key;
+                if (is_array($ov) && is_array($nv)) {
+                    $diffMap($label, $ov, $nv, []);
+                } else {
+                    $meta[$label] = ['status' => 'changed', 'old' => $encode($ov ?? ''), 'new' => $encode($nv ?? '')];
+                }
+            }
+        };
+
+        $diffMap('', $oldBlock['data'], $newBlock['data'], $textKeys);
+        $diffMap('', $oldBlock['tunes'] ?? [], $newBlock['tunes'] ?? [], []);
+
+        return $meta;
+    }
+
     private function hasInsDel(string $html): bool
     {
         return stripos($html, '<ins') !== false || stripos($html, '<del') !== false;
