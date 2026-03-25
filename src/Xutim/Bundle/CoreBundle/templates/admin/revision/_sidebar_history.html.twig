@@ -19,6 +19,9 @@
                         {{ event.recordedAt|date('d M H:i') }}
                     </div>
                     <div class="small text-secondary">
+                        {% if not is_content_event(event) %}
+                            <span class="badge bg-muted-lt">{{ revision_event_label(event) }}</span>
+                        {% endif %}
                         {{ userData.name|default(event.userIdentifier) }}
                     </div>
                 </div>

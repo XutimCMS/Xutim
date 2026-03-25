@@ -57,34 +57,61 @@
                     {% set total = events|length %}
                     {% for event in events %}
                         {% set userData = usersData[event.userIdentifier]|default({}) %}
-                        <label class="list-group-item d-flex align-items-center gap-2 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                class="form-check-input m-0"
-                                value="{{ event.id }}"
-                                data-revision-filter-target="checkbox"
-                                data-action="revision-filter#selectRevision"
-                                data-index="{{ loop.index0 }}"
-                                {{ selectedOld.id == event.id or selectedNew.id == event.id ? 'checked' : '' }}
-                            />
-                            <div class="text-muted" style="width: 1.5rem">
-                                {{ total - loop.index0 }}
-                            </div>
-                            <span
-                                class="avatar avatar-sm"
-                                {% if userData.avatar|default('') %}
-                                style="background-image: url({{ userData.avatar }})"
-                                {% endif %}
-                            ></span>
-                            <div class="flex-fill">
-                                <div class="fw-semibold">
-                                    {{ event.recordedAt|date('d M Y H:i') }}
+                        {% set isContent = is_content_event(event) %}
+                        {% if isContent %}
+                            <label class="list-group-item d-flex align-items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input m-0"
+                                    value="{{ event.id }}"
+                                    data-revision-filter-target="checkbox"
+                                    data-action="revision-filter#selectRevision"
+                                    data-index="{{ loop.index0 }}"
+                                    {{ selectedOld.id == event.id or selectedNew.id == event.id ? 'checked' : '' }}
+                                />
+                                <div class="text-muted" style="width: 1.5rem">
+                                    {{ total - loop.index0 }}
                                 </div>
-                                <div class="small text-secondary">
-                                    {{ userData.name|default(event.userIdentifier) }}
+                                <span
+                                    class="avatar avatar-sm"
+                                    {% if userData.avatar|default('') %}
+                                    style="background-image: url({{ userData.avatar }})"
+                                    {% endif %}
+                                ></span>
+                                <div class="flex-fill">
+                                    <div class="fw-semibold">
+                                        {{ event.recordedAt|date('d M Y H:i') }}
+                                    </div>
+                                    <div class="small text-secondary">
+                                        {{ userData.name|default(event.userIdentifier) }}
+                                    </div>
+                                </div>
+                            </label>
+                        {% else %}
+                            <div class="list-group-item d-flex align-items-center gap-2">
+                                <div style="width: 1.1rem"></div>
+                                <div class="text-muted" style="width: 1.5rem">
+                                    {{ total - loop.index0 }}
+                                </div>
+                                <span
+                                    class="avatar avatar-sm"
+                                    {% if userData.avatar|default('') %}
+                                    style="background-image: url({{ userData.avatar }})"
+                                    {% endif %}
+                                ></span>
+                                <div class="flex-fill">
+                                    <div class="fw-semibold">
+                                        {{ event.recordedAt|date('d M Y H:i') }}
+                                    </div>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="badge bg-muted-lt">{{ revision_event_label(event) }}</span>
+                                        <span class="small text-secondary">
+                                            {{ userData.name|default(event.userIdentifier) }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </label>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

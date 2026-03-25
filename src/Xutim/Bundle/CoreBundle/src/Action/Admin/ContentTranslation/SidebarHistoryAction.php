@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
+use Xutim\CoreBundle\Twig\Extension\RevisionExtension;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
 class SidebarHistoryAction extends AbstractController
@@ -16,6 +17,7 @@ class SidebarHistoryAction extends AbstractController
         private readonly LogEventRepository $eventRepository,
         private readonly ContentTranslationRepository $contentTransRepo,
         private readonly UserRepositoryInterface $userRepository,
+        private readonly RevisionExtension $revisionExtension,
     ) {
     }
 
@@ -26,8 +28,9 @@ class SidebarHistoryAction extends AbstractController
             throw $this->createNotFoundException('The content translation does not exist');
         }
 
-        $logEvents = $this->eventRepository->findContentRevisionsByTranslation($translation);
-        $logEventsNewestFirst = array_values(array_reverse($logEvents));
+        $allEvents = $this->eventRepository->findByTranslation($translation);
+        $filteredEvents = $this->revisionExtension->filterRevisionEvents($allEvents);
+        $logEventsNewestFirst = array_reverse($filteredEvents);
 
         $usersData = $this->userRepository->findAllUsersWithAvatars();
 

@@ -12,7 +12,9 @@ use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Domain\Model\LogEventInterface;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
+use Xutim\CoreBundle\Twig\Extension\RevisionExtension;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Service\BlockAuthorTracker;
@@ -32,6 +34,7 @@ class ShowTranslationRevisionsAction extends AbstractController
         private readonly SiteContext $siteContext,
         private readonly TagRepository $tagRepo,
         private readonly ContentContext $contentContext,
+        private readonly RevisionExtension $revisionExtension,
     ) {
     }
 
@@ -46,16 +49,34 @@ class ShowTranslationRevisionsAction extends AbstractController
             throw $this->createNotFoundException('Either both (oldId and newId) should be set or both have to be null.');
         }
 
-        $logEvents = $this->eventRepository->findContentRevisionsByTranslation($translation);
-        $logEventsNewestFirst = array_values(array_reverse($logEvents));
+        $allEvents = $this->eventRepository->findByTranslation($translation);
+        $filteredEvents = $this->revisionExtension->filterRevisionEvents($allEvents);
+        $filteredEventsNewestFirst = array_reverse($filteredEvents);
+
+        $contentEvents = array_values(array_filter($allEvents, static function (LogEventInterface $event): bool {
+            $domainEvent = $event->getEvent();
+            return $domainEvent instanceof ContentTranslationCreatedEvent
+                || $domainEvent instanceof ContentTranslationUpdatedEvent;
+        }));
+        $contentEventsNewestFirst = array_reverse($contentEvents);
+
         if ($oldId === null && $newId === null) {
-            $newRevision = $logEventsNewestFirst[0];
-            $oldRevision = $logEventsNewestFirst[count($logEvents) === 1 ? 0 : 1];
+            $newRevision = $contentEventsNewestFirst[0];
+            $oldRevision = $contentEventsNewestFirst[count($contentEvents) === 1 ? 0 : 1];
         } else {
             $oldRevision = $this->eventRepository->find($oldId);
             $newRevision = $this->eventRepository->find($newId);
             if ($oldRevision === null || $newRevision === null) {
                 throw $this->createNotFoundException('The revision with "' . $oldId . '" or "' . $newId . '" does not exist.');
+            }
+
+            $oldEvent = $oldRevision->getEvent();
+            $newEvent = $newRevision->getEvent();
+            if (
+                !($oldEvent instanceof ContentTranslationCreatedEvent || $oldEvent instanceof ContentTranslationUpdatedEvent)
+                || !($newEvent instanceof ContentTranslationCreatedEvent || $newEvent instanceof ContentTranslationUpdatedEvent)
+            ) {
+                throw $this->createNotFoundException('The selected revisions must be content events.');
             }
         }
 
@@ -97,7 +118,7 @@ class ShowTranslationRevisionsAction extends AbstractController
         );
 
         $blockAuthors = $this->blockAuthorTracker->getBlockAuthors(
-            $logEvents,
+            $contentEvents,
             $oldRevision->getId(),
             $newRevision->getId(),
         );
@@ -111,7 +132,7 @@ class ShowTranslationRevisionsAction extends AbstractController
             'selectedNew' => $newRevision,
             'descriptionDiff' => $descriptionDiff,
             'contentRows' => $contentRows,
-            'events' => $logEventsNewestFirst,
+            'events' => $filteredEventsNewestFirst,
             'usersData' => $usersData,
             'changeSummary' => $changeSummary,
             'blockAuthors' => $blockAuthors,
@@ -137,9 +158,9 @@ class ShowTranslationRevisionsAction extends AbstractController
         $referenceHasChanged = false;
         if ($referenceTranslation !== null
             && $translation->getLocale() !== $refLocale
-            && $translation->getReferenceSyncedAt() !== null
         ) {
-            $referenceHasChanged = $referenceTranslation->getUpdatedAt() > $translation->getReferenceSyncedAt();
+            $referenceHasChanged = $translation->getReferenceSyncedAt() === null
+                || $referenceTranslation->getUpdatedAt() > $translation->getReferenceSyncedAt();
         }
 
         $revisionsCount = $this->eventRepository->eventsCountPerTranslation($translation);
@@ -169,9 +190,9 @@ class ShowTranslationRevisionsAction extends AbstractController
         $referenceHasChanged = false;
         if ($referenceTranslation !== null
             && $translation->getLocale() !== $refLocale
-            && $translation->getReferenceSyncedAt() !== null
         ) {
-            $referenceHasChanged = $referenceTranslation->getUpdatedAt() > $translation->getReferenceSyncedAt();
+            $referenceHasChanged = $translation->getReferenceSyncedAt() === null
+                || $referenceTranslation->getUpdatedAt() > $translation->getReferenceSyncedAt();
         }
 
         $revisionsCount = $this->eventRepository->eventsCountPerTranslation($translation);
