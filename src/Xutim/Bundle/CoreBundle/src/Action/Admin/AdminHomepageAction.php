@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Action\Admin;
 
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Repository\ArticleRepository;
@@ -24,13 +27,15 @@ class AdminHomepageAction extends AbstractController
     ) {
     }
 
-    public function __invoke(): Response
-    {
+    public function __invoke(
+        #[MapQueryParameter] int $untranslatedPage = 1,
+        #[MapQueryParameter] int $changedPage = 1,
+    ): Response {
         $latestArticles = $this->articleRepository->findBy([], ['createdAt' => 'desc'], 10);
         $articlesCount = $this->articleRepository->getArticlesCount();
 
         if ($this->isGranted('ROLE_TRANSLATOR')) {
-            return $this->renderDashboardForTranslators($latestArticles, $articlesCount);
+            return $this->renderDashboardForTranslators($latestArticles, $articlesCount, $untranslatedPage, $changedPage);
         }
 
         return $this->renderDashboardForUsers($latestArticles);
@@ -41,7 +46,9 @@ class AdminHomepageAction extends AbstractController
      */
     private function renderDashboardForTranslators(
         array $latestArticles,
-        int $articlesCount
+        int $articlesCount,
+        int $untranslatedPage,
+        int $changedPage,
     ): Response {
         $userLocales = $this->getUser()->getTranslationLocales();
         $userLocales = array_filter(
@@ -53,20 +60,24 @@ class AdminHomepageAction extends AbstractController
         foreach ($userLocales as $locale) {
             $translatedLocalesCount[$locale] = $this->articleRepository->getTranslatedSumByLocale($locale);
         }
-        $latestUntranslatedArticles = $this->articleRepository->findByMissingTranslations(
-            $userLocales,
+
+        $untranslatedPager = Pagerfanta::createForCurrentPageWithMaxPerPage(
+            new ArrayAdapter($this->articleRepository->findByMissingTranslations($userLocales)),
+            $untranslatedPage,
             10
         );
-        $latestChangedArticles = $this->articleRepository->findByChangedDefaultTranslations(
-            $userLocales,
+        $changedPager = Pagerfanta::createForCurrentPageWithMaxPerPage(
+            new ArrayAdapter($this->articleRepository->findByChangedDefaultTranslations($userLocales)),
+            $changedPage,
             10
         );
+
         $latestNotifications = $this->notificationRepository->findLatestForRecipient($this->getUser(), 5);
 
         return $this->render('@XutimCore/admin/homepage/homepage_translator.html.twig', [
             'latestArticles' => $latestArticles,
-            'latestUntranslatedArticles' => $latestUntranslatedArticles,
-            'latestChangedArticles' => $latestChangedArticles,
+            'untranslatedPager' => $untranslatedPager,
+            'changedPager' => $changedPager,
             'latestNotifications' => $latestNotifications,
             'articlesCount' => $articlesCount,
             'translatedLocalesCount' => $translatedLocalesCount,

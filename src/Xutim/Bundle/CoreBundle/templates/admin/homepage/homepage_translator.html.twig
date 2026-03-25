@@ -79,6 +79,7 @@
 
     <div class="row row-cards mt-4">
         <div class="col-md-12 col-lg-6">
+            <turbo-frame id="untranslated-articles" data-turbo-action="advance">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -86,7 +87,7 @@
                     </h3>
                 </div>
                 <div class="card-table table-responsive">
-                    <table class="table  table-vcenter">
+                    <table class="table table-vcenter">
                         <thead>
                             <tr>
                                 <th
@@ -109,7 +110,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for article in latestUntranslatedArticles %}
+                            {% for article in untranslatedPager %}
                                 {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
                                 {% set firstMissingLocale = null %}
                                 {% for userLocale in userLocales %}
@@ -125,7 +126,7 @@
                                     </td>
                                     <td class="text-wrap">
                                         <a
-                                            href="{{ admin_path('admin_article_edit', {id: article.id, locale: firstMissingLocale}) }}"
+                                            href="{{ admin_path('admin_article_edit', {id: article.id, _content_locale: firstMissingLocale}) }}"
                                             data-turbo-frame="_top"
                                             class="btn-link mt-1 text-dark"
                                             aria-label="{{ 'show'|trans({}, 'admin') }}"
@@ -162,9 +163,41 @@
                         </tbody>
                     </table>
                 </div>
+                {% if untranslatedPager.nbPages > 1 %}
+                <div class="card-footer d-flex align-items-center border-top">
+                    <p class="m-0 text-muted">
+                        {{ 'page'|trans({}, 'admin')|capitalize }}
+                        {{ untranslatedPager.currentPage }}
+                        {{ 'of'|trans({}, 'admin') }}
+                        {{ untranslatedPager.nbPages }}
+                    </p>
+                    <ul class="pagination m-0 ms-auto">
+                        <li class="page-item{{ not untranslatedPager.hasPreviousPage ? ' disabled' }}">
+                            <a
+                                href="{{ untranslatedPager.hasPreviousPage ? admin_current_path_with({untranslatedPage: untranslatedPager.previousPage}) : '#' }}"
+                                class="page-link"
+                            >
+                                <twig:Xutim:Admin:Icon name="chevron-left" />
+                                {{ 'prev'|trans({}, 'admin') }}
+                            </a>
+                        </li>
+                        <li class="page-item{{ not untranslatedPager.hasNextPage ? ' disabled' }}">
+                            <a
+                                href="{{ untranslatedPager.hasNextPage ? admin_current_path_with({untranslatedPage: untranslatedPager.nextPage}) : '#' }}"
+                                class="page-link"
+                            >
+                                {{ 'next'|trans({}, 'admin') }}
+                                <twig:Xutim:Admin:Icon name="chevron-right" />
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
             </div>
+            </turbo-frame>
         </div>
         <div class="col-md-12 col-lg-6">
+            <turbo-frame id="changed-articles" data-turbo-action="advance">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -190,7 +223,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for article in latestChangedArticles %}
+                            {% for article in changedPager %}
                                 {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
                                 {% set refTrans = article.getTranslationByLocale(referenceLocale) %}
                                 {% set effectiveRef = refTrans ?? article.defaultTranslation %}
@@ -207,7 +240,7 @@
                                     </td>
                                     <td class="text-wrap">
                                         <a
-                                            href="{{ admin_path('admin_article_edit', {id: article.id, locale: firstOutdatedLocale}) }}"
+                                            href="{{ admin_path('admin_article_edit', {id: article.id, _content_locale: firstOutdatedLocale}) }}"
                                             data-turbo-frame="_top"
                                             class="btn-link mt-1 text-dark"
                                             aria-label="{{ 'show'|trans({}, 'admin') }}"
@@ -240,7 +273,38 @@
                         </tbody>
                     </table>
                 </div>
+                {% if changedPager.nbPages > 1 %}
+                <div class="card-footer d-flex align-items-center border-top">
+                    <p class="m-0 text-muted">
+                        {{ 'page'|trans({}, 'admin')|capitalize }}
+                        {{ changedPager.currentPage }}
+                        {{ 'of'|trans({}, 'admin') }}
+                        {{ changedPager.nbPages }}
+                    </p>
+                    <ul class="pagination m-0 ms-auto">
+                        <li class="page-item{{ not changedPager.hasPreviousPage ? ' disabled' }}">
+                            <a
+                                href="{{ changedPager.hasPreviousPage ? admin_current_path_with({changedPage: changedPager.previousPage}) : '#' }}"
+                                class="page-link"
+                            >
+                                <twig:Xutim:Admin:Icon name="chevron-left" />
+                                {{ 'prev'|trans({}, 'admin') }}
+                            </a>
+                        </li>
+                        <li class="page-item{{ not changedPager.hasNextPage ? ' disabled' }}">
+                            <a
+                                href="{{ changedPager.hasNextPage ? admin_current_path_with({changedPage: changedPager.nextPage}) : '#' }}"
+                                class="page-link"
+                            >
+                                {{ 'next'|trans({}, 'admin') }}
+                                <twig:Xutim:Admin:Icon name="chevron-right" />
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
             </div>
+            </turbo-frame>
         </div>
     </div>
 {% endblock %}
