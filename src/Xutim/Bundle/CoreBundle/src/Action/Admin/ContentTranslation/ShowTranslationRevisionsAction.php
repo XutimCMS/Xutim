@@ -64,19 +64,27 @@ class ShowTranslationRevisionsAction extends AbstractController
             $newRevision = $contentEventsNewestFirst[0];
             $oldRevision = $contentEventsNewestFirst[count($contentEvents) === 1 ? 0 : 1];
         } else {
-            $oldRevision = $this->eventRepository->find($oldId);
-            $newRevision = $this->eventRepository->find($newId);
-            if ($oldRevision === null || $newRevision === null) {
+            $revisionA = $this->eventRepository->find($oldId);
+            $revisionB = $this->eventRepository->find($newId);
+            if ($revisionA === null || $revisionB === null) {
                 throw $this->createNotFoundException('The revision with "' . $oldId . '" or "' . $newId . '" does not exist.');
             }
 
-            $oldEvent = $oldRevision->getEvent();
-            $newEvent = $newRevision->getEvent();
+            $eventA = $revisionA->getEvent();
+            $eventB = $revisionB->getEvent();
             if (
-                !($oldEvent instanceof ContentTranslationCreatedEvent || $oldEvent instanceof ContentTranslationUpdatedEvent)
-                || !($newEvent instanceof ContentTranslationCreatedEvent || $newEvent instanceof ContentTranslationUpdatedEvent)
+                !($eventA instanceof ContentTranslationCreatedEvent || $eventA instanceof ContentTranslationUpdatedEvent)
+                || !($eventB instanceof ContentTranslationCreatedEvent || $eventB instanceof ContentTranslationUpdatedEvent)
             ) {
                 throw $this->createNotFoundException('The selected revisions must be content events.');
+            }
+
+            if ($revisionA->getRecordedAt() <= $revisionB->getRecordedAt()) {
+                $oldRevision = $revisionA;
+                $newRevision = $revisionB;
+            } else {
+                $oldRevision = $revisionB;
+                $newRevision = $revisionA;
             }
         }
 
