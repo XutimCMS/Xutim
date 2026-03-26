@@ -39,6 +39,7 @@ final class EditorJsDiffRenderer
 
         /** @var array<string,int> $oldById */
         $oldById = $this->indexById($oldBlocks);
+        $newById = $this->indexById($newBlocks);
 
         $result = [];
         /** @var array<int,true> $visitedOld */
@@ -47,7 +48,7 @@ final class EditorJsDiffRenderer
         foreach ($newBlocks as $newIndex => $newBlock) {
             $nid = $newBlock['id'];
 
-            $matchedOldIndex = $oldById[$nid] ?? $this->fuzzyMatchIndex($newBlock, $oldBlocks);
+            $matchedOldIndex = $oldById[$nid] ?? $this->fuzzyMatchIndex($newBlock, $oldBlocks, $newById, $visitedOld);
 
             if ($matchedOldIndex !== null) {
                 $visitedOld[$matchedOldIndex] = true;
@@ -113,6 +114,7 @@ final class EditorJsDiffRenderer
             $propsChanged = $this->metaHasChange($propsMeta);
 
             if ($oldTxt === $newTxt) {
+                // Text with formatting tags is identical → unchanged (or props-only change)
                 return [
                     'op' => $propsChanged ? 'modified' : 'unchanged',
                     'block_new' => $newBlock,
@@ -120,6 +122,39 @@ final class EditorJsDiffRenderer
                     'meta' => $propsMeta,
                 ];
             }
+
+            $oldPlain = trim(strip_tags($oldTxt));
+            $newPlain = trim(strip_tags($newTxt));
+
+            if ($oldPlain === $newPlain) {
+                // Plain text identical but formatting changed (e.g. italic added/removed).
+                // Show old formatting struck through, new formatting as replacement.
+                $html = '<del>' . $oldTxt . '</del><ins>' . $newTxt . '</ins>';
+                return [
+                    'op' => 'modified_text',
+                    'block_new' => $newBlock,
+                    'block_old' => $oldBlock,
+                    'html' => $this->unescapeInlineHtml($html),
+                    'meta' => $propsMeta,
+                ];
+            }
+
+            // When one side is effectively empty, show full replacement
+            // instead of broken line-by-line diff
+            if ($oldPlain === '' || $newPlain === '') {
+                $oldHtml = $oldPlain !== '' ? '<del>' . htmlspecialchars($oldPlain) . '</del>' : '';
+                $newHtml = $newPlain !== ''
+                    ? '<ins>' . $newTxt . '</ins>'
+                    : '<ins>' . $this->unescapeInlineHtml(htmlspecialchars($newTxt)) . '</ins>';
+                return [
+                    'op' => 'modified_text',
+                    'block_new' => $newBlock,
+                    'block_old' => $oldBlock,
+                    'html' => $oldHtml . $newHtml,
+                    'meta' => $propsMeta,
+                ];
+            }
+
             $html = $this->inlineDiff($oldTxt, $newTxt);
             return [
                 'op' => 'modified_text',
@@ -178,11 +213,11 @@ final class EditorJsDiffRenderer
             $onlyLastCol2 = $this->extractDiffColumnHtml($html2);
 
             if ($this->hasInsDel($onlyLastCol2)) {
-                return $onlyLastCol2;
+                return $this->unescapeInlineHtml($onlyLastCol2);
             }
         }
 
-        return $onlyLastCol;
+        return $this->unescapeInlineHtml($onlyLastCol);
     }
 
     /**
@@ -222,7 +257,12 @@ final class EditorJsDiffRenderer
      * @param EditorBlocksUnion       $needle
      * @param list<EditorBlocksUnion> $haystack
      */
-    private function fuzzyMatchIndex(array $needle, array $haystack): ?int
+    /**
+     * @param array<string,int>  $reservedIds Old block IDs that exist in the new
+     *                                        block set — will be matched by ID later.
+     * @param array<int,true>   $visitedOld  Old indices already matched — skip them.
+     */
+    private function fuzzyMatchIndex(array $needle, array $haystack, array $reservedIds = [], array $visitedOld = []): ?int
     {
         $needleType = $needle['type'];
         $needleText = $this->extractText($needle);
@@ -231,18 +271,29 @@ final class EditorJsDiffRenderer
         $bestScore = 0.0;
 
         foreach ($haystack as $i => $cand) {
+            if (isset($visitedOld[$i])) {
+                continue;
+            }
             if ($cand['type'] !== $needleType) {
                 continue;
             }
+            if (isset($reservedIds[$cand['id']])) {
+                continue;
+            }
             $candText = $this->extractText($cand);
-            $score = (float) similar_text($candText, $needleText);
-            if ($score > $bestScore) {
-                $bestScore = $score;
+            $maxLen = max(strlen($candText), strlen($needleText));
+            if ($maxLen === 0) {
+                continue;
+            }
+            $matchedChars = (float) similar_text($candText, $needleText);
+            $pct = $matchedChars / $maxLen;
+            if ($pct > $bestScore) {
+                $bestScore = $pct;
                 $bestIndex = $i;
             }
         }
 
-        return $bestScore >= 25.0 ? $bestIndex : null;
+        return $bestScore >= 0.5 ? $bestIndex : null;
     }
 
     /**
@@ -366,8 +417,43 @@ final class EditorJsDiffRenderer
         return $html;
     }
 
+    /**
+     * Restore escaped formatting tags (<i>, <b>, <em>, <strong>) back to real
+     * HTML so the browser renders them. Span tags are stripped entirely since
+     * they are Editor.js wrappers that add no visible formatting.
+     */
+    private function unescapeInlineHtml(string $html): string
+    {
+        // Strip span tags (noise from Editor.js)
+        $html = preg_replace('/&lt;span(\s[^&]*?)?&gt;/i', '', $html) ?? $html;
+        $html = str_ireplace('&lt;/span&gt;', '', $html);
+
+        // Render <br> as a visible line break symbol
+        $brMarker = '⏎';
+        $html = str_ireplace('&lt;br&gt;', $brMarker, $html);
+        $html = preg_replace('/&lt;br\s*\/?&gt;/i', $brMarker, $html) ?? $html;
+
+        // Restore semantic formatting tags
+        $formattingTags = ['b', 'i', 'u', 'em', 'strong', 'mark', 'code', 'sub', 'sup'];
+        foreach ($formattingTags as $tag) {
+            $html = preg_replace('/&lt;(' . $tag . ')(\s[^&]*?)?&gt;/i', '<$1$2>', $html) ?? $html;
+            $html = str_ireplace('&lt;/' . $tag . '&gt;', '</' . $tag . '>', $html);
+        }
+
+        return $html;
+    }
+
+    private function stripSpanTags(string $s): string
+    {
+        $s = preg_replace('/<span[^>]*>/i', '', $s) ?? $s;
+        $s = str_ireplace('</span>', '', $s);
+
+        return $s;
+    }
+
     private function normalizeWs(string $s): string
     {
+        $s = $this->stripSpanTags($s);
         // unify NBSP and weird spaces
         $s = str_replace(["\xC2\xA0", "&nbsp;"], ' ', $s);
         // trim each line's indentation

@@ -133,6 +133,8 @@
             {{
                 include('@XutimCore/admin/content_fragment/diff/code_block_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
             }}
+        {% elseif fragment.type == 'delimiter' %}
+            {{ include('@XutimCore/admin/content_fragment/delimiter.html.twig') }}
         {% elseif fragment.type == 'foldableStart' %}
             {{
                 include('@XutimCore/admin/content_fragment/foldable_start.html.twig', {fragment: fragment, inlineHtml: inlineHtml})
