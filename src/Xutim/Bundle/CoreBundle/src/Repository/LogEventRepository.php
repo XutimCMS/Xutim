@@ -79,21 +79,35 @@ class LogEventRepository extends ServiceEntityRepository
         return $this->findOneBy(['objectId' => $object->getId()], ['recordedAt' => 'asc']);
     }
 
+    public function findLatestContentRevision(ContentTranslationInterface $translation): ?LogEventInterface
+    {
+        return $this->findContentRevisionBefore($translation);
+    }
+
     public function findRevisionAtOrBefore(
         ContentTranslationInterface $translation,
         \DateTimeImmutable $before,
     ): ?LogEventInterface {
-        /** @var array<LogEventInterface> */
-        $events = $this->createQueryBuilder('e')
+        return $this->findContentRevisionBefore($translation, $before);
+    }
+
+    private function findContentRevisionBefore(
+        ContentTranslationInterface $translation,
+        ?\DateTimeImmutable $before = null,
+    ): ?LogEventInterface {
+        $qb = $this->createQueryBuilder('e')
             ->where('e.objectId = :id')
-            ->andWhere('e.recordedAt <= :before')
             ->setParameter('id', $translation->getId())
-            ->setParameter('before', $before)
             ->orderBy('e.recordedAt', 'DESC')
-            ->setMaxResults(20)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->setMaxResults(20);
+
+        if ($before !== null) {
+            $qb->andWhere('e.recordedAt <= :before')
+                ->setParameter('before', $before);
+        }
+
+        /** @var array<LogEventInterface> */
+        $events = $qb->getQuery()->getResult();
 
         foreach ($events as $event) {
             $domainEvent = $event->getEvent();

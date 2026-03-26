@@ -55,11 +55,21 @@ class ShowReferenceDiffAction extends AbstractController
         /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent $oldEvent */
         $oldEvent = $oldRevision->getEvent();
 
-        $preTitleDiff = $this->diffRenderer->diffTitle($oldEvent->preTitle, $refTranslation->getPreTitle());
-        $titleDiff = $this->diffRenderer->diffTitle($oldEvent->title, $refTranslation->getTitle());
-        $subTitleDiff = $this->diffRenderer->diffTitle($oldEvent->subTitle, $refTranslation->getSubTitle());
-        $descriptionDiff = $this->diffRenderer->diffDescription($oldEvent->description, $refTranslation->getDescription());
-        $contentRows = $this->diffRenderer->diffContent($oldEvent->content, $refTranslation->getContent());
+        $currentRevision = $this->logEventRepo->findLatestContentRevision($refTranslation);
+        /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent|null $newEvent */
+        $newEvent = $currentRevision?->getEvent();
+
+        $newPreTitle = $newEvent?->preTitle ?? $refTranslation->getPreTitle();
+        $newTitle = $newEvent?->title ?? $refTranslation->getTitle();
+        $newSubTitle = $newEvent?->subTitle ?? $refTranslation->getSubTitle();
+        $newDescription = $newEvent?->description ?? $refTranslation->getDescription();
+        $newContent = $newEvent?->content ?? $refTranslation->getContent();
+
+        $preTitleDiff = $this->diffRenderer->diffTitle($oldEvent->preTitle, $newPreTitle);
+        $titleDiff = $this->diffRenderer->diffTitle($oldEvent->title, $newTitle);
+        $subTitleDiff = $this->diffRenderer->diffTitle($oldEvent->subTitle, $newSubTitle);
+        $descriptionDiff = $this->diffRenderer->diffDescription($oldEvent->description, $newDescription);
+        $contentRows = $this->diffRenderer->diffContent($oldEvent->content, $newContent);
 
         return $this->render('@XutimCore/admin/content_translation/_reference_diff.html.twig', [
             'preTitleDiff' => $preTitleDiff,
