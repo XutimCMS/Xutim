@@ -111,7 +111,7 @@
                         </thead>
                         <tbody>
                             {% for article in untranslatedPager %}
-                                {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
+                                {% set translation = article.translationByLocaleOrAny(content_context_language(), referenceLocale) %}
                                 {% set firstMissingLocale = null %}
                                 {% for userLocale in userLocales %}
                                     {% if firstMissingLocale is null
@@ -224,7 +224,7 @@
                         </thead>
                         <tbody>
                             {% for article in changedPager %}
-                                {% set translation = article.translationByLocaleOrAny(content_context_language()) %}
+                                {% set translation = article.translationByLocaleOrAny(content_context_language(), referenceLocale) %}
                                 {% set refTrans = article.getTranslationByLocale(referenceLocale) %}
                                 {% set effectiveRef = refTrans ?? article.defaultTranslation %}
                                 {% set firstOutdatedLocale = null %}
