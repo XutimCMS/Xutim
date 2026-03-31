@@ -37,7 +37,7 @@ class DeleteRedirectAction
         if ($redirect === null) {
             throw new NotFoundHttpException('The redirect does not exist');
         }
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
 
         $this->repo->remove($redirect, true);
         $this->flashNotifier->changesSaved();

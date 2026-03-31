@@ -66,7 +66,7 @@ class ForgotPasswordRequestAction
         }
 
         $email = (new TemplatedEmail())
-            ->from(new Address($this->siteContext->getSender(), 'Taizé Website'))
+            ->from(new Address($this->siteContext->getSender(), 'Xutim'))
             ->to($user->getEmail())
             ->subject('Your password reset request')
             ->htmlTemplate('@XutimSecurity/security/reset_password/email.html.twig')

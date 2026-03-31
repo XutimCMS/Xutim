@@ -40,7 +40,7 @@ class MarkDefaultTranslationAction extends AbstractController
             throw $this->createNotFoundException('The content translation does not exist');
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
         $page->setDefaultTranslation($trans);
         $this->pageRepo->save($page, true);
 

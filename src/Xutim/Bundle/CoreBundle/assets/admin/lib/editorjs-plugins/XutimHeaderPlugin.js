@@ -1,6 +1,6 @@
 import Header from '@editorjs/header';
 
-export default class PulseHeader extends Header {
+export default class XutimHeader extends Header {
     constructor({ data, config, api }) {
         super({ data, config, api });
 

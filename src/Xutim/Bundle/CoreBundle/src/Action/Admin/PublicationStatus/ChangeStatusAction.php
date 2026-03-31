@@ -37,7 +37,7 @@ class ChangeStatusAction extends AbstractController
             throw $this->createNotFoundException('The content translation does not exist');
         }
         $this->transAuthChecker->denyUnlessCanTranslate($translation->getLocale());
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
 
         $user = $this->userStorage->getUserWithException();
         $command = new ChangePublicationStatusCommand(

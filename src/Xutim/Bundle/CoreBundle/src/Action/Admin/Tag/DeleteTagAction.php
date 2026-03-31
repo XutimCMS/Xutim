@@ -33,7 +33,7 @@ class DeleteTagAction extends AbstractController
         }
 
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
 
         if ($tag->getArticles()->isEmpty() === false) {
             $message = $this->generateLinkedWithArticlesMessage($request, $tag);

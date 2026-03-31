@@ -33,7 +33,7 @@ class DeleteTranslationAction extends AbstractController
             throw $this->createNotFoundException('The content translation does not exist');
         }
         $this->transAuthChecker->denyUnlessCanTranslate($trans->getLocale());
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
         $object = $trans->getObject();
         // Last translation is about to be deleted.
         $fullyDeleted = $object->getTranslations()->count() === 1;

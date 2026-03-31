@@ -40,7 +40,7 @@ class DeleteSnippetAction
             throw new NotFoundHttpException('The snippet does not exist');
         }
 
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
         foreach ($snippet->getTranslations() as $trans) {
             $this->transRepo->remove($trans);
         }

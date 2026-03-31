@@ -36,7 +36,7 @@ class ChangeTagStatusAction extends AbstractController
             throw $this->createNotFoundException('The tag does not exist');
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
 
         $user = $this->userStorage->getUserWithException();
         $command = new ChangeTagPublicationStatusCommand(

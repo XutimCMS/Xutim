@@ -29,7 +29,7 @@ class DiscardDraftAction extends AbstractController
 
     public function __invoke(Request $request, string $draftId): Response
     {
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
 
         $draft = $this->draftRepo->find(Uuid::fromString($draftId));
         if ($draft === null) {

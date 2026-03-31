@@ -41,7 +41,7 @@ export default class FileGalleryModal {
             'data-action',
             'close->modal#close click->modal#clickOutside',
         );
-        dialog.id = 'pulse-dialog';
+        dialog.id = 'xutim-dialog';
         dialog.className = 'shadow-lg dialog-md d-block';
         dialog.style.border = 'none';
         dialog.style.background = 'transparent';

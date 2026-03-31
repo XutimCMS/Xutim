@@ -41,7 +41,7 @@ class DeleteUserAction
             throw new NotFoundHttpException('The user does not exist');
         }
 
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
         $command = new DeleteUserCommand($user->getId(), $user->getUserIdentifier());
         $this->commandBus->dispatch($command);
         $this->flashNotifier->changesSaved();

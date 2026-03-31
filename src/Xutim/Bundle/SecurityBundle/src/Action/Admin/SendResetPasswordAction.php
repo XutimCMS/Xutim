@@ -37,7 +37,7 @@ class SendResetPasswordAction
         if ($this->authChecker->isGranted(UserRoles::ROLE_ADMIN) === false) {
             throw new AccessDeniedException('Access denied.');
         }
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
 
         $this->commandBus->dispatch(new SendResetPasswordCommand($user->getId()));
 

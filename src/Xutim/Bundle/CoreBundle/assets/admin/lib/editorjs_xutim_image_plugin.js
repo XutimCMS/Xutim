@@ -1,6 +1,6 @@
 import ImageTool from '@editorjs/image';
 
-export default class PulseImage extends ImageTool {
+export default class XutimImage extends ImageTool {
     render() {
         const wrapper = super.render();
 

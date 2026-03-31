@@ -26,7 +26,7 @@ class RemoveBlockItemAction extends AbstractController
             throw $this->createNotFoundException('The item does not exist');
         }
         $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-        $this->csrfTokenChecker->checkTokenFromFormRequest('pulse-dialog', $request);
+        $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
         $this->blockItemRepository->remove($blockItem, true);
         $this->addFlash('success', 'flash.changes_made_successfully');
 
