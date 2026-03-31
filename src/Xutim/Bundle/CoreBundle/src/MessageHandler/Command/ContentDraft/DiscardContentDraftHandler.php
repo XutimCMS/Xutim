@@ -34,8 +34,6 @@ readonly class DiscardContentDraftHandler implements CommandHandlerInterface
 
         $translationId = $draft->getTranslation()->getId();
 
-        $this->draftRepo->remove($draft, true);
-
         $event = new ContentDraftDiscardedEvent($translationId, $cmd->draftId);
 
         $log = $this->logEventFactory->create(
@@ -45,6 +43,8 @@ readonly class DiscardContentDraftHandler implements CommandHandlerInterface
             $event
         );
 
-        $this->eventRepository->save($log, true);
+        $this->draftRepo->remove($draft);
+        $this->eventRepository->save($log);
+        $this->draftRepo->flush();
     }
 }

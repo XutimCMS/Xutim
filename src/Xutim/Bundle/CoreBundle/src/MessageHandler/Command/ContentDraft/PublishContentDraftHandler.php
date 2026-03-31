@@ -61,10 +61,6 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
         $translation->changeSearchContent($searchContent);
         $translation->changeSearchTagContent($searchTagContent);
 
-        $this->draftRepo->remove($draft);
-        $this->contentTransRepo->save($translation);
-        $this->draftRepo->flush();
-
         $hasContentRevisions = count($this->eventRepository->findContentRevisionsByTranslation($translation)) > 0;
 
         $event = $hasContentRevisions
@@ -78,7 +74,10 @@ readonly class PublishContentDraftHandler implements CommandHandlerInterface
             $event
         );
 
-        $this->eventRepository->save($log, true);
+        $this->draftRepo->remove($draft);
+        $this->contentTransRepo->save($translation);
+        $this->eventRepository->save($log);
+        $this->draftRepo->flush();
 
         if ($isReferenceTranslation) {
             $this->referenceSyncService->resyncRevertedSiblings($translation);

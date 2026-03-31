@@ -57,8 +57,8 @@
                     {% set total = events|length %}
                     {% for event in events %}
                         {% set userData = usersData[event.userIdentifier]|default({}) %}
-                        {% set isContent = is_content_event(event) %}
-                        {% if isContent %}
+                        {% set isComparable = is_comparable_event(event) %}
+                        {% if isComparable %}
                             <label class="list-group-item d-flex align-items-center gap-2 cursor-pointer">
                                 <input
                                     type="checkbox"
@@ -82,8 +82,13 @@
                                     <div class="fw-semibold">
                                         {{ event.recordedAt|date('d M Y H:i') }}
                                     </div>
-                                    <div class="small text-secondary">
-                                        {{ userData.name|default(event.userIdentifier) }}
+                                    <div class="d-flex align-items-center gap-1">
+                                        {% if not is_content_event(event) %}
+                                            <span class="badge bg-muted-lt">{{ revision_event_label(event) }}</span>
+                                        {% endif %}
+                                        <span class="small text-secondary">
+                                            {{ userData.name|default(event.userIdentifier) }}
+                                        </span>
                                     </div>
                                 </div>
                             </label>

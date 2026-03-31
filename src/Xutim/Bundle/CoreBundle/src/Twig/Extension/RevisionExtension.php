@@ -27,6 +27,13 @@ class RevisionExtension extends AbstractExtension
         ContentDraftUpdatedEvent::class,
     ];
 
+    private const COMPARABLE_EVENTS = [
+        ContentTranslationCreatedEvent::class,
+        ContentTranslationUpdatedEvent::class,
+        ContentDraftCreatedEvent::class,
+        ContentDraftUpdatedEvent::class,
+    ];
+
     /** @var array<class-string, string> */
     private const EVENT_LABELS = [
         ContentTranslationCreatedEvent::class => 'Created',
@@ -45,6 +52,7 @@ class RevisionExtension extends AbstractExtension
     {
         return [
             new TwigFunction('is_content_event', [$this, 'isContentEvent']),
+            new TwigFunction('is_comparable_event', [$this, 'isComparableEvent']),
             new TwigFunction('revision_event_label', [$this, 'getEventLabel']),
         ];
     }
@@ -52,6 +60,11 @@ class RevisionExtension extends AbstractExtension
     public function isContentEvent(LogEventInterface $logEvent): bool
     {
         return in_array($logEvent->getEvent()::class, self::CONTENT_EVENTS, true);
+    }
+
+    public function isComparableEvent(LogEventInterface $logEvent): bool
+    {
+        return in_array($logEvent->getEvent()::class, self::COMPARABLE_EVENTS, true);
     }
 
     public function getEventLabel(LogEventInterface $logEvent): string

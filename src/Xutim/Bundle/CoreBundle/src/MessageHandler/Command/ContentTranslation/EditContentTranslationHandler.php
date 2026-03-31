@@ -71,6 +71,18 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
         $draft = $this->draftRepo->findDraft($translation);
         $isNew = $draft === null;
 
+        $source = $isNew ? $translation : $draft;
+        $hasChanges = $source->getPreTitle() !== $cmd->preTitle
+            || $source->getTitle() !== $cmd->title
+            || $source->getSubTitle() !== $cmd->subTitle
+            || $source->getSlug() !== $cmd->slug
+            || ($source->getContent()['blocks'] ?? []) !== ($cmd->content['blocks'] ?? [])
+            || $source->getDescription() !== $cmd->description;
+
+        if (!$hasChanges) {
+            return;
+        }
+
         if ($isNew) {
             $draft = $this->draftFactory->createUserDraft($translation, $user);
         }
@@ -96,8 +108,6 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
             }
         }
 
-        $this->draftRepo->save($draft, true);
-
         $event = $isNew
             ? ContentDraftCreatedEvent::fromDraft($draft)
             : ContentDraftUpdatedEvent::fromDraft($draft);
@@ -109,7 +119,9 @@ readonly class EditContentTranslationHandler implements CommandHandlerInterface
             $event
         );
 
-        $this->eventRepository->save($log, true);
+        $this->draftRepo->save($draft);
+        $this->eventRepository->save($log);
+        $this->draftRepo->flush();
     }
 
     private function applyDirectly(

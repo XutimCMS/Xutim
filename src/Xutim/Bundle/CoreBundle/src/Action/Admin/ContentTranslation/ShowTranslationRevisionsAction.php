@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Event\ContentDraft\ContentDraftCreatedEvent;
+use Xutim\CoreBundle\Domain\Event\ContentDraft\ContentDraftUpdatedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
@@ -53,11 +55,15 @@ class ShowTranslationRevisionsAction extends AbstractController
         $filteredEvents = $this->revisionExtension->filterRevisionEvents($allEvents);
         $filteredEventsNewestFirst = array_reverse($filteredEvents);
 
-        $contentEvents = array_values(array_filter($allEvents, static function (LogEventInterface $event): bool {
+        $isComparable = static function (LogEventInterface $event): bool {
             $domainEvent = $event->getEvent();
             return $domainEvent instanceof ContentTranslationCreatedEvent
-                || $domainEvent instanceof ContentTranslationUpdatedEvent;
-        }));
+                || $domainEvent instanceof ContentTranslationUpdatedEvent
+                || $domainEvent instanceof ContentDraftCreatedEvent
+                || $domainEvent instanceof ContentDraftUpdatedEvent;
+        };
+
+        $contentEvents = array_values(array_filter($allEvents, $isComparable));
         $contentEventsNewestFirst = array_reverse($contentEvents);
 
         if ($oldId === null && $newId === null) {
@@ -70,12 +76,7 @@ class ShowTranslationRevisionsAction extends AbstractController
                 throw $this->createNotFoundException('The revision with "' . $oldId . '" or "' . $newId . '" does not exist.');
             }
 
-            $eventA = $revisionA->getEvent();
-            $eventB = $revisionB->getEvent();
-            if (
-                !($eventA instanceof ContentTranslationCreatedEvent || $eventA instanceof ContentTranslationUpdatedEvent)
-                || !($eventB instanceof ContentTranslationCreatedEvent || $eventB instanceof ContentTranslationUpdatedEvent)
-            ) {
+            if (!$isComparable($revisionA) || !$isComparable($revisionB)) {
                 throw $this->createNotFoundException('The selected revisions must be content events.');
             }
 
@@ -88,9 +89,9 @@ class ShowTranslationRevisionsAction extends AbstractController
             }
         }
 
-        /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent $newEvent */
+        /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent|ContentDraftCreatedEvent|ContentDraftUpdatedEvent $newEvent */
         $newEvent = $newRevision->getEvent();
-        /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent $oldEvent */
+        /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent|ContentDraftCreatedEvent|ContentDraftUpdatedEvent $oldEvent */
         $oldEvent = $oldRevision->getEvent();
 
         $preTitleDiff = $this->diffRenderer->diffTitle(
