@@ -1,0 +1,41 @@
+{
+  "time": 1753951122035,
+  "blocks": [
+    {
+      "id": "before-1",
+      "type": "paragraph",
+      "data": {
+        "text": "Valid text before malformed history revised."
+      },
+      "tunes": []
+    },
+    {
+      "id": "bad-list-1",
+      "type": "list",
+      "data": {
+        "style": "unordered",
+        "meta": {
+          "start": 1,
+          "counterType": "numeric"
+        },
+        "items": "still-not-an-array"
+      },
+      "tunes": []
+    },
+    {
+      "id": "orphan-end-1",
+      "type": "foldableEnd",
+      "data": [],
+      "tunes": []
+    },
+    {
+      "id": "after-1",
+      "type": "paragraph",
+      "data": {
+        "text": "Valid text after malformed history remains."
+      },
+      "tunes": []
+    }
+  ],
+  "version": "2.31.0-rc.10"
+}

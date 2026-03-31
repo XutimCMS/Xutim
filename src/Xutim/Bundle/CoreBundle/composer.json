@@ -31,8 +31,6 @@
         "dunglas/doctrine-json-odm": "^1.4",
         "gedmo/doctrine-extensions": "^3.18",
         "jdenticon/jdenticon": "^1.0",
-        "jfcherng/php-diff": "^6.16",
-
         "pagerfanta/doctrine-orm-adapter": "^4.7",
         "pagerfanta/twig": "^4.7",
         "stof/doctrine-extensions-bundle": "^1.13",

@@ -1,88 +1,33 @@
-{%
-    if op == 'added' or op == 'removed' or meta is not defined or meta is empty
-%}
-    {% set imgs = fragment.data.images ?? [] %}
-    <div class="d-flex align-items-center gap-2 flex-wrap">
-        {% for it in imgs %}
+{% set currentUrl = row.attrs.thumbnailUrl ?? row.attrs.url ?? row.data.file.thumbnailUrl ?? row.data.file.url ?? '' %}
+{% set urlMeta = meta is defined and meta.thumbnailUrl is defined and meta.thumbnailUrl.new ? meta.thumbnailUrl : (meta is defined and meta.url is defined ? meta.url : null) %}
+{% set changed = urlMeta and urlMeta.status is defined and urlMeta.status != 'same' %}
+
+{% macro image_row(label, url) %}
+    <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+        <div class="small text-muted me-2" style="width: 3rem">{{ label }}</div>
+        {% if url %}
             <img
-                src="{{ it.thumbnailUrl ?? it.url }}"
+                src="{{ url }}"
                 alt=""
                 class="img-thumbnail"
                 style="max-width: 120px; height: auto"
             >
-        {% endfor %}
-        {% if imgs is empty %}
+        {% else %}
             <div class="small text-secondary">—</div>
         {% endif %}
     </div>
+{% endmacro %}
+
+{% import _self as I %}
+
+{% if op == 'added' or op == 'removed' or meta is not defined or meta is empty %}
+    {{ I.image_row('', currentUrl) }}
+{% elseif changed %}
+    {% set oldUrl = urlMeta.old ?? '' %}
+    {% set newUrl = urlMeta.new ?? currentUrl %}
+    {{ I.image_row('Old', oldUrl) }}
+    <div class="text-muted my-1">→</div>
+    {{ I.image_row('New', newUrl) }}
 {% else %}
-    {% set changed = false %}
-    {% set break = false %}
-    {% for info in meta %}
-        {%
-            if break == false and info.status is defined and info.status != 'same'
-        %}
-            {% set changed = true %}
-            {% set break = true %}
-        {% endif %}
-    {% endfor %}
-
-    {% set oldImages = [] %}
-    {% set newImages = [] %}
-    {% for key, info in meta %}
-        {% if key matches '/^image\\[\\d+\\]$/' %}
-            {%
-                set oldImages = oldImages|merge([info.old is defined and info.old ? info.old : null])
-            %}
-            {%
-                set newImages = newImages|merge([info.new is defined and info.new ? info.new : null])
-            %}
-        {% endif %}
-    {% endfor %}
-
-    {% macro row(label, items) %}
-        <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
-            <div class="small text-muted me-2" style="width: 3rem">
-                {{ label }}
-            </div>
-            {% set any = false %}
-            {% for raw in items %}
-                {% set img = raw ? raw|json_decode : null %}
-                {% if img and img.url is defined %}
-                    {% set any = true %}
-                    <img
-                        src="{{ img.thumbnailUrl ?? img.url }}"
-                        alt=""
-                        class="img-thumbnail"
-                        style="max-width: 120px; height: auto"
-                    >
-                {% endif %}
-            {% endfor %}
-            {% if not any %}
-                <div class="small text-secondary">—</div>
-            {% endif %}
-        </div>
-    {% endmacro %}
-    {% import _self as R %}
-
-    {% if changed %}
-        {{ R.row('Old', oldImages) }}
-        <div class="text-muted my-1">→</div>
-        {{ R.row('New', newImages) }}
-    {% else %}
-        {% set imgs = fragment.data.images ?? [] %}
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-            {% for it in imgs %}
-                <img
-                    src="{{ it.thumbnailUrl ?? it.url }}"
-                    alt=""
-                    class="img-thumbnail"
-                    style="max-width: 120px; height: auto"
-                >
-            {% endfor %}
-            {% if imgs is empty %}
-                <div class="small text-secondary">—</div>
-            {% endif %}
-        </div>
-    {% endif %}
+    {{ I.image_row('', currentUrl) }}
 {% endif %}

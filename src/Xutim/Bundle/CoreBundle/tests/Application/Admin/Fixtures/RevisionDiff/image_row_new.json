@@ -1,0 +1,26 @@
+{
+  "time": 1753951122035,
+  "version": "2.31.0-rc.10",
+  "blocks": [
+    {
+      "id": "gallery-1",
+      "type": "imageRow",
+      "data": {
+        "images": [
+          {
+            "url": "/media/uploads/new-a.jpg",
+            "id": "new-a",
+            "thumbnailUrl": "/media/variants/thumb_small/new-a.webp"
+          },
+          {
+            "url": "/media/uploads/shared-b.jpg",
+            "id": "shared-b",
+            "thumbnailUrl": "/media/variants/thumb_small/shared-b.webp"
+          }
+        ],
+        "imagesPerRow": 2
+      },
+      "tunes": []
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "blocks": [
+    {
+      "id": "snippet-1",
+      "type": "block",
+      "data": {
+        "code": "new-snippet-code"
+      },
+      "tunes": []
+    },
+    {
+      "id": "embed-1",
+      "type": "embed",
+      "data": {
+        "service": "youtube",
+        "source": "https://example.com/new",
+        "embed": "https://example.com/embed/new",
+        "width": 640,
+        "height": 360,
+        "caption": "Updated embed caption"
+      },
+      "tunes": []
+    },
+    {
+      "id": "delim-1",
+      "type": "delimiter",
+      "data": {},
+      "tunes": []
+    },
+    {
+      "id": "fold-1",
+      "type": "foldableStart",
+      "data": {
+        "title": "Foldable revised title",
+        "open": true
+      },
+      "tunes": []
+    },
+    {
+      "id": "fold-child-1",
+      "type": "paragraph",
+      "data": {
+        "text": "Inside foldable"
+      },
+      "tunes": []
+    },
+    {
+      "id": "fold-end-1",
+      "type": "foldableEnd",
+      "data": {},
+      "tunes": []
+    }
+  ]
+}

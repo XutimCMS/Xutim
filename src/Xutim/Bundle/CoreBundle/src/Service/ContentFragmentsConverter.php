@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Service;
 
-use Symfony\Component\HttpFoundation\Exception\UnexpectedValueException;
+use Xutim\CoreBundle\Content\CanonicalContentExtractor;
+use Xutim\CoreBundle\Content\Transform\EditorJsToCanonicalDocumentTransformer;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Uid\UuidV4;
 use Twig\Environment;
@@ -14,7 +15,9 @@ readonly class ContentFragmentsConverter
 {
     public function __construct(
         private readonly Environment $twig,
-        private readonly MediaRepositoryInterface $mediaRepo
+        private readonly MediaRepositoryInterface $mediaRepo,
+        private readonly EditorJsToCanonicalDocumentTransformer $transformer,
+        private readonly CanonicalContentExtractor $extractor,
     ) {
     }
 
@@ -23,7 +26,7 @@ readonly class ContentFragmentsConverter
      */
     public function convertToThemeHtml(array $fragments, string $themePath, string $locale): string
     {
-        if (count($fragments) === 0 || count($fragments['blocks']) === 0) {
+        if (!is_array($fragments['blocks'] ?? null) || $fragments['blocks'] === []) {
             return '';
         }
 
@@ -62,7 +65,7 @@ readonly class ContentFragmentsConverter
         string $locale,
         array $options = []
     ): string {
-        if (count($fragments) === 0 || count($fragments['blocks']) === 0) {
+        if (!is_array($fragments['blocks'] ?? null) || $fragments['blocks'] === []) {
             return '';
         }
 
@@ -79,7 +82,7 @@ readonly class ContentFragmentsConverter
      */
     public function convertToAdminHtml(array $fragments, string $locale): string
     {
-        if (count($fragments) === 0 || count($fragments['blocks']) === 0) {
+        if (!is_array($fragments['blocks'] ?? null) || $fragments['blocks'] === []) {
             return '';
         }
 
@@ -94,33 +97,7 @@ readonly class ContentFragmentsConverter
      */
     public function extractIntroduction(array $fragments): string
     {
-        if ($fragments === [] || $fragments['blocks'] === []) {
-            return '';
-        }
-
-        $text = '';
-        foreach ($fragments['blocks'] as $fragment) {
-            if ($fragment['type'] === 'paragraph' || $fragment['type'] === 'quote') {
-                /** @var string $par */
-                $par = $fragment['data']['text'];
-                $text .= $par . ' ';
-                if (strlen($text) > 500) {
-                    return $text;
-                }
-            }
-            if ($fragment['type'] === 'list') {
-                foreach ($fragment['data']['items'] as $item) {
-                    /** @var string $par */
-                    $par = $item['content'];
-                    $text .= $par . ' ';
-                    if (strlen($text) > 500) {
-                        return $text;
-                    }
-                }
-            }
-        }
-
-        return $text;
+        return $this->extractor->extractIntroduction($this->transformer->transform($fragments));
     }
 
     /**
@@ -128,25 +105,7 @@ readonly class ContentFragmentsConverter
      */
     public function extractParagraphs(array $fragments, int $num): string
     {
-        if ($fragments === [] || $fragments['blocks'] === []) {
-            return '';
-        }
-
-        $html = '';
-        $count = 0;
-        foreach ($fragments['blocks'] as $fragment) {
-            if ($fragment['type'] === 'paragraph') {
-                /** @var string $paragraph */
-                $paragraph = $fragment['data']['text'];
-                $html .= sprintf('<p>%s</p>', $paragraph);
-
-                if (++$count === $num) {
-                    return $html;
-                }
-            }
-        }
-
-        return $html;
+        return $this->extractor->extractParagraphsHtml($this->transformer->transform($fragments), $num);
     }
 
     /**
@@ -156,28 +115,28 @@ readonly class ContentFragmentsConverter
      */
     public function extractCopyrights(array $fragments): array
     {
-        if (count($fragments) === 0 || count($fragments['blocks']) === 0) {
+        $document = $this->transformer->transform($fragments);
+        if ($document->blocks === []) {
             return [];
         }
 
         $copyrights = [];
-        foreach ($fragments['blocks'] as $fragment) {
-            if ($fragment['type'] === 'xutimImage') {
-                $media = $this->mediaRepo->findById(new UuidV4($fragment['data']['file']['id']));
+        foreach ($this->extractor->flattenBlocks($document->blocks) as $block) {
+            if ($block->kind === 'image') {
+                $media = $this->mediaRepo->findById(new UuidV4((string) ($block->attrs['fileId'] ?? '')));
                 if ($media === null) {
-                    throw new NotFoundHttpException('Media with an id ' . $fragment['data']['file']['id'] . ' was not found');
+                    throw new NotFoundHttpException('Media with an id ' . ($block->attrs['fileId'] ?? '') . ' was not found');
                 }
                 if ($media->copyright() !== null && $media->copyright() !== '') {
                     $copyrights[$media->id()->toRfc4122()] = $media->copyright();
                 }
             }
 
-
-            if ($fragment['type'] === 'imageRow') {
-                foreach ($fragment['data']['images'] as $imageFragment) {
-                    $media = $this->mediaRepo->findById(new UuidV4($imageFragment['id']));
+            if ($block->kind === 'image_gallery') {
+                foreach ($block->items as $imageFragment) {
+                    $media = $this->mediaRepo->findById(new UuidV4((string) ($imageFragment['id'] ?? '')));
                     if ($media === null) {
-                        throw new NotFoundHttpException('Media with an id ' . $imageFragment['id'] . ' was not found');
+                        throw new NotFoundHttpException('Media with an id ' . ($imageFragment['id'] ?? '') . ' was not found');
                     }
 
                     if ($media->copyright() !== null && $media->copyright() !== '') {
@@ -200,37 +159,6 @@ readonly class ContentFragmentsConverter
      */
     public function extractTimelineElements(array $fragments): array
     {
-        if (count($fragments) === 0 || count($fragments['blocks']) === 0) {
-            return [];
-        }
-
-        $elements = [];
-        for ($i = 0; $i < count($fragments['blocks']); $i = $i + 2) {
-            if ($fragments['blocks'][$i]['type'] === 'header') {
-                $header = $fragments['blocks'][$i]['data']['text'];
-            } else {
-                $this->throwUnexpectedValueException('header', $fragments['blocks'][$i]['type']);
-            }
-
-            if ($fragments['blocks'][$i + 1]['type'] === 'paragraph') {
-                $par = $fragments['blocks'][$i + 1]['data']['text'];
-            } else {
-                $this->throwUnexpectedValueException('paragraph', $fragments['blocks'][$i]['type']);
-            }
-
-            $elements[] = [
-                'header' => $header,
-                'paragraph' => $par
-            ];
-        }
-
-        return $elements;
-    }
-
-    private function throwUnexpectedValueException(string $expected, string $given): never
-    {
-        $message = sprintf('Expected timeline element of type %s, but %s given.', $expected, $given);
-
-        throw new UnexpectedValueException($message);
+        return $this->extractor->extractTimelineElements($this->transformer->transform($fragments));
     }
 }

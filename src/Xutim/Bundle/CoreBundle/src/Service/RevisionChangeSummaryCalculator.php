@@ -9,7 +9,7 @@ final class RevisionChangeSummaryCalculator
     /**
      * Calculate a summary of changes between two revisions.
      *
-     * @param list<array{op: string}> $contentRows
+     * @param list<array<string, mixed>> $contentRows
      *
      * @return array{
      *     titleChanged: bool,

@@ -4,14 +4,14 @@
         {{ 'Block:'|trans({}, 'admin') }}
     </span>
     {% if op == 'added' or op == 'removed' %}
-        {{ fragment.data.code }}
+        {{ row.attrs.code ?? '' }}
     {% else %}
         {% set codeMeta = meta.code is defined ? meta.code : null %}
         {%
             set oldCode = codeMeta and codeMeta.old is defined ? codeMeta.old : ''
         %}
         {%
-            set newCode = codeMeta and codeMeta.new is defined ? codeMeta.new : (fragment.data.code ?? '')
+            set newCode = codeMeta and codeMeta.new is defined ? codeMeta.new : (row.attrs.code ?? '')
         %}
 
         {%
@@ -20,7 +20,7 @@
             <del>{{ oldCode|e }}</del> →
             <ins>{{ newCode|e }}</ins>
         {% else %}
-            {{ (fragment.data.code ?? '')|e }}
+            {{ (row.attrs.code ?? '')|e }}
         {% endif %}
     {% endif %}
 </div>

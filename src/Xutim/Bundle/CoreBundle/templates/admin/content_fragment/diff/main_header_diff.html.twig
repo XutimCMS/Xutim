@@ -9,8 +9,8 @@
 <div class="vstack gap-2">
     <div>
         <div class="small text-muted">{{ 'Pretitle'|trans({}, 'admin') }}</div>
-        {% if showPlain %}
-            <div>{{ fragment.data.pretitle ?? '' }}</div>
+{% if showPlain %}
+            <div>{{ row.parts.pretitle.html|default('')|raw }}</div>
         {% else %}
             {%
                 if preMeta and preMeta.status is defined and preMeta.status != 'same'
@@ -27,8 +27,8 @@
 
     <div>
         <div class="small text-muted">{{ 'Title'|trans({}, 'admin') }}</div>
-        {% if showPlain %}
-            <h2 class="h4">{{ fragment.data.title ?? '' }}</h2>
+{% if showPlain %}
+            <h2 class="h4">{{ row.parts.title.html|default('')|raw }}</h2>
         {% else %}
             {%
                 if titMeta and titMeta.status is defined and titMeta.status != 'same'
@@ -45,8 +45,8 @@
 
     <div>
         <div class="small text-muted">{{ 'Subtitle'|trans({}, 'admin') }}</div>
-        {% if showPlain %}
-            <div>{{ fragment.data.subtitle ?? '' }}</div>
+{% if showPlain %}
+            <div>{{ row.parts.subtitle.html|default('')|raw }}</div>
         {% else %}
             {%
                 if subMeta and subMeta.status is defined and subMeta.status != 'same'

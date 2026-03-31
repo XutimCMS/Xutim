@@ -1,13 +1,13 @@
-{% set type = fragment.type %}
-{% set id = fragment.data.id ?? '' %}
+{% set type = row.kind %}
+{% set id = row.attrs.targetId ?? '' %}
 
-{% if type == 'pageLink' %}
+{% if type == 'page_link' %}
     {% set label = 'Page link'|trans({}, 'admin') %}
     {% set route = 'admin_page_edit' %}
-{% elseif type == 'articleLink' %}
+{% elseif type == 'article_link' %}
     {% set label = 'Article link'|trans({}, 'admin') %}
     {% set route = 'admin_article_edit' %}
-{% elseif type == 'xutimTag' %}
+{% elseif type == 'tag_link' %}
     {% set label = 'Tag'|trans({}, 'admin') %}
     {% set route = 'admin_tag_edit' %}
 {% else %}
@@ -24,15 +24,15 @@
 
 {# Helper to render a link to the admin route for a given ID #}
 {% macro link_for(routeName, idValue, type) %}
-    {% if type == 'pageLink' %}
+    {% if type == 'page_link' %}
         {%
             set title = get_page(idValue).translationByLocaleOrDefault(app.locale).title|default('page link doesn\'t exist')
         %}
-    {% elseif type == 'articleLink' %}
+    {% elseif type == 'article_link' %}
         {%
             set title = get_article(idValue).translationByLocaleOrDefault(app.locale).title|default('article link doesn\'t exist')
         %}
-    {% elseif type == 'xutimTag' %}
+    {% elseif type == 'tag_link' %}
         {%
             set title = fetch_tag(idValue).translationByLocaleOrAny(app.locale).title|default('tag link doesn\'t exist')
         %}
@@ -63,7 +63,7 @@
     {% endif %}
 </div>
 
-{% if type == 'xutimTag' %}
+{% if type == 'tag_link' %}
     {%
         set layoutMeta = meta is defined and meta.layout is defined ? meta.layout : null
     %}
@@ -71,7 +71,7 @@
         set layoutChanged = layoutMeta and layoutMeta.status is defined and layoutMeta.status != 'same'
     %}
     {%
-        set curLayout = fragment.data.layout is defined ? fragment.data.layout : ''
+        set curLayout = row.attrs.layout is defined ? row.attrs.layout : ''
     %}
 
     {% if layoutChanged %}

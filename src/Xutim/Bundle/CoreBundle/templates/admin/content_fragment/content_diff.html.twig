@@ -24,12 +24,10 @@
 
 {% for row in rows %}
     {% set op = row.op %}
-    {% set fragment = row.block_new is defined ? row.block_new : row.block %}
-    {% set inlineHtml = row.html is defined ? row.html : null %}
     {% set meta = row.meta is defined ? row.meta : null %}
-    {% set props = row.props is defined ? row.props : meta %}
-
+    {% set props = row.props is defined ? row.props : null %}
     {% set hasMetaChange = false %}
+
     {% for source in [meta, props] %}
         {% if source %}
             {% for f in source %}
@@ -39,36 +37,28 @@
             {% endfor %}
         {% endif %}
     {% endfor %}
-    {% set opEff = (op == 'unchanged' and hasMetaChange) ? 'modified' : op %}
 
+    {% set opEff = (op == 'unchanged' and hasMetaChange) ? 'modified' : op %}
     {% set wrapperClass = diff.wrapper_class(opEff) %}
-    <div class="{{ wrapperClass }} {% if inlineHtml %}diff-inline{% endif %}">
+    {% set renderKey = row.render_key is defined ? row.render_key : null %}
+
+    <div class="{{ wrapperClass }} {% if row.body_html is defined and row.body_html %}diff-inline{% endif %}">
         <div class="mb-2">
             {% if opEff == 'added' %}
-                <span class="badge bg-success text-white">{{
-                    'Added'|trans({}, 'admin')
-                }}</span>
+                <span class="badge bg-success text-white">{{ 'Added'|trans({}, 'admin') }}</span>
             {% elseif opEff == 'removed' %}
-                <span class="badge bg-danger text-white">{{
-                    'Removed'|trans({}, 'admin')
-                }}</span>
+                <span class="badge bg-danger text-white">{{ 'Removed'|trans({}, 'admin') }}</span>
             {% elseif opEff == 'modified_text' %}
-                <span class="badge bg-warning text-black">{{
-                    'Changed text'|trans({}, 'admin')
-                }}</span>
+                <span class="badge bg-warning text-black">{{ 'Changed text'|trans({}, 'admin') }}</span>
             {% elseif opEff == 'modified' %}
-                <span class="badge bg-warning text-black">{{
-                    'Changed'|trans({}, 'admin')
-                }}</span>
+                <span class="badge bg-warning text-black">{{ 'Changed'|trans({}, 'admin') }}</span>
             {% else %}
-                <span class="badge bg-secondary text-white">{{
-                    'Unchanged'|trans({}, 'admin')
-                }}</span>
+                <span class="badge bg-secondary text-white">{{ 'Unchanged'|trans({}, 'admin') }}</span>
             {% endif %}
 
-            {% if blockAuthors is defined and fragment.id is defined and blockAuthors[fragment.id] is defined and blockAuthors[fragment.id]|length > 0 %}
+            {% if blockAuthors is defined and renderKey and blockAuthors[renderKey] is defined and blockAuthors[renderKey]|length > 0 %}
                 <div class="d-inline-flex align-items-center gap-1 ms-2 small text-muted">
-                    {% for email in blockAuthors[fragment.id] %}
+                    {% for email in blockAuthors[renderKey] %}
                         {% set user = usersData[email]|default({}) %}
                         <span
                             class="avatar avatar-xs"
@@ -78,76 +68,51 @@
                             title="{{ user.name|default(email) }}"
                         ></span>
                     {% endfor %}
-                    <span>{{ blockAuthors[fragment.id]|map(e => usersData[e].name|default(e))|join(', ') }}</span>
+                    <span>{{ blockAuthors[renderKey]|map(e => usersData[e].name|default(e))|join(', ') }}</span>
                 </div>
             {% endif %}
         </div>
 
-        {% if fragment.type == 'paragraph' %}
-            {{
-                include('@XutimCore/admin/content_fragment/paragraph.html.twig', {fragment: fragment, inlineHtml: inlineHtml})
-            }}
-        {% elseif fragment.type == 'header' %}
-            {{
-                include('@XutimCore/admin/content_fragment/header.html.twig', {fragment: fragment, inlineHtml: inlineHtml})
-            }}
-        {% elseif fragment.type == 'quote' %}
-            {{
-                include('@XutimCore/admin/content_fragment/quote.html.twig', {fragment: fragment, inlineHtml: inlineHtml})
-            }}
-        {% elseif fragment.type == 'list' %}
-            {{
-                include('@XutimCore/admin/content_fragment/list.html.twig', {fragment: fragment})
-            }}
-        {% elseif fragment.type == 'xutimImage' %}
-            {{
-                include('@XutimCore/admin/content_fragment/diff/xutim_image_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
-            }}
-        {% elseif fragment.type == 'xutimFile' %}
-            {{
-                include('@XutimCore/admin/content_fragment/diff/xutim_file_diff.html.twig', {fragment: fragment, meta: meta, op: opEff, locale: locale})
-            }}
-        {% elseif fragment.type == 'imageRow' %}
-            {{
-                include('@XutimCore/admin/content_fragment/diff/image_row_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
-            }}
-        {%
-            elseif fragment.type == 'pageLink' or fragment.type == 'articleLink'
-        %}
-            {{
-                include('@XutimCore/admin/content_fragment/diff/link_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
-            }}
-        {% elseif fragment.type == 'xutimTag' %}
-            {{
-                include('@XutimCore/admin/content_fragment/diff/link_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
-            }}
-        {% elseif fragment.type == 'mainHeader' %}
-            {{
-                include('@XutimCore/admin/content_fragment/diff/main_header_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
-            }}
-        {% elseif fragment.type == 'embed' %}
-            {{
-                include('@XutimCore/admin/content_fragment/diff/embed_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
-            }}
-        {% elseif fragment.type == 'block' %}
-            {{
-                include('@XutimCore/admin/content_fragment/diff/code_block_diff.html.twig', {fragment: fragment, meta: meta, op: opEff})
-            }}
-        {% elseif fragment.type == 'delimiter' %}
+        {% if row.kind == 'paragraph' %}
+            {{ include('@XutimCore/admin/content_fragment/paragraph.html.twig', {row: row}) }}
+        {% elseif row.kind == 'heading' %}
+            {{ include('@XutimCore/admin/content_fragment/header.html.twig', {row: row}) }}
+        {% elseif row.kind == 'quote' %}
+            {{ include('@XutimCore/admin/content_fragment/quote.html.twig', {row: row, meta: meta}) }}
+        {% elseif row.kind == 'list' %}
+            {{ include('@XutimCore/admin/content_fragment/list.html.twig', {row: row}) }}
+        {% elseif row.kind == 'image' or row.kind == 'xutimImage' %}
+            {{ include('@XutimCore/admin/content_fragment/diff/xutim_image_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
+        {% elseif row.kind == 'file' or row.kind == 'xutimFile' %}
+            {{ include('@XutimCore/admin/content_fragment/diff/xutim_file_diff.html.twig', {row: row, meta: meta, op: opEff, locale: locale}) }}
+        {% elseif row.kind == 'image_gallery' or row.kind == 'imageRow' %}
+            {{ include('@XutimCore/admin/content_fragment/diff/image_row_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
+        {% elseif row.kind == 'page_link' or row.kind == 'article_link' or row.kind == 'tag_link' or row.kind == 'pageLink' or row.kind == 'articleLink' or row.kind == 'xutimTag' %}
+            {{ include('@XutimCore/admin/content_fragment/diff/link_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
+        {% elseif row.kind == 'hero_heading' or row.kind == 'mainHeader' %}
+            {{ include('@XutimCore/admin/content_fragment/diff/main_header_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
+        {% elseif row.kind == 'embed' %}
+            {{ include('@XutimCore/admin/content_fragment/diff/embed_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
+        {% elseif row.kind == 'snippet' or row.kind == 'block' %}
+            {{ include('@XutimCore/admin/content_fragment/diff/code_block_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
+        {% elseif row.kind == 'delimiter' %}
             {{ include('@XutimCore/admin/content_fragment/delimiter.html.twig') }}
-        {% elseif fragment.type == 'foldableStart' %}
-            {{
-                include('@XutimCore/admin/content_fragment/foldable_start.html.twig', {fragment: fragment, inlineHtml: inlineHtml})
-            }}
-        {% elseif fragment.type == 'foldableEnd' %}
-            {{
-                include('@XutimCore/admin/content_fragment/foldable_end.html.twig', {fragment: fragment})
-            }}
+        {% elseif row.kind == 'foldable_start' %}
+            {{ include('@XutimCore/admin/content_fragment/foldable_start.html.twig', {row: row}) }}
+        {% elseif row.kind == 'foldable_end' %}
+            {{ include('@XutimCore/admin/content_fragment/foldable_end.html.twig') }}
         {% else %}
-            {% if meta %}
-                <pre class="small text-secondary">{{ meta|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
-            {% else %}
+            <div class="small text-muted mb-1">
                 {{ 'Unknown block'|trans({}, 'admin') }}
+            </div>
+            <div class="small text-muted">
+                <strong>{{ row.attrs.sourceType ?? 'unknown' }}</strong>
+                {% if row.attrs.reason is defined and row.attrs.reason %}
+                    <span class="ms-2">{{ row.attrs.reason }}</span>
+                {% endif %}
+            </div>
+            {% if row.raw_summary is defined and row.raw_summary %}
+                <pre class="small text-secondary mb-0">{{ row.raw_summary }}</pre>
             {% endif %}
         {% endif %}
 

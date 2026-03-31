@@ -1,8 +1,16 @@
 <blockquote>
-    {% if inlineHtml is defined and inlineHtml %}
-        {{ inlineHtml|raw }}
+    {% set textMeta = meta is defined and meta.text is defined ? meta.text : null %}
+    {% set captionMeta = meta is defined and meta.caption is defined ? meta.caption : null %}
+
+    {% if textMeta and textMeta.html is defined %}
+        <p>{{ textMeta.html|raw }}</p>
     {% else %}
-        <p>{{ fragment.data.text|replace({'<br>': ''})|raw }}</p>
+        <p>{{ row.parts.text.html|default('')|raw }}</p>
     {% endif %}
-    <footer>{{ fragment.data.caption|replace({'<br>': ''}) }}</footer>
+
+    {% if captionMeta and captionMeta.html is defined %}
+        <footer>{{ captionMeta.html|raw }}</footer>
+    {% else %}
+        <footer>{{ row.parts.caption.html|default('')|raw }}</footer>
+    {% endif %}
 </blockquote>

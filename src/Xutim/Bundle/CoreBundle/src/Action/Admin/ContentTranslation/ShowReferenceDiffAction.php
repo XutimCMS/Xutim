@@ -56,14 +56,22 @@ class ShowReferenceDiffAction extends AbstractController
         $oldEvent = $oldRevision->getEvent();
 
         $currentRevision = $this->logEventRepo->findLatestContentRevision($refTranslation);
-        /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent|null $newEvent */
-        $newEvent = $currentRevision?->getEvent();
 
-        $newPreTitle = $newEvent?->preTitle ?? $refTranslation->getPreTitle();
-        $newTitle = $newEvent?->title ?? $refTranslation->getTitle();
-        $newSubTitle = $newEvent?->subTitle ?? $refTranslation->getSubTitle();
-        $newDescription = $newEvent?->description ?? $refTranslation->getDescription();
-        $newContent = $newEvent?->content ?? $refTranslation->getContent();
+        if ($currentRevision !== null) {
+            /** @var ContentTranslationCreatedEvent|ContentTranslationUpdatedEvent $newEvent */
+            $newEvent = $currentRevision->getEvent();
+            $newPreTitle = $newEvent->preTitle;
+            $newTitle = $newEvent->title;
+            $newSubTitle = $newEvent->subTitle;
+            $newDescription = $newEvent->description;
+            $newContent = $newEvent->content;
+        } else {
+            $newPreTitle = $refTranslation->getPreTitle();
+            $newTitle = $refTranslation->getTitle();
+            $newSubTitle = $refTranslation->getSubTitle();
+            $newDescription = $refTranslation->getDescription();
+            $newContent = $refTranslation->getContent();
+        }
 
         $preTitleDiff = $this->diffRenderer->diffTitle($oldEvent->preTitle, $newPreTitle);
         $titleDiff = $this->diffRenderer->diffTitle($oldEvent->title, $newTitle);

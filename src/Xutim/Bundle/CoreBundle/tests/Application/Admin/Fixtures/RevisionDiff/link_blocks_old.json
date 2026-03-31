@@ -1,0 +1,29 @@
+{
+  "blocks": [
+    {
+      "id": "page-link-1",
+      "type": "pageLink",
+      "data": {
+        "id": "OLD_PAGE_ID"
+      },
+      "tunes": []
+    },
+    {
+      "id": "article-link-1",
+      "type": "articleLink",
+      "data": {
+        "id": "OLD_ARTICLE_ID"
+      },
+      "tunes": []
+    },
+    {
+      "id": "tag-link-1",
+      "type": "xutimTag",
+      "data": {
+        "id": "OLD_TAG_ID",
+        "layout": "compact"
+      },
+      "tunes": []
+    }
+  ]
+}

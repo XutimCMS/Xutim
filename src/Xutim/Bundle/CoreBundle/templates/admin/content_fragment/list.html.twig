@@ -1,6 +1,23 @@
-{% set tag = fragment.data.style == 'ordered' ? 'ol' : 'ul' -%}
-<{{ tag }}>
-    {% for item in fragment.data.items %}
-        <li>{{ item.content|replace({'<br>': ''})|raw }}</li>
+{% macro list_items(items) %}
+    {% for item in items %}
+        <li>
+            {{ item.html|default('')|raw }}
+            {% if item.children is defined and item.children %}
+                <ul>
+                    {{ _self.list_items(item.children) }}
+                </ul>
+            {% endif %}
+        </li>
     {% endfor %}
-</{{ tag }}>
+{% endmacro %}
+
+{% import _self as lists %}
+
+{% set tag = row.attrs.style == 'ordered' ? 'ol' : 'ul' -%}
+{% if row.body_html is defined and row.body_html %}
+    <div class="diff-inline">{{ row.body_html|raw }}</div>
+{% else %}
+    <{{ tag }}>
+        {{ lists.list_items(row.items|default([])) }}
+    </{{ tag }}>
+{% endif %}

@@ -1,0 +1,27 @@
+{
+  "blocks": [
+    {
+      "id": "img-1",
+      "type": "xutimImage",
+      "data": {
+        "file": {
+          "id": "OLD_IMAGE_ID",
+          "url": "/media/uploads/old-image.jpg",
+          "thumbnailUrl": "/media/uploads/old-image.jpg"
+        }
+      },
+      "tunes": []
+    },
+    {
+      "id": "file-1",
+      "type": "xutimFile",
+      "data": {
+        "file": {
+          "id": "OLD_FILE_ID",
+          "url": "/media/uploads/old-file.pdf"
+        }
+      },
+      "tunes": []
+    }
+  ]
+}

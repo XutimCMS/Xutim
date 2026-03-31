@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Service;
 
+use Xutim\CoreBundle\Content\CanonicalContentExtractor;
+use Xutim\CoreBundle\Content\Transform\EditorJsToCanonicalDocumentTransformer;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Repository\BlockRepository;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
@@ -12,6 +14,8 @@ readonly class SearchContentBuilder
 {
     public function __construct(
         private readonly BlockRepository $blockRepo,
+        private readonly EditorJsToCanonicalDocumentTransformer $transformer,
+        private readonly CanonicalContentExtractor $extractor,
     ) {
     }
 
@@ -21,31 +25,30 @@ readonly class SearchContentBuilder
 
         $parts = [];
 
-        $data = $trans->getContent();
-        if (isset($data['blocks'])) {
-            foreach ($data['blocks'] as $block) {
-                switch ($block['type']) {
-                    case 'paragraph':
-                    case 'header':
-                        $parts[] = $block['data']['text'];
-                        break;
-                    case 'mainHeader':
-                        $parts[] = $block['data']['pretitle'];
-                        $parts[] = $block['data']['title'];
-                        $parts[] = $block['data']['subtitle'];
-                        break;
-                    case 'quote':
-                        $parts[] = $block['data']['text'];
-                        $parts[] = $block['data']['caption'];
-                        break;
-                    case 'list':
-                        foreach ($block['data']['items'] as $item) {
-                            $parts[] = $item['content'];
-                        }
-                        break;
-                    case 'block':
-                        $parts = array_merge($parts, $this->extractBlockContent($block['data']['code'], $locale));
-                }
+        $document = $this->transformer->transform($trans->getContent());
+        foreach ($this->extractor->flattenBlocks($document->blocks) as $block) {
+            switch ($block->kind) {
+                case 'paragraph':
+                case 'heading':
+                    $parts[] = $this->extractor->runsToPlainText($block->body);
+                    break;
+                case 'hero_heading':
+                    $parts[] = $this->extractor->runsToPlainText($block->parts['pretitle'] ?? []);
+                    $parts[] = $this->extractor->runsToPlainText($block->parts['title'] ?? []);
+                    $parts[] = $this->extractor->runsToPlainText($block->parts['subtitle'] ?? []);
+                    break;
+                case 'quote':
+                    $parts[] = $this->extractor->runsToPlainText($block->parts['body'] ?? []);
+                    $parts[] = $this->extractor->runsToPlainText($block->parts['caption'] ?? []);
+                    break;
+                case 'list':
+                    foreach ($block->items as $item) {
+                        $parts[] = $this->extractor->runsToPlainText($item['body'] ?? []);
+                    }
+                    break;
+                case 'snippet':
+                    $parts = array_merge($parts, $this->extractBlockContent((string) ($block->attrs['code'] ?? ''), $locale));
+                    break;
             }
         }
 

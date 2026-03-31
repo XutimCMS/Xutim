@@ -1,5 +1,5 @@
-{% set curId = fragment.data.file.id ?? '' %}
-{% set curUrl = fragment.data.file.url ?? '' %}
+{% set curId = row.attrs.fileId ?? row.data.file.id ?? '' %}
+{% set curUrl = row.attrs.url ?? row.data.file.url ?? '' %}
 {% set curFile = curId ? (curId|xutim_image_file_from_id) : null %}
 {% set curTrans = curFile ? (curFile.translationByLocale(locale) ?? curFile.translations|first) : null %}
 {% set curName = curTrans ? curTrans.name|striptags|raw : curId %}

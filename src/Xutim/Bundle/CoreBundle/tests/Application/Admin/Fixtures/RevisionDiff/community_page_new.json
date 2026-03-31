@@ -1,0 +1,93 @@
+{
+  "time": 1753951122035,
+  "version": "2.31.0-rc.10",
+  "blocks": [
+    {
+      "id": "intro-1",
+      "type": "paragraph",
+      "data": {
+        "text": "\nOur team includes engineers, designers and researchers from over twenty countries."
+      },
+      "tunes": {
+        "alignment": {
+          "alignment": "center"
+        }
+      }
+    },
+    {
+      "id": "head-1",
+      "type": "header",
+      "data": {
+        "text": "How to join",
+        "level": 2
+      },
+      "tunes": {
+        "alignment": {
+          "alignment": "center"
+        }
+      }
+    },
+    {
+      "id": "list-1",
+      "type": "list",
+      "data": {
+        "style": "unordered",
+        "meta": {
+          "start": 1,
+          "counterType": "numeric"
+        },
+        "items": [
+          {
+            "content": "Complete the online application form.",
+            "meta": "",
+            "items": []
+          },
+          {
+            "content": "Schedule a technical interview.",
+            "meta": "",
+            "items": [
+              {
+                "content": "Interviews are held monthly.",
+                "meta": "",
+                "items": []
+              }
+            ]
+          }
+        ]
+      },
+      "tunes": []
+    },
+    {
+      "id": "main-1",
+      "type": "mainHeader",
+      "data": {
+        "pretitle": "Leadership",
+        "title": "Meet the team",
+        "subtitle": ""
+      },
+      "tunes": []
+    },
+    {
+      "id": "para-1",
+      "type": "paragraph",
+      "data": {
+        "text": "\n\"At the core of every great product is a team that communicates openly and iterates quickly.\"\n<i>(Internal Playbook)</i>\n"
+      },
+      "tunes": {
+        "alignment": {
+          "alignment": "center"
+        }
+      }
+    },
+    {
+      "id": "quote-1",
+      "type": "quote",
+      "data": {
+        "text": "We believe that sustainable progress comes from collaboration, not competition.",
+        "caption": "Company Values, 2nd edition",
+        "alignment": "center"
+      },
+      "tunes": []
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "time": 1753951122035,
+  "blocks": [
+    {
+      "id": "unknown-1",
+      "type": "mysteryWidget",
+      "data": {
+        "label": "Old widget label",
+        "mode": "compact"
+      },
+      "tunes": []
+    }
+  ],
+  "version": "2.31.0-rc.10"
+}
