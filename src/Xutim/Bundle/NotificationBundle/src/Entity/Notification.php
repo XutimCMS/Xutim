@@ -181,6 +181,11 @@ class Notification implements NotificationInterface
         $this->readAt = new DateTimeImmutable();
     }
 
+    public function markUnread(): void
+    {
+        $this->readAt = null;
+    }
+
     public function markSent(): void
     {
         $this->deliveryStatus = NotificationDeliveryStatus::Sent;

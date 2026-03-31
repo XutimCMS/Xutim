@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\NotificationBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Uuid;
 use Xutim\NotificationBundle\Domain\Model\NotificationInterface;
@@ -35,6 +36,32 @@ class NotificationRepository extends ServiceEntityRepository
             ->getResult();
 
         return $notifications;
+    }
+
+    /**
+     * @return list<NotificationInterface>
+     */
+    public function findUnreadForRecipient(UserInterface $recipient, int $limit = 50): array
+    {
+        /** @var list<NotificationInterface> $notifications */
+        $notifications = $this->createQueryBuilder('notification')
+            ->where('notification.recipient = :recipient')
+            ->andWhere('notification.readAt IS NULL')
+            ->setParameter('recipient', $recipient)
+            ->orderBy('notification.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return $notifications;
+    }
+
+    public function createForRecipientQueryBuilder(UserInterface $recipient): QueryBuilder
+    {
+        return $this->createQueryBuilder('notification')
+            ->where('notification.recipient = :recipient')
+            ->setParameter('recipient', $recipient)
+            ->orderBy('notification.createdAt', 'DESC');
     }
 
     public function countUnreadForRecipient(UserInterface $recipient): int

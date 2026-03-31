@@ -46,6 +46,8 @@ interface NotificationInterface
 
     public function markRead(): void;
 
+    public function markUnread(): void;
+
     public function markSent(): void;
 
     public function markFailed(): void;

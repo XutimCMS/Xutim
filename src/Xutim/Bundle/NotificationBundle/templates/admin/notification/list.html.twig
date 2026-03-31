@@ -22,9 +22,6 @@
 {% endblock %}
 
 {% block body %}
-    {% set unread = notifications|filter(n => not n.read) %}
-    {% set read = notifications|filter(n => n.read) %}
-
     {% if notifications is empty %}
         <div class="card">
             <div class="empty">
@@ -36,33 +33,93 @@
             </div>
         </div>
     {% else %}
-        {% if unread is not empty %}
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Unread
-                        <span class="badge bg-primary text-white rounded-circle ms-2" style="width: 1.2rem; height: 1.2rem; font-size: .65rem; padding: 0; line-height: 1.2rem;">{{ unread|length }}</span>
-                    </h3>
-                </div>
-                <div class="list-group list-group-flush list-group-hoverable">
-                    {% for notification in unread %}
-                        {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
-                    {% endfor %}
+        <div data-controller="notification-select">
+            <div class="card mb-3 d-none" data-notification-select-target="actions">
+                <div class="card-body py-2">
+                    <form method="post" action="{{ admin_path('admin_notification_bulk') }}" class="d-flex align-items-center gap-2">
+                        <input type="hidden" name="action" value="" />
+                        <span class="text-secondary">
+                            <span data-notification-select-target="count">0</span> selected
+                        </span>
+                        <button type="button" class="btn btn-sm btn-primary" data-action="notification-select#markRead">
+                            <twig:ux:icon name="tabler:mail-opened" class="icon me-1" />
+                            Mark read
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-action="notification-select#markUnread">
+                            <twig:ux:icon name="tabler:mail" class="icon me-1" />
+                            Mark unread
+                        </button>
+                    </form>
                 </div>
             </div>
-        {% endif %}
 
-        {% if read is not empty %}
-            <div class="card">
-                {% if unread is not empty %}
+            {% set unread = notifications|filter(n => not n.read) %}
+            {% set read = notifications|filter(n => n.read) %}
+
+            {% if unread is not empty %}
+                <div class="card mb-3">
                     <div class="card-header">
-                        <h3 class="card-title text-secondary">Earlier</h3>
+                        <h3 class="card-title d-flex align-items-center gap-2">
+                            <input
+                                type="checkbox"
+                                class="form-check-input m-0"
+                                data-notification-select-target="selectAll"
+                                data-action="notification-select#toggleAll"
+                            />
+                            Unread
+                            <span class="badge bg-primary text-white rounded-circle" style="width: 1.2rem; height: 1.2rem; font-size: .65rem; padding: 0; line-height: 1.2rem;">{{ unread|length }}</span>
+                        </h3>
                     </div>
-                {% endif %}
-                <div class="list-group list-group-flush list-group-hoverable">
-                    {% for notification in read %}
-                        {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
-                    {% endfor %}
+                    <div class="list-group list-group-flush list-group-hoverable">
+                        {% for notification in unread %}
+                            {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if read is not empty %}
+                <div class="card">
+                    {% if unread is not empty %}
+                        <div class="card-header">
+                            <h3 class="card-title text-secondary">Earlier</h3>
+                        </div>
+                    {% endif %}
+                    <div class="list-group list-group-flush list-group-hoverable">
+                        {% for notification in read %}
+                            {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if notifications.nbPages > 1 %}
+            <div class="card mt-3">
+                <div class="card-footer d-flex align-items-center border-top">
+                    <p class="m-0 text-muted">
+                        Page {{ notifications.currentPage }} of {{ notifications.nbPages }}
+                    </p>
+                    <ul class="pagination m-0 ms-auto">
+                        <li class="page-item{{ not notifications.hasPreviousPage ? ' disabled' }}">
+                            <a
+                                href="{{ notifications.hasPreviousPage ? admin_path('admin_notification_list', {page: notifications.previousPage}) : '#' }}"
+                                class="page-link"
+                            >
+                                <twig:Xutim:Admin:Icon name="chevron-left" />
+                                prev
+                            </a>
+                        </li>
+                        <li class="page-item{{ not notifications.hasNextPage ? ' disabled' }}">
+                            <a
+                                href="{{ notifications.hasNextPage ? admin_path('admin_notification_list', {page: notifications.nextPage}) : '#' }}"
+                                class="page-link"
+                            >
+                                next
+                                <twig:Xutim:Admin:Icon name="chevron-right" />
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         {% endif %}

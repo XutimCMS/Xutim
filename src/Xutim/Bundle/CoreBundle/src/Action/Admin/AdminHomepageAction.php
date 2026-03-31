@@ -72,7 +72,7 @@ class AdminHomepageAction extends AbstractController
             10
         );
 
-        $latestNotifications = $this->notificationRepository->findLatestForRecipient($this->getUser(), 5);
+        $latestNotifications = $this->notificationRepository->findUnreadForRecipient($this->getUser(), 5);
 
         return $this->render('@XutimCore/admin/homepage/homepage_translator.html.twig', [
             'latestArticles' => $latestArticles,
