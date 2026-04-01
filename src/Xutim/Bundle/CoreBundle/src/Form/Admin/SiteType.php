@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\LocaleType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -59,6 +60,12 @@ class SiteType extends AbstractType implements DataMapperInterface
                 'required' => false,
                 'placeholder' => 'Select reference language',
             ])
+            ->add('untranslatedArticleAgeLimitDays', IntegerType::class, [
+                'label' => new TranslatableMessage('untranslated article age limit (days)', [], 'admin'),
+                'required' => true,
+                'attr' => ['min' => 0, 'placeholder' => '180'],
+                'help' => new TranslatableMessage('Articles older than this will not appear in the translator dashboard. Set to 0 for no limit.', [], 'admin'),
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => new TranslatableMessage('submit', [], 'admin')
             ])
@@ -84,6 +91,7 @@ class SiteType extends AbstractType implements DataMapperInterface
         $forms['theme']->setData($viewData->theme);
         $forms['sender']->setData($viewData->sender);
         $forms['referenceLocale']->setData($viewData->referenceLocale);
+        $forms['untranslatedArticleAgeLimitDays']->setData($viewData->untranslatedArticleAgeLimitDays);
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
@@ -101,6 +109,9 @@ class SiteType extends AbstractType implements DataMapperInterface
         /** @var string $referenceLocale */
         $referenceLocale = $forms['referenceLocale']->getData() ?? 'en';
 
-        $viewData = new SiteDto($languages, $extendedLanguages, $theme, $sender, $referenceLocale);
+        /** @var int $untranslatedArticleAgeLimitDays */
+        $untranslatedArticleAgeLimitDays = $forms['untranslatedArticleAgeLimitDays']->getData() ?? 180;
+
+        $viewData = new SiteDto($languages, $extendedLanguages, $theme, $sender, $referenceLocale, $untranslatedArticleAgeLimitDays);
     }
 }

@@ -12,7 +12,14 @@ interface SiteInterface
      * @param array<string> $locales
      * @param array<string> $extendedContentLocales
      */
-    public function change(array $locales, array $extendedContentLocales, string $theme, string $sender, string $referenceLocale): void;
+    public function change(
+        array $locales,
+        array $extendedContentLocales,
+        string $theme,
+        string $sender,
+        string $referenceLocale,
+        int $untranslatedArticleAgeLimitDays = 180,
+    ): void;
 
     public function getReferenceLocale(): string;
 

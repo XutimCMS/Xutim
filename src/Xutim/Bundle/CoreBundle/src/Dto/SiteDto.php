@@ -15,7 +15,8 @@ final readonly class SiteDto
         public array $extendedContentLocales,
         public string $theme,
         public string $sender,
-        public string $referenceLocale
+        public string $referenceLocale,
+        public int $untranslatedArticleAgeLimitDays = 180,
     ) {
     }
 }

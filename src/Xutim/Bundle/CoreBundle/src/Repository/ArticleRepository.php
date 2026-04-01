@@ -478,7 +478,7 @@ class ArticleRepository extends ServiceEntityRepository
      * @param  array<string>                $locales
      * @return array<int, ArticleInterface>
      */
-    public function findByMissingTranslations(array $locales, ?int $limit = null): array
+    public function findByMissingTranslations(array $locales, ?int $limit = null, int $ageLimitDays = 0): array
     {
         $qb = $this->createQueryBuilder('article');
         $qb
@@ -503,6 +503,11 @@ class ArticleRepository extends ServiceEntityRepository
             ->setParameter('localeCount', count($locales))
             ->orderBy('article.createdAt', 'desc')
             ->setMaxResults($limit);
+
+        if ($ageLimitDays > 0) {
+            $qb->andWhere('article.createdAt >= :ageLimit')
+                ->setParameter('ageLimit', new \DateTimeImmutable("-{$ageLimitDays} days"));
+        }
 
         $localeConditions = [$qb->expr()->eq('article.allTranslationLocales', 'true')];
         foreach ($locales as $i => $locale) {

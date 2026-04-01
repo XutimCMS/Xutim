@@ -36,6 +36,9 @@ class Site implements SiteInterface
     #[Column(type: 'string', length: 10, nullable: false, options: ['comment' => 'Site\'s reference locale for translations.'])]
     private string $referenceLocale;
 
+    #[Column(type: 'integer', nullable: false, options: ['default' => 180, 'comment' => 'Max age in days for untranslated articles on dashboard. 0 = no limit.'])]
+    private int $untranslatedArticleAgeLimitDays;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
@@ -44,14 +47,21 @@ class Site implements SiteInterface
         $this->theme = 'default';
         $this->sender = 'website@example.com';
         $this->referenceLocale = 'en';
+        $this->untranslatedArticleAgeLimitDays = 180;
     }
 
     /**
      * @param array<string> $locales
      * @param array<string> $extendedContentLocales
      */
-    public function change(array $locales, array $extendedContentLocales, string $theme, string $sender, string $referenceLocale): void
-    {
+    public function change(
+        array $locales,
+        array $extendedContentLocales,
+        string $theme,
+        string $sender,
+        string $referenceLocale,
+        int $untranslatedArticleAgeLimitDays = 180,
+    ): void {
         usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
         usort($extendedContentLocales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
         $this->locales = $locales;
@@ -59,6 +69,12 @@ class Site implements SiteInterface
         $this->theme = $theme;
         $this->sender = $sender;
         $this->referenceLocale = $referenceLocale;
+        $this->untranslatedArticleAgeLimitDays = $untranslatedArticleAgeLimitDays;
+    }
+
+    public function getUntranslatedArticleAgeLimitDays(): int
+    {
+        return $this->untranslatedArticleAgeLimitDays;
     }
 
     public function getReferenceLocale(): string
@@ -89,6 +105,6 @@ class Site implements SiteInterface
 
     public function toDto(): SiteDto
     {
-        return new SiteDto($this->locales, $this->extendedContentLocales, $this->theme, $this->sender, $this->referenceLocale);
+        return new SiteDto($this->locales, $this->extendedContentLocales, $this->theme, $this->sender, $this->referenceLocale, $this->untranslatedArticleAgeLimitDays);
     }
 }

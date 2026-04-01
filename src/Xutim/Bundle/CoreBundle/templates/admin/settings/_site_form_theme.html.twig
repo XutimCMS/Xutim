@@ -1,0 +1,28 @@
+{% block _site_untranslatedArticleAgeLimitDays_row %}
+    {% set fieldValue = form.vars.data %}
+    <div class="mb-3" data-controller="preset-input">
+        {{ form_label(form) }}
+        <div class="d-flex align-items-center gap-2">
+            <div class="btn-group" role="group">
+                {% for label, days in {'1 month': 30, '3 months': 90, '6 months': 180} %}
+                    <button
+                        type="button"
+                        class="btn btn-sm {{ fieldValue == days ? 'btn-primary active' : 'btn-outline-primary' }}"
+                        data-preset-input-target="button"
+                        data-action="preset-input#select"
+                        data-value="{{ days }}"
+                    >{{ label }}</button>
+                {% endfor %}
+            </div>
+            {{ form_widget(form, {attr: {
+                class: 'form-control form-control-sm',
+                style: 'width: 5rem',
+                'data-preset-input-target': 'input',
+                'data-action': 'preset-input#inputChanged',
+            }}) }}
+            <span class="text-secondary small">days</span>
+        </div>
+        {{ form_help(form) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}

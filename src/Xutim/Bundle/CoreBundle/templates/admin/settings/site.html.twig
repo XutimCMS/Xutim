@@ -10,5 +10,7 @@
 {% endblock %}
 
 {% block settingsBody %}
+    {% form_theme form '@XutimCore/admin/settings/_site_form_theme.html.twig' %}
+
     {{ form(form) }}
 {% endblock %}

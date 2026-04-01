@@ -127,4 +127,9 @@ class SiteContext
     {
         return $this->getDefaultSite()->referenceLocale;
     }
+
+    public function getUntranslatedArticleAgeLimitDays(): int
+    {
+        return $this->getDefaultSite()->untranslatedArticleAgeLimitDays;
+    }
 }

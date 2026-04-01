@@ -38,6 +38,7 @@ import SplitView from './controllers/split-view_controller.js';
 import EditingPresence from './controllers/editing-presence_controller.js';
 import TranslationLocales from './controllers/translation-locales_controller.js';
 import NotificationSelect from './controllers/notification-select_controller.js';
+import PresetInput from './controllers/preset-input_controller.js';
 
 app.register('sidebar', Sidebar);
 app.register('article-preview', ArticlePreview);
@@ -71,3 +72,4 @@ app.register('split-view', SplitView);
 app.register('editing-presence', EditingPresence);
 app.register('translation-locales', TranslationLocales);
 app.register('notification-select', NotificationSelect);
+app.register('preset-input', PresetInput);
