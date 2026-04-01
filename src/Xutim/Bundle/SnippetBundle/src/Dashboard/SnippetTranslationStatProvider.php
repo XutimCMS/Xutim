@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Xutim\SnippetBundle\Dashboard;
 
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Xutim\CoreBundle\Dashboard\TranslationStat;
 use Xutim\CoreBundle\Dashboard\TranslationStatProvider;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SnippetBundle\Repository\SnippetRepository;
 
+#[AutoconfigureTag('xutim.translation_stat_provider', ['priority' => 20])]
 final readonly class SnippetTranslationStatProvider implements TranslationStatProvider
 {
     public function __construct(

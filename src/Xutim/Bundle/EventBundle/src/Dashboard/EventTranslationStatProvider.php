@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Xutim\EventBundle\Dashboard;
 
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Xutim\CoreBundle\Dashboard\TranslationStat;
 use Xutim\CoreBundle\Dashboard\TranslationStatProvider;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 
+#[AutoconfigureTag('xutim.translation_stat_provider', ['priority' => 10])]
 final readonly class EventTranslationStatProvider implements TranslationStatProvider
 {
     public function __construct(
