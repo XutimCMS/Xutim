@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Traversable;
 use Xutim\CoreBundle\Dto\SiteDto;
+use Xutim\CoreBundle\Entity\Site;
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
 /**
@@ -63,7 +64,7 @@ class SiteType extends AbstractType implements DataMapperInterface
             ->add('untranslatedArticleAgeLimitDays', IntegerType::class, [
                 'label' => new TranslatableMessage('untranslated article age limit (days)', [], 'admin'),
                 'required' => true,
-                'attr' => ['min' => 0, 'placeholder' => '180'],
+                'attr' => ['min' => 0, 'placeholder' => (string) Site::DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS],
                 'help' => new TranslatableMessage('Articles older than this will not appear in the translator dashboard. Set to 0 for no limit.', [], 'admin'),
             ])
             ->add('submit', SubmitType::class, [
@@ -110,7 +111,7 @@ class SiteType extends AbstractType implements DataMapperInterface
         $referenceLocale = $forms['referenceLocale']->getData() ?? 'en';
 
         /** @var int $untranslatedArticleAgeLimitDays */
-        $untranslatedArticleAgeLimitDays = $forms['untranslatedArticleAgeLimitDays']->getData() ?? 180;
+        $untranslatedArticleAgeLimitDays = $forms['untranslatedArticleAgeLimitDays']->getData() ?? Site::DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS;
 
         $viewData = new SiteDto($languages, $extendedLanguages, $theme, $sender, $referenceLocale, $untranslatedArticleAgeLimitDays);
     }

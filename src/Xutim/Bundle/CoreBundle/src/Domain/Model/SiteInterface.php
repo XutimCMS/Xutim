@@ -18,7 +18,7 @@ interface SiteInterface
         string $theme,
         string $sender,
         string $referenceLocale,
-        int $untranslatedArticleAgeLimitDays = 180,
+        int $untranslatedArticleAgeLimitDays,
     ): void;
 
     public function getReferenceLocale(): string;

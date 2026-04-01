@@ -15,6 +15,7 @@ use Xutim\CoreBundle\Dto\SiteDto;
 #[MappedSuperclass]
 class Site implements SiteInterface
 {
+    public const int DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS = 180;
     #[Id]
     #[Column(type: 'uuid')]
     private Uuid $id;
@@ -36,8 +37,8 @@ class Site implements SiteInterface
     #[Column(type: 'string', length: 10, nullable: false, options: ['comment' => 'Site\'s reference locale for translations.'])]
     private string $referenceLocale;
 
-    #[Column(type: 'integer', nullable: false, options: ['default' => 180, 'comment' => 'Max age in days for untranslated articles on dashboard. 0 = no limit.'])]
-    private int $untranslatedArticleAgeLimitDays;
+    #[Column(type: 'integer', nullable: false, options: ['default' => self::DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS, 'comment' => 'Max age in days for untranslated articles on dashboard. 0 = no limit.'])]
+    private int $untranslatedArticleAgeLimitDays = self::DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS;
 
     public function __construct()
     {
@@ -47,7 +48,7 @@ class Site implements SiteInterface
         $this->theme = 'default';
         $this->sender = 'website@example.com';
         $this->referenceLocale = 'en';
-        $this->untranslatedArticleAgeLimitDays = 180;
+        $this->untranslatedArticleAgeLimitDays = self::DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS;
     }
 
     /**
@@ -60,7 +61,7 @@ class Site implements SiteInterface
         string $theme,
         string $sender,
         string $referenceLocale,
-        int $untranslatedArticleAgeLimitDays = 180,
+        int $untranslatedArticleAgeLimitDays,
     ): void {
         usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
         usort($extendedContentLocales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));

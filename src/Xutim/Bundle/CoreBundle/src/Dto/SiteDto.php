@@ -16,7 +16,7 @@ final readonly class SiteDto
         public string $theme,
         public string $sender,
         public string $referenceLocale,
-        public int $untranslatedArticleAgeLimitDays = 180,
+        public int $untranslatedArticleAgeLimitDays,
     ) {
     }
 }
