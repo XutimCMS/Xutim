@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Xutim\SnippetBundle\Dashboard\SnippetTranslationStatProvider;
 
 /**
  * @author Tomas Jakl <tomasjakll@gmail.com>
@@ -43,6 +44,9 @@ final class XutimSnippetExtension extends Extension implements PrependExtensionI
         $loader->load('routing.php');
         $loader->load('twig.php');
         $loader->load('actions.php');
+
+        $container->autowire(SnippetTranslationStatProvider::class)
+            ->setAutoconfigured(true);
 
         if ($container->getParameter('kernel.environment') === 'test') {
             $loader->load('fixtures.php');
