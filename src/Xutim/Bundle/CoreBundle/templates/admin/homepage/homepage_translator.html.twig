@@ -11,101 +11,83 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row row-deck row-cards">
-        {% for locale, localeCount in translatedLocalesCount %}
-            {% set translatedPercentage = articlesCount ? (100 * localeCount / articlesCount)|round(1, 'floor') %}
-            <div class="col-md-6 col-lg-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="subheader">
-                                Translated {{ locale|language_name }} articles
-                            </div>
-                        </div>
-                        <div class="h1 mb-0">{{ translatedPercentage }}%</div>
-                        <div class="d-flex mb-2"></div>
-                        <div class="progress progress-sm">
-                            <div
-                                class="progress-bar bg-primary"
-                                style="width: {{ translatedPercentage }}%"
-                                role="progressbar"
-                                aria-valuenow="{{ translatedPercentage }}"
-                                aria-valuemin="0"
-                                aria-valuemax="100"
-                                aria-label="{{ translatedPercentage }}% Complete"
-                            >
-                                <span class="visually-hidden">
-                                    {{- translatedPercentage -}}% Complete
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-    {% if latestNotifications is not empty %}
-    <div class="card mt-4">
-        <div class="card-header">
-            <h3 class="card-title">Unread notifications</h3>
-            <div class="card-actions">
-                <a href="{{ admin_path('admin_notification_list') }}" class="btn btn-link">View all</a>
-            </div>
-        </div>
-        <div class="list-group list-group-flush">
-            {% for notification in latestNotifications %}
-                <form method="post" action="{{ admin_path('admin_notification_read', {id: notification.id}) }}">
-                    <button type="submit" class="list-group-item list-group-item-action w-100 text-start border-0">
-                        <div class="d-flex justify-content-between align-items-center gap-2">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="status-dot status-dot-animated status-{{ notification.severity.statusColor() }}"></span>
-                                <div>
-                                    <div class="fw-semibold">{{ notification.title }}</div>
-                                    <div class="text-secondary small mt-1">{{ notification.body|u.truncate(80, '...') }}</div>
+    {% if translationStats is not empty %}
+        <div class="row row-cards mb-4">
+            {% for stat in translationStats %}
+                <div class="col-sm-6 col-lg-3">
+                    <a href="{{ stat.listUrl }}" class="card card-sm card-link">
+                        <div class="card-body">
+                            <div class="subheader">{{ stat.label|capitalize }}</div>
+                            <div class="d-flex align-items-baseline gap-2">
+                                <div class="h1 mb-0">{{ stat.totalCount }}</div>
+                                <div class="text-secondary small">
+                                    {% if stat.untranslatedCount > 0 and stat.outdatedCount > 0 %}
+                                        {{ stat.untranslatedCount }} {{ 'to translate'|trans({}, 'admin') }},
+                                        {{ stat.outdatedCount }} {{ 'to update'|trans({}, 'admin') }}
+                                    {% elseif stat.untranslatedCount > 0 %}
+                                        {{ 'to translate'|trans({}, 'admin') }}
+                                    {% else %}
+                                        {{ 'to update'|trans({}, 'admin') }}
+                                    {% endif %}
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="text-secondary text-nowrap small">{{ notification.createdAt|format_datetime('short', 'short') }}</span>
-                                <span class="badge bg-danger text-white">new</span>
-                            </div>
                         </div>
-                    </button>
-                </form>
+                    </a>
+                </div>
             {% endfor %}
         </div>
-    </div>
     {% endif %}
 
-    <div class="row row-cards mt-4">
+    {% if latestNotifications is not empty %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title">{{ 'Unread notifications'|trans({}, 'admin') }}</h3>
+                <div class="card-actions">
+                    <a href="{{ admin_path('admin_notification_list') }}" class="btn btn-link">{{ 'View all'|trans({}, 'admin') }}</a>
+                </div>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for notification in latestNotifications %}
+                    <form method="post" action="{{ admin_path('admin_notification_read', {id: notification.id}) }}">
+                        <button type="submit" class="list-group-item list-group-item-action w-100 text-start border-0">
+                            <div class="d-flex justify-content-between align-items-center gap-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="status-dot status-dot-animated status-{{ notification.severity.statusColor() }}"></span>
+                                    <div>
+                                        <div class="fw-semibold">{{ notification.title }}</div>
+                                        <div class="text-secondary small mt-1">{{ notification.body|u.truncate(80, '...') }}</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-secondary text-nowrap small">{{ notification.createdAt|format_datetime('short', 'short') }}</span>
+                                    <span class="badge bg-danger text-white">new</span>
+                                </div>
+                            </div>
+                        </button>
+                    </form>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row row-cards">
         <div class="col-md-12 col-lg-6">
             <turbo-frame id="untranslated-articles" data-turbo-action="advance">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
-                        {{ 'newest untranslated articles'|trans|capitalize }}
+                        {{ 'Articles to translate'|trans({}, 'admin') }}
                     </h3>
                 </div>
                 <div class="card-table table-responsive">
                     <table class="table table-vcenter">
                         <thead>
                             <tr>
-                                <th
-                                    title="{{ 'publication status'|trans({}, 'admin')|capitalize }}"
-                                    data-controller="tooltip"
-                                >
-                                    S
-                                </th>
-                                <th>
-                                    {{ 'title'|trans({}, 'admin')|capitalize }}
-                                </th>
-                                <th>
-                                    {{ 'created at'|trans({}, 'admin')|capitalize }}
-                                </th>
+                                <th title="{{ 'publication status'|trans({}, 'admin')|capitalize }}" data-controller="tooltip">S</th>
+                                <th>{{ 'title'|trans({}, 'admin')|capitalize }}</th>
+                                <th>{{ 'created at'|trans({}, 'admin')|capitalize }}</th>
                                 {% if userLocales|length > 1 %}
-                                <th>
-                                    {{ 'missing languages'|trans({}, 'admin')|capitalize }}
-                                </th>
+                                    <th>{{ 'missing languages'|trans({}, 'admin')|capitalize }}</th>
                                 {% endif %}
                             </tr>
                         </thead>
@@ -121,42 +103,32 @@
                                     {% endif %}
                                 {% endfor %}
                                 <tr>
-                                    <td>
-                                        {{ badges.publicationStatusBadge(translation) }}
-                                    </td>
+                                    <td>{{ badges.publicationStatusBadge(translation) }}</td>
                                     <td class="text-wrap">
-                                        <a
-                                            href="{{ admin_path('admin_article_edit', {id: article.id, _content_locale: firstMissingLocale}) }}"
-                                            data-turbo-frame="_top"
-                                            class="btn-link mt-1 text-dark"
-                                            aria-label="{{ 'show'|trans({}, 'admin') }}"
-                                        >
+                                        <a href="{{ admin_path('admin_article_edit', {id: article.id, _content_locale: firstMissingLocale}) }}"
+                                           data-turbo-frame="_top" class="btn-link mt-1 text-dark">
                                             {{ translatable.languageBadge(translation) }}
                                             {{ translation.title }}
                                         </a>
                                     </td>
                                     <td class="text-secondary text-nowrap">
-                                        <twig:Xutim:Admin:Icon
-                                            name="calendar"
-                                        />
+                                        <twig:Xutim:Admin:Icon name="calendar" />
                                         {{ article.createdAt|format_date }}
                                     </td>
                                     {% if userLocales|length > 1 %}
-                                    <td>
-                                        <div class="tags-list d-inline">
-                                            {% for userLocale in userLocales %}
-                                                {% if article.translations|reduce((carry, translation) => carry == true or userLocale == translation.locale) == false %}
-                                                    {% set allowed = article.translationLocales is empty or article.isLocaleAllowed(userLocale) %}
-                                                    <span class="tag{{ not allowed ? ' opacity-50' : '' }}" {% if not allowed %}title="{{ 'not translatable'|trans({}, 'admin') }}"{% endif %}>
-                                                        {{ userLocale }}
-                                                        {% if not allowed %}
-                                                            <small class="text-muted">&times;</small>
-                                                        {% endif %}
-                                                    </span>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    </td>
+                                        <td>
+                                            <div class="tags-list d-inline">
+                                                {% for userLocale in userLocales %}
+                                                    {% if article.translations|reduce((carry, translation) => carry == true or userLocale == translation.locale) == false %}
+                                                        {% set allowed = article.translationLocales is empty or article.isLocaleAllowed(userLocale) %}
+                                                        <span class="tag{{ not allowed ? ' opacity-50' : '' }}" {% if not allowed %}title="{{ 'not translatable'|trans({}, 'admin') }}"{% endif %}>
+                                                            {{ userLocale }}
+                                                            {% if not allowed %}<small class="text-muted">&times;</small>{% endif %}
+                                                        </span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </td>
                                     {% endif %}
                                 </tr>
                             {% endfor %}
@@ -164,61 +136,43 @@
                     </table>
                 </div>
                 {% if untranslatedPager.nbPages > 1 %}
-                <div class="card-footer d-flex align-items-center border-top">
-                    <p class="m-0 text-muted">
-                        {{ 'page'|trans({}, 'admin')|capitalize }}
-                        {{ untranslatedPager.currentPage }}
-                        {{ 'of'|trans({}, 'admin') }}
-                        {{ untranslatedPager.nbPages }}
-                    </p>
-                    <ul class="pagination m-0 ms-auto">
-                        <li class="page-item{{ not untranslatedPager.hasPreviousPage ? ' disabled' }}">
-                            <a
-                                href="{{ untranslatedPager.hasPreviousPage ? admin_current_path_with({untranslatedPage: untranslatedPager.previousPage}) : '#' }}"
-                                class="page-link"
-                            >
-                                <twig:Xutim:Admin:Icon name="chevron-left" />
-                                {{ 'prev'|trans({}, 'admin') }}
-                            </a>
-                        </li>
-                        <li class="page-item{{ not untranslatedPager.hasNextPage ? ' disabled' }}">
-                            <a
-                                href="{{ untranslatedPager.hasNextPage ? admin_current_path_with({untranslatedPage: untranslatedPager.nextPage}) : '#' }}"
-                                class="page-link"
-                            >
-                                {{ 'next'|trans({}, 'admin') }}
-                                <twig:Xutim:Admin:Icon name="chevron-right" />
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                    <div class="card-footer d-flex align-items-center border-top">
+                        <p class="m-0 text-muted">{{ 'page'|trans({}, 'admin')|capitalize }} {{ untranslatedPager.currentPage }} {{ 'of'|trans({}, 'admin') }} {{ untranslatedPager.nbPages }}</p>
+                        <ul class="pagination m-0 ms-auto">
+                            <li class="page-item{{ not untranslatedPager.hasPreviousPage ? ' disabled' }}">
+                                <a href="{{ untranslatedPager.hasPreviousPage ? admin_current_path_with({untranslatedPage: untranslatedPager.previousPage}) : '#' }}" class="page-link">
+                                    <twig:Xutim:Admin:Icon name="chevron-left" /> {{ 'prev'|trans({}, 'admin') }}
+                                </a>
+                            </li>
+                            <li class="page-item{{ not untranslatedPager.hasNextPage ? ' disabled' }}">
+                                <a href="{{ untranslatedPager.hasNextPage ? admin_current_path_with({untranslatedPage: untranslatedPager.nextPage}) : '#' }}" class="page-link">
+                                    {{ 'next'|trans({}, 'admin') }} <twig:Xutim:Admin:Icon name="chevron-right" />
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 {% endif %}
             </div>
             </turbo-frame>
         </div>
+
         <div class="col-md-12 col-lg-6">
             <turbo-frame id="changed-articles" data-turbo-action="advance">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">
-                        {{ 'new version of translated articles'|trans|capitalize }}
+                        {{ 'Articles to update'|trans({}, 'admin') }}
                     </h3>
                 </div>
                 <div class="card-table table-responsive">
                     <table class="table table-vcenter">
                         <thead>
                             <tr>
-                                <th
-                                    title="{{ 'publication status'|trans({}, 'admin') }}"
-                                >
-                                    S
-                                </th>
+                                <th title="{{ 'publication status'|trans({}, 'admin') }}">S</th>
                                 <th>{{ 'title'|trans({}, 'admin') }}</th>
                                 <th>{{ 'updated at'|trans({}, 'admin') }}</th>
                                 {% if userLocales|length > 1 %}
-                                <th>
-                                    {{ 'languages changed'|trans({}, 'admin') }}
-                                </th>
+                                    <th>{{ 'languages changed'|trans({}, 'admin') }}</th>
                                 {% endif %}
                             </tr>
                         </thead>
@@ -235,38 +189,29 @@
                                     {% endif %}
                                 {% endfor %}
                                 <tr>
-                                    <td>
-                                        {{ badges.publicationStatusBadge(translation) }}
-                                    </td>
+                                    <td>{{ badges.publicationStatusBadge(translation) }}</td>
                                     <td class="text-wrap">
-                                        <a
-                                            href="{{ admin_path('admin_article_edit', {id: article.id, _content_locale: firstOutdatedLocale}) }}"
-                                            data-turbo-frame="_top"
-                                            class="btn-link mt-1 text-dark"
-                                            aria-label="{{ 'show'|trans({}, 'admin') }}"
-                                        >
+                                        <a href="{{ admin_path('admin_article_edit', {id: article.id, _content_locale: firstOutdatedLocale}) }}"
+                                           data-turbo-frame="_top" class="btn-link mt-1 text-dark">
                                             {{ translatable.languageBadge(translation) }}
                                             {{ translation.title }}
                                         </a>
                                     </td>
                                     <td class="text-secondary text-nowrap">
-                                        <twig:Xutim:Admin:Icon
-                                            name="calendar"
-                                        />
+                                        <twig:Xutim:Admin:Icon name="calendar" />
                                         {{ effectiveRef.updatedAt|format_date }}
                                     </td>
                                     {% if userLocales|length > 1 %}
-                                    <td>
-                                        <div class="tag-list">
-                                            {% for t in article.translations %}
-                                                {% if t.locale in userLocales and t.locale != referenceLocale
-                                                    and (t.referenceSyncedAt is null or t.referenceSyncedAt < effectiveRef.updatedAt)
-                                                %}
-                                                    <span class="tag">{{ t.locale }}</span>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    </td>
+                                        <td>
+                                            <div class="tag-list">
+                                                {% for t in article.translations %}
+                                                    {% if t.locale in userLocales and t.locale != referenceLocale
+                                                        and (t.referenceSyncedAt is null or t.referenceSyncedAt < effectiveRef.updatedAt) %}
+                                                        <span class="tag">{{ t.locale }}</span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </td>
                                     {% endif %}
                                 </tr>
                             {% endfor %}
@@ -274,37 +219,25 @@
                     </table>
                 </div>
                 {% if changedPager.nbPages > 1 %}
-                <div class="card-footer d-flex align-items-center border-top">
-                    <p class="m-0 text-muted">
-                        {{ 'page'|trans({}, 'admin')|capitalize }}
-                        {{ changedPager.currentPage }}
-                        {{ 'of'|trans({}, 'admin') }}
-                        {{ changedPager.nbPages }}
-                    </p>
-                    <ul class="pagination m-0 ms-auto">
-                        <li class="page-item{{ not changedPager.hasPreviousPage ? ' disabled' }}">
-                            <a
-                                href="{{ changedPager.hasPreviousPage ? admin_current_path_with({changedPage: changedPager.previousPage}) : '#' }}"
-                                class="page-link"
-                            >
-                                <twig:Xutim:Admin:Icon name="chevron-left" />
-                                {{ 'prev'|trans({}, 'admin') }}
-                            </a>
-                        </li>
-                        <li class="page-item{{ not changedPager.hasNextPage ? ' disabled' }}">
-                            <a
-                                href="{{ changedPager.hasNextPage ? admin_current_path_with({changedPage: changedPager.nextPage}) : '#' }}"
-                                class="page-link"
-                            >
-                                {{ 'next'|trans({}, 'admin') }}
-                                <twig:Xutim:Admin:Icon name="chevron-right" />
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                    <div class="card-footer d-flex align-items-center border-top">
+                        <p class="m-0 text-muted">{{ 'page'|trans({}, 'admin')|capitalize }} {{ changedPager.currentPage }} {{ 'of'|trans({}, 'admin') }} {{ changedPager.nbPages }}</p>
+                        <ul class="pagination m-0 ms-auto">
+                            <li class="page-item{{ not changedPager.hasPreviousPage ? ' disabled' }}">
+                                <a href="{{ changedPager.hasPreviousPage ? admin_current_path_with({changedPage: changedPager.previousPage}) : '#' }}" class="page-link">
+                                    <twig:Xutim:Admin:Icon name="chevron-left" /> {{ 'prev'|trans({}, 'admin') }}
+                                </a>
+                            </li>
+                            <li class="page-item{{ not changedPager.hasNextPage ? ' disabled' }}">
+                                <a href="{{ changedPager.hasNextPage ? admin_current_path_with({changedPage: changedPager.nextPage}) : '#' }}" class="page-link">
+                                    {{ 'next'|trans({}, 'admin') }} <twig:Xutim:Admin:Icon name="chevron-right" />
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 {% endif %}
             </div>
             </turbo-frame>
         </div>
     </div>
+
 {% endblock %}

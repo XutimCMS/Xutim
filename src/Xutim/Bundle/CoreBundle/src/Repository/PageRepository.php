@@ -224,6 +224,40 @@ class PageRepository extends ServiceEntityRepository
         return $translatedTotal;
     }
 
+    /**
+     * @param list<string> $locales
+     */
+    public function countUntranslatedForLocales(array $locales): int
+    {
+        if ($locales === []) {
+            return 0;
+        }
+
+        $qb = $this->createQueryBuilder('page');
+        $qb
+            ->select('page.id')
+            ->leftJoin('page.translations', 'translation', 'WITH', $qb->expr()->in('translation.locale', ':locales'))
+            ->groupBy('page.id')
+            ->having(
+                $qb->expr()->orX(
+                    $qb->expr()->eq($qb->expr()->count('translation.id'), 0),
+                    $qb->expr()->lt($qb->expr()->countDistinct('translation.locale'), ':localeCount')
+                )
+            )
+            ->setParameter('locales', $locales)
+            ->setParameter('localeCount', count($locales));
+
+        $localeConditions = [$qb->expr()->eq('page.allTranslationLocales', 'true')];
+        foreach ($locales as $i => $locale) {
+            $param = 'localeFilter' . $i;
+            $localeConditions[] = $qb->expr()->like('CAST(page.translationLocales AS TEXT)', ':' . $param);
+            $qb->setParameter($param, '%' . $locale . '%');
+        }
+        $qb->andWhere($qb->expr()->orX(...$localeConditions));
+
+        return count($qb->getQuery()->getResult());
+    }
+
     public function moveUp(PageInterface $page, int $step = 1): void
     {
         $page->movePosUp($step);

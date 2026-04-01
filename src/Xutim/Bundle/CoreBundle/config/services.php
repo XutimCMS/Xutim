@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Symfony\Component\Asset\Context\RequestStackContext;
+use Xutim\CoreBundle\Dashboard\TranslationStatProvider;
 use Xutim\CoreBundle\Form\Admin\BlockItemProvider\BlockItemProviderInterface;
 use Xutim\CoreBundle\Infra\Doctrine\Type\AbstractEnumType;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
@@ -25,6 +26,9 @@ return static function (ContainerConfigurator $container): void {
 
     $services->instanceof(BlockItemProviderInterface::class)
         ->tag('xutim.block_item_provider');
+
+    $services->instanceof(TranslationStatProvider::class)
+        ->tag('xutim.translation_stat_provider');
 
     $services->alias(RequestStackContext::class, 'assets.context');
 

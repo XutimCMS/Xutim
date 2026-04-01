@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Xutim\CoreBundle\Dashboard\TranslationStatProvider;
 use Xutim\CoreBundle\Form\Admin\BlockItemProvider\BlockItemProviderInterface;
 use Xutim\CoreBundle\Message\Command\Article\PublishScheduledArticlesCommand;
 use Xutim\CoreBundle\Message\Command\GenerateSitemapCommand;
@@ -33,6 +34,9 @@ final class XutimCoreExtension extends Extension implements PrependExtensionInte
 
         $container->registerForAutoconfiguration(BlockItemProviderInterface::class)
             ->addTag('xutim.block_item_provider');
+
+        $container->registerForAutoconfiguration(TranslationStatProvider::class)
+            ->addTag('xutim.translation_stat_provider');
 
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
 

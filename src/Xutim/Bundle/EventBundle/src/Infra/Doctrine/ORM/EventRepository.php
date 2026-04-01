@@ -94,6 +94,34 @@ class EventRepository extends ServiceEntityRepository
         return $builder;
     }
 
+    /**
+     * @param list<string> $locales
+     */
+    public function countUntranslatedForLocales(array $locales): int
+    {
+        if ($locales === []) {
+            return 0;
+        }
+
+        $qb = $this->createQueryBuilder('event');
+        $qb
+            ->select('event.id')
+            ->leftJoin('event.translations', 'translation', 'WITH', $qb->expr()->in('translation.locale', ':locales'))
+            ->where('event.status = :status')
+            ->groupBy('event.id')
+            ->having(
+                $qb->expr()->orX(
+                    $qb->expr()->eq($qb->expr()->count('translation.id'), 0),
+                    $qb->expr()->lt($qb->expr()->countDistinct('translation.locale'), ':localeCount')
+                )
+            )
+            ->setParameter('locales', $locales)
+            ->setParameter('localeCount', count($locales))
+            ->setParameter('status', PublicationStatus::Published);
+
+        return count($qb->getQuery()->getResult());
+    }
+
     public function save(EventInterface $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
