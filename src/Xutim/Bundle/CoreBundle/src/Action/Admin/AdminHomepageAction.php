@@ -58,7 +58,7 @@ class AdminHomepageAction extends AbstractController
         $userLocales = $this->getUser()->getTranslationLocales();
         $userLocales = array_filter(
             $userLocales,
-            fn (string $locale) => in_array($locale, $this->siteContext->getLocales(), true)
+            fn (string $locale) => in_array($locale, $this->siteContext->getAllLocales(), true)
         );
 
         $referenceLocale = $this->siteContext->getReferenceLocale();
