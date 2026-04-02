@@ -135,7 +135,7 @@
                   placeholder: 'Any'|trans({}, 'admin'),
                   minWidth: '200px',
                 },
-                chip: true,
+                chip: {fallbackLabel: 'Last %value% days'|trans({}, 'admin')},
               },
               {
                 key: 'publishedAt',

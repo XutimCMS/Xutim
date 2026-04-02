@@ -33,7 +33,7 @@ final readonly class ArticleTranslationStatProvider implements TranslationStatPr
             icon: 'tabler:article',
             untranslatedCount: count($this->articleRepository->findByMissingTranslations($locales, ageLimitDays: $ageLimitDays)),
             outdatedCount: count($this->articleRepository->findByChangedDefaultTranslations($locales)),
-            listUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'missing']]),
+            listUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'missing', ...($ageLimitDays > 0 ? ['updatedAt' => (string) $ageLimitDays] : [])]]),
             unpublishedCount: $this->articleRepository->countUnpublishedForLocales($localesWithoutReference),
         );
     }

@@ -90,13 +90,18 @@
                             {% set formatter = chipConfig.formatter|default(column.filter.formatter|default('')) %}
 
                             {% if column.filter.type|default('none') == 'select' and column.filter.options is defined %}
+                                {% set matched = false %}
                                 {% for option in column.filter.options %}
                                     {% set optionValue = option.value|default(option) %}
                                     {% set optionLabel = option.label|default(optionValue) %}
                                     {% if optionValue == filterValue %}
                                         {% set displayValue = optionLabel %}
+                                        {% set matched = true %}
                                     {% endif %}
                                 {% endfor %}
+                                {% if not matched and chipConfig.fallbackLabel|default('') is not empty %}
+                                    {% set displayValue = chipConfig.fallbackLabel|replace({'%value%': filterValue}) %}
+                                {% endif %}
                             {% endif %}
 
                             {% if formatter == 'upper' %}

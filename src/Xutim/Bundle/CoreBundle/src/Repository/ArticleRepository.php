@@ -61,16 +61,24 @@ class ArticleRepository extends ServiceEntityRepository
             return 0;
         }
 
-        /** @var int $count */
-        $count = $this->createQueryBuilder('article')
+        $qb = $this->createQueryBuilder('article')
             ->select('COUNT(DISTINCT article.id)')
             ->innerJoin('article.translations', 'trans')
             ->where('trans.locale IN (:locales)')
             ->andWhere('trans.status != :publishedStatus')
             ->setParameter('locales', $locales)
-            ->setParameter('publishedStatus', PublicationStatus::Published)
-            ->getQuery()
-            ->getSingleScalarResult();
+            ->setParameter('publishedStatus', PublicationStatus::Published);
+
+        $localeConditions = [$qb->expr()->eq('article.allTranslationLocales', 'true')];
+        foreach ($locales as $i => $locale) {
+            $param = 'localeFilter' . $i;
+            $localeConditions[] = $qb->expr()->like('CAST(article.translationLocales AS TEXT)', ':' . $param);
+            $qb->setParameter($param, '%' . $locale . '%');
+        }
+        $qb->andWhere($qb->expr()->orX(...$localeConditions));
+
+        /** @var int $count */
+        $count = $qb->getQuery()->getSingleScalarResult();
 
         return $count;
     }
@@ -262,7 +270,14 @@ class ArticleRepository extends ServiceEntityRepository
                             ':localeParam = :fallbackLocale',
                             'fallbackTranslation.id IS NULL'
                         )
-                    );
+                    )
+                    ->andWhere(
+                        $builder->expr()->orX(
+                            $builder->expr()->eq('article.allTranslationLocales', 'true'),
+                            $builder->expr()->like('CAST(article.translationLocales AS TEXT)', ':localeFilterMissing')
+                        )
+                    )
+                    ->setParameter('localeFilterMissing', '%' . $locale . '%');
             } elseif ($translationStatus === 'fallback') {
                 // Article is using fallback (not in requested locale, but fallback or default exists)
                 $builder->andWhere('translation.id IS NULL')
@@ -282,51 +297,21 @@ class ArticleRepository extends ServiceEntityRepository
             /** @var string $updatedAtRange */
             $updatedAtRange = $filter->col('updatedAt');
             $now = new \DateTimeImmutable();
+            $updatedAtCase =
+                'CASE
+                    WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                    WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                    ELSE defaultTranslation.updatedAt
+                 END';
 
-            if ($updatedAtRange === '7') {
-                $since = $now->modify('-7 days');
+            if ($updatedAtRange === '90+') {
                 $builder
-                    ->andWhere(
-                        'CASE
-                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
-                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
-                            ELSE defaultTranslation.updatedAt
-                         END >= :updatedSince'
-                    )
-                    ->setParameter('updatedSince', $since);
-            } elseif ($updatedAtRange === '30') {
-                $since = $now->modify('-30 days');
+                    ->andWhere($updatedAtCase . ' < :updatedBefore')
+                    ->setParameter('updatedBefore', $now->modify('-90 days'));
+            } elseif (ctype_digit($updatedAtRange)) {
                 $builder
-                    ->andWhere(
-                        'CASE
-                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
-                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
-                            ELSE defaultTranslation.updatedAt
-                         END >= :updatedSince'
-                    )
-                    ->setParameter('updatedSince', $since);
-            } elseif ($updatedAtRange === '90') {
-                $since = $now->modify('-90 days');
-                $builder
-                    ->andWhere(
-                        'CASE
-                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
-                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
-                            ELSE defaultTranslation.updatedAt
-                         END >= :updatedSince'
-                    )
-                    ->setParameter('updatedSince', $since);
-            } elseif ($updatedAtRange === '90+') {
-                $since = $now->modify('-90 days');
-                $builder
-                    ->andWhere(
-                        'CASE
-                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
-                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
-                            ELSE defaultTranslation.updatedAt
-                         END < :updatedBefore'
-                    )
-                    ->setParameter('updatedBefore', $since);
+                    ->andWhere($updatedAtCase . ' >= :updatedSince')
+                    ->setParameter('updatedSince', $now->modify("-{$updatedAtRange} days"));
             }
         }
 
@@ -528,7 +513,7 @@ class ArticleRepository extends ServiceEntityRepository
             ->setMaxResults($limit);
 
         if ($ageLimitDays > 0) {
-            $qb->andWhere('article.createdAt >= :ageLimit')
+            $qb->andWhere('article.updatedAt >= :ageLimit')
                 ->setParameter('ageLimit', new \DateTimeImmutable("-{$ageLimitDays} days"));
         }
 
