@@ -36,6 +36,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(TagRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.tag.class%')
+        ->arg('$defaultLocale', '%kernel.default_locale%')
         ->tag('doctrine.repository_service');
 
     $services->set(ContentTranslationRepository::class)

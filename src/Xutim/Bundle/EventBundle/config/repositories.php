@@ -13,6 +13,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(EventRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_event.model.event.class%')
+        ->arg('$defaultLocale', '%kernel.default_locale%')
         ->tag('doctrine.repository_service');
 
     $services->set(EventTranslationRepository::class)

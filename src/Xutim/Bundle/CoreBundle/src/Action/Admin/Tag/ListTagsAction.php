@@ -7,9 +7,11 @@ namespace Xutim\CoreBundle\Action\Admin\Tag;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Xutim\CoreBundle\Entity\Article;
+use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 
@@ -17,11 +19,13 @@ class ListTagsAction extends AbstractController
 {
     public function __construct(
         private readonly TagRepository $tagRepo,
-        private readonly ListFilterBuilder $filterBuilder
+        private readonly ListFilterBuilder $filterBuilder,
+        private readonly ContentContext $contentContext,
     ) {
     }
 
     public function __invoke(
+        Request $request,
         #[MapQueryParameter]
         string $searchTerm = '',
         #[MapQueryParameter]
@@ -29,14 +33,16 @@ class ListTagsAction extends AbstractController
         #[MapQueryParameter]
         int $pageLength = 10,
         #[MapQueryParameter]
-        string $orderColumn = TagRepository::FILTER_ORDER_COLUMN_MAP['name'],
+        string $orderColumn = '',
         #[MapQueryParameter]
-        string $orderDirection = 'asc'
+        string $orderDirection = 'asc',
     ): Response {
-        $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
+        /** @var array<string,string> $cols */
+        $cols = $request->query->all('col');
+        $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection, $cols);
 
-        /** @var QueryAdapter<Article> $adapter */
-        $adapter = new QueryAdapter($this->tagRepo->queryByFilter($filter));
+        /** @var QueryAdapter<TagInterface> $adapter */
+        $adapter = new QueryAdapter($this->tagRepo->queryByFilter($filter, $this->contentContext->getLocale()));
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
             $adapter,
             $filter->page,

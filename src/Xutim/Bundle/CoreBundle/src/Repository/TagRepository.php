@@ -19,11 +19,16 @@ class TagRepository extends ServiceEntityRepository
     public const FILTER_ORDER_COLUMN_MAP = [
         'id' => 'tag.id',
         'name' => 'translation.name',
-        'slug' => 'translation.slug'
+        'slug' => 'translation.slug',
+        'updatedAt' => 'translation.updatedAt',
+        'publicationStatus' => 'tag.status',
     ];
 
-    public function __construct(ManagerRegistry $registry, string $entityClass)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        string $entityClass,
+        private readonly string $defaultLocale,
+    ) {
         parent::__construct($registry, $entityClass);
     }
 
@@ -45,34 +50,132 @@ class TagRepository extends ServiceEntityRepository
         }
     }
 
-    public function queryByFilter(FilterDto $filter, string $locale = 'en'): QueryBuilder
+    public function queryByFilter(FilterDto $filter, ?string $locale = null): QueryBuilder
     {
         $builder = $this->createQueryBuilder('tag')
-            ->select('tag', 'translation')
-            ->leftJoin('tag.translations', 'translation');
-        // ->where('translation.locale = :localeParam')
-        // ->setParameter('localeParam', $locale);
+            ->select('tag')
+            ->leftJoin('tag.translations', 'translation', 'WITH', 'translation.locale = :localeParam')
+            ->leftJoin('tag.translations', 'fallbackTranslation', 'WITH', 'fallbackTranslation.locale = :fallbackLocale')
+            ->setParameter('localeParam', $locale)
+            ->setParameter('fallbackLocale', $this->defaultLocale);
+
         if ($filter->hasSearchTerm() === true) {
             $builder
                 ->andWhere($builder->expr()->orX(
-                    $builder->expr()->like('LOWER(translation.name)', ':searchTerm'),
-                    $builder->expr()->like('LOWER(translation.slug)', ':searchTerm'),
+                    $builder->expr()->like(
+                        'LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.name WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.name ELSE translation.name END)',
+                        ':searchTerm'
+                    ),
+                    $builder->expr()->like(
+                        'LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.slug WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.slug ELSE translation.slug END)',
+                        ':searchTerm'
+                    ),
                 ))
                 ->setParameter('searchTerm', '%' . strtolower($filter->searchTerm) . '%');
         }
 
-        // Check if the order has a valid orderDir and orderColumn parameters.
-        if (in_array(
-            $filter->orderColumn,
-            array_keys(self::FILTER_ORDER_COLUMN_MAP),
-            true
-        ) === true) {
+        $hasOrder = in_array($filter->orderColumn, array_keys(self::FILTER_ORDER_COLUMN_MAP), true);
+
+        if ($filter->orderColumn === 'updatedAt') {
+            $builder
+                ->addOrderBy(
+                    'CASE
+                        WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                        ELSE translation.updatedAt
+                     END',
+                    $filter->getOrderDir()
+                );
+        } elseif ($hasOrder) {
             $builder->orderBy(
                 self::FILTER_ORDER_COLUMN_MAP[$filter->orderColumn],
                 $filter->getOrderDir()
             );
         } else {
             $builder->orderBy('tag.updatedAt', 'desc');
+        }
+
+        if ($filter->hasCol('publicationStatus')) {
+            /** @var string $status */
+            $status = $filter->col('publicationStatus');
+            $builder
+                ->andWhere('tag.status = :colStatus')
+                ->setParameter('colStatus', $status);
+        }
+
+        if ($filter->hasCol('translationStatus')) {
+            /** @var string $translationStatus */
+            $translationStatus = $filter->col('translationStatus');
+
+            if ($translationStatus === 'translated') {
+                $builder->andWhere('translation.id IS NOT NULL');
+            } elseif ($translationStatus === 'missing') {
+                $builder->andWhere('translation.id IS NULL')
+                    ->andWhere(
+                        $builder->expr()->orX(
+                            ':localeParam = :fallbackLocale',
+                            'fallbackTranslation.id IS NULL'
+                        )
+                    );
+            } elseif ($translationStatus === 'fallback') {
+                $builder->andWhere('translation.id IS NULL')
+                    ->andWhere(
+                        $builder->expr()->andX(
+                            ':localeParam != :fallbackLocale',
+                            'fallbackTranslation.id IS NOT NULL'
+                        )
+                    );
+            }
+        }
+
+        if ($filter->hasCol('name')) {
+            /** @var string $name */
+            $name = $filter->col('name');
+            $builder
+                ->andWhere(
+                    $builder->expr()->like(
+                        'LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.name WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.name ELSE translation.name END)',
+                        ':colName'
+                    )
+                )
+                ->setParameter('colName', sprintf('%%%s%%', strtolower($name)));
+        }
+
+        if ($filter->hasCol('excludeFromNews')) {
+            $excludeFromNews = $filter->col('excludeFromNews') === 'true';
+            $builder
+                ->andWhere('tag.excludeFromNews = :colExcludeFromNews')
+                ->setParameter('colExcludeFromNews', $excludeFromNews);
+        }
+
+        if ($filter->hasCol('updatedAt')) {
+            /** @var string $updatedAtRange */
+            $updatedAtRange = $filter->col('updatedAt');
+            $now = new \DateTimeImmutable();
+
+            if (in_array($updatedAtRange, ['7', '30', '90'], true)) {
+                $since = $now->modify('-' . $updatedAtRange . ' days');
+                $builder
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                            ELSE translation.updatedAt
+                         END >= :updatedSince'
+                    )
+                    ->setParameter('updatedSince', $since);
+            } elseif ($updatedAtRange === '90+') {
+                $since = $now->modify('-90 days');
+                $builder
+                    ->andWhere(
+                        'CASE
+                            WHEN translation.id IS NOT NULL THEN translation.updatedAt
+                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                            ELSE translation.updatedAt
+                         END < :updatedBefore'
+                    )
+                    ->setParameter('updatedBefore', $since);
+            }
         }
 
         return $builder;

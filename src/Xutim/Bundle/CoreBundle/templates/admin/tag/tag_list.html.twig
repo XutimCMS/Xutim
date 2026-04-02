@@ -36,97 +36,106 @@
               {
                 key: 'publicationStatus',
                 label: 'S'|trans({}, 'admin'),
-                sortable: false,
+                sortable: true,
                 order: 'publicationStatus',
-                filter: {type: 'none'},
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Draft'|trans({}, 'admin'), value: 'draft'},
+                    {label: 'Published'|trans({}, 'admin'), value: 'published'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '180px',
+                },
                 chip: true,
               },
               {
-                key: 'language',
-                label: 'T'|trans({}, 'admin'),
+                key: 'translationStatus',
+                label: 'Translation'|trans({}, 'admin'),
                 sortable: false,
-                order: 'locale',
-                filter: {type: 'none'},
-                chip: true,
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Translated'|trans({}, 'admin'), value: 'translated'},
+                    {label: 'Missing'|trans({}, 'admin'), value: 'missing'},
+                    {label: 'Using fallback'|trans({}, 'admin'), value: 'fallback'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '200px',
+                },
+                chip: {
+                  label: 'Translation'|trans({}, 'admin'),
+                },
               },
               {
                 key: 'name',
                 label: 'Name'|trans({}, 'admin'),
-                sortable: false,
-                order: 'publicationStatus',
-                filter: {type: 'none'},
+                sortable: true,
+                order: 'name',
+                filter: {type: 'text'},
                 chip: true,
               },
               {
                 key: 'excludeFromNews',
-                label: 'Exclude from news'|trans({}, 'admin'),
+                label: 'In news'|trans({}, 'admin'),
                 sortable: false,
-                order: 'excludeFromNews',
-                filter: {type: 'none'},
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'yes'|trans({}, 'admin'), value: 'false'},
+                    {label: 'no'|trans({}, 'admin'), value: 'true'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '180px',
+                },
                 chip: true,
               },
               {
                 key: 'updatedAt',
                 label: 'Updated at'|trans({}, 'admin'),
-                sortable: false,
+                sortable: true,
                 order: 'updatedAt',
-                filter: {type: 'none'},
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Last 7 days'|trans({}, 'admin'), value: '7'},
+                    {label: 'Last 30 days'|trans({}, 'admin'), value: '30'},
+                    {label: 'Last 90 days'|trans({}, 'admin'), value: '90'},
+                    {label: 'Older than 90 days'|trans({}, 'admin'), value: '90+'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '200px',
+                },
                 chip: true,
               },
           ],
         }
     %}
-    {% block header %}
-        {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
-        <th
-            class="w-1"
-            title="{{ 'publication status'|trans({}, 'admin') }}"
-            data-controller="tooltip"
-        >
-            S
-        </th>
-        <th
-            class="w-1"
-            title="{{ 'Translated language'|trans({}, 'admin') }}"
-            data-controller="tooltip"
-        >
-            T
-        </th>
-        <th>
-            <a href="{{ admin_filter_order_path_with('name', filter) }}">
-                {{ 'name'|trans({}, 'admin') }}
-                {{
-                    icons.order_arrow('name', filter.orderColumn, filter.orderDirection)
-                }}
-            </a>
-        </th>
-        <th>
-            {{ 'in news'|trans({}, 'admin')|capitalize }}
-        </th>
-        <th>
-            <a>
-                {{ 'updated at'|trans({}, 'admin') }}
-                {{
-                    icons.order_arrow('updatedAt', filter.orderColumn, filter.orderDirection)
-                }}
-            </a>
-        </th>
-    {% endblock %}
-
     {% block body %}
         {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
         {% for tag in tags %}
             {% set tagColor = tag.color %}
             {%
-                set translation = tag.translationByLocaleOrAny(content_context_language(), default_locale)
+                set translation = tag.translationByLocaleOrFallback(content_context_language(), default_locale)
             %}
             <tr>
-                <td>{{ badges.publicationStatusBadgeSimple(tag) }}</td>
-                <td class="text-wrap">
-                    {%
-                        import '@XutimCore/admin/common/translatable.html.twig' as translatable
-                    %}
-                    {{ translatable.languageBadge(translation, true) }}
+                <td>
+                    {% if translation.locale == content_context_language() %}
+                        {{ badges.publicationStatusBadgeSimple(tag) }}
+                    {% else %}
+                        {{ badges.missingBadge() }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if translation.locale == content_context_language() %}
+                        <span class="status status-green">
+                            {{ 'Translated'|trans({}, 'admin') }}
+                        </span>
+                    {% else %}
+                        <span class="status status-warning">
+                            {{ translation.locale|upper }}
+                        </span>
+                    {% endif %}
                 </td>
                 <td class="text-wrap">
                     <twig:Xutim:Admin:Button
@@ -153,7 +162,14 @@
                     {% endif %}
                 </td>
                 <td>
-                    {{ tag.updatedAt|time_ago() }}
+                    <time
+                        datetime="{{ translation.updatedAt|date('c') }}"
+                        title="{{ translation.updatedAt|format_datetime('long') }}"
+                        class="inline-flex flex-col leading-tight text-xs"
+                        data-controller="tooltip"
+                    >
+                        <span>{{ translation.updatedAt|time_ago() }}</span>
+                    </time>
                 </td>
             </tr>
         {% endfor %}

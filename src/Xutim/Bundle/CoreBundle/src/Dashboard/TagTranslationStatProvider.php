@@ -29,7 +29,7 @@ final readonly class TagTranslationStatProvider implements TranslationStatProvid
             icon: 'tabler:tag',
             untranslatedCount: $this->tagRepository->countUntranslatedForLocales($localesWithoutReference),
             outdatedCount: 0,
-            listUrl: $this->router->generate('admin_tag_list'),
+            listUrl: $this->router->generate('admin_tag_list', ['col' => ['translationStatus' => 'missing']]),
         );
     }
 }
