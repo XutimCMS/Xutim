@@ -110,21 +110,7 @@ class TagRepository extends ServiceEntityRepository
             if ($translationStatus === 'translated') {
                 $builder->andWhere('translation.id IS NOT NULL');
             } elseif ($translationStatus === 'missing') {
-                $builder->andWhere('translation.id IS NULL')
-                    ->andWhere(
-                        $builder->expr()->orX(
-                            ':localeParam = :fallbackLocale',
-                            'fallbackTranslation.id IS NULL'
-                        )
-                    );
-            } elseif ($translationStatus === 'fallback') {
-                $builder->andWhere('translation.id IS NULL')
-                    ->andWhere(
-                        $builder->expr()->andX(
-                            ':localeParam != :fallbackLocale',
-                            'fallbackTranslation.id IS NOT NULL'
-                        )
-                    );
+                $builder->andWhere('translation.id IS NULL');
             }
         }
 
