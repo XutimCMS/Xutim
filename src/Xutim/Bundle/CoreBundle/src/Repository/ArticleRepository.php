@@ -52,6 +52,29 @@ class ArticleRepository extends ServiceEntityRepository
         return $articles;
     }
 
+    /**
+     * @param list<string> $locales
+     */
+    public function countUnpublishedForLocales(array $locales): int
+    {
+        if ($locales === []) {
+            return 0;
+        }
+
+        /** @var int $count */
+        $count = $this->createQueryBuilder('article')
+            ->select('COUNT(DISTINCT article.id)')
+            ->innerJoin('article.translations', 'trans')
+            ->where('trans.locale IN (:locales)')
+            ->andWhere('trans.status != :publishedStatus')
+            ->setParameter('locales', $locales)
+            ->setParameter('publishedStatus', PublicationStatus::Published)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count;
+    }
+
     public function getTranslatedSumByLocale(string $locale): int
     {
         /** @var int $count */

@@ -21,14 +21,17 @@
                             <div class="d-flex align-items-baseline gap-2">
                                 <div class="h1 mb-0">{{ stat.totalCount }}</div>
                                 <div class="text-secondary small">
-                                    {% if stat.untranslatedCount > 0 and stat.outdatedCount > 0 %}
-                                        {{ stat.untranslatedCount }} {{ 'to translate'|trans({}, 'admin') }},
-                                        {{ stat.outdatedCount }} {{ 'to update'|trans({}, 'admin') }}
-                                    {% elseif stat.untranslatedCount > 0 %}
-                                        {{ 'to translate'|trans({}, 'admin') }}
-                                    {% else %}
-                                        {{ 'to update'|trans({}, 'admin') }}
+                                    {% set parts = [] %}
+                                    {% if stat.untranslatedCount > 0 %}
+                                        {% set parts = parts|merge([stat.untranslatedCount ~ ' ' ~ 'to translate'|trans({}, 'admin')]) %}
                                     {% endif %}
+                                    {% if stat.outdatedCount > 0 %}
+                                        {% set parts = parts|merge([stat.outdatedCount ~ ' ' ~ 'to update'|trans({}, 'admin')]) %}
+                                    {% endif %}
+                                    {% if stat.unpublishedCount > 0 %}
+                                        {% set parts = parts|merge([stat.unpublishedCount ~ ' ' ~ 'to publish'|trans({}, 'admin')]) %}
+                                    {% endif %}
+                                    {{ parts|join(', ') }}
                                 </div>
                             </div>
                         </div>

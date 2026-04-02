@@ -30,6 +30,7 @@ final readonly class PageTranslationStatProvider implements TranslationStatProvi
             untranslatedCount: $this->pageRepository->countUntranslatedForLocales($localesWithoutReference),
             outdatedCount: 0,
             listUrl: $this->router->generate('admin_page_list'),
+            unpublishedCount: $this->pageRepository->countUnpublishedForLocales($localesWithoutReference),
         );
     }
 }

@@ -227,6 +227,29 @@ class PageRepository extends ServiceEntityRepository
     /**
      * @param list<string> $locales
      */
+    public function countUnpublishedForLocales(array $locales): int
+    {
+        if ($locales === []) {
+            return 0;
+        }
+
+        /** @var int $count */
+        $count = $this->createQueryBuilder('page')
+            ->select('COUNT(DISTINCT page.id)')
+            ->innerJoin('page.translations', 'trans')
+            ->where('trans.locale IN (:locales)')
+            ->andWhere('trans.status != :publishedStatus')
+            ->setParameter('locales', $locales)
+            ->setParameter('publishedStatus', PublicationStatus::Published)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count;
+    }
+
+    /**
+     * @param list<string> $locales
+     */
     public function countUntranslatedForLocales(array $locales): int
     {
         if ($locales === []) {

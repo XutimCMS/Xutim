@@ -23,12 +23,18 @@ final readonly class ArticleTranslationStatProvider implements TranslationStatPr
     {
         $ageLimitDays = $this->siteContext->getUntranslatedArticleAgeLimitDays();
 
+        $localesWithoutReference = array_values(array_filter(
+            $locales,
+            static fn (string $l) => $l !== $referenceLocale,
+        ));
+
         return new TranslationStat(
             label: 'articles',
             icon: 'tabler:article',
             untranslatedCount: count($this->articleRepository->findByMissingTranslations($locales, ageLimitDays: $ageLimitDays)),
             outdatedCount: count($this->articleRepository->findByChangedDefaultTranslations($locales)),
             listUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'missing']]),
+            unpublishedCount: $this->articleRepository->countUnpublishedForLocales($localesWithoutReference),
         );
     }
 }
