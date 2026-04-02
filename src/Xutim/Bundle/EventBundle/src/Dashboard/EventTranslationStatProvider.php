@@ -31,7 +31,7 @@ final readonly class EventTranslationStatProvider implements TranslationStatProv
             icon: 'tabler:calendar-event',
             untranslatedCount: $this->eventRepository->countUntranslatedForLocales($localesWithoutReference),
             outdatedCount: 0,
-            listUrl: $this->router->generate('admin_event_list', ['col' => ['translationStatus' => 'missing']]),
+            listUrl: $this->router->generate('admin_event_list', ['col' => ['translationStatus' => 'missing', 'publicationStatus' => 'published']]),
         );
     }
 }
