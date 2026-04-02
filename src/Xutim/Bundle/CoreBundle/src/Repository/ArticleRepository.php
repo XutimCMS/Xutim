@@ -260,17 +260,9 @@ class ArticleRepository extends ServiceEntityRepository
             $translationStatus = $filter->col('translationStatus');
 
             if ($translationStatus === 'translated') {
-                // Article has translation in requested locale
                 $builder->andWhere('translation.id IS NOT NULL');
             } elseif ($translationStatus === 'missing') {
-                // Article has no translation in requested locale AND no fallback
                 $builder->andWhere('translation.id IS NULL')
-                    ->andWhere(
-                        $builder->expr()->orX(
-                            ':localeParam = :fallbackLocale',
-                            'fallbackTranslation.id IS NULL'
-                        )
-                    )
                     ->andWhere(
                         $builder->expr()->orX(
                             $builder->expr()->eq('article.allTranslationLocales', 'true'),
@@ -297,8 +289,10 @@ class ArticleRepository extends ServiceEntityRepository
             /** @var string $updatedAtRange */
             $updatedAtRange = $filter->col('updatedAt');
             $now = new \DateTimeImmutable();
-            $updatedAtCase =
-                'CASE
+            $isMissing = $filter->hasCol('translationStatus') && $filter->col('translationStatus') === 'missing';
+            $updatedAtCase = $isMissing
+                ? 'article.updatedAt'
+                : 'CASE
                     WHEN translation.id IS NOT NULL THEN translation.updatedAt
                     WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
                     ELSE defaultTranslation.updatedAt

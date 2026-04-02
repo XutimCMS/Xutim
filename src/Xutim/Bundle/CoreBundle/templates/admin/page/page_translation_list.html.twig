@@ -1,0 +1,169 @@
+{% extends '@XutimCore/admin/base.html.twig' %}
+
+{% block pageTitle %}{{ 'pages'|trans({}, 'admin')|capitalize }}{% endblock %}
+
+{% block pageMenu %}
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ admin_path('admin_page_list') }}"
+    >
+        <twig:ux:icon name="tabler:binary-tree" class="icon" />
+        {{ 'Page tree'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
+{% endblock %}
+
+{% block languageBar %}
+    <twig:Xutim:Admin:LanguageContextBar
+        class="d-flex justify-content-end align-items-center mb-2"
+    />
+{% endblock %}
+
+{% block breadcrumbHeader %}
+    <twig:Xutim:Admin:Breadcrumbs>
+        <li class="breadcrumb-item">Pages</li>
+    </twig:Xutim:Admin:Breadcrumbs>
+{% endblock %}
+
+{% block body %}
+    {%
+        component 'Xutim:Admin:DataTable' with {
+            frameId: 'pages-translation-list',
+            pager: pages,
+            tableBodyId: 'pages-translation-list-body',
+            filter: filter,
+            showChips: true,
+            columns: [
+              {
+                key: 'publicationStatus',
+                label: 'S'|trans({}, 'admin'),
+                sortable: true,
+                order: 'publicationStatus',
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Draft'|trans({}, 'admin'), value: 'draft'},
+                    {label: 'Published'|trans({}, 'admin'), value: 'published'},
+                    {label: 'Scheduled'|trans({}, 'admin'), value: 'scheduled'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '180px',
+                },
+                chip: true,
+              },
+              {
+                key: 'translationStatus',
+                label: 'Translation'|trans({}, 'admin'),
+                sortable: false,
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Translated'|trans({}, 'admin'), value: 'translated'},
+                    {label: 'Missing'|trans({}, 'admin'), value: 'missing'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '200px',
+                },
+                chip: {
+                  label: 'Translation'|trans({}, 'admin'),
+                },
+              },
+              {
+                key: 'title',
+                label: 'title'|trans({}, 'admin'),
+                sortable: true,
+                order: 'title',
+                filter: {type: 'text'},
+                chip: true,
+              },
+              {
+                key: 'parent',
+                label: 'Parent'|trans({}, 'admin'),
+                sortable: false,
+              },
+              {
+                key: 'updatedAt',
+                label: 'Updated at'|trans({}, 'admin'),
+                sortable: true,
+                order: 'updatedAt',
+                filter: {
+                  type: 'select',
+                  options: [
+                    {label: 'Last 7 days'|trans({}, 'admin'), value: '7'},
+                    {label: 'Last 30 days'|trans({}, 'admin'), value: '30'},
+                    {label: 'Last 90 days'|trans({}, 'admin'), value: '90'},
+                    {label: 'Older than 90 days'|trans({}, 'admin'), value: '90+'},
+                  ],
+                  placeholder: 'Any'|trans({}, 'admin'),
+                  minWidth: '200px',
+                },
+                chip: {fallbackLabel: 'Last %value% days'|trans({}, 'admin')},
+              },
+            ],
+        }
+    %}
+    {% block body %}
+        {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
+        {% for page in pages %}
+            {%
+                set translation = page.translationByLocaleOrFallback(content_context_language(), default_locale)
+            %}
+            <tr>
+                <td>
+                    {% if translation.locale == content_context_language() %}
+                        {{ badges.publicationStatusBadge(translation) }}
+                    {% else %}
+                        {{ badges.missingBadge() }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if translation.locale == content_context_language() %}
+                        <span class="status status-green">
+                            {{ 'Translated'|trans({}, 'admin') }}
+                        </span>
+                    {% else %}
+                        <span class="status status-warning">
+                            {{ translation.locale|upper }}
+                        </span>
+                    {% endif %}
+                </td>
+                <td class="text-wrap">
+                    <twig:Xutim:Admin:Button
+                        tag="a"
+                        variant="link"
+                        href="{{ admin_path('admin_page_list', {id: page.id}) }}"
+                        data-turbo-frame="_top"
+                        class="mt-1"
+                        aria-label="{{ 'show'|trans({}, 'admin') }}"
+                    >
+                        {%
+                            import '@XutimCore/admin/common/translatable.html.twig' as translatable
+                        %}
+
+                        {{
+                            translatable.titleWithBadge(page, default_locale)
+                        }}
+                    </twig:Xutim:Admin:Button>
+                </td>
+                <td class="text-wrap text-secondary small">
+                    {% if page.parent %}
+                        {{ page.parent.translationByLocaleOrDefault(content_context_language()).title }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    <time
+                        datetime="{{ translation.updatedAt|date('c') }}"
+                        title="{{ translation.updatedAt|format_datetime('long') }}"
+                        class="inline-flex flex-col leading-tight text-xs"
+                        data-controller="tooltip"
+                    >
+                        <span>{{ translation.updatedAt|time_ago() }}</span>
+                    </time>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+    {% endcomponent %}
+{% endblock %}

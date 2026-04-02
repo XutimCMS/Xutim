@@ -29,7 +29,7 @@ final readonly class PageTranslationStatProvider implements TranslationStatProvi
             icon: 'tabler:file-text',
             untranslatedCount: $this->pageRepository->countUntranslatedForLocales($localesWithoutReference),
             outdatedCount: 0,
-            listUrl: $this->router->generate('admin_page_list'),
+            listUrl: $this->router->generate('admin_page_translation_list', ['col' => ['translationStatus' => 'missing']]),
             unpublishedCount: $this->pageRepository->countUnpublishedForLocales($localesWithoutReference),
         );
     }

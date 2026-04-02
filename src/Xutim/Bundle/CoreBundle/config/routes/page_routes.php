@@ -12,6 +12,7 @@ use Xutim\CoreBundle\Action\Admin\Page\EditPageTranslationLocalesAction;
 use Xutim\CoreBundle\Action\Admin\Page\JsonListPagesAction;
 use Xutim\CoreBundle\Action\Admin\Page\JsonReorderPagesAction;
 use Xutim\CoreBundle\Action\Admin\Page\ListPagesAction;
+use Xutim\CoreBundle\Action\Admin\Page\ListPageTranslationsAction;
 use Xutim\CoreBundle\Action\Admin\Page\MarkDefaultTranslationAction;
 use Xutim\CoreBundle\Action\Admin\Page\MovePagePositionAction;
 use Xutim\CoreBundle\Action\Admin\Page\ShowPageBySlugAction;
@@ -66,6 +67,12 @@ return function (RoutingConfigurator $routes) {
         ->methods(['post'])
         ->requirements(['direction' => '0|1'])
         ->controller(JsonReorderPagesAction::class)
+    ;
+
+    $routes
+        ->add('admin_page_translation_list', '/admin/{_content_locale}/page-translations')
+        ->methods(['get'])
+        ->controller(ListPageTranslationsAction::class)
     ;
 
     $routes

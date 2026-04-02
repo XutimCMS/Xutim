@@ -115,6 +115,14 @@
             </twig:Xutim:Admin:Button>
         {% endif %}
     {% endif %}
+    <twig:Xutim:Admin:Button
+        tag="a"
+        variant="nav"
+        href="{{ admin_path('admin_page_translation_list', {col: {translationStatus: 'missing'} }) }}"
+    >
+        <twig:ux:icon name="tabler:list-search" class="icon me-1" />
+        {{ 'Translation list'|trans({}, 'admin') }}
+    </twig:Xutim:Admin:Button>
 {% endblock %}
 
 {% block sidebar %}
