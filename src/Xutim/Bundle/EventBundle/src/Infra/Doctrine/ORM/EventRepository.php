@@ -111,7 +111,10 @@ class EventRepository extends ServiceEntityRepository
             if ($translationStatus === 'translated') {
                 $builder->andWhere('translation.id IS NOT NULL');
             } elseif ($translationStatus === 'missing') {
-                $builder->andWhere('translation.id IS NULL');
+                $builder
+                    ->andWhere('translation.id IS NULL')
+                    ->andWhere('event.endsAt > :translationFilterNow')
+                    ->setParameter('translationFilterNow', new DateTimeImmutable());
             }
         }
 
@@ -233,6 +236,7 @@ class EventRepository extends ServiceEntityRepository
             ->select('event.id')
             ->leftJoin('event.translations', 'translation', 'WITH', $qb->expr()->in('translation.locale', ':locales'))
             ->where('event.status = :status')
+            ->andWhere('event.endsAt > :now')
             ->groupBy('event.id')
             ->having(
                 $qb->expr()->orX(
@@ -242,7 +246,8 @@ class EventRepository extends ServiceEntityRepository
             )
             ->setParameter('locales', $locales)
             ->setParameter('localeCount', count($locales))
-            ->setParameter('status', PublicationStatus::Published);
+            ->setParameter('status', PublicationStatus::Published)
+            ->setParameter('now', new DateTimeImmutable());
 
         return count($qb->getQuery()->getResult());
     }

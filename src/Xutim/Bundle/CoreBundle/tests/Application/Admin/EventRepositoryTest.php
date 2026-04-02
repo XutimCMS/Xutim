@@ -144,6 +144,26 @@ class EventRepositoryTest extends AdminApplicationTestCase
         $this->assertEventIn($onlyFrench, $results);
     }
 
+    public function testFilterTranslationStatusMissingExcludesPastEvents(): void
+    {
+        $pastEvent = EventFactory::createOne([
+            'startsAt' => new \DateTimeImmutable('-10 days'),
+            'endsAt' => new \DateTimeImmutable('-5 days'),
+        ]);
+        EventTranslationFactory::createOne(['event' => $pastEvent, 'locale' => 'en']);
+
+        $futureEvent = EventFactory::createOne([
+            'startsAt' => new \DateTimeImmutable('+1 day'),
+            'endsAt' => new \DateTimeImmutable('+2 days'),
+        ]);
+        EventTranslationFactory::createOne(['event' => $futureEvent, 'locale' => 'en']);
+
+        $filter = new FilterDto(cols: ['translationStatus' => 'missing']);
+        $results = $this->query($filter, 'es');
+        $this->assertEventIn($futureEvent, $results);
+        $this->assertEventNotIn($pastEvent, $results);
+    }
+
     public function testFilterByTitle(): void
     {
         $match = EventFactory::createOne();
