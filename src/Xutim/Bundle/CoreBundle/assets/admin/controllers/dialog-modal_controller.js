@@ -61,6 +61,12 @@ export default class extends Controller {
         modalElem.role = 'dialog';
         modalElem.innerHTML = modalHTML;
 
+        // Close any open <dialog> elements (top-layer blocks everything)
+        const openDialog = document.querySelector('dialog[open]');
+        if (openDialog) {
+            openDialog.close();
+        }
+
         // Append modal window to the body.
         document.body.appendChild(modalElem);
 
@@ -69,9 +75,14 @@ export default class extends Controller {
         modal.show();
 
         // Remove the modal window completely after it disappears.
+        // Reopen the <dialog> if the user cancelled.
         modalElem.addEventListener('hidden.bs.modal', function (event) {
             Modal.getInstance(event.currentTarget).hide();
             document.body.removeChild(event.currentTarget);
+
+            if (openDialog) {
+                openDialog.showModal();
+            }
         });
     }
 }
