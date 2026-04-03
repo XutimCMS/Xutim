@@ -36,6 +36,7 @@ class CreateSnippetAction
         private readonly AdminUrlGenerator $router,
         private readonly FlashNotifier $flashNotifier,
         private readonly string $snippetVersionPath,
+        private readonly string $defaultLocale,
     ) {
     }
 
@@ -45,15 +46,17 @@ class CreateSnippetAction
         if ($this->authChecker->isGranted(UserRoles::ROLE_EDITOR) === false) {
             throw new AccessDeniedException('Access denied.');
         }
+        $locale = $this->context->getLanguage();
         $form = $this->formFactory->create(SnippetType::class, null, [
-            'action' => $this->router->generate('admin_snippet_new')
+            'action' => $this->router->generate('admin_snippet_new'),
+            'active_locale' => $locale,
+            'default_locale' => $this->defaultLocale,
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var SnippetFormData $data */
             $data = $form->getData();
-            $locale = $this->context->getLanguage();
             $snippet = $this->snippetFactory->create($data->getCode(), $data->getDescription(), $data->getCategory());
             foreach ($data->getContents() as $contentLocale => $content) {
                 $trans = $this->snippetTransFactory->create($snippet, $contentLocale, $content);

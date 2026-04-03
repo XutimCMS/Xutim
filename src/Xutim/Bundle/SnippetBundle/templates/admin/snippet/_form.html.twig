@@ -3,8 +3,14 @@
 {{ form_row(form.code) }}
 {{ form_row(form.description) }}
 {{ form_row(form.category) }}
-{% for locale in site_context.locales %}
-    {{ form_row(form[locale]) }}
-{% endfor %}
+
+{% if form[default_locale] is defined and default_locale != content_context_language() %}
+    {{ form_row(form[default_locale]) }}
+{% endif %}
+
+{% set activeLocale = content_context_language() %}
+{% if form[activeLocale] is defined %}
+    {{ form_row(form[activeLocale]) }}
+{% endif %}
 
 {{ form_end(form) }}

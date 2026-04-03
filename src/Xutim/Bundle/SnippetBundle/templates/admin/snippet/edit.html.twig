@@ -13,6 +13,20 @@
         <div class="card-body">
             {{ include('@XutimSnippet/admin/snippet/_form.html.twig') }}
         </div>
+        {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_ADMIN')) %}
+            <div class="card-footer d-flex justify-content-end">
+                <twig:Xutim:Admin:ModalDialog
+                    class="btn btn-sm btn-outline-danger"
+                    data-turbo-frame="_top"
+                    modalDialogColor="danger"
+                    action="{{ admin_path('admin_snippet_delete', {id: snippet.id}) }}"
+                    confirmActionLabel="{{ 'action.delete'|trans({}, 'admin')|capitalize }}"
+                >
+                    <twig:Xutim:Admin:Icon name="trash" />
+                    {{ 'Delete snippet'|trans({}, 'admin') }}
+                </twig:Xutim:Admin:ModalDialog>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 

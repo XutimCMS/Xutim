@@ -1,8 +1,5 @@
-{% set containerClass = 'container-expanded' %}
 {% extends '@XutimCore/admin/base.html.twig' %}
-{% block pageTitle %}{{ 'snippets'|trans({}, 'admin')|capitalize }}{%
-    endblock
-%}
+{% block pageTitle %}{{ 'snippets'|trans({}, 'admin')|capitalize }}{% endblock %}
 
 {% block pageMenu %}
     {%
@@ -20,6 +17,13 @@
     {% endif %}
 {% endblock %}
 
+{% block languageBar %}
+    <twig:Xutim:Admin:LanguageContextBar
+        class="d-flex justify-content-end align-items-center mb-2"
+        :showExtendedLanguages="true"
+    />
+{% endblock %}
+
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
         <li class="breadcrumb-item">Snippets</li>
@@ -27,96 +31,284 @@
 {% endblock %}
 
 {% block body %}
-    {% set mainLanguages = site_context.locales|sort((loc1, loc2) => loc1 <=> loc2) %}
-    {% set extendedLanguages = site_context.extendedContentLocales|sort((loc1, loc2) => loc1 <=> loc2) %}
+    {% set canTranslateLocale = is_granted(constant('Xutim\\SecurityBundle\\Security\\Voter\\CanTranslateVoter::TRANSLATE'), activeLocale) %}
 
-    {% set localeFilterOptions = [] %}
-    {% for locale in site_context.allLocales %}
-        {% set localeFilterOptions = localeFilterOptions|merge([{label: locale|upper, value: locale}]) %}
-    {% endfor %}
+    {% set mainLocales = site_context.locales
+        |filter(l => app.user.canTranslate(l))
+        |sort((a, b) => a|language_name <=> b|language_name) %}
+    {% set extendedLocales = site_context.extendedContentLocales
+        |filter(l => app.user.canTranslate(l))
+        |sort((a, b) => a|language_name <=> b|language_name) %}
 
-    {% set columnVisibilityOptions = [] %}
-    {% for locale in mainLanguages %}
-        {% set columnVisibilityOptions = columnVisibilityOptions|merge([{label: locale|upper, value: locale, checked: true}]) %}
-    {% endfor %}
-    {% if extendedLanguages is not empty %}
-        {% set columnVisibilityOptions = columnVisibilityOptions|merge([{separator: true}]) %}
-        {% for locale in extendedLanguages %}
-            {% set columnVisibilityOptions = columnVisibilityOptions|merge([{label: locale|upper, value: locale, checked: false}]) %}
-        {% endfor %}
-    {% endif %}
+    {% set mainRefLocales = site_context.locales
+        |filter(l => l != activeLocale)
+        |sort((a, b) => a|language_name <=> b|language_name) %}
+    {% set extendedRefLocales = site_context.extendedContentLocales
+        |filter(l => l != activeLocale)
+        |sort((a, b) => a|language_name <=> b|language_name) %}
 
-    {%
-        component 'Xutim:Admin:DataTable' with {
-            frameId: 'snippet-list',
-            pager: snippets,
-            filter: filter,
-            'data-controller': 'snippet-editor',
-            'data-snippet-editor-url-value': admin_path('admin_json_snippet_translate'),
-            responsive: false,
-            showChips: true,
-            filters: [
-                {
-                    key: 'notTranslatedInLocales',
-                    label: 'Not translated in'|trans({}, 'admin'),
-                    type: 'multiselect',
-                    chipLabel: 'Missing translations'|trans({}, 'admin'),
-                    options: localeFilterOptions,
-                    minWidth: '250px',
-                },
-                {
-                    key: 'showLanguages',
-                    label: 'Show languages'|trans({}, 'admin'),
-                    type: 'columnVisibility',
-                    chipLabel: 'Languages'|trans({}, 'admin'),
-                    options: columnVisibilityOptions,
-                    minWidth: '200px',
-                },
-            ],
-        }
-    %}
+    {% set activeFilters = filter.cols %}
 
-    {% block body %}
-        {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
+    {% set notTranslatedKey = 'notTranslatedInLocales' %}
+    {% set notTranslatedValues = activeFilters[notTranslatedKey]|default([])|filter(v => v is not empty) %}
 
-        {%
-            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_ADMIN'))
-        %}
-            <th class="w-1 text-end"></th>
+    {% set referencesKey = 'referenceLocales' %}
+    {% set referencesValues = activeFilters[referencesKey]|default([])|filter(v => v is not empty) %}
+
+    {% set _formId = 'snippet-list-filters' %}
+    {% set hasActiveFilters = notTranslatedValues is not empty or referencesValues is not empty %}
+
+    <turbo-frame
+        id="snippet-list-list"
+        data-turbo-action="advance"
+        data-controller="snippet-editor"
+        data-snippet-editor-url-value="{{ admin_path('admin_json_snippet_translate') }}"
+    >
+        <div class="d-flex align-items-center flex-wrap gap-3 mb-3">
+            <div class="position-relative" data-controller="dt-filter">
+                <button
+                    type="button"
+                    class="btn btn-sm {{ notTranslatedValues is not empty ? 'btn-primary' : 'btn-outline-secondary' }}"
+                    data-action="click->dt-filter#toggle"
+                    data-dt-filter-popover-id="snippet-filter-not-translated"
+                >
+                    <twig:ux:icon name="tabler:filter" class="icon" />
+                    {{ 'Not translated in'|trans({}, 'admin') }}
+                    {% if notTranslatedValues is not empty %}
+                        <span class="badge bg-white text-primary ms-1">{{ notTranslatedValues|length }}</span>
+                    {% endif %}
+                </button>
+
+                <div
+                    id="snippet-filter-not-translated"
+                    class="card shadow-sm p-3 position-absolute d-none"
+                    style="min-width: 250px; z-index: 1050; top: 100%; left: 0; margin-top: 4px;"
+                    data-dt-filter-popover
+                    data-min-width="250px"
+                >
+                    <label class="form-label mb-2">{{ 'Not translated in'|trans({}, 'admin') }}</label>
+                    <select
+                        name="col[{{ notTranslatedKey }}][]"
+                        multiple
+                        placeholder="{{ 'Select languages...'|trans({}, 'admin') }}"
+                        data-controller="tom-select"
+                        form="{{ _formId }}"
+                    >
+                        {% if mainLocales is not empty %}
+                            <optgroup label="{{ 'Main languages'|trans({}, 'admin') }}">
+                                {% for locale in mainLocales %}
+                                    <option value="{{ locale }}" {{ locale in notTranslatedValues ? 'selected' }}>
+                                        {{ locale|language_name|capitalize }} ({{ locale|upper }})
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                        {% if extendedLocales is not empty %}
+                            <optgroup label="{{ 'Extended languages'|trans({}, 'admin') }}">
+                                {% for locale in extendedLocales %}
+                                    <option value="{{ locale }}" {{ locale in notTranslatedValues ? 'selected' }}>
+                                        {{ locale|language_name|capitalize }} ({{ locale|upper }})
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                    </select>
+                    <div class="mt-3 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-sm btn-primary" form="{{ _formId }}">
+                            {{ 'Apply'|trans({}, 'admin') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="position-relative" data-controller="dt-filter">
+                <button
+                    type="button"
+                    class="btn btn-sm {{ referencesValues is not empty ? 'btn-primary' : 'btn-outline-secondary' }}"
+                    data-action="click->dt-filter#toggle"
+                    data-dt-filter-popover-id="snippet-filter-references"
+                >
+                    <twig:ux:icon name="tabler:language" class="icon" />
+                    {{ 'References'|trans({}, 'admin') }}
+                    {% if referencesValues is not empty %}
+                        <span class="badge bg-white text-primary ms-1">{{ referencesValues|length }}</span>
+                    {% endif %}
+                </button>
+
+                <div
+                    id="snippet-filter-references"
+                    class="card shadow-sm p-3 position-absolute d-none"
+                    style="min-width: 250px; z-index: 1050; top: 100%; left: 0; margin-top: 4px;"
+                    data-dt-filter-popover
+                    data-min-width="250px"
+                >
+                    <label class="form-label mb-2">{{ 'Reference languages'|trans({}, 'admin') }}</label>
+                    <select
+                        name="col[{{ referencesKey }}][]"
+                        multiple
+                        placeholder="{{ 'Select languages...'|trans({}, 'admin') }}"
+                        data-controller="tom-select"
+                        form="{{ _formId }}"
+                    >
+                        {% if mainRefLocales is not empty %}
+                            <optgroup label="{{ 'Main languages'|trans({}, 'admin') }}">
+                                {% for locale in mainRefLocales %}
+                                    <option value="{{ locale }}" {{ locale in referencesValues ? 'selected' }}>
+                                        {{ locale|language_name|capitalize }} ({{ locale|upper }})
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                        {% if extendedRefLocales is not empty %}
+                            <optgroup label="{{ 'Extended languages'|trans({}, 'admin') }}">
+                                {% for locale in extendedRefLocales %}
+                                    <option value="{{ locale }}" {{ locale in referencesValues ? 'selected' }}>
+                                        {{ locale|language_name|capitalize }} ({{ locale|upper }})
+                                    </option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                    </select>
+                    <div class="mt-3 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-sm btn-primary" form="{{ _formId }}">
+                            {{ 'Apply'|trans({}, 'admin') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ms-auto text-muted" data-turbo-permanent id="snippet-list-search-container">
+                {{ 'search'|trans({}, 'admin')|capitalize }}:
+                <div class="ms-2 d-inline-block">
+                    <form method="GET" action="" data-controller="auto-submit">
+                        {% for key, value in filter.cols %}
+                            {% if value is iterable %}
+                                {% for v in value %}
+                                    <input type="hidden" name="col[{{ key }}][]" value="{{ v }}">
+                                {% endfor %}
+                            {% else %}
+                                <input type="hidden" name="col[{{ key }}]" value="{{ value }}">
+                            {% endif %}
+                        {% endfor %}
+                        <input
+                            type="text"
+                            id="snippet-list-searchTerm"
+                            name="searchTerm"
+                            autofocus
+                            class="form-control form-control-sm"
+                            aria-label="{{ 'search'|trans({}, 'admin')|capitalize }}"
+                            value="{{ filter.searchTerm }}"
+                            data-action="auto-submit#debouncedSubmit"
+                            onfocus="var temp_value=this.value; this.value=''; this.value=temp_value"
+                        />
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <form id="{{ _formId }}" method="get" action="">
+            <input type="hidden" name="page" value="1">
+            {% if filter.searchTerm %}
+                <input type="hidden" name="searchTerm" value="{{ filter.searchTerm }}">
+            {% endif %}
+        </form>
+
+        {% if hasActiveFilters %}
+            <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                <span class="text-muted small">{{ 'Filters:'|trans({}, 'admin') }}</span>
+
+                {% if notTranslatedValues is not empty %}
+                    {% set labels = [] %}
+                    {% for val in notTranslatedValues %}
+                        {% set labels = labels|merge([val|language_name|capitalize]) %}
+                    {% endfor %}
+                    {% set withoutThis = activeFilters|filter((v, k) => k != notTranslatedKey) %}
+                    {% set removeCol = withoutThis|length > 0 ? withoutThis : {_clear: '1'} %}
+                    <span class="badge bg-primary text-white d-inline-flex align-items-center">
+                        <span class="me-1">{{ 'Missing translations'|trans({}, 'admin') }}: {{ labels|join(', ') }}</span>
+                        <a
+                            class="btn-close btn-close-white ms-1 text-decoration-none"
+                            href="{{ admin_current_path_with({col: removeCol, page: 1}) }}"
+                        ></a>
+                    </span>
+                {% endif %}
+
+                {% if referencesValues is not empty %}
+                    {% set labels = [] %}
+                    {% for val in referencesValues %}
+                        {% set labels = labels|merge([val|language_name|capitalize]) %}
+                    {% endfor %}
+                    {% set withoutThis = activeFilters|filter((v, k) => k != referencesKey) %}
+                    {% set removeCol = withoutThis|length > 0 ? withoutThis : {_clear: '1'} %}
+                    <span class="badge bg-primary text-white d-inline-flex align-items-center">
+                        <span class="me-1">{{ 'References'|trans({}, 'admin') }}: {{ labels|join(', ') }}</span>
+                        <a
+                            class="btn-close btn-close-white ms-1 text-decoration-none"
+                            href="{{ admin_current_path_with({col: removeCol, page: 1}) }}"
+                        ></a>
+                    </span>
+                {% endif %}
+
+                <a
+                    class="btn btn-link btn-sm text-decoration-none"
+                    href="{{ admin_current_path_with({col: {_clear: '1'}, page: 1}) }}"
+                >{{ 'Clear all'|trans({}, 'admin') }}</a>
+            </div>
         {% endif %}
-        <th>
-            <a href="{{ admin_filter_order_path_with('category', filter) }}">
-                {{ 'category'|trans({}, 'admin') }}
-                {{
-                    icons.order_arrow('category', filter.orderColumn, filter.orderDirection)
-                }}
-            </a>
-        </th>
-        <th>
-            <a href="{{ admin_filter_order_path_with('code', filter) }}">
-                {{ 'code'|trans({}, 'admin') }}
-                {{
-                    icons.order_arrow('code', filter.orderColumn, filter.orderDirection)
-                }}
-            </a>
-        </th>
 
-        {% for locale in visibleLanguages %}
-            <th>{{ locale|upper }}</th>
-        {% endfor %}
+        <div class="d-flex flex-column gap-3">
+            {% for snippet in snippets %}
+                {{ include('@XutimSnippet/admin/snippet/_snippet_row.html.twig', {
+                    snippet: snippet,
+                    activeLocale: activeLocale,
+                    canTranslateLocale: canTranslateLocale,
+                    visibleReferenceLocales: referencesValues,
+                }, with_context: false) }}
+            {% endfor %}
+        </div>
 
-        {% set canTranslateLocales = {} %}
-        {% for locale in visibleLanguages %}
-            {%
-                set canTranslateLocales = canTranslateLocales|merge({(locale): is_granted(constant('Xutim\\SecurityBundle\\Security\\Voter\\CanTranslateVoter::TRANSLATE'), locale)})
-            %}
-        {% endfor %}
+        <div class="d-flex align-items-center mt-3">
+            <p class="m-0 text-muted">
+                {{ 'page'|trans({}, 'admin')|capitalize }}
+                {{ snippets.currentPage }}
+                {{ 'of'|trans({}, 'admin') }}
+                {{ snippets.nbPages }}
+                ({{ snippets.count }}
+                {{ 'entries'|trans({}, 'admin') }})
+            </p>
+            <ul class="pagination m-0 ms-auto">
+                {% if snippets.hasPreviousPage %}
+                    <li class="page-item">
+                        <a href="{{ pagerfanta_page_url(snippets, snippets.previousPage) }}" class="page-link">
+                            <twig:Xutim:Admin:Icon name="chevron-left" />
+                            {{ 'prev'|trans({}, 'admin') }}
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a href="#" class="page-link" tabindex="-1" aria-disabled="true">
+                            <twig:Xutim:Admin:Icon name="chevron-left" />
+                            {{ 'prev'|trans({}, 'admin') }}
+                        </a>
+                    </li>
+                {% endif %}
 
-        {% for snippet in snippets %}
-            {{
-                include('@XutimSnippet/admin/snippet/_snippet_row.html.twig', {snippet: snippet, canTranslateLocales: canTranslateLocales, visibleLanguages: visibleLanguages}, with_context: false)
-            }}
-        {% endfor %}
-    {% endblock %}
-    {% endcomponent %}
+                {% if snippets.hasNextPage %}
+                    <li class="page-item">
+                        <a href="{{ pagerfanta_page_url(snippets, snippets.nextPage) }}" class="page-link">
+                            {{ 'next'|trans({}, 'admin') }}
+                            <twig:Xutim:Admin:Icon name="chevron-right" />
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a href="#" class="page-link" tabindex="-1" aria-disabled="true">
+                            {{ 'next'|trans({}, 'admin') }}
+                            <twig:Xutim:Admin:Icon name="chevron-right" />
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </turbo-frame>
 {% endblock %}

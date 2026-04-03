@@ -38,6 +38,7 @@ class EditSnippetAction
         private readonly FlashNotifier $flashNotifier,
         private readonly EntityManagerInterface $entityManager,
         private readonly string $snippetVersionPath,
+        private readonly string $defaultLocale,
     ) {
     }
 
@@ -50,11 +51,12 @@ class EditSnippetAction
         if ($snippet === null) {
             throw new NotFoundHttpException('The snippet does not exist');
         }
-        $locale = $this->context->getLanguage();
 
         $form = $this->formFactory->create(SnippetType::class, $snippet->toFormData(), [
             'action' => $this->router->generate('admin_snippet_edit', ['id' => $snippet->getId()]),
-            'can_edit' => $this->authChecker->isGranted(UserRoles::ROLE_EDITOR)
+            'can_edit' => $this->authChecker->isGranted(UserRoles::ROLE_EDITOR),
+            'active_locale' => $locale,
+            'default_locale' => $this->defaultLocale,
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\SnippetBundle\Dashboard;
 
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Xutim\CoreBundle\Dashboard\LocaleStat;
 use Xutim\CoreBundle\Dashboard\TranslationStat;
 use Xutim\CoreBundle\Dashboard\TranslationStatProvider;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
@@ -27,28 +28,42 @@ final readonly class SnippetTranslationStatProvider implements TranslationStatPr
             static fn (string $l) => $l !== $referenceLocale,
         ));
 
-        $count = 0;
-        if ($localesWithoutReference !== []) {
-            $filter = new FilterDto(cols: ['notTranslatedInLocales' => $localesWithoutReference]);
+        $totalCount = 0;
+        $localeBreakdown = [];
+
+        foreach ($localesWithoutReference as $locale) {
+            $filter = new FilterDto(cols: ['notTranslatedInLocales' => [$locale]]);
             $qb = $this->snippetRepository->queryByFilter($filter);
             $qb->select('COUNT(DISTINCT snippet.id)');
             $qb->resetDQLPart('orderBy');
             $count = (int) $qb->getQuery()->getSingleScalarResult();
-        }
 
-        $showLanguages = array_values(array_unique(array_merge([$referenceLocale], $locales)));
+            if ($count > 0) {
+                $localeBreakdown[] = new LocaleStat(
+                    locale: $locale,
+                    count: $count,
+                    url: $this->router->generate('admin_snippet_list', [
+                        '_content_locale' => $locale,
+                        'col' => [
+                            'notTranslatedInLocales' => [$locale],
+                        ],
+                    ]),
+                );
+                $totalCount += $count;
+            }
+        }
 
         return new TranslationStat(
             label: 'snippets',
             icon: 'tabler:code',
-            untranslatedCount: $count,
+            untranslatedCount: $totalCount,
             outdatedCount: 0,
             listUrl: $this->router->generate('admin_snippet_list', [
                 'col' => [
                     'notTranslatedInLocales' => $localesWithoutReference,
-                    'showLanguages' => $showLanguages,
                 ],
             ]),
+            localeBreakdown: $localeBreakdown,
         );
     }
 }

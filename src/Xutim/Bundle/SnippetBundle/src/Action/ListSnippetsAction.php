@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
-use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 use Xutim\SnippetBundle\Domain\Repository\SnippetRepositoryInterface;
@@ -26,9 +26,9 @@ class ListSnippetsAction
         private readonly SnippetRepositoryInterface $repo,
         private readonly ListFilterBuilder $filterBuilder,
         private readonly Environment $twig,
-        private readonly SiteContext $siteContext,
+        private readonly ContentContext $contentContext,
         private readonly RequestStack $requestStack,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly AdminUrlGenerator $router
     ) {
     }
 
@@ -65,20 +65,17 @@ class ListSnippetsAction
                 $params['col'] = $sessionFilters;
 
                 return new RedirectResponse(
-                    $this->urlGenerator->generate('admin_snippet_list', $params)
+                    $this->router->generate('admin_snippet_list', $params)
                 );
             }
         }
 
         $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection, $col);
 
-        $visibleLanguages = $filter->colArray('showLanguages');
-        if (count($visibleLanguages) === 0) {
-            $visibleLanguages = $this->siteContext->getMainLocales();
-        }
+        $activeLocale = $this->contentContext->getLocale();
 
         /** @var QueryAdapter<SnippetInterface> $adapter */
-        $adapter = new QueryAdapter($this->repo->queryByFilter($filter));
+        $adapter = new QueryAdapter($this->repo->queryByFilter($filter, $activeLocale));
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
             $adapter,
             $filter->page,
@@ -88,7 +85,7 @@ class ListSnippetsAction
         $html = $this->twig->render('@XutimSnippet/admin/snippet/snippet_list.html.twig', [
             'snippets' => $pager,
             'filter' => $filter,
-            'visibleLanguages' => $visibleLanguages,
+            'activeLocale' => $activeLocale,
         ]);
 
         return new Response($html);

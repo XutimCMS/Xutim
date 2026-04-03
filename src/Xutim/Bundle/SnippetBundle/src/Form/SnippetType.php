@@ -18,7 +18,6 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
 use Traversable;
-use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SnippetBundle\Domain\Model\SnippetCategory;
 
@@ -29,14 +28,17 @@ use Xutim\SnippetBundle\Domain\Model\SnippetCategory;
 class SnippetType extends AbstractType implements DataMapperInterface
 {
     public function __construct(
-        private readonly SiteContext $context,
         private readonly TranslatorAuthChecker $authChecker
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $locales = $this->context->getLocales();
+        /** @var string $activeLocale */
+        $activeLocale = $options['active_locale'];
+        /** @var string $defaultLocale */
+        $defaultLocale = $options['default_locale'];
+
         $builder
             ->add('code', TextType::class, [
                 'label' => new TranslatableMessage('code', [], 'admin'),
@@ -64,15 +66,21 @@ class SnippetType extends AbstractType implements DataMapperInterface
                 'class' => SnippetCategory::class,
             ])
         ;
-        foreach ($locales as $locale) {
-            $builder
-                ->add($locale, TextareaType::class, [
-                    'required' => false,
-                    'label' => strtoupper($locale),
-                    'disabled' => $this->authChecker->canTranslate($locale) ? false : true
-                ]);
+
+        if ($activeLocale !== $defaultLocale) {
+            $builder->add($defaultLocale, TextareaType::class, [
+                'required' => false,
+                'label' => strtoupper($defaultLocale) . ' (' . (new TranslatableMessage('reference', [], 'admin')) . ')',
+                'disabled' => !$this->authChecker->canTranslate($defaultLocale),
+            ]);
         }
-    
+
+        $builder->add($activeLocale, TextareaType::class, [
+            'required' => false,
+            'label' => strtoupper($activeLocale),
+            'disabled' => !$this->authChecker->canTranslate($activeLocale),
+        ]);
+
         $builder
             ->add('submit', SubmitType::class, [
                 'label' => new TranslatableMessage('submit', [], 'admin'),
@@ -84,9 +92,12 @@ class SnippetType extends AbstractType implements DataMapperInterface
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'can_edit' => true
+            'can_edit' => true,
         ]);
+        $resolver->setRequired(['active_locale', 'default_locale']);
         $resolver->addAllowedTypes('can_edit', 'bool');
+        $resolver->addAllowedTypes('active_locale', 'string');
+        $resolver->addAllowedTypes('default_locale', 'string');
     }
 
     public function mapDataToForms(mixed $viewData, Traversable $forms): void
@@ -126,10 +137,13 @@ class SnippetType extends AbstractType implements DataMapperInterface
         $category = $forms['category']->getData();
 
         $contents = [];
-        foreach ($this->context->getLocales() as $locale) {
+        foreach ($forms as $name => $form) {
+            if (in_array($name, ['code', 'description', 'category', 'submit'], true)) {
+                continue;
+            }
             /** @var string|null $content */
-            $content = $forms[$locale]->getData();
-            $contents[$locale] = $content ?? '';
+            $content = $form->getData();
+            $contents[$name] = $content ?? '';
         }
 
         $viewData = new SnippetFormData($code, $description, $category, $contents);
