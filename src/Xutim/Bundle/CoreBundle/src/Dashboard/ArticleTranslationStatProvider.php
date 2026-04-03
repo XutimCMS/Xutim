@@ -50,7 +50,7 @@ final readonly class ArticleTranslationStatProvider implements TranslationStatPr
 
         return new TranslationStat(
             label: 'articles',
-            icon: 'tabler:article',
+            icon: 'tabler:news',
             untranslatedCount: $totalUntranslated,
             outdatedCount: count($this->articleRepository->findByChangedDefaultTranslations($locales)),
             listUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'missing', ...$ageLimitCol]]),

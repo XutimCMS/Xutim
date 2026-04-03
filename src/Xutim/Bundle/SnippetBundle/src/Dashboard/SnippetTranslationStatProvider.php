@@ -55,7 +55,7 @@ final readonly class SnippetTranslationStatProvider implements TranslationStatPr
 
         return new TranslationStat(
             label: 'snippets',
-            icon: 'tabler:code',
+            icon: 'tabler:abc',
             untranslatedCount: $totalCount,
             outdatedCount: 0,
             listUrl: $this->router->generate('admin_snippet_list', [

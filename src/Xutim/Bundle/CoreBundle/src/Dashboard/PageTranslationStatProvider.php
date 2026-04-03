@@ -46,7 +46,7 @@ final readonly class PageTranslationStatProvider implements TranslationStatProvi
 
         return new TranslationStat(
             label: 'pages',
-            icon: 'tabler:file-text',
+            icon: 'tabler:folder',
             untranslatedCount: $totalCount,
             outdatedCount: 0,
             listUrl: $this->router->generate('admin_page_translation_list', ['col' => ['translationStatus' => 'missing']]),
