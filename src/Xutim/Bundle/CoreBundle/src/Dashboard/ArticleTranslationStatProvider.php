@@ -58,7 +58,7 @@ final readonly class ArticleTranslationStatProvider implements TranslationStatPr
             localeBreakdown: $localeBreakdown,
             untranslatedUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'missing', ...$ageLimitCol]]),
             outdatedUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'fallback', ...$ageLimitCol]]),
-            unpublishedUrl: $this->router->generate('admin_article_list', ['col' => ['publicationStatus' => 'draft']]),
+            unpublishedUrl: $this->router->generate('admin_article_list', ['col' => ['publicationStatus' => 'draft', 'translationStatus' => 'translated']]),
         );
     }
 }

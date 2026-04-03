@@ -34,20 +34,20 @@
                                     <div class="d-flex align-items-baseline flex-wrap gap-2">
                                         <span class="h2 mb-0">{{ stat.totalCount }}</span>
                                         {% if typeCount > 1 %}
-                                            <span class="d-flex align-items-center gap-2 ms-auto text-secondary small">
+                                            <span class="d-flex align-items-center gap-2 ms-auto text-secondary">
                                                 {% if stat.untranslatedCount > 0 %}
                                                     <a href="{{ stat.untranslatedUrl ?? stat.listUrl }}" class="d-inline-flex align-items-center gap-1 text-secondary text-decoration-none" title="{{ 'to translate'|trans({}, 'admin') }}" data-controller="tooltip">
-                                                        <twig:ux:icon name="tabler:language" class="icon-sm" />{{ stat.untranslatedCount }}
+                                                        <twig:ux:icon name="tabler:language" style="width: 1em; height: 1em;" />{{ stat.untranslatedCount }}
                                                     </a>
                                                 {% endif %}
                                                 {% if stat.outdatedCount > 0 %}
                                                     <a href="{{ stat.outdatedUrl ?? stat.listUrl }}" class="d-inline-flex align-items-center gap-1 text-secondary text-decoration-none" title="{{ 'to update'|trans({}, 'admin') }}" data-controller="tooltip">
-                                                        <twig:ux:icon name="tabler:refresh" class="icon-sm" />{{ stat.outdatedCount }}
+                                                        <twig:ux:icon name="tabler:refresh-alert" style="width: 1em; height: 1em;" />{{ stat.outdatedCount }}
                                                     </a>
                                                 {% endif %}
                                                 {% if stat.unpublishedCount > 0 %}
                                                     <a href="{{ stat.unpublishedUrl ?? stat.listUrl }}" class="d-inline-flex align-items-center gap-1 text-secondary text-decoration-none" title="{{ 'to publish'|trans({}, 'admin') }}" data-controller="tooltip">
-                                                        <twig:ux:icon name="tabler:send" class="icon-sm" />{{ stat.unpublishedCount }}
+                                                        <twig:ux:icon name="tabler:send" style="width: 1em; height: 1em;" />{{ stat.unpublishedCount }}
                                                     </a>
                                                 {% endif %}
                                             </span>
