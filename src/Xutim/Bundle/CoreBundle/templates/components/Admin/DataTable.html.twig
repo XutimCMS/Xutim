@@ -205,7 +205,7 @@
                                 data-action="click->dt-filter#toggle"
                                 data-dt-filter-popover-id="{{ popoverId }}"
                             >
-                                <twig:ux:icon name="{{ buttonIcon }}" class="icon" />
+                                <twig:ux:icon :name="buttonIcon" class="icon" />
                                 {{ filterLabel }}
                                 {% if hasActiveFilter %}
                                     <span class="badge bg-white text-primary ms-1">{{ selectedValues|filter(v => v is not empty)|length }}</span>

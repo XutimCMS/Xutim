@@ -27,7 +27,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center gap-3{{ stat.localeBreakdown|length > 1 ? ' mb-3' : '' }}">
                                 <span class="avatar avatar-md rounded-circle bg-primary-lt" style="box-shadow: none;">
-                                    <twig:ux:icon name="{{ stat.icon }}" class="icon text-primary" />
+                                    <twig:ux:icon :name="stat.icon" class="icon text-primary" />
                                 </span>
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="fw-bold text-uppercase small" style="letter-spacing: 0.05em;">{{ stat.label|capitalize }}</div>
