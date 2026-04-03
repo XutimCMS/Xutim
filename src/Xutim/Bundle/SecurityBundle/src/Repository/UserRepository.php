@@ -21,7 +21,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public const FILTER_ORDER_COLUMN_MAP = [
         'id' => 'user.id',
         'name' => 'user.name',
-        'email' => 'user.email'
+        'email' => 'user.email',
+        'roles' => 'user.roles',
     ];
 
     public function __construct(ManagerRegistry $registry, string $entityClass)
@@ -119,6 +120,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->where($builder->expr()->like('LOWER(user.email)', ':searchTerm'))
                 ->orWhere($builder->expr()->like('LOWER(user.name)', ':searchTerm'))
                 ->setParameter('searchTerm', '%' . strtolower($filter->searchTerm) . '%');
+        }
+
+        if ($filter->hasCol('role')) {
+            /** @var string $role */
+            $role = $filter->col('role');
+            $builder
+                ->andWhere($builder->expr()->like('CAST(user.roles AS TEXT)', ':role'))
+                ->setParameter('role', '%"' . $role . '"%');
+        }
+
+        if ($filter->hasCol('locale')) {
+            /** @var string $locale */
+            $locale = $filter->col('locale');
+            $builder
+                ->andWhere($builder->expr()->like('CAST(user.translationLocales AS TEXT)', ':locale'))
+                ->setParameter('locale', '%"' . $locale . '"%');
         }
 
         // Check if the order has a valid orderDir and orderColumn parameters.

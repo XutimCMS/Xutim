@@ -7,7 +7,6 @@ export default class extends Controller {
     };
 
     connect() {
-        // Remember the initial values to detect changes
         this.inputTargets.forEach((el) => {
             el.dataset.savedValue = this.#normalize(el.value);
         });
@@ -22,7 +21,6 @@ export default class extends Controller {
 
         const current = this.#normalize(input.value);
         const lastSaved = input.dataset.savedValue ?? '';
-        // No changes
         if (current === lastSaved) return;
 
         fetch(this.urlValue, {
@@ -35,21 +33,19 @@ export default class extends Controller {
         })
             .then((response) => {
                 if (response.ok) {
-                    this.#flashSuccess(event.target);
+                    input.dataset.savedValue = current;
+                    this.#flashSuccess(input);
                 } else {
-                    this.#flashError(event.target);
+                    this.#flashError(input);
                 }
             })
-            .catch(() => this.#flashError());
+            .catch(() => this.#flashError(input));
     }
 
     #flashSuccess(elem) {
         elem.classList.remove('is-invalid');
         elem.classList.add('is-valid');
-
-        setTimeout(() => {
-            elem.classList.remove('is-valid');
-        }, 2000);
+        setTimeout(() => elem.classList.remove('is-valid'), 2000);
     }
 
     #flashError(elem) {

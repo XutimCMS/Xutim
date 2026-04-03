@@ -11,15 +11,15 @@ use Xutim\SnippetBundle\Action\ListSnippetsAction;
 use Xutim\SnippetBundle\Action\TranslateSnippetAction;
 
 return function (RoutingConfigurator $routes) {
-    $routes->add('admin_snippet_new', '/admin/snippet/new')
+    $routes->add('admin_snippet_new', '/admin/{_content_locale}/snippet/new')
         ->methods(['get', 'post'])
         ->controller(CreateSnippetAction::class);
 
-    $routes->add('admin_snippet_delete', '/admin/snippet/delete/{id}')
+    $routes->add('admin_snippet_delete', '/admin/{_content_locale}/snippet/delete/{id}')
         ->methods(['post'])
         ->controller(DeleteSnippetAction::class);
 
-    $routes->add('admin_snippet_edit', '/admin/snippet/edit/{id}/{locale? }')
+    $routes->add('admin_snippet_edit', '/admin/{_content_locale}/snippet/edit/{id}')
         ->methods(['get', 'post'])
         ->controller(EditSnippetAction::class);
 
@@ -27,7 +27,7 @@ return function (RoutingConfigurator $routes) {
         ->methods(['get'])
         ->controller(JsonListSnippetsAction::class);
 
-    $routes->add('admin_snippet_list', '/admin/snippet')
+    $routes->add('admin_snippet_list', '/admin/{_content_locale}/snippet')
         ->methods(['get'])
         ->controller(ListSnippetsAction::class);
 

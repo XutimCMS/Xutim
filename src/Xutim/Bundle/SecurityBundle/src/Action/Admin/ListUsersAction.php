@@ -6,6 +6,7 @@ namespace Xutim\SecurityBundle\Action\Admin;
 
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -26,6 +27,7 @@ class ListUsersAction
     }
 
     public function __invoke(
+        Request $request,
         #[MapQueryParameter]
         string $searchTerm = '',
         #[MapQueryParameter]
@@ -40,7 +42,9 @@ class ListUsersAction
         if ($this->authChecker->isGranted(UserRoles::ROLE_ADMIN) === false) {
             throw new AccessDeniedException('Access denied.');
         }
-        $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection);
+        /** @var array<string,string> $cols */
+        $cols = $request->query->all('col');
+        $filter = $this->filterBuilder->buildFilter($searchTerm, $page, $pageLength, $orderColumn, $orderDirection, $cols);
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(
             new QueryAdapter($this->userRepo->queryByFilter($filter)),
             $filter->page,

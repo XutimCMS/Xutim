@@ -39,7 +39,6 @@ import EditingPresence from './controllers/editing-presence_controller.js';
 import TranslationLocales from './controllers/translation-locales_controller.js';
 import NotificationSelect from './controllers/notification-select_controller.js';
 import PresetInput from './controllers/preset-input_controller.js';
-
 app.register('sidebar', Sidebar);
 app.register('article-preview', ArticlePreview);
 app.register('auto-expand', AutoExpand);

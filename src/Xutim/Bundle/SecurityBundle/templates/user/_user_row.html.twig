@@ -19,6 +19,11 @@
             <code>{{ role|replace({ROLE_: ''}) }}</code>
         {% endfor %}
     </td>
+    <td>
+        {% for locale in user.translationLocales %}
+            <code>{{ locale|upper }}</code>
+        {% endfor %}
+    </td>
     <td class="w-8 justify-end">
         <div class="d-flex justify-content-end">
             <twig:Xutim:Admin:Button

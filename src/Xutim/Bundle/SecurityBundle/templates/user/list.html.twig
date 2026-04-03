@@ -26,6 +26,19 @@
 {% endblock %}
 
 {% block settingsBody %}
+    {% set roleOptions = [
+        {label: 'User'|trans({}, 'admin'), value: 'ROLE_USER'},
+        {label: 'Translator'|trans({}, 'admin'), value: 'ROLE_TRANSLATOR'},
+        {label: 'Editor'|trans({}, 'admin'), value: 'ROLE_EDITOR'},
+        {label: 'Admin'|trans({}, 'admin'), value: 'ROLE_ADMIN'},
+        {label: 'Developer'|trans({}, 'admin'), value: 'ROLE_DEVELOPER'},
+    ] %}
+
+    {% set localeOptions = [] %}
+    {% for locale in site_context.allLocales %}
+        {% set localeOptions = localeOptions|merge([{label: locale|upper, value: locale}]) %}
+    {% endfor %}
+
     <div class="row">
         <div class="col-md-12">
             <h2 class="mb-2 py-2">
@@ -33,39 +46,62 @@
             </h2>
             {%
                 component 'Xutim:Admin:DataTable' with {
-            frameId: 'users-list',
-            pager: users,
-            filter: filter,
-            tableBodyId: 'user-list-body',
-        }
+                    frameId: 'users-list',
+                    pager: users,
+                    filter: filter,
+                    tableBodyId: 'user-list-body',
+                    showChips: true,
+                    columns: [
+                        {
+                            key: '_avatar',
+                            label: '',
+                            sortable: false,
+                        },
+                        {
+                            key: 'name',
+                            label: 'name'|trans({}, 'admin')|capitalize,
+                            sortable: true,
+                            order: 'name',
+                        },
+                        {
+                            key: 'email',
+                            label: 'email'|trans({}, 'admin')|capitalize,
+                            sortable: true,
+                            order: 'email',
+                        },
+                        {
+                            key: 'role',
+                            label: 'roles'|trans({}, 'admin')|capitalize,
+                            sortable: true,
+                            order: 'roles',
+                            filter: {
+                                type: 'select',
+                                options: roleOptions,
+                                placeholder: 'Any'|trans({}, 'admin'),
+                                minWidth: '180px',
+                            },
+                            chip: true,
+                        },
+                        {
+                            key: 'locale',
+                            label: 'locales'|trans({}, 'admin')|capitalize,
+                            sortable: false,
+                            filter: {
+                                type: 'select',
+                                options: localeOptions,
+                                placeholder: 'Any'|trans({}, 'admin'),
+                                minWidth: '180px',
+                            },
+                            chip: true,
+                        },
+                        {
+                            key: '_actions',
+                            label: '',
+                            sortable: false,
+                        },
+                    ],
+                }
             %}
-            {% block header %}
-                {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
-                <th class="w-1"></th>
-                <th>
-                    <a
-                        href="{{ admin_filter_order_path_with('name', filter) }}"
-                    >
-                        {{ 'name'|trans({}, 'admin')|capitalize }}
-                        {{
-                            icons.order_arrow('name', filter.orderColumn, filter.orderDirection)
-                        }}
-                    </a>
-                </th>
-                <th>
-                    <a
-                        href="{{ admin_filter_order_path_with('email', filter) }}"
-                    >
-                        {{ 'email'|trans({}, 'admin')|capitalize }}
-                        {{
-                            icons.order_arrow('email', filter.orderColumn, filter.orderDirection)
-                        }}
-                    </a>
-                </th>
-                <th>{{ 'roles'|trans({}, 'admin')|capitalize }}</th>
-                <th class="w-8"></th>
-            {% endblock %}
-
             {% block body %}
                 {% for user in users %}
                     {{ include('@XutimSecurity/user/_user_row.html.twig') }}

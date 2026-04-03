@@ -7,11 +7,9 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
-use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
@@ -44,6 +42,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->arg('$snippetVersionPath', '%snippet_routes_version_file%')
+        ->arg('$defaultLocale', '%kernel.default_locale%')
         ->tag('controller.service_arguments')
     ;
 
@@ -60,6 +59,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->arg('$entityManager', service(EntityManagerInterface::class))
         ->arg('$snippetVersionPath', '%snippet_routes_version_file%')
+        ->arg('$defaultLocale', '%kernel.default_locale%')
         ->tag('controller.service_arguments')
     ;
 
@@ -67,9 +67,9 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$repo', service(SnippetRepositoryInterface::class))
         ->arg('$filterBuilder', service(ListFilterBuilder::class))
         ->arg('$twig', service(Environment::class))
-        ->arg('$siteContext', service(SiteContext::class))
+        ->arg('$contentContext', service(ContentContext::class))
         ->arg('$requestStack', service(RequestStack::class))
-        ->arg('$urlGenerator', service(UrlGeneratorInterface::class))
+        ->arg('$router', service(AdminUrlGenerator::class))
         ->tag('controller.service_arguments')
     ;
 
