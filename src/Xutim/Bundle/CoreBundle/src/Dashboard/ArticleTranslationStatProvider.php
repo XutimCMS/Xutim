@@ -28,13 +28,37 @@ final readonly class ArticleTranslationStatProvider implements TranslationStatPr
             static fn (string $l) => $l !== $referenceLocale,
         ));
 
+        $totalUntranslated = 0;
+        $localeBreakdown = [];
+
+        foreach ($localesWithoutReference as $locale) {
+            $count = count($this->articleRepository->findByMissingTranslations([$locale, $referenceLocale], ageLimitDays: $ageLimitDays));
+            if ($count > 0) {
+                $localeBreakdown[] = new LocaleStat(
+                    locale: $locale,
+                    count: $count,
+                    url: $this->router->generate('admin_article_list', [
+                        '_content_locale' => $locale,
+                        'col' => ['translationStatus' => 'missing', ...($ageLimitDays > 0 ? ['updatedAt' => (string) $ageLimitDays] : [])],
+                    ]),
+                );
+                $totalUntranslated += $count;
+            }
+        }
+
+        $ageLimitCol = $ageLimitDays > 0 ? ['updatedAt' => (string) $ageLimitDays] : [];
+
         return new TranslationStat(
             label: 'articles',
             icon: 'tabler:article',
-            untranslatedCount: count($this->articleRepository->findByMissingTranslations($locales, ageLimitDays: $ageLimitDays)),
+            untranslatedCount: $totalUntranslated,
             outdatedCount: count($this->articleRepository->findByChangedDefaultTranslations($locales)),
-            listUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'missing', ...($ageLimitDays > 0 ? ['updatedAt' => (string) $ageLimitDays] : [])]]),
+            listUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'missing', ...$ageLimitCol]]),
             unpublishedCount: $this->articleRepository->countUnpublishedForLocales($localesWithoutReference),
+            localeBreakdown: $localeBreakdown,
+            untranslatedUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'missing', ...$ageLimitCol]]),
+            outdatedUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'fallback', ...$ageLimitCol]]),
+            unpublishedUrl: $this->router->generate('admin_article_list', ['col' => ['publicationStatus' => 'draft']]),
         );
     }
 }

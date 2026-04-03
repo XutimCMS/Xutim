@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\EventBundle\Dashboard;
 
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Xutim\CoreBundle\Dashboard\LocaleStat;
 use Xutim\CoreBundle\Dashboard\TranslationStat;
 use Xutim\CoreBundle\Dashboard\TranslationStatProvider;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
@@ -26,12 +27,31 @@ final readonly class EventTranslationStatProvider implements TranslationStatProv
             static fn (string $l) => $l !== $referenceLocale,
         ));
 
+        $totalCount = 0;
+        $localeBreakdown = [];
+
+        foreach ($localesWithoutReference as $locale) {
+            $count = $this->eventRepository->countUntranslatedForLocales([$locale]);
+            if ($count > 0) {
+                $localeBreakdown[] = new LocaleStat(
+                    locale: $locale,
+                    count: $count,
+                    url: $this->router->generate('admin_event_list', [
+                        '_content_locale' => $locale,
+                        'col' => ['translationStatus' => 'missing', 'publicationStatus' => 'published'],
+                    ]),
+                );
+                $totalCount += $count;
+            }
+        }
+
         return new TranslationStat(
             label: 'events',
             icon: 'tabler:calendar-event',
-            untranslatedCount: $this->eventRepository->countUntranslatedForLocales($localesWithoutReference),
+            untranslatedCount: $totalCount,
             outdatedCount: 0,
             listUrl: $this->router->generate('admin_event_list', ['col' => ['translationStatus' => 'missing', 'publicationStatus' => 'published']]),
+            localeBreakdown: $localeBreakdown,
         );
     }
 }

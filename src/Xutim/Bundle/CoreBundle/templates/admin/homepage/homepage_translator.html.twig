@@ -15,27 +15,64 @@
         <div class="row row-cards mb-4">
             {% for stat in translationStats %}
                 <div class="col-sm-6 col-lg-3">
-                    <a href="{{ stat.listUrl }}" class="card card-sm card-link">
+                    {% set singleLocale = stat.localeBreakdown|length == 1 %}
+                    {% set typeCount = (stat.untranslatedCount > 0 ? 1 : 0) + (stat.outdatedCount > 0 ? 1 : 0) + (stat.unpublishedCount > 0 ? 1 : 0) %}
+                    {% set cardUrl = (singleLocale and typeCount <= 1) ? stat.localeBreakdown[0].url : (stat.localeBreakdown is empty ? stat.listUrl : null) %}
+
+                    {% if cardUrl %}
+                        <a href="{{ cardUrl }}" class="card card-link text-decoration-none">
+                    {% else %}
+                        <div class="card" style="transition: box-shadow .15s ease;" onmouseover="this.style.boxShadow='0 .5rem 1rem rgba(0,0,0,.1)'" onmouseout="this.style.boxShadow=''">
+                    {% endif %}
                         <div class="card-body">
-                            <div class="subheader">{{ stat.label|capitalize }}</div>
-                            <div class="d-flex align-items-baseline gap-2">
-                                <div class="h1 mb-0">{{ stat.totalCount }}</div>
-                                <div class="text-secondary small">
-                                    {% set parts = [] %}
-                                    {% if stat.untranslatedCount > 0 %}
-                                        {% set parts = parts|merge([stat.untranslatedCount ~ ' ' ~ 'to translate'|trans({}, 'admin')]) %}
-                                    {% endif %}
-                                    {% if stat.outdatedCount > 0 %}
-                                        {% set parts = parts|merge([stat.outdatedCount ~ ' ' ~ 'to update'|trans({}, 'admin')]) %}
-                                    {% endif %}
-                                    {% if stat.unpublishedCount > 0 %}
-                                        {% set parts = parts|merge([stat.unpublishedCount ~ ' ' ~ 'to publish'|trans({}, 'admin')]) %}
-                                    {% endif %}
-                                    {{ parts|join(', ') }}
+                            <div class="d-flex align-items-center gap-3{{ stat.localeBreakdown|length > 1 ? ' mb-3' : '' }}">
+                                <span class="avatar avatar-md rounded-circle bg-primary-lt" style="box-shadow: none;">
+                                    <twig:ux:icon name="{{ stat.icon }}" class="icon text-primary" />
+                                </span>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="fw-bold text-uppercase small" style="letter-spacing: 0.05em;">{{ stat.label|capitalize }}</div>
+                                    <div class="d-flex align-items-baseline flex-wrap gap-2">
+                                        <span class="h2 mb-0">{{ stat.totalCount }}</span>
+                                        {% if typeCount > 1 %}
+                                            <span class="d-flex align-items-center gap-2 ms-auto text-secondary small">
+                                                {% if stat.untranslatedCount > 0 %}
+                                                    <a href="{{ stat.untranslatedUrl ?? stat.listUrl }}" class="d-inline-flex align-items-center gap-1 text-secondary text-decoration-none" title="{{ 'to translate'|trans({}, 'admin') }}" data-controller="tooltip">
+                                                        <twig:ux:icon name="tabler:language" class="icon-sm" />{{ stat.untranslatedCount }}
+                                                    </a>
+                                                {% endif %}
+                                                {% if stat.outdatedCount > 0 %}
+                                                    <a href="{{ stat.outdatedUrl ?? stat.listUrl }}" class="d-inline-flex align-items-center gap-1 text-secondary text-decoration-none" title="{{ 'to update'|trans({}, 'admin') }}" data-controller="tooltip">
+                                                        <twig:ux:icon name="tabler:refresh" class="icon-sm" />{{ stat.outdatedCount }}
+                                                    </a>
+                                                {% endif %}
+                                                {% if stat.unpublishedCount > 0 %}
+                                                    <a href="{{ stat.unpublishedUrl ?? stat.listUrl }}" class="d-inline-flex align-items-center gap-1 text-secondary text-decoration-none" title="{{ 'to publish'|trans({}, 'admin') }}" data-controller="tooltip">
+                                                        <twig:ux:icon name="tabler:send" class="icon-sm" />{{ stat.unpublishedCount }}
+                                                    </a>
+                                                {% endif %}
+                                            </span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
+
+                            {% if stat.localeBreakdown|length > 1 %}
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for localeStat in stat.localeBreakdown %}
+                                        <a href="{{ localeStat.url }}"
+                                           class="badge bg-primary-lt text-decoration-none"
+                                        >
+                                            {{ localeStat.locale|upper }}: <span class="fw-bold">{{ localeStat.count }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
-                    </a>
+                    {% if cardUrl %}
+                        </a>
+                    {% else %}
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

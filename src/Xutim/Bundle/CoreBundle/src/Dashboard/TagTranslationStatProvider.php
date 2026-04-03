@@ -24,12 +24,31 @@ final readonly class TagTranslationStatProvider implements TranslationStatProvid
             static fn (string $l) => $l !== $referenceLocale,
         ));
 
+        $totalCount = 0;
+        $localeBreakdown = [];
+
+        foreach ($localesWithoutReference as $locale) {
+            $count = $this->tagRepository->countUntranslatedForLocales([$locale]);
+            if ($count > 0) {
+                $localeBreakdown[] = new LocaleStat(
+                    locale: $locale,
+                    count: $count,
+                    url: $this->router->generate('admin_tag_list', [
+                        '_content_locale' => $locale,
+                        'col' => ['translationStatus' => 'missing', 'publicationStatus' => 'published'],
+                    ]),
+                );
+                $totalCount += $count;
+            }
+        }
+
         return new TranslationStat(
             label: 'tags',
             icon: 'tabler:tag',
-            untranslatedCount: $this->tagRepository->countUntranslatedForLocales($localesWithoutReference),
+            untranslatedCount: $totalCount,
             outdatedCount: 0,
             listUrl: $this->router->generate('admin_tag_list', ['col' => ['translationStatus' => 'missing', 'publicationStatus' => 'published']]),
+            localeBreakdown: $localeBreakdown,
         );
     }
 }
