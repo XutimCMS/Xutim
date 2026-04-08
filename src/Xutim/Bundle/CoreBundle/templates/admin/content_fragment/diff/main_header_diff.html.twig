@@ -6,9 +6,9 @@
     set showPlain = (op == 'added') or (op == 'removed') or (meta is not defined) or (meta is empty)
 %}
 
-<div class="vstack gap-2">
+<div class="flex flex-col gap-2">
     <div>
-        <div class="small text-muted">{{ 'Pretitle'|trans({}, 'admin') }}</div>
+        <div class="text-sm text-content-secondary">{{ 'Pretitle'|trans({}, 'admin') }}</div>
 {% if showPlain %}
             <div>{{ row.parts.pretitle.html|default('')|raw }}</div>
         {% else %}
@@ -16,7 +16,7 @@
                 if preMeta and preMeta.status is defined and preMeta.status != 'same'
             %}
                 <div>
-                    <del>{{ preMeta.old ?? '' }}</del> &nbsp;→&nbsp;
+                    <del>{{ preMeta.old ?? '' }}</del> &nbsp;&rarr;&nbsp;
                     <ins>{{ preMeta.new ?? '' }}</ins>
                 </div>
             {% else %}
@@ -26,25 +26,25 @@
     </div>
 
     <div>
-        <div class="small text-muted">{{ 'Title'|trans({}, 'admin') }}</div>
+        <div class="text-sm text-content-secondary">{{ 'Title'|trans({}, 'admin') }}</div>
 {% if showPlain %}
-            <h2 class="h4">{{ row.parts.title.html|default('')|raw }}</h2>
+            <h2 class="text-lg font-semibold">{{ row.parts.title.html|default('')|raw }}</h2>
         {% else %}
             {%
                 if titMeta and titMeta.status is defined and titMeta.status != 'same'
             %}
-                <h2 class="h4">
-                    <del>{{ titMeta.old ?? '' }}</del> &nbsp;→&nbsp;
+                <h2 class="text-lg font-semibold">
+                    <del>{{ titMeta.old ?? '' }}</del> &nbsp;&rarr;&nbsp;
                     <ins>{{ titMeta.new ?? '' }}</ins>
                 </h2>
             {% else %}
-                <h2 class="h4">{{ titMeta.new ?? titMeta.old ?? '' }}</h2>
+                <h2 class="text-lg font-semibold">{{ titMeta.new ?? titMeta.old ?? '' }}</h2>
             {% endif %}
         {% endif %}
     </div>
 
     <div>
-        <div class="small text-muted">{{ 'Subtitle'|trans({}, 'admin') }}</div>
+        <div class="text-sm text-content-secondary">{{ 'Subtitle'|trans({}, 'admin') }}</div>
 {% if showPlain %}
             <div>{{ row.parts.subtitle.html|default('')|raw }}</div>
         {% else %}
@@ -52,7 +52,7 @@
                 if subMeta and subMeta.status is defined and subMeta.status != 'same'
             %}
                 <div>
-                    <del>{{ subMeta.old ?? '' }}</del> &nbsp;→&nbsp;
+                    <del>{{ subMeta.old ?? '' }}</del> &nbsp;&rarr;&nbsp;
                     <ins>{{ subMeta.new ?? '' }}</ins>
                 </div>
             {% else %}

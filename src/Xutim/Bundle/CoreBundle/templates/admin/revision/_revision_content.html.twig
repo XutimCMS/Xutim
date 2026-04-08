@@ -1,116 +1,116 @@
-<div class="row"
+<div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] gap-4"
      data-controller="revision-filter"
      data-revision-filter-base-url-value="{{ path('admin_content_translation_revisions', {id: translation.id}) }}">
-    <div class="col-md-3">
+    <div>
         {% if (events|length) > 0 %}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
+            <div class="rounded-xl border border-border">
+                <div class="px-4 py-3 border-b border-border">
+                    <h3 class="text-base font-semibold text-content">
                         {{ 'Revisions'|trans({}, 'admin') }}
                     </h3>
                 </div>
 
                 <div class="px-3 pt-3">
-                    <div class="small text-muted mb-1">
+                    <div class="text-sm text-content-secondary mb-1">
                         {{ 'Comparing'|trans({}, 'admin') }}
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-secondary text-white">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-content-secondary/20 text-content-secondary">
                             {{ selectedOld.recordedAt|date('d M Y H:i') }}
                         </span>
-                        <span class="text-muted">→</span>
-                        <span class="badge bg-primary text-white">
+                        <span class="text-content-secondary">&rarr;</span>
+                        <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-accent/20 text-accent">
                             {{ selectedNew.recordedAt|date('d M Y H:i') }}
                         </span>
                     </div>
                     {% if changeSummary is defined %}
-                    <div class="d-flex flex-wrap gap-1 mt-2">
+                    <div class="flex flex-wrap gap-1 mt-2">
                         {% if changeSummary.preTitleChanged %}
-                            <span class="badge bg-warning-lt">{{ 'pretitle'|trans({}, 'admin') }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{{ 'pretitle'|trans({}, 'admin') }}</span>
                         {% endif %}
                         {% if changeSummary.titleChanged %}
-                            <span class="badge bg-warning-lt">{{ 'title'|trans({}, 'admin') }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{{ 'title'|trans({}, 'admin') }}</span>
                         {% endif %}
                         {% if changeSummary.subTitleChanged %}
-                            <span class="badge bg-warning-lt">{{ 'subtitle'|trans({}, 'admin') }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{{ 'subtitle'|trans({}, 'admin') }}</span>
                         {% endif %}
                         {% if changeSummary.descriptionChanged %}
-                            <span class="badge bg-warning-lt">{{ 'description'|trans({}, 'admin') }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{{ 'description'|trans({}, 'admin') }}</span>
                         {% endif %}
                         {% if changeSummary.blocksAdded > 0 %}
-                            <span class="badge bg-success-lt">+{{ changeSummary.blocksAdded }} {{ 'blocks'|trans({}, 'admin') }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">+{{ changeSummary.blocksAdded }} {{ 'blocks'|trans({}, 'admin') }}</span>
                         {% endif %}
                         {% if changeSummary.blocksRemoved > 0 %}
-                            <span class="badge bg-danger-lt">-{{ changeSummary.blocksRemoved }} {{ 'blocks'|trans({}, 'admin') }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">-{{ changeSummary.blocksRemoved }} {{ 'blocks'|trans({}, 'admin') }}</span>
                         {% endif %}
                         {% if changeSummary.blocksModified > 0 %}
-                            <span class="badge bg-warning-lt">{{ changeSummary.blocksModified }} {{ 'modified'|trans({}, 'admin') }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{{ changeSummary.blocksModified }} {{ 'modified'|trans({}, 'admin') }}</span>
                         {% endif %}
                     </div>
                     {% endif %}
-                    <div class="small text-muted mt-2 mb-4">
+                    <div class="text-sm text-content-secondary mt-2 mb-4">
                         {{ 'Select 2 revisions to compare'|trans({}, 'admin') }}
                     </div>
                 </div>
 
-                <div class="list-group list-group-flush">
+                <div class="divide-y divide-border">
                     {% set total = events|length %}
                     {% for event in events %}
                         {% set userData = usersData[event.userIdentifier]|default({}) %}
                         {% set isComparable = is_comparable_event(event) %}
                         {% if isComparable %}
-                            <label class="list-group-item d-flex align-items-center gap-2 cursor-pointer">
+                            <label class="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-surface-raised">
                                 <input
                                     type="checkbox"
-                                    class="form-check-input m-0"
+                                    class="rounded border-border text-accent focus:ring-accent m-0"
                                     value="{{ event.id }}"
                                     data-revision-filter-target="checkbox"
                                     data-action="revision-filter#selectRevision"
                                     data-index="{{ loop.index0 }}"
                                     {{ selectedOld.id == event.id or selectedNew.id == event.id ? 'checked' : '' }}
                                 />
-                                <div class="text-muted" style="width: 1.5rem">
+                                <div class="text-content-secondary" style="width: 1.5rem">
                                     {{ total - loop.index0 }}
                                 </div>
                                 <span
-                                    class="avatar avatar-sm"
+                                    class="w-8 h-8 rounded-full bg-surface-raised bg-cover bg-center"
                                     {% if userData.avatar|default('') %}
                                     style="background-image: url({{ userData.avatar }})"
                                     {% endif %}
                                 ></span>
-                                <div class="flex-fill">
-                                    <div class="fw-semibold">
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-semibold text-sm">
                                         {{ event.recordedAt|date('d M Y H:i') }}
                                     </div>
-                                    <div class="d-flex align-items-center gap-1">
+                                    <div class="flex items-center gap-1">
                                         {% if not is_content_event(event) %}
-                                            <span class="badge bg-muted-lt">{{ revision_event_label(event) }}</span>
+                                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-surface-raised text-content-secondary">{{ revision_event_label(event) }}</span>
                                         {% endif %}
-                                        <span class="small text-secondary">
+                                        <span class="text-sm text-content-secondary">
                                             {{ userData.name|default(event.userIdentifier) }}
                                         </span>
                                     </div>
                                 </div>
                             </label>
                         {% else %}
-                            <div class="list-group-item d-flex align-items-center gap-2">
+                            <div class="flex items-center gap-2 px-3 py-2">
                                 <div style="width: 1.1rem"></div>
-                                <div class="text-muted" style="width: 1.5rem">
+                                <div class="text-content-secondary" style="width: 1.5rem">
                                     {{ total - loop.index0 }}
                                 </div>
                                 <span
-                                    class="avatar avatar-sm"
+                                    class="w-8 h-8 rounded-full bg-surface-raised bg-cover bg-center"
                                     {% if userData.avatar|default('') %}
                                     style="background-image: url({{ userData.avatar }})"
                                     {% endif %}
                                 ></span>
-                                <div class="flex-fill">
-                                    <div class="fw-semibold">
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-semibold text-sm">
                                         {{ event.recordedAt|date('d M Y H:i') }}
                                     </div>
-                                    <div class="d-flex align-items-center gap-1">
-                                        <span class="badge bg-muted-lt">{{ revision_event_label(event) }}</span>
-                                        <span class="small text-secondary">
+                                    <div class="flex items-center gap-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-surface-raised text-content-secondary">{{ revision_event_label(event) }}</span>
+                                        <span class="text-sm text-content-secondary">
                                             {{ userData.name|default(event.userIdentifier) }}
                                         </span>
                                     </div>
@@ -121,36 +121,36 @@
                 </div>
             </div>
         {% else %}
-            <div class="alert alert-warning" role="alert">
-                <h4 class="alert-title">{{ 'No revision'|trans({}, 'admin') }}</h4>
-                <div class="text-secondary">
+            <div class="rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700 p-4" role="alert">
+                <h4 class="font-semibold text-amber-800 dark:text-amber-200">{{ 'No revision'|trans({}, 'admin') }}</h4>
+                <div class="text-content-secondary">
                     {{ 'There is no revision to compare.'|trans({}, 'admin') }}
                 </div>
             </div>
         {% endif %}
     </div>
 
-    <div class="col-md-9">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="card-title mb-0">
+    <div>
+        <div class="rounded-xl border border-border">
+            <div class="px-4 py-3 border-b border-border flex justify-between items-center">
+                <h3 class="text-base font-semibold text-content">
                     {{ 'Revision comparison'|trans({}, 'admin') }}
                 </h3>
                 <button
                     type="button"
-                    class="btn btn-sm btn-outline-primary"
+                    class="px-3 py-1.5 text-sm font-medium rounded-lg border border-accent text-accent hover:bg-accent/10"
                     data-action="revision-filter#toggle"
                 >
-                    <twig:ux:icon name="tabler:filter" class="icon" />
+                    <twig:ux:icon name="ph:funnel" class="icon" />
                     <span data-revision-filter-target="showAllText">
                         {{ 'Show All'|trans({}, 'admin') }}
                     </span>
-                    <span data-revision-filter-target="onlyChangedText" class="d-none">
+                    <span data-revision-filter-target="onlyChangedText" class="hidden">
                         {{ 'Only Changed'|trans({}, 'admin') }}
                     </span>
                 </button>
             </div>
-            <div class="card-body">
+            <div class="p-4">
                 <h2>{{ 'Intro title'|trans({}, 'admin') }}</h2>
                 <p>
                     {% if preTitleDiff is defined and preTitleDiff %}

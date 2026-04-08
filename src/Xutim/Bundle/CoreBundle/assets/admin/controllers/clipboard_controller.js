@@ -1,18 +1,18 @@
 import { Controller } from '@hotwired/stimulus';
 import Clipboard from 'clipboard';
-import { Popover } from 'bootstrap';
+import tippy from 'tippy.js';
 
 export default class extends Controller {
     connect() {
         const clipboard = new Clipboard(this.element);
-        const popover = new Popover(this.element, {
-            delay: {
-                hide: 800,
-            },
+        const tip = tippy(this.element, {
+            content: 'Copied!',
+            trigger: 'manual',
         });
 
-        clipboard.on('success', function () {
-            popover.show();
+        clipboard.on('success', () => {
+            tip.show();
+            setTimeout(() => tip.hide(), 1200);
         });
     }
 }

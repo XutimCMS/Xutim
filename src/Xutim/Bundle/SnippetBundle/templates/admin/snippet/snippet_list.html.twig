@@ -11,7 +11,7 @@
             data-turbo-frame="modal"
             href="{{ admin_path('admin_snippet_new') }}"
         >
-            <twig:Xutim:Admin:Icon name="text" />
+            <twig:ux:icon name="ph:text-aa" class="icon" />
             {{ 'New snippet'|trans({}, 'admin') }}
         </twig:Xutim:Admin:Button>
     {% endif %}
@@ -19,7 +19,7 @@
 
 {% block languageBar %}
     <twig:Xutim:Admin:LanguageContextBar
-        class="d-flex justify-content-end align-items-center mb-2"
+        class="flex justify-end items-center mb-2"
         :showExtendedLanguages="true"
     />
 {% endblock %}
@@ -64,24 +64,24 @@
         data-controller="snippet-editor"
         data-snippet-editor-url-value="{{ admin_path('admin_json_snippet_translate') }}"
     >
-        <div class="d-flex align-items-center flex-wrap gap-3 mb-3">
-            <div class="position-relative" data-controller="dt-filter">
+        <div class="flex items-center flex-wrap gap-3 mb-3">
+            <div class="relative" data-controller="dt-filter">
                 <button
                     type="button"
-                    class="btn btn-sm {{ notTranslatedValues is not empty ? 'btn-primary' : 'btn-outline-secondary' }}"
+                    class="inline-flex items-center rounded-md px-3 py-1.5 text-[13px] font-medium {{ notTranslatedValues is not empty ? 'bg-accent text-white hover:bg-accent/90' : 'border border-border text-content-secondary hover:bg-surface-raised' }}"
                     data-action="click->dt-filter#toggle"
                     data-dt-filter-popover-id="snippet-filter-not-translated"
                 >
-                    <twig:ux:icon name="tabler:filter" class="icon" />
+                    <twig:ux:icon name="ph:funnel" class="icon" />
                     {{ 'Not translated in'|trans({}, 'admin') }}
                     {% if notTranslatedValues is not empty %}
-                        <span class="badge bg-white text-primary ms-1">{{ notTranslatedValues|length }}</span>
+                        <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-white text-accent ml-1">{{ notTranslatedValues|length }}</span>
                     {% endif %}
                 </button>
 
                 <div
                     id="snippet-filter-not-translated"
-                    class="card shadow-sm p-3 position-absolute d-none"
+                    class="rounded-xl border border-border shadow-sm p-3 absolute hidden"
                     style="min-width: 250px; z-index: 1050; top: 100%; left: 0; margin-top: 4px;"
                     data-dt-filter-popover
                     data-min-width="250px"
@@ -113,31 +113,31 @@
                             </optgroup>
                         {% endif %}
                     </select>
-                    <div class="mt-3 d-flex justify-content-end">
-                        <button type="submit" class="btn btn-sm btn-primary" form="{{ _formId }}">
+                    <div class="mt-3 flex justify-end">
+                        <button type="submit" class="inline-flex items-center rounded-md bg-accent text-white px-3 py-1.5 text-[13px] font-medium hover:bg-accent/90" form="{{ _formId }}">
                             {{ 'Apply'|trans({}, 'admin') }}
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="position-relative" data-controller="dt-filter">
+            <div class="relative" data-controller="dt-filter">
                 <button
                     type="button"
-                    class="btn btn-sm {{ referencesValues is not empty ? 'btn-primary' : 'btn-outline-secondary' }}"
+                    class="inline-flex items-center rounded-md px-3 py-1.5 text-[13px] font-medium {{ referencesValues is not empty ? 'bg-accent text-white hover:bg-accent/90' : 'border border-border text-content-secondary hover:bg-surface-raised' }}"
                     data-action="click->dt-filter#toggle"
                     data-dt-filter-popover-id="snippet-filter-references"
                 >
-                    <twig:ux:icon name="tabler:language" class="icon" />
+                    <twig:ux:icon name="ph:translate" class="icon" />
                     {{ 'References'|trans({}, 'admin') }}
                     {% if referencesValues is not empty %}
-                        <span class="badge bg-white text-primary ms-1">{{ referencesValues|length }}</span>
+                        <span class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[11px] font-medium bg-white text-accent ml-1">{{ referencesValues|length }}</span>
                     {% endif %}
                 </button>
 
                 <div
                     id="snippet-filter-references"
-                    class="card shadow-sm p-3 position-absolute d-none"
+                    class="rounded-xl border border-border shadow-sm p-3 absolute hidden"
                     style="min-width: 250px; z-index: 1050; top: 100%; left: 0; margin-top: 4px;"
                     data-dt-filter-popover
                     data-min-width="250px"
@@ -169,17 +169,17 @@
                             </optgroup>
                         {% endif %}
                     </select>
-                    <div class="mt-3 d-flex justify-content-end">
-                        <button type="submit" class="btn btn-sm btn-primary" form="{{ _formId }}">
+                    <div class="mt-3 flex justify-end">
+                        <button type="submit" class="inline-flex items-center rounded-md bg-accent text-white px-3 py-1.5 text-[13px] font-medium hover:bg-accent/90" form="{{ _formId }}">
                             {{ 'Apply'|trans({}, 'admin') }}
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="ms-auto text-muted" data-turbo-permanent id="snippet-list-search-container">
+            <div class="ml-auto text-content-secondary" data-turbo-permanent id="snippet-list-search-container">
                 {{ 'search'|trans({}, 'admin')|capitalize }}:
-                <div class="ms-2 d-inline-block">
+                <div class="ml-2 inline-block">
                     <form method="GET" action="" data-controller="auto-submit">
                         {% for key, value in filter.cols %}
                             {% if value is iterable %}
@@ -214,8 +214,8 @@
         </form>
 
         {% if hasActiveFilters %}
-            <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
-                <span class="text-muted small">{{ 'Filters:'|trans({}, 'admin') }}</span>
+            <div class="flex flex-wrap gap-2 items-center mb-3">
+                <span class="text-content-secondary text-sm">{{ 'Filters:'|trans({}, 'admin') }}</span>
 
                 {% if notTranslatedValues is not empty %}
                     {% set labels = [] %}
@@ -224,10 +224,10 @@
                     {% endfor %}
                     {% set withoutThis = activeFilters|filter((v, k) => k != notTranslatedKey) %}
                     {% set removeCol = withoutThis|length > 0 ? withoutThis : {_clear: '1'} %}
-                    <span class="badge bg-primary text-white d-inline-flex align-items-center">
-                        <span class="me-1">{{ 'Missing translations'|trans({}, 'admin') }}: {{ labels|join(', ') }}</span>
+                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-accent text-white">
+                        <span class="mr-1">{{ 'Missing translations'|trans({}, 'admin') }}: {{ labels|join(', ') }}</span>
                         <a
-                            class="btn-close btn-close-white ms-1 text-decoration-none"
+                            class="ml-1 text-white hover:text-white/80 no-underline text-xs"
                             href="{{ admin_current_path_with({col: removeCol, page: 1}) }}"
                         ></a>
                     </span>
@@ -240,23 +240,23 @@
                     {% endfor %}
                     {% set withoutThis = activeFilters|filter((v, k) => k != referencesKey) %}
                     {% set removeCol = withoutThis|length > 0 ? withoutThis : {_clear: '1'} %}
-                    <span class="badge bg-primary text-white d-inline-flex align-items-center">
-                        <span class="me-1">{{ 'References'|trans({}, 'admin') }}: {{ labels|join(', ') }}</span>
+                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-accent text-white">
+                        <span class="mr-1">{{ 'References'|trans({}, 'admin') }}: {{ labels|join(', ') }}</span>
                         <a
-                            class="btn-close btn-close-white ms-1 text-decoration-none"
+                            class="ml-1 text-white hover:text-white/80 no-underline text-xs"
                             href="{{ admin_current_path_with({col: removeCol, page: 1}) }}"
                         ></a>
                     </span>
                 {% endif %}
 
                 <a
-                    class="btn btn-link btn-sm text-decoration-none"
+                    class="text-accent hover:text-accent/80 text-sm no-underline"
                     href="{{ admin_current_path_with({col: {_clear: '1'}, page: 1}) }}"
                 >{{ 'Clear all'|trans({}, 'admin') }}</a>
             </div>
         {% endif %}
 
-        <div class="d-flex flex-column gap-3">
+        <div class="flex flex-col gap-3">
             {% for snippet in snippets %}
                 {{ include('@XutimSnippet/admin/snippet/_snippet_row.html.twig', {
                     snippet: snippet,
@@ -267,8 +267,8 @@
             {% endfor %}
         </div>
 
-        <div class="d-flex align-items-center mt-3">
-            <p class="m-0 text-muted">
+        <div class="flex items-center mt-3">
+            <p class="m-0 text-content-secondary">
                 {{ 'page'|trans({}, 'admin')|capitalize }}
                 {{ snippets.currentPage }}
                 {{ 'of'|trans({}, 'admin') }}
@@ -276,35 +276,35 @@
                 ({{ snippets.count }}
                 {{ 'entries'|trans({}, 'admin') }})
             </p>
-            <ul class="pagination m-0 ms-auto">
+            <ul class="flex gap-1 ml-auto">
                 {% if snippets.hasPreviousPage %}
-                    <li class="page-item">
-                        <a href="{{ pagerfanta_page_url(snippets, snippets.previousPage) }}" class="page-link">
-                            <twig:Xutim:Admin:Icon name="chevron-left" />
+                    <li class="">
+                        <a href="{{ pagerfanta_page_url(snippets, snippets.previousPage) }}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm text-content-secondary hover:bg-surface-raised">
+                            <twig:ux:icon name="ph:caret-left" class="icon" />
                             {{ 'prev'|trans({}, 'admin') }}
                         </a>
                     </li>
                 {% else %}
-                    <li class="page-item disabled">
-                        <a href="#" class="page-link" tabindex="-1" aria-disabled="true">
-                            <twig:Xutim:Admin:Icon name="chevron-left" />
+                    <li class="opacity-50 pointer-events-none">
+                        <a href="#" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm text-content-secondary hover:bg-surface-raised" tabindex="-1" aria-disabled="true">
+                            <twig:ux:icon name="ph:caret-left" class="icon" />
                             {{ 'prev'|trans({}, 'admin') }}
                         </a>
                     </li>
                 {% endif %}
 
                 {% if snippets.hasNextPage %}
-                    <li class="page-item">
-                        <a href="{{ pagerfanta_page_url(snippets, snippets.nextPage) }}" class="page-link">
+                    <li class="">
+                        <a href="{{ pagerfanta_page_url(snippets, snippets.nextPage) }}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm text-content-secondary hover:bg-surface-raised">
                             {{ 'next'|trans({}, 'admin') }}
-                            <twig:Xutim:Admin:Icon name="chevron-right" />
+                            <twig:ux:icon name="ph:caret-right" class="icon" />
                         </a>
                     </li>
                 {% else %}
-                    <li class="page-item disabled">
-                        <a href="#" class="page-link" tabindex="-1" aria-disabled="true">
+                    <li class="opacity-50 pointer-events-none">
+                        <a href="#" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm text-content-secondary hover:bg-surface-raised" tabindex="-1" aria-disabled="true">
                             {{ 'next'|trans({}, 'admin') }}
-                            <twig:Xutim:Admin:Icon name="chevron-right" />
+                            <twig:ux:icon name="ph:caret-right" class="icon" />
                         </a>
                     </li>
                 {% endif %}

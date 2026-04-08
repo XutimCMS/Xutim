@@ -1,9 +1,8 @@
-<div
-    {{
-        attributes.defaults({
-            class: 'border-bottom p-3',
-        })
-    }}
->
+{% if this.title %}
+    <div class="px-4 pt-3 pb-1 border-t border-border first:border-t-0">
+        <p class="text-[11px] font-medium uppercase tracking-wider text-content-tertiary">{{ this.title }}</p>
+    </div>
+{% endif %}
+<div {{ attributes.defaults({class: 'divide-y divide-border'}) }}>
     {% block content %}{% endblock %}
 </div>

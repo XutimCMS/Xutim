@@ -1,53 +1,27 @@
 <twig:Xutim:Admin:SidebarItem id="published-at-sidebar-item">
     <twig:block name="header">
         {% if article.isPublishingScheduled() %}
-            {{ 'scheduled for'|trans({}, 'admin')|capitalize }}:
+            {{ 'scheduled for'|trans({}, 'admin')|capitalize }}
         {% else %}
-            {{ 'published on'|trans({}, 'admin')|capitalize }}:
+            {{ 'published on'|trans({}, 'admin')|capitalize }}
         {% endif %}
     </twig:block>
     <twig:block name="content">
         {% if translation.isPublished() %}
             {% if translation.publishedAt %}
-                <span
-                    title="{{ translation.publishedAt|date('d/m/Y H:i') }}"
-                    data-controller="tooltip"
-                >
-                    {{ translation.publishedAt|time_ago }}
-                </span>
+                {% set dateText = translation.publishedAt|format_datetime('medium', 'short') %}
+                {% if is_granted('ROLE_EDITOR') %}
+                    <a href="{{ admin_path('admin_article_edit_publication_date', {id: translation.id}) }}" data-turbo-frame="modal" class="text-accent hover:underline" title="{{ translation.publishedAt|time_ago }}" data-controller="tooltip">{{ dateText }}</a>
+                {% else %}
+                    <span title="{{ translation.publishedAt|time_ago }}" data-controller="tooltip">{{ dateText }}</span>
+                {% endif %}
             {% else %}
                 -
             {% endif %}
         {% elseif article.isPublishingScheduled() %}
-            <time
-                datetime="{{ article.scheduledAt|date('c') }}"
-                title="{{ article.scheduledAt|format_datetime('long') }}"
-                class="d-inline-flex flex-column"
-                data-controller="tooltip"
-            >
-                <span class="mb-1">
-                    {{ article.scheduledAt|format_datetime() }}
-                </span>
-                <span>
-                    {{ article.scheduledAt|time_ago() }}
-                </span>
-            </time>
+            <span title="{{ article.scheduledAt|time_ago }}" data-controller="tooltip">{{ article.scheduledAt|format_datetime('medium', 'short') }}</span>
         {% else %}
             {{ 'Not yet published'|trans({}, 'admin') }}
-        {% endif %}
-
-        {% if translation.isPublished() == true and is_granted('ROLE_EDITOR') %}
-            <div class="ms-auto">
-                <twig:Xutim:Admin:Button
-                    tag="a"
-                    variant="link"
-                    class="p-0"
-                    data-turbo-frame="modal"
-                    href="{{ admin_path('admin_article_edit_publication_date', {id: translation.id}) }}"
-                >
-                    <twig:Xutim:Admin:Icon name="edit" />
-                </twig:Xutim:Admin:Button>
-            </div>
         {% endif %}
     </twig:block>
 </twig:Xutim:Admin:SidebarItem>

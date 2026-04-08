@@ -8,20 +8,20 @@
         variant="nav"
         href="{{ admin_path('admin_page_list') }}"
     >
-        <twig:ux:icon name="tabler:binary-tree" class="icon" />
+        <twig:ux:icon name="ph:tree-structure" class="icon" />
         {{ 'Page tree'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 {% endblock %}
 
 {% block languageBar %}
     <twig:Xutim:Admin:LanguageContextBar
-        class="d-flex justify-content-end align-items-center mb-2"
+        class="flex justify-end items-center mb-2"
     />
 {% endblock %}
 
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
-        <li class="breadcrumb-item">Pages</li>
+        <li>Pages</li>
     </twig:Xutim:Admin:Breadcrumbs>
 {% endblock %}
 
@@ -118,11 +118,11 @@
                 </td>
                 <td>
                     {% if translation.locale == content_context_language() %}
-                        <span class="status status-green">
+                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400">
                             {{ 'Translated'|trans({}, 'admin') }}
                         </span>
                     {% else %}
-                        <span class="status status-warning">
+                        <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
                             {{ translation.locale|upper }}
                         </span>
                     {% endif %}
@@ -145,7 +145,7 @@
                         }}
                     </twig:Xutim:Admin:Button>
                 </td>
-                <td class="text-wrap text-secondary small">
+                <td class="text-wrap text-content-secondary text-sm">
                     {% if page.parent %}
                         {{ page.parent.translationByLocaleOrDefault(content_context_language()).title }}
                     {% else %}

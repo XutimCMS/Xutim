@@ -37,33 +37,18 @@
     {{ form_row(form.subTitle) }}
 
     {{ form_label(form.slug) }}
-    <div class="input-group mb-3">
-        {{
-            form_widget(form.slug, {
-                attr: {
-                    'data-slug-generator-target': 'slugField',
-                },
-            })
-        }}
-        {%
-            if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
-        %}
-            <twig:Xutim:Admin:Button
-                variant="default"
-                class="pe-1"
-                type="button"
-                id="slug-unblock"
-                data-action="click->slug-generator#unblockSlugField"
-            >
-                <twig:Xutim:Admin:Icon name="lock" />
-            </twig:Xutim:Admin:Button>
+    <div class="flex items-center gap-1 mb-4">
+        {{ form_widget(form.slug, {attr: {'data-slug-generator-target': 'slugField'}}) }}
+        {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
+            <button type="button" class="rounded-md p-2 hover:bg-surface-raised cursor-pointer" id="slug-unblock" data-action="click->slug-generator#unblockSlugField">
+                <twig:ux:icon name="ph:lock-simple" class="h-3.5 w-3.5 text-content-tertiary" />
+            </button>
         {% endif %}
-
-        {{ form_errors(form.slug) }}
     </div>
+    {{ form_errors(form.slug) }}
     {{ form_help(form.slug) }}
 
-    {{ form_row(form.description) }}
+    {{ form_row(form.description, {attr: {rows: 3}}) }}
 
     {{
         form_row(form.locale, {
@@ -80,7 +65,7 @@
 
     <input type="hidden" name="_save_action" value="publish" data-editorjs-form-target="saveAction">
 
-    <div class="d-none">
+    <div class="hidden">
         <button type="submit" id="content_translation_submit"></button>
     </div>
     {{
@@ -91,32 +76,5 @@
         })
     }}
 
-    {% if form.vars.disabled == false %}
-    <div class="py-3 bg-white border-top mt-4" style="position: sticky; bottom: 0; z-index: 10;">
-        <div class="btn-group">
-            <button type="submit" class="btn btn-primary" data-editorjs-form-target="primaryBtn">
-                {{ 'Save and publish'|trans({}, 'admin') }}
-            </button>
-            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="visually-hidden">{{ 'Toggle dropdown'|trans({}, 'admin') }}</span>
-            </button>
-            <div class="dropdown-menu dropdown-menu-end">
-                <button type="button" class="dropdown-item"
-                    data-action="click->editorjs-form#chooseSaveAction"
-                    data-editorjs-form-action-param="publish"
-                >
-                    {{ 'Save and publish'|trans({}, 'admin') }}
-                </button>
-                <button type="button" class="dropdown-item"
-                    data-action="click->editorjs-form#chooseSaveAction"
-                    data-editorjs-form-action-param="draft"
-                >
-                    {{ 'Save as draft'|trans({}, 'admin') }}
-                </button>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    {{ form_end(form) }}
+    {{ form_end(form, {render_rest: false}) }}
 </turbo-frame>

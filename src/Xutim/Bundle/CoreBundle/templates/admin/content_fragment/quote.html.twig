@@ -4,13 +4,17 @@
 
     {% if textMeta and textMeta.html is defined %}
         <p>{{ textMeta.html|raw }}</p>
-    {% else %}
-        <p>{{ row.parts.text.html|default('')|raw }}</p>
+    {% elseif row is defined and row.parts.text.html is defined %}
+        <p>{{ row.parts.text.html|raw }}</p>
+    {% elseif fragment is defined and fragment.data.text is defined %}
+        <p>{{ fragment.data.text|striptags('<a><b><i><em><strong><sup>')|raw }}</p>
     {% endif %}
 
     {% if captionMeta and captionMeta.html is defined %}
         <footer>{{ captionMeta.html|raw }}</footer>
-    {% else %}
-        <footer>{{ row.parts.caption.html|default('')|raw }}</footer>
+    {% elseif row is defined and row.parts.caption.html is defined %}
+        <footer>{{ row.parts.caption.html|raw }}</footer>
+    {% elseif fragment is defined and fragment.data.caption|default('') is not empty %}
+        <footer>{{ fragment.data.caption|striptags('<a><b><i><em><strong><sup>')|raw }}</footer>
     {% endif %}
 </blockquote>

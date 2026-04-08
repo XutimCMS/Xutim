@@ -13,7 +13,7 @@
 {% block languageBar %}
     <twig:Xutim:Admin:LanguageContextBar
         :entity="article"
-        class="d-flex justify-content-end align-items-center mb-2"
+        class="flex justify-end items-center mb-2"
     />
 {% endblock %}
 
@@ -66,7 +66,7 @@
                             src="{{ admin_path('admin_content_translation_sidebar_history', {id: contextTranslation.id}) }}"
                             loading="lazy"
                         >
-                            <div class="p-3 text-muted small">{{ 'Loading...'|trans({}, 'admin') }}</div>
+                            <div class="p-3 text-content-secondary text-sm">{{ 'Loading...'|trans({}, 'admin') }}</div>
                         </turbo-frame>
                     </div>
                 {% endif %}
@@ -86,7 +86,7 @@
             variant="nav"
             href="{{ admin_path('admin_content_translation_revisions', {id: contextTranslation.id}) }}"
         >
-            <twig:Xutim:Admin:Icon name="history" class="me-1" />
+            <twig:ux:icon name="ph:clock-counter-clockwise" class="icon mr-1" />
             History
         </twig:Xutim:Admin:Button>
     {% endif %}
@@ -96,17 +96,17 @@
         variant="nav"
         href="{{ admin_path('admin_article_edit', {id: article.id}) }}"
     >
-        <twig:Xutim:Admin:Icon name="edit" class="me-1" />
+        <twig:ux:icon name="ph:pencil-simple" class="icon mr-1" />
         Edit
     </twig:Xutim:Admin:Button>
 
     <twig:Xutim:Admin:Button
         tag="button"
-        id="sidebar-toggle"
+        onclick="window.dispatchEvent(new Event('sidebar:toggle'))"
         variant="nav"
         href="{{ admin_path('admin_article_edit', {id: article.id}) }}"
     >
-        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        <twig:ux:icon name="ph:sidebar-simple" class="icon mr-1" />
         Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}
@@ -115,17 +115,17 @@
     {{ include('@XutimCore/admin/content_draft/_draft_banner.html.twig') }}
     <turbo-frame
         id="article-preview-frame"
-        class="d-flex justify-content-center"
+        class="flex justify-center"
     >
         <div
             data-controller="article-preview"
-            class="border-0 position-relative"
+            class="border-0 relative"
             style="width: 100%"
         >
             <iframe
                 src="{{ admin_path('admin_article_frame_show', {id: article.id}) }}"
                 sandbox="allow-scripts allow-same-origin"
-                class="w-100 bg-white d-block"
+                class="w-full bg-white block"
                 data-article-preview-target="frame"
                 style="border: none"
             >

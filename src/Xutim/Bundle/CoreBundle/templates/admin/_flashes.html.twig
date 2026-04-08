@@ -1,17 +1,12 @@
 {% for message in app.flashes('success') %}
-    {{
-        component('Xutim:Admin:Alert', {
-            type: 'success',
-            message: message,
-        })
-    }}
+    {{ component('Xutim:Admin:Alert', { type: 'success', message: message }) }}
 {% endfor %}
-
 {% for message in app.flashes('danger') %}
-    {{
-        component('Xutim:Admin:Alert', {
-            type: 'danger',
-            message: message,
-        })
-    }}
+    {{ component('Xutim:Admin:Alert', { type: 'error', message: message }) }}
+{% endfor %}
+{% for message in app.flashes('warning') %}
+    {{ component('Xutim:Admin:Alert', { type: 'warning', message: message }) }}
+{% endfor %}
+{% for message in app.flashes('info') %}
+    {{ component('Xutim:Admin:Alert', { type: 'info', message: message }) }}
 {% endfor %}

@@ -20,7 +20,6 @@ use Xutim\CoreBundle\Twig\Components\Admin\BreadcrumbsArticle;
 use Xutim\CoreBundle\Twig\Components\Admin\BreadcrumbsPage;
 use Xutim\CoreBundle\Twig\Components\Admin\Button;
 use Xutim\CoreBundle\Twig\Components\Admin\DataTable;
-use Xutim\CoreBundle\Twig\Components\Admin\Icon;
 use Xutim\CoreBundle\Twig\Components\Admin\LanguageContextBar;
 use Xutim\CoreBundle\Twig\Components\Admin\ListGroup;
 use Xutim\CoreBundle\Twig\Components\Admin\ListGroupItem;
@@ -98,13 +97,6 @@ return static function (ContainerConfigurator $container): void {
         ])
     ;
 
-    $services
-        ->set(Icon::class)
-        ->tag('twig.component', [
-            'key' => 'Xutim:Admin:Icon',
-            'template' => '@XutimCore/components/Admin/Icon.html.twig'
-        ])
-    ;
 
     $services
         ->set(LanguageContextBar::class)

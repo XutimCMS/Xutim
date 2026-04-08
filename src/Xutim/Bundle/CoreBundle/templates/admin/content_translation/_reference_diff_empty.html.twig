@@ -1,4 +1,4 @@
-<div class="alert alert-secondary">
+<div class="rounded-lg border border-border bg-surface-raised p-4 text-content-secondary">
     {% if reason == 'no_snapshot' %}
         {{ 'No reference snapshot available. Save this translation to start tracking changes.'|trans({}, 'admin') }}
     {% elseif reason == 'no_reference' %}

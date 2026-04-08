@@ -1,24 +1,25 @@
 <div class="modal" tabindex="-1" id="{{ modalTitle }}">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div class="fixed inset-0 flex items-center justify-center p-4" role="document">
+        <div class="rounded-xl border border-border bg-surface w-full max-w-lg flex flex-col">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-border">
                 {% if title is defined %}
-                    <h5 class="modal-title">{{ title }}</h5>
+                    <h5 class="text-base font-semibold text-content">{{ title }}</h5>
                 {% endif %}
                 <twig:Xutim:Admin:Button
                     variant="default"
                     type="button"
-                    class="btn-close"
+                    class="text-content-secondary hover:text-content"
                     data-bs-dismiss="modal"
                     aria-label="Close"
-                ></twig:Xutim:Admin:Button>
+                >
+                    <twig:ux:icon name="ph:x" class="w-5 h-5" />
+                </twig:Xutim:Admin:Button>
             </div>
-            <div class="modal-body">{% block body %}{% endblock %}</div>
-            <div class="modal-footer">
+            <div class="p-4">{% block body %}{% endblock %}</div>
+            <div class="px-4 py-3 border-t border-border flex justify-between">
                 <twig:Xutim:Admin:Button
                     variant="default"
                     type="button"
-                    class="me-auto"
                     data-bs-dismiss="modal"
                 >
                     {{ 'close'|trans({}, 'admin')|capitalize }}

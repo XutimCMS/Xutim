@@ -6,23 +6,23 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">{{ title }}</h3>
+    <div class="rounded-xl border border-border">
+        <div class="border-b border-border px-4 py-3">
+            <h3 class="text-base font-semibold">{{ title }}</h3>
         </div>
-        <div class="card-body">
+        <div class="p-4">
             {{ include('@XutimSnippet/admin/snippet/_form.html.twig') }}
         </div>
         {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_ADMIN')) %}
-            <div class="card-footer d-flex justify-content-end">
+            <div class="px-4 py-3 border-t border-border flex justify-end">
                 <twig:Xutim:Admin:ModalDialog
-                    class="btn btn-sm btn-outline-danger"
+                    class="inline-flex items-center rounded-md border border-red-300 text-red-600 px-3 py-1.5 text-[13px] font-medium hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
                     data-turbo-frame="_top"
                     modalDialogColor="danger"
                     action="{{ admin_path('admin_snippet_delete', {id: snippet.id}) }}"
                     confirmActionLabel="{{ 'action.delete'|trans({}, 'admin')|capitalize }}"
                 >
-                    <twig:Xutim:Admin:Icon name="trash" />
+                    <twig:ux:icon name="ph:trash" class="icon" />
                     {{ 'Delete snippet'|trans({}, 'admin') }}
                 </twig:Xutim:Admin:ModalDialog>
             </div>

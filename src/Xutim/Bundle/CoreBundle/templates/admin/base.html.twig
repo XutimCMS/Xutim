@@ -1,140 +1,227 @@
 <!DOCTYPE html>
-<html lang="{{ app.request.locale }}">
+<html lang="{{ app.request.locale }}" class="h-full">
     <head>
         {% block head %}
             <meta charset="{{ _charset }}" />
-            <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1, viewport-fit=cover"
-            />
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
             <meta name="robots" content="noindex,nofollow" />
+            <meta name="color-scheme" content="light dark" />
             <meta name="view-transition" content="same-origin" />
             <title>{% block title %}{% endblock %}</title>
 
             {% block css %}{% endblock %}
 
             <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link
-                rel="preconnect"
-                href="https://fonts.gstatic.com"
-                crossorigin
-            />
-            <link
-                href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
-                rel="stylesheet"
-            />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
             {% block javascripts %}
                 {{ importmap('app-admin') }}
             {% endblock %}
         {% endblock head %}
     </head>
 
-    <body>
-        <div class="page">
-            {% if block('publicLink') is defined %}
-                {% set _publicLinkBlock = block('publicLink') %}
-            {% else %}
-                {% set _publicLinkBlock %}
-                    <twig:Xutim:Admin:PublicPageLink />
-                {% endset %}
-            {% endif %}
+    <body class="h-full bg-surface font-sans text-content antialiased" data-controller="sidebar-toggle">
+        {{ include('@XutimCore/admin/_impersonate_bar.html.twig') }}
 
-            {{
-                include('@XutimCore/admin/_top_bar.html.twig', {
-                    publicLinkBlock: _publicLinkBlock|raw,
-                },
-            )
-            }}
-            <header id="navbar-local" class="navbar-expand-md">
-                <div class="collapse navbar-collapse" id="navbar-menu">
-                    <div class="navbar navbar-light">
-                        <div class="container-xl">
-                            {% if block('breadcrumbHeader') is defined %}
-                                <div class="m-2">
-                                    {% set _bp = block('breadcrumbHeader') %}
-                                    {{ _bp|raw }}
-                                </div>
+        <div id="sidebar-backdrop" class="fixed inset-0 z-40 bg-black/50 lg:hidden hidden" data-action="click->sidebar-toggle#close"></div>
+
+        <aside id="admin-sidebar" class="fixed inset-y-0 left-0 z-50 flex w-60 -translate-x-full flex-col border-r border-border bg-surface transition-transform duration-200 lg:translate-x-0" data-sidebar-toggle-target="sidebar">
+            
+            <div class="flex h-14 items-center gap-3 border-b border-border px-4 shrink-0">
+                <a href="{{ admin_path('admin_homepage') }}" class="flex items-center gap-3">
+                    {% block sidebarLogo %}
+                        <svg class="h-6 w-6 shrink-0" viewBox="0 0 28 28" fill="currentColor">
+                            <circle cx="7" cy="7" r="2.5"/><circle cx="19" cy="7" r="2.5"/>
+                            <circle cx="7" cy="15" r="2.5"/><circle cx="14" cy="15" r="2.5"/>
+                            <circle cx="14" cy="23" r="2.5"/><circle cx="21" cy="23" r="2.5"/>
+                        </svg>
+                        <span class="text-sm font-semibold tracking-tight">Xutim</span>
+                    {% endblock %}
+                </a>
+            </div>
+
+            
+            <nav class="flex-1 overflow-y-auto px-2 py-2">
+                {% block sidebarNav %}
+                    <div class="space-y-0.5">
+                        {% set _r = app.current_route %}
+                        <a href="{{ admin_path('admin_homepage') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r == 'admin_homepage' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                            <twig:ux:icon name="ph:house" class="h-4 w-4 shrink-0" />
+                            {{ 'dashboard'|trans({}, 'admin')|capitalize }}
+                        </a>
+                        <a href="{{ admin_path('admin_page_list') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_page' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                            <twig:ux:icon name="ph:folder-simple" class="h-4 w-4 shrink-0" />
+                            {{ 'pages'|trans({}, 'admin')|capitalize }}
+                        </a>
+                        <a href="{{ admin_path('admin_article_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_article' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                            <twig:ux:icon name="ph:newspaper" class="h-4 w-4 shrink-0" />
+                            {{ 'articles'|trans({}, 'admin')|capitalize }}
+                        </a>
+                        <a href="{{ admin_path('admin_tag_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_tag' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                            <twig:ux:icon name="ph:tag" class="h-4 w-4 shrink-0" />
+                            {{ 'tags'|trans({}, 'admin')|capitalize }}
+                        </a>
+                        <a href="{{ admin_path('admin_snippet_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_snippet' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                            <twig:ux:icon name="ph:text-aa" class="h-4 w-4 shrink-0" />
+                            {{ 'snippets'|trans({}, 'admin')|capitalize }}
+                        </a>
+                        <a href="{{ admin_path('admin_media_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_media' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                            <twig:ux:icon name="ph:image" class="h-4 w-4 shrink-0" />
+                            {{ 'media'|trans({}, 'admin')|capitalize }}
+                        </a>
+                        {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
+                            <a href="{{ admin_path('admin_block_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_block' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                                <twig:ux:icon name="ph:squares-four" class="h-4 w-4 shrink-0" />
+                                {{ 'blocks'|trans({}, 'admin')|capitalize }}
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    {% block sidebarNavExtra %}{% endblock %}
+
+                    <div class="mt-5">
+                        <p class="mb-1 px-2.5 text-[11px] font-medium uppercase tracking-wider text-content-tertiary">{{ 'system'|trans({}, 'admin')|capitalize }}</p>
+                        <div class="space-y-0.5">
+                            <a href="{{ admin_path('admin_notification_list') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_notification' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                                <twig:ux:icon name="ph:bell" class="h-4 w-4 shrink-0" />
+                                {{ 'notifications'|trans({}, 'admin')|capitalize }}
+                                {% if notification_center.unreadCount > 0 %}
+                                    <span class="ml-auto flex h-4 min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+                                        {{ notification_center.unreadCount > 99 ? '99+' : notification_center.unreadCount }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                            {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_DEVELOPER')) %}
+                                <a href="{{ admin_path('admin_settings_site') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_settings' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                                    <twig:ux:icon name="ph:gear" class="h-4 w-4 shrink-0" />
+                                    {{ 'settings'|trans({}, 'admin')|capitalize }}
+                                </a>
                             {% endif %}
-                            <ul class="navbar-nav sm:flex-row flex-col order-md-last">
-                                {%
-                                    set pageMenuBlock = block('pageMenu') is defined ? block('pageMenu') : ''
-                                %}
-                                {{ pageMenuBlock|raw }}
-                            </ul>
                         </div>
+                    </div>
+                {% endblock %}
+            </nav>
+
+            
+            <div class="border-t border-border px-2 py-2 shrink-0">
+                <div class="flex items-center gap-2.5 rounded-md px-2.5 py-1.5">
+                    <div class="h-7 w-7 rounded-full bg-accent/10 flex items-center justify-center text-content-secondary text-[11px] font-semibold shrink-0"
+                         {% if app.user.avatar %}style="background-image: url({{ app.user.avatar }}); background-size: cover;"{% endif %}>
+                        {% if not app.user.avatar %}{{ app.user.name|first|upper }}{% endif %}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[13px] font-medium truncate">{{ app.user.name }}</div>
+                        <div class="text-[11px] text-content-tertiary truncate">{{ app.user.userIdentifier }}</div>
+                    </div>
+                    <a href="{{ admin_path('admin_logout') }}" class="rounded-md p-1 text-content-tertiary hover:text-content hover:bg-surface-raised transition-colors" title="{{ 'Logout'|trans({}, 'admin') }}">
+                        <twig:ux:icon name="ph:sign-out" class="h-4 w-4" />
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <div class="lg:pl-60">
+            
+            <header class="sticky top-0 z-30 border-b border-border bg-surface/80 backdrop-blur-sm print:hidden">
+                <div class="mx-auto flex h-12 max-w-7xl items-center gap-3 px-4 lg:px-6">
+                    <button class="lg:hidden -ml-1 rounded-md p-1.5 hover:bg-surface-raised" data-action="click->sidebar-toggle#toggle">
+                        <twig:ux:icon name="ph:list" class="h-5 w-5" />
+                    </button>
+
+                    <nav class="flex items-center gap-1.5 text-[13px] text-content-tertiary min-w-0">
+                        {% if block('breadcrumbHeader') is defined %}
+                            {{ block('breadcrumbHeader') }}
+                        {% elseif block('pageTitle') is defined %}
+                            <span class="truncate">{{ block('pageTitle')|striptags|trim }}</span>
+                        {% else %}
+                            <span class="truncate">{{ block('title')|striptags|trim }}</span>
+                        {% endif %}
+                    </nav>
+
+                    <div class="ml-auto flex items-center gap-1 shrink-0">
+                        {% if block('publicLink') is defined %}
+                            {{ block('publicLink') }}
+                        {% else %}
+                            <twig:Xutim:Admin:PublicPageLink />
+                        {% endif %}
+                        <a href="/" target="_blank" class="rounded-md p-1.5 text-content-tertiary hover:text-content hover:bg-surface-raised transition-colors" title="{{ 'View site'|trans({}, 'admin') }}">
+                            <twig:ux:icon name="ph:arrow-square-out" class="h-4 w-4" />
+                        </a>
+                        <button onclick="document.documentElement.classList.toggle('dark'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light')" class="rounded-md p-1.5 text-content-tertiary hover:text-content hover:bg-surface-raised transition-colors" title="Toggle theme">
+                            <twig:ux:icon name="ph:moon" class="h-4 w-4 dark:hidden" />
+                            <twig:ux:icon name="ph:sun" class="h-4 w-4 hidden dark:block" />
+                        </button>
                     </div>
                 </div>
             </header>
-            {{ include('@XutimCore/admin/_impersonate_bar.html.twig') }}
 
-            <div class="page-wrapper" id="main-content">
-                <div class="page-header">
-                    <div class="{{ containerClass is defined ? containerClass : 'container-xl' }}">
-                        <div class="row row-cols-1 row-cols-md-2">
-                            <div class="col">
-                                {% if block('pagePreTitle') is defined %}
-                                    {% set _pph = block('pagePreTitle') %}
-                                    <div class="page-pretitle">{{ _pph }}</div>
-                                {% endif %}
-                                {% if block('pageTitle') is defined %}
-                                    {% set _ph = block('pageTitle') %}
-                                    <h2 class="page-title">{{ _ph|raw }}</h2>
-                                {% endif %}
-                            </div>
-                            {% if block('languageBar') is defined %}
-                                {% set langBarBlock = block('languageBar') %}
-                                <div class="col" id="language-context-bar">
-                                    {{ langBarBlock|raw }}
-                                </div>
+            <div id="flash-container" class="mx-auto max-w-7xl px-4 lg:px-6">
+                {% if app.flashes('success')|length > 0 or app.flashes('danger')|length > 0 %}
+                    <div class="pt-4 space-y-2">
+                        {{ include('@XutimCore/admin/_flashes.html.twig') }}
+                    </div>
+                {% endif %}
+            </div>
+
+            
+            {% if block('pageTitle') is defined and (withoutHeader is not defined or withoutHeader is same as(false)) %}
+                <div class="border-b border-border print:hidden">
+                    <div class="mx-auto max-w-7xl flex items-center justify-between px-4 py-2.5 lg:px-6">
+                        <div class="min-w-0">
+                            <h1 class="text-[13px] font-semibold truncate">{{ block('pageTitle')|raw }}</h1>
+                            {% if block('pagePreTitle') is defined %}
+                                <p class="text-[11px] text-content-tertiary truncate">{{ block('pagePreTitle') }}</p>
                             {% endif %}
                         </div>
+                        {% set pageMenuBlock = block('pageMenu') is defined ? block('pageMenu') : '' %}
+                        {% if pageMenuBlock|trim is not empty %}
+                            <div class="flex items-center gap-2 shrink-0 ml-3">
+                                {{ pageMenuBlock|raw }}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
+            {% endif %}
 
-                <div class="page-body">
-                    <div class="{{ containerClass is defined ? containerClass : 'container-xl' }}">
-                        <div id="flash-container">
-                            {{ include('@XutimCore/admin/_flashes.html.twig') }}
-                        </div>
-                        {% block body %}{% endblock %}
+            {% if block('languageBar') is defined %}
+                <div class="border-b border-border print:hidden">
+                    <div class="mx-auto max-w-7xl px-4 py-2 lg:px-6" id="language-context-bar">
+                        {{ block('languageBar') }}
                     </div>
                 </div>
-                {{ include('@XutimCore/admin/_footer.html.twig') }}
-            </div>
+            {% endif %}
+
+            <main class="mx-auto max-w-7xl px-4 py-4 lg:px-6 lg:py-6">
+                {% block body %}{% endblock %}
+            </main>
         </div>
-        {% block sidebar %}
-        {% endblock %}
+
+        
+        {% block sidebar %}{% endblock %}
+
+        
         <twig:Xutim:Admin:Modal>
             <turbo-frame
                 id="modal"
                 data-modal-target="dynamicContent"
                 data-action="turbo:before-fetch-request->modal#showLoading"
             >
-                {{
-                    include('@XutimCore/admin/_frameSuccessStream.html.twig', {frame: 'modal'})
-                }}
+                {{ include('@XutimCore/admin/_frameSuccessStream.html.twig', {frame: 'modal'}) }}
             </turbo-frame>
             <twig:block name="loading_template">
-                <div class="card placeholder-glow">
-                    <div class="ratio ratio-21x9 card-img-top placeholder">
-                    </div>
-                    <div class="card-body">
-                        <div class="placeholder col-9 mb-3"></div>
-                        <div class="placeholder placeholder-xs col-10"></div>
-                        <div class="placeholder placeholder-xs col-11"></div>
-                        <div class="mt-3">
-                            <twig:Xutim:Admin:Button
-                                type="a"
-                                href="#"
-                                tabindex="-1"
-                                class="disabled placeholder col-4"
-                                aria-hidden="true"
-                            ></twig:Xutim:Admin:Button>
-                        </div>
-                    </div>
+                <div class="space-y-3 p-4">
+                    <div class="h-4 w-3/4 rounded bg-surface-raised animate-pulse"></div>
+                    <div class="h-4 w-1/2 rounded bg-surface-raised animate-pulse"></div>
+                    <div class="h-4 w-5/6 rounded bg-surface-raised animate-pulse"></div>
                 </div>
             </twig:block>
         </twig:Xutim:Admin:Modal>
+
+        
+        <script>
+            if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        </script>
     </body>
 </html>

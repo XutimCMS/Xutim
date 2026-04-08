@@ -11,31 +11,18 @@
         {% else %}
             <div
                 data-controller="article-preview"
-                class="border-0 position-relative"
+                class="border-0 relative"
             >
                 <iframe
                     src="{{ admin_path('admin_page_frame_show', {id: page.id}) }}"
                     sandbox="allow-scripts allow-same-origin"
-                    class="w-100 bg-white"
+                    class="w-full bg-white"
                     data-article-preview-target="frame"
                     style="border: none"
                 >
                 </iframe>
                 <twig:Xutim:Admin:PreviewSizesButtons />
             </div>
-            {#
-                    <div
-                        data-controller="article-preview"
-                        data-article-preview-url-value="{{ admin_path('admin_page_frame_show', {id: page.id}) }}"
-                    >
-                        <div
-                            id="preview-container"
-                            data-article-preview-target="preview"
-                        >
-                            <twig:Xutim:Admin:Placeholder />
-                        </div>
-                    </div>
-                    #}
         {% endif %}
     </turbo-frame>
 </div>

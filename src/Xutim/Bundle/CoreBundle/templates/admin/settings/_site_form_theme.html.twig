@@ -2,12 +2,12 @@
     {% set fieldValue = form.vars.data %}
     <div class="mb-3" data-controller="preset-input">
         {{ form_label(form) }}
-        <div class="d-flex align-items-center gap-2">
-            <div class="btn-group" role="group">
+        <div class="flex items-center gap-2">
+            <div class="inline-flex rounded-lg border border-border" role="group">
                 {% for label, days in {'1 month': 30, '3 months': 90, '6 months': 180} %}
                     <button
                         type="button"
-                        class="btn btn-sm {{ fieldValue == days ? 'btn-primary active' : 'btn-outline-primary' }}"
+                        class="px-3 py-1 text-sm {{ fieldValue == days ? 'bg-accent text-white' : 'bg-surface text-content-secondary hover:bg-surface-raised' }} first:rounded-l-lg last:rounded-r-lg"
                         data-preset-input-target="button"
                         data-action="preset-input#select"
                         data-value="{{ days }}"
@@ -15,12 +15,12 @@
                 {% endfor %}
             </div>
             {{ form_widget(form, {attr: {
-                class: 'form-control form-control-sm',
+                class: 'text-sm rounded-lg border-border',
                 style: 'width: 5rem',
                 'data-preset-input-target': 'input',
                 'data-action': 'preset-input#inputChanged',
             }}) }}
-            <span class="text-secondary small">days</span>
+            <span class="text-content-secondary text-sm">days</span>
         </div>
         {{ form_help(form) }}
         {{ form_errors(form) }}

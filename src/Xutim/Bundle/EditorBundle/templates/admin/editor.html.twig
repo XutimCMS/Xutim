@@ -6,27 +6,27 @@
 >
     <div class="content-editor__toolbar">
         <div class="content-editor__toolbar-left">
-            <span class="text-muted">
+            <span class="text-content-secondary">
                 {% if draft.status.isEditing %}
-                    <twig:ux:icon name="tabler:pencil" class="me-1" />
+                    <twig:ux:icon name="ph:pencil-simple" class="mr-1" />
                     Editing draft
                 {% elseif draft.status.isStale %}
                     <twig:ux:icon
-                        name="tabler:alert-triangle"
-                        class="me-1 text-warning"
+                        name="ph:warning"
+                        class="mr-1 text-amber-500"
                     />
                     Draft is stale - content has changed
                 {% elseif draft.status.isLive %}
                     <twig:ux:icon
-                        name="tabler:check"
-                        class="me-1 text-success"
+                        name="ph:check"
+                        class="mr-1 text-green-600"
                     />
                     Published
                 {% endif %}
             </span>
         </div>
         <div class="content-editor__toolbar-right">
-            <span class="text-muted small">
+            <span class="text-content-secondary text-sm">
                 Last saved: {{ draft.updatedAt|date('H:i') }}
             </span>
         </div>

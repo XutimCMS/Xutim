@@ -6,17 +6,17 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card mt-np1">
-        <div class="card-status-top bg-danger"></div>
-        <div class="card-body">
+    <div class="rounded-xl border border-border">
+        <div class="h-1 rounded-t-xl bg-red-500"></div>
+        <div class="p-4">
             <div class="text-center">
                 <p>
-                    <twig:Xutim:Admin:Icon name="alert-triangle" class="mb-2 text-danger icon-lg" />
+                    <twig:ux:icon name="ph:warning" class="icon mb-2 text-danger icon-lg" />
                 </p>
                 <h3>{{ title }}</h3>
             </div>
         </div>
-        <div class="card-body">
+        <div class="p-4">
             {% set trans = media.getTranslationByLocale(content_context_language()) %}
             <p>
                 <strong>{{ trans ? trans.name : media.originalPath|split('/')|last }}</strong>
@@ -24,11 +24,11 @@
             </p>
         </div>
 
-        <div class="card-footer">
-            {{ form_start(form, {attr: {class: 'd-flex align-items-center'}}) }}
+        <div class="px-4 py-3 border-t border-border">
+            {{ form_start(form, {attr: {class: 'd-flex items-center'}}) }}
             <a
                 href="{{ admin_path('admin_media_edit', {id: media.id}) }}"
-                class="text-sm font-medium me-auto"
+                class="text-sm font-medium ml-auto"
             >
                 {{ 'Back to list'|trans({}, 'admin') }}
             </a>
@@ -38,11 +38,11 @@
                 tag="button"
                 id="{{ form.delete.vars.id }}"
                 name="{{ form.delete.vars.full_name }}"
-                class="btn btn-danger ms-auto"
+                class="btn btn-danger ml-auto"
                 type="submit"
                 data-turbo-frame="{{ app.request.headers.get('turbo-frame') ? '_top' : '' }}"
             >
-                <twig:Xutim:Admin:Icon name="trash" />
+                <twig:ux:icon name="ph:trash" class="icon" />
                 {{ 'delete'|trans({}, 'admin')|capitalize }}
             </twig:Xutim:Admin:Button>
             {{ form_row(form._token) }}

@@ -9,11 +9,11 @@
     {% if meta %}
         {% for key, field in meta %}
             {% if field.status is defined and field.status == 'changed' %}
-                <div class="small text-muted mt-1">
-                    <span class="badge bg-secondary-lt">{{ key }}</span>
-                    <del class="text-danger">{{ field.old }}</del>
-                    →
-                    <ins class="text-success">{{ field.new }}</ins>
+                <div class="text-sm text-content-secondary mt-1">
+                    <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-surface-raised text-content-secondary">{{ key }}</span>
+                    <del class="text-red-600">{{ field.old }}</del>
+                    &rarr;
+                    <ins class="text-green-600">{{ field.new }}</ins>
                 </div>
             {% endif %}
         {% endfor %}
@@ -45,23 +45,23 @@
     <div class="{{ wrapperClass }} {% if row.body_html is defined and row.body_html %}diff-inline{% endif %}">
         <div class="mb-2">
             {% if opEff == 'added' %}
-                <span class="badge bg-success text-white">{{ 'Added'|trans({}, 'admin') }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-green-600 text-white">{{ 'Added'|trans({}, 'admin') }}</span>
             {% elseif opEff == 'removed' %}
-                <span class="badge bg-danger text-white">{{ 'Removed'|trans({}, 'admin') }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-red-600 text-white">{{ 'Removed'|trans({}, 'admin') }}</span>
             {% elseif opEff == 'modified_text' %}
-                <span class="badge bg-warning text-black">{{ 'Changed text'|trans({}, 'admin') }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-amber-400 text-black">{{ 'Changed text'|trans({}, 'admin') }}</span>
             {% elseif opEff == 'modified' %}
-                <span class="badge bg-warning text-black">{{ 'Changed'|trans({}, 'admin') }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-amber-400 text-black">{{ 'Changed'|trans({}, 'admin') }}</span>
             {% else %}
-                <span class="badge bg-secondary text-white">{{ 'Unchanged'|trans({}, 'admin') }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-content-secondary/20 text-content-secondary">{{ 'Unchanged'|trans({}, 'admin') }}</span>
             {% endif %}
 
             {% if blockAuthors is defined and renderKey and blockAuthors[renderKey] is defined and blockAuthors[renderKey]|length > 0 %}
-                <div class="d-inline-flex align-items-center gap-1 ms-2 small text-muted">
+                <div class="inline-flex items-center gap-1 ml-2 text-sm text-content-secondary">
                     {% for email in blockAuthors[renderKey] %}
                         {% set user = usersData[email]|default({}) %}
                         <span
-                            class="avatar avatar-xs"
+                            class="w-6 h-6 rounded-full bg-surface-raised bg-cover bg-center shrink-0"
                             {% if user.avatar|default('') %}
                             style="background-image: url({{ user.avatar }})"
                             {% endif %}
@@ -102,17 +102,17 @@
         {% elseif row.kind == 'foldable_end' %}
             {{ include('@XutimCore/admin/content_fragment/foldable_end.html.twig') }}
         {% else %}
-            <div class="small text-muted mb-1">
+            <div class="text-sm text-content-secondary mb-1">
                 {{ 'Unknown block'|trans({}, 'admin') }}
             </div>
-            <div class="small text-muted">
+            <div class="text-sm text-content-secondary">
                 <strong>{{ row.attrs.sourceType ?? 'unknown' }}</strong>
                 {% if row.attrs.reason is defined and row.attrs.reason %}
-                    <span class="ms-2">{{ row.attrs.reason }}</span>
+                    <span class="ml-2">{{ row.attrs.reason }}</span>
                 {% endif %}
             </div>
             {% if row.raw_summary is defined and row.raw_summary %}
-                <pre class="small text-secondary mb-0">{{ row.raw_summary }}</pre>
+                <pre class="text-sm text-content-secondary mb-0">{{ row.raw_summary }}</pre>
             {% endif %}
         {% endif %}
 

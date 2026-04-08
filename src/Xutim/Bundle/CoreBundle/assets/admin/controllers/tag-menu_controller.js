@@ -6,34 +6,28 @@ export default class extends Controller {
         csrfToken: String,
     };
 
-    static targets = ['item', 'search'];
+    static targets = ['item', 'search', 'menu'];
 
     connect() {
-        this.element
-            .querySelector('.dropdown-menu')
-            ?.addEventListener('click', (e) => e.stopPropagation());
-
-        const button = this.element.querySelector(
-            '[data-bs-toggle="dropdown"]',
-        );
-        if (!button) return;
-
-        this.observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (
-                    mutation.attributeName === 'aria-expanded' &&
-                    button.getAttribute('aria-expanded') === 'true'
-                ) {
-                    setTimeout(() => this.searchTarget?.focus(), 10);
-                }
-            });
-        });
-
-        this.observer.observe(button, { attributes: true });
+        this._onClickOutside = this._onClickOutside.bind(this);
     }
 
     disconnect() {
-        this.observer?.disconnect();
+        document.removeEventListener('click', this._onClickOutside);
+    }
+
+    toggle(event) {
+        event.stopPropagation();
+        const menu = this.menuTarget;
+        const isHidden = menu.classList.contains('hidden');
+
+        if (isHidden) {
+            menu.classList.remove('hidden');
+            document.addEventListener('click', this._onClickOutside);
+            setTimeout(() => this.searchTarget?.focus(), 10);
+        } else {
+            this._close();
+        }
     }
 
     submitChange(event) {
@@ -65,10 +59,21 @@ export default class extends Controller {
         this.itemTargets.forEach((el) => {
             const name = el.dataset.name || '';
             if (name.includes(query)) {
-                el.classList.remove('d-none');
+                el.classList.remove('hidden');
             } else {
-                el.classList.add('d-none');
+                el.classList.add('hidden');
             }
         });
+    }
+
+    _close() {
+        this.menuTarget.classList.add('hidden');
+        document.removeEventListener('click', this._onClickOutside);
+    }
+
+    _onClickOutside(event) {
+        if (!this.element.contains(event.target)) {
+            this._close();
+        }
     }
 }

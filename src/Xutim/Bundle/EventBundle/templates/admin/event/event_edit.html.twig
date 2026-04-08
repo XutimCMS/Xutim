@@ -13,10 +13,10 @@
 {% block pageMenu %}
     <twig:Xutim:Admin:Button
         tag="button"
-        id="sidebar-toggle"
+        onclick="window.dispatchEvent(new Event('sidebar:toggle'))"
         variant="nav"
     >
-        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        <twig:ux:icon name="ph:sidebar-simple" class="icon mr-1" />
         Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}
@@ -25,7 +25,7 @@
     <twig:Xutim:Admin:LanguageContextBar
         :entity="event"
         :simpleTranslation="true"
-        class="d-flex justify-content-end align-items-center mb-2"
+        class="flex justify-end items-center mb-2"
     />
 {% endblock %}
 
@@ -62,8 +62,8 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-body">
+    <div class="rounded-xl border border-border">
+        <div class="p-4">
             {{ form_start(form) }}
             {{ form_row(form.title) }}
             {{ form_row(form.location) }}

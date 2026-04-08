@@ -1,86 +1,45 @@
 <twig:Xutim:Admin:SidebarItem id="tags-sidebar-item">
-    <twig:block name="header">
-        {{ 'tags'|trans({}, 'admin')|capitalize }}:
-    </twig:block>
     <twig:block name="content">
-        <div id="article-sidebar-tags-list">
-            {% for tag in article.tags %}
-                <div class="mt-1">
-                    {% set name = tag.translationByLocaleOrAny(content_context_language(), default_locale).name %}
-                    <a href="{{ path('admin_tag_edit', {id: tag.id}) }}">
-                        <twig:Xutim:Admin:Tag
-                            :color="tag.color"
-                            title="{{ name }}"
-                            data-controller="tooltip"
-                        >
-                            {% if name|length <= 20 %}
-                                {{ name }}
-                            {% else %}
-                                {{ name|slice(0, 17) }} ...
-                            {% endif %}
-                        </twig:Xutim:Admin:Tag>
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
-
-        {% if is_granted('ROLE_EDITOR') %}
-            <div class="ms-auto dropdown" data-controller="tag-menu"
-                 data-tag-menu-csrf-token-value="{{ csrf_token(constant('Xutim\\CoreBundle\\Action\\Admin\\Article\\ToggleTagAction::TOKEN_NAME')) }}">
-                <twig:Xutim:Admin:Button
-                    tag="button"
-                    variant="link"
-                    class="p-0"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                >
-                    <twig:Xutim:Admin:Icon name="edit" />
-                </twig:Xutim:Admin:Button>
-
-                <div class="dropdown-menu p-2"
-                     style="min-width: 300px; max-height: 350px; overflow-y: auto;"
-                     data-tag-menu-target="menu"
-                     data-bs-auto-close="outside"
-                 >
-                     <div>
-                        <h3>{{ 'Apply tags to this article'|trans({}, 'admin') }}</h3>
-                     </div>
-                    <div class="mb-2">
-                        <div class="input-icon mb-2">
-                            <span class="input-icon-addon">
-                                <twig:ux:icon name="tabler:search" class="text-white w-3 h-3" />
-                            </span>
-                            <input
-                                type="search"
-                                class="form-control"
-                                placeholder="{{ 'Search tags'|trans({}, 'admin') }}"
-                                data-action="input->tag-menu#filter"
-                                data-tag-menu-target="search"
-                            />
+        <div class="w-full">
+            <div class="flex items-center justify-between">
+                <span class="text-[12px] text-content-secondary">{{ 'tags'|trans({}, 'admin')|capitalize }}</span>
+                {% if is_granted('ROLE_EDITOR') %}
+                    <div class="relative" data-controller="tag-menu" data-tag-menu-csrf-token-value="{{ csrf_token(constant('Xutim\\CoreBundle\\Action\\Admin\\Article\\ToggleTagAction::TOKEN_NAME')) }}">
+                        <button type="button" class="text-content-tertiary hover:text-accent transition-colors cursor-pointer" data-action="click->tag-menu#toggle">
+                            <twig:ux:icon name="ph:pencil-simple" class="h-3 w-3" />
+                        </button>
+                        <div class="hidden absolute right-0 top-full mt-1 z-50 w-64 rounded-lg border border-border bg-surface shadow-lg" data-tag-menu-target="menu">
+                            <div class="p-2 border-b border-border">
+                                <div class="relative">
+                                    <twig:ux:icon name="ph:magnifying-glass" class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-content-tertiary pointer-events-none" />
+                                    <input type="search" class="w-full rounded-md border border-border bg-surface py-1.5 pl-8 pr-2.5 text-[12px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" placeholder="{{ 'Search tags'|trans({}, 'admin') }}" data-action="input->tag-menu#filter" data-tag-menu-target="search" />
+                                </div>
+                            </div>
+                            <div class="max-h-52 overflow-y-auto p-1">
+                                {% for tag in allTags %}
+                                    <label class="flex items-center gap-2 rounded-md px-2.5 py-1.5 text-[12px] hover:bg-surface-raised cursor-pointer transition-colors" data-tag-menu-target="item" data-name="{{ tag.translationByLocaleOrAny(content_context_language(), default_locale).name|lower }}">
+                                        <input class="h-3.5 w-3.5 rounded border-border text-accent focus:ring-accent" type="checkbox" value="{{ tag.id }}" data-action="tag-menu#submitChange" data-update-url="{{ admin_path('admin_article_toggle_tag', {id: article.id, tagId: tag.id}) }}" {{ article.hasTag(tag) ? 'checked' : '' }}>
+                                        <span class="h-2.5 w-2.5 rounded-full shrink-0" style="background-color: {{ tag.color.HTMLHex }}"></span>
+                                        {{ tag.translationByLocaleOrAny(content_context_language(), default_locale).name }}
+                                    </label>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                    <div class="dropdown-divider"></div>
-
-                    <div>
-                        {% for tag in allTags %}
-                            <label class="dropdown-item d-flex align-items-center gap-2 cursor-pointer"
-                                   data-tag-menu-target="item"
-                                   data-name="{{ tag.translationByLocaleOrAny(content_context_language(), default_locale).name|lower }}"
-                                   >
-                                <input class="form-check-input m-0"
-                                       type="checkbox"
-                                       value="{{ tag.id }}"
-                                       data-action="tag-menu#submitChange"
-                                       data-update-url="{{ admin_path('admin_article_toggle_tag', {id: article.id, tagId: tag.id}) }}"
-                                       {{ article.hasTag(tag) ? 'checked' : '' }} >
-                                <span class="badge badge-3 tag-status badge-dot"
-                                      style="background-color: {{ tag.color.HTMLHex }}"></span>
-                                {{ tag.translationByLocaleOrAny(content_context_language(), default_locale).name }}
-                            </label>
-                        {% endfor %}
-                    </div>
-                </div>
+                {% endif %}
             </div>
-        {% endif %}
+            {% if article.tags|length > 0 %}
+                <div class="mt-1.5 flex flex-wrap gap-1" id="article-sidebar-tags-list">
+                    {% for tag in article.tags %}
+                        {% set name = tag.translationByLocaleOrAny(content_context_language(), default_locale).name %}
+                        <a href="{{ path('admin_tag_edit', {id: tag.id}) }}">
+                            <twig:Xutim:Admin:Tag :color="tag.color" title="{{ name }}" data-controller="tooltip">
+                                {% if name|length <= 20 %}{{ name }}{% else %}{{ name|slice(0, 17) }}...{% endif %}
+                            </twig:Xutim:Admin:Tag>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
     </twig:block>
 </twig:Xutim:Admin:SidebarItem>

@@ -6,7 +6,7 @@
         variant="nav"
         href="{{ admin_path('admin_page_edit', {id: page.id}) }}"
     >
-        <twig:Xutim:Admin:Icon name="edit" class="me-1" />
+        <twig:ux:icon name="ph:pencil-simple" class="icon mr-1" />
         {{ 'Edit'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 
@@ -15,16 +15,16 @@
         variant="nav"
         href="{{ admin_path('admin_page_list', {id: page.id}) }}"
     >
-        <twig:Xutim:Admin:Icon name="search" class="me-1" />
+        <twig:ux:icon name="ph:magnifying-glass" class="icon mr-1" />
         {{ 'Show'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 
     <twig:Xutim:Admin:Button
         tag="button"
-        id="sidebar-toggle"
+        onclick="window.dispatchEvent(new Event('sidebar:toggle'))"
         variant="nav"
     >
-        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        <twig:ux:icon name="ph:sidebar-simple" class="icon mr-1" />
         {{ 'Sidebar'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 {% endblock %}

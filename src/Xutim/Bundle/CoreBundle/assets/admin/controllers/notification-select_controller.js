@@ -21,7 +21,7 @@ export default class extends Controller {
         const selected = this.selectedIds;
         const hasSelection = selected.length > 0;
 
-        this.actionsTarget.classList.toggle('d-none', !hasSelection);
+        this.actionsTarget.classList.toggle('hidden', !hasSelection);
         this.countTarget.textContent = selected.length;
 
         if (this.hasSelectAllTarget) {

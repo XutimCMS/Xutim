@@ -1,5 +1,4 @@
 import { Controller } from '@hotwired/stimulus';
-import { Modal } from 'bootstrap';
 
 export default class extends Controller {
     static targets = ['localeSelect'];
@@ -9,29 +8,31 @@ export default class extends Controller {
     }
 
     activate() {
-        const modal = new Modal(this.element);
-        modal.show();
-
-        // Remove the modal window completely after it disappears.
-        // this.element.addEventListener('hidden.bs.modal', function (event) {
-        //     Modal.getInstance(event.currentTarget).hide();
-        //     document.body.removeChild(event.currentTarget);
-        // });
+        if (this.element.tagName === 'DIALOG') {
+            this.element.showModal();
+        } else {
+            // Wrap in dialog if not already a dialog element
+            const dialog = document.createElement('dialog');
+            dialog.className = 'fixed inset-0 z-[60] m-auto max-w-lg rounded-xl border border-border bg-surface shadow-xl backdrop:bg-black/50 p-0';
+            this.element.parentNode.insertBefore(dialog, this.element);
+            dialog.appendChild(this.element);
+            dialog.showModal();
+            this._dialog = dialog;
+        }
     }
 
     dismissModal() {
-        const modal = Modal.getInstance(this.element);
-        this.element.classList.remove('fade');
-        modal._backdrop._config.isAnimated = false;
-        modal.hide();
-        modal.dispose();
+        const dialog = this.element.closest('dialog') || this._dialog;
+        if (dialog) {
+            dialog.close();
+            dialog.remove();
+        }
     }
 
     getResponse() {
-        const url =
-            this.localeSelectTarget.options[
-                this.localeSelectTarget.selectedIndex
-            ].dataset.urlValue;
+        const url = this.localeSelectTarget.options[
+            this.localeSelectTarget.selectedIndex
+        ].dataset.urlValue;
         window.location = url;
     }
 }

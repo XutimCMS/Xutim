@@ -10,14 +10,14 @@
         <twig:Xutim:Admin:BreadcrumbsPage :page="page" />
     {% else %}
         <twig:Xutim:Admin:Breadcrumbs>
-            <li class="breadcrumb-item">New Page</li>
+            <li>New Page</li>
         </twig:Xutim:Admin:Breadcrumbs>
     {% endif %}
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-body">
+    <div class="rounded-xl border border-border">
+        <div class="p-4">
             <turbo-frame id="editorjs-frame">
                 {{
                     form_start(form, {
@@ -40,8 +40,8 @@
                     })
                 }}
 
-                <div class="row g-6">
-                    <div class="col-sm-6">
+                <div class="flex flex-wrap gap-6">
+                    <div class="w-full sm:w-[calc(50%-12px)]">
                         {{ form_row(form.preTitle) }}
                         {{
                             form_row(form.title, {
@@ -66,12 +66,12 @@
                             %}
                                 <twig:Xutim:Admin:Button
                                     variant="default"
-                                    class="pe-1"
+                                    class="pr-1"
                                     type="button"
                                     id="slug-unblock"
                                     data-action="click->slug-generator#unblockSlugField"
                                 >
-                                    <twig:Xutim:Admin:Icon name="lock" />
+                                    <twig:ux:icon name="ph:lock-simple" class="icon" />
                                 </twig:Xutim:Admin:Button>
                             {% endif %}
 
@@ -100,7 +100,7 @@
                         {{ form_row(form.description) }}
 
                         {% set hasTranslationLocaleError = form.translationLocales.vars.errors|length > 0 %}
-                        <div data-controller="translation-locales" class="p-3 rounded{{ hasTranslationLocaleError ? ' border border-danger bg-danger bg-opacity-10' : '' }}">
+                        <div data-controller="translation-locales" class="p-3 rounded{{ hasTranslationLocaleError ? ' border border-red-300 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10' : '' }}">
                             {{ form_row(form.allTranslationLocales, {
                                 attr: {
                                     'data-translation-locales-target': 'radioGroup',
@@ -111,14 +111,14 @@
                             <div data-translation-locales-target="localesList" class="mb-3"{{ form.allTranslationLocales.vars.data is not same as(false) ? ' hidden' : '' }}>
                                 {{ form_label(form.translationLocales) }}
                                 {{ form_errors(form.translationLocales) }}
-                                <div class="d-flex flex-wrap gap-1 align-items-center mt-2">
+                                <div class="flex flex-wrap gap-1 items-center mt-2">
                                     {% set childIndex = 0 %}
                                     {% for group_label, children in form.translationLocales.vars.choices %}
-                                        {% if not loop.first %}<span class="border-start align-self-stretch mx-1"></span>{% endif %}
+                                        {% if not loop.first %}<span class="border-l border-border self-stretch mx-1"></span>{% endif %}
                                         {% for choice in children %}
                                             {% set child = form.translationLocales.children[childIndex] %}
-                                            <label class="badge cursor-pointer{{ child.vars.checked ? ' bg-primary text-white' : ' badge-outline text-primary' }}">
-                                                <input type="checkbox" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="d-none" data-action="change->translation-locales#toggleBadge"{{ child.vars.checked ? ' checked' : '' }}>
+                                            <label class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer{{ child.vars.checked ? ' bg-accent text-white' : ' border border-accent text-accent' }}">
+                                                <input type="checkbox" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="hidden" data-action="change->translation-locales#toggleBadge"{{ child.vars.checked ? ' checked' : '' }}>
                                                 {{ child.vars.label }}
                                             </label>
                                             {% set childIndex = childIndex + 1 %}
@@ -129,7 +129,7 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="w-full sm:w-[calc(50%-12px)]">
                         {{ form_label(form.featuredImage) }}
                         <div
                             data-controller="featured-image"
@@ -137,7 +137,7 @@
                             class="cursor-pointer mb-3"
                         >
                             <div
-                                class="media-container-extended d-flex justify-content-center align-items-center"
+                                class="media-container-extended flex justify-center items-center"
                                 data-action="click->featured-image#openModal"
                             >
                                 <div
@@ -193,7 +193,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <div
-                                                class="row g-3"
+                                                class="grid grid-cols-3 gap-3"
                                                 data-featured-image-target="imageGallery"
                                             >
                                             </div>
@@ -201,7 +201,7 @@
                                         <div class="modal-footer">
                                             <button
                                                 type="button"
-                                                class="btn btn-secondary"
+                                                class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised"
                                                 data-bs-dismiss="modal"
                                             >
                                                 {{ 'Close'|trans({}, 'admin') }}

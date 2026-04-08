@@ -1,6 +1,4 @@
 import { Controller } from '@hotwired/stimulus';
-import { Modal } from 'bootstrap';
-import axios from 'axios';
 
 export default class extends Controller {
     static values = {
@@ -10,122 +8,100 @@ export default class extends Controller {
         closeButtonLabel: String,
         submitButtonLabel: String,
         submitButtonColor: String,
-        // In case the request should be redirected after a successfull
-        // response. If it is not set, nothing will be redirected.
-        redirectUrl: null | String,
+        redirectUrl: { type: String, default: '' },
     };
 
-    openModal(event) {
+    openModal() {
         document.getElementById('modal-controller')?.remove();
-        axios.get(this.urlValue, { params: { ajax: 1 } }).then((response) => {
-            document.body.insertAdjacentHTML(
-                'beforeend',
-                this.renderTemplate(response.data),
-            );
-            const modalElem = document.getElementById('modal-controller');
-            this.fixModal(modalElem);
-            const modalInstance = new Modal(modalElem);
-            modalInstance.show();
-        });
-    }
 
-    renderTemplate(body) {
-        return `
-            <div class="modal fade" tabindex="-1" id="modal-controller">
-                <div class="modal-dialog modal-dialog-centered ${this.modalWidthValue}">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">${this.titleValue}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">${body}</div>
-                        <div class="modal-footer">
-                            <button class="btn btn-${this.submitButtonColorValue}" type="button" role="button">${this.submitButtonLabelValue}</button>
-                        </div>
+        fetch(this.urlValue + '?ajax=1')
+            .then(response => response.text())
+            .then(body => {
+                const colorClasses = {
+                    danger: 'bg-red-600 hover:bg-red-700',
+                    warning: 'bg-amber-500 hover:bg-amber-600',
+                    success: 'bg-green-600 hover:bg-green-700',
+                    primary: 'bg-accent hover:bg-accent-hover dark:text-black',
+                };
+                const btnColor = colorClasses[this.submitButtonColorValue] || 'bg-accent hover:bg-accent-hover dark:text-black';
+
+                const dialog = document.createElement('dialog');
+                dialog.id = 'modal-controller';
+                dialog.className = 'fixed inset-0 z-[60] m-auto w-full rounded-xl border border-border bg-surface shadow-xl backdrop:bg-black/50 p-0 ' + (this.modalWidthValue || 'max-w-lg');
+                dialog.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-border px-5 py-3.5">
+                        <h3 class="text-[15px] font-semibold">${this.titleValue}</h3>
+                        <button type="button" data-action="close" class="rounded-md p-1 hover:bg-surface-raised transition-colors">
+                            <svg class="h-4 w-4 text-content-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
                     </div>
-                </div>
-            </div>`;
+                    <div class="modal-body p-5">${body}</div>
+                    <div class="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
+                        <button type="button" data-action="submit" class="rounded-md px-3 py-1.5 text-[13px] font-medium text-white ${btnColor} transition-colors">${this.submitButtonLabelValue}</button>
+                    </div>
+                `;
+
+                document.body.appendChild(dialog);
+                this.#fixModal(dialog);
+                dialog.showModal();
+
+                dialog.querySelector('[data-action="close"]').addEventListener('click', () => dialog.close());
+                dialog.addEventListener('close', () => dialog.remove());
+            });
     }
 
-    fixModal(modalElem) {
-        const footerBtn = modalElem.querySelector('.modal-footer button.btn');
-        const buttons = modalElem.querySelectorAll('button[type=submit]');
-        if (buttons.length > 0) {
-            footerBtn.innerText = buttons.item(0).innerText;
-            buttons.item(0).remove();
+    #fixModal(dialog) {
+        const footerBtn = dialog.querySelector('[data-action="submit"]');
+        const formButtons = dialog.querySelectorAll('.modal-body button[type=submit]');
+        if (formButtons.length > 0) {
+            footerBtn.innerText = formButtons.item(0).innerText;
+            formButtons.item(0).remove();
         }
 
-        // When hitting enter form isn't going to be submitted without adding the event listener.
-        modalElem
-            .querySelector('.modal-body')
-            .addEventListener('submit', () => {
-                this.submitForm(modalElem);
-            });
+        dialog.querySelector('.modal-body').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.#submitForm(dialog);
+        });
 
         footerBtn.addEventListener('click', () => {
-            this.submitForm(modalElem);
+            this.#submitForm(dialog);
         });
     }
 
-    submitForm(modalElem) {
-        event.preventDefault();
-        const form = modalElem.querySelector('form');
-        const formData = new FormData(form);
-        const params = new URLSearchParams({ ajax: 1 });
+    #submitForm(dialog) {
+        const form = dialog.querySelector('form');
+        if (!form) return;
 
-        fetch(`${this.urlValue}?${params.toString()}`, {
+        const formData = new FormData(form);
+
+        fetch(`${this.urlValue}?ajax=1`, {
             method: 'POST',
             body: formData,
         })
-            .then((response) => {
+            .then(response => {
                 if (response.status === 200 && response.redirected) {
                     Turbo.visit(response.url);
+                    return;
                 }
                 if (response.status === 302) {
                     const location = response.headers.get('location');
                     if (location) {
-                        Turbo.visit(response.headers['location']);
+                        Turbo.visit(location);
                     }
+                    return;
                 }
 
-                const modalBody =
-                    modalElem.getElementsByClassName('modal-body')[0];
-                const responseData = response.text();
-
-                modalBody.innerHTML = responseData;
-                this.fixModal(modalElem);
-                if (response.status !== 200) {
-                    const modalInstance = Modal.getInstance(modalElem);
-                    modalInstance.hide();
-                    window.location.reload();
-                }
+                return response.text().then(html => {
+                    dialog.querySelector('.modal-body').innerHTML = html;
+                    this.#fixModal(dialog);
+                    if (response.status !== 200) {
+                        dialog.close();
+                        window.location.reload();
+                    }
+                });
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error('Error:', error);
             });
     }
-
-    // submitForm(modalElem) {
-    //     event.preventDefault();
-    //     const form = modalElem.querySelector('form');
-    //     axios
-    //         .postForm(this.urlValue, new FormData(form), {
-    //             params: { ajax: 1 },
-    //         })
-    //         .then((response) => {
-    //             const modalBody =
-    //                 modalElem.getElementsByClassName('modal-body')[0];
-    //             modalBody.innerHTML = response.data;
-    //             this.fixModal(modalElem);
-    //             console.error(response.status);
-    //             if (response.status === 302) {
-    //                 window.location.href = response.headers['location'];
-    //             }
-    //             if (response.status !== 200) {
-    //                 const modalInstance = Modal.getInstance(modalElem);
-    //                 modalInstance.hide();
-    //                 window.location.reload();
-    //             }
-    //         });
-    // }
 }

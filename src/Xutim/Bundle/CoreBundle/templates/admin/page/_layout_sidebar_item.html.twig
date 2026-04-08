@@ -6,7 +6,7 @@
         {{ page.layout }}
 
         {% if is_granted('ROLE_EDITOR') %}
-            <div {% if not page.layout %}class="ms-auto"{% endif %}>
+            <div {% if not page.layout %}class="ml-auto"{% endif %}>
                 <twig:Xutim:Admin:Button
                     tag="a"
                     variant="link"
@@ -14,7 +14,7 @@
                     data-turbo-frame="modal"
                     href="{{ admin_path('admin_page_layout_edit', {id: page.id}) }}"
                 >
-                    <twig:Xutim:Admin:Icon name="edit" />
+                    <twig:ux:icon name="ph:pencil-simple" class="icon" />
                 </twig:Xutim:Admin:Button>
             </div>
         {% endif %}

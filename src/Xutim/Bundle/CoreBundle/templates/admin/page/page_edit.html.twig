@@ -3,7 +3,7 @@
 {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
 
 {% block pageTitle %}
-    <twig:Xutim:Admin:Icon name="folder" />
+    <twig:ux:icon name="ph:folder-simple" class="icon" />
     {%
         set translation = page.translationByLocaleOrDefault(content_context_language())
     %}
@@ -32,30 +32,29 @@
     {% if translation is not same as(null) %}
         <twig:Xutim:Admin:Button
             tag="a"
-            variant="nav"
+            variant="secondary"
             href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
         >
-            <twig:Xutim:Admin:Icon name="history" class="me-1" />
+            <twig:ux:icon name="ph:clock-counter-clockwise" width="14" height="14" />
             {{ 'History'|trans({}, 'admin') }}
         </twig:Xutim:Admin:Button>
     {% endif %}
 
     <twig:Xutim:Admin:Button
         tag="a"
-        variant="nav"
+        variant="secondary"
         href="{{ admin_path('admin_page_list', {id: page.id}) }}"
     >
-        <twig:Xutim:Admin:Icon name="search" class="me-1" />
-        Show
+        <twig:ux:icon name="ph:eye" width="14" height="14" />
+        Preview
     </twig:Xutim:Admin:Button>
 
     <twig:Xutim:Admin:Button
         tag="button"
-        id="sidebar-toggle"
-        variant="nav"
-        href="#"
+        onclick="window.dispatchEvent(new Event('sidebar:toggle'))"
+        variant="secondary"
     >
-        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        <twig:ux:icon name="ph:sidebar-simple" width="14" height="14" />
         Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}
@@ -109,7 +108,7 @@
                         src="{{ admin_path('admin_content_translation_sidebar_history', {id: translation.id}) }}"
                         loading="lazy"
                     >
-                        <div class="p-3 text-muted small">{{ 'Loading...'|trans({}, 'admin') }}</div>
+                        <div class="p-3 text-content-secondary text-sm">{{ 'Loading...'|trans({}, 'admin') }}</div>
                     </turbo-frame>
                 </div>
                 {% endif %}
@@ -120,7 +119,7 @@
 
 {% block body %}
     {% if localeBlocked|default(false) %}
-        <div class="alert alert-info mb-3">
+        <div class="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400 mb-3">
             {{ 'This page is not translatable into the selected locale.'|trans({}, 'admin') }}
         </div>
     {% else %}
@@ -136,7 +135,7 @@
     {% endif %}
     {{ include('@XutimCore/admin/content_draft/_draft_banner.html.twig') }}
     {% if not referenceExists %}
-    <div class="alert alert-warning mb-3">
+    <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 mb-3">
         {{ 'Reference translation ({locale}) is missing for this content.'|trans({'{locale}': referenceLocale|upper}, 'admin') }}
     </div>
     {% endif %}
@@ -145,7 +144,7 @@
         data-split-view-target="root"
         data-split-view-reference-url-value="{{ referenceTranslation ? admin_path('admin_json_content_translation_show', {id: referenceTranslation.id}) : (page.translations|length > 0 ? admin_path('admin_json_content_translation_show', {id: page.translations|first.id}) : '') }}"
         data-split-view-current-translation-id-value="{{ translation ? translation.id : '' }}"
-        class="card mb-3"
+        class="rounded-xl border border-border mb-3"
         data-split-view-block-codes-value="{{ fetch_block_codes()|json_encode }}"
         data-split-view-tags-value="{{ fetch_tags()|json_encode }}"
         data-split-view-fetch-files-url-value="{{ admin_path('admin_json_file_list') }}"
@@ -161,17 +160,17 @@
         data-split-view-reference-has-changed-value="{{ referenceHasChanged ? 'true' : 'false' }}"
         {% endif %}
     >
-        <div class="card-header d-flex align-items-center justify-content-between bg-white" style="position: sticky; top: 0; z-index: 10;">
-            <div class="d-flex align-items-center gap-2 text-truncate">
+        <div class="border-b border-border px-4 py-3 flex items-center justify-between bg-surface sticky top-0 z-10">
+            <div class="flex items-center gap-2 truncate">
                 {% if translation is not null %}
                     {{ badges.publicationStatusBadge(translation, '', referenceHasChanged) }}
-                    <span class="fw-bold text-truncate">{{ translation.title }}</span>
+                    <span class="font-bold truncate">{{ translation.title }}</span>
                 {% else %}
-                    <span class="fw-bold">{{ 'Translate into'|trans({}, 'admin') }} {{ content_context_language()|upper }}</span>
+                    <span class="font-bold">{{ 'Translate into'|trans({}, 'admin') }} {{ content_context_language()|upper }}</span>
                 {% endif %}
             </div>
 
-            <div class="d-none d-md-flex align-items-center gap-2">
+            <div class="hidden md:flex items-center gap-2">
                 <select
                     class="form-select form-select-sm"
                     data-split-view-target="localeSelect"
@@ -204,7 +203,7 @@
                     title="{{ 'Copy all blocks'|trans({}, 'admin') }}"
                     hidden
                 >
-                    <twig:ux:icon name="tabler:clipboard" class="w-3 h-3" />
+                    <twig:ux:icon name="ph:clipboard" class="w-3 h-3" />
                 </twig:Xutim:Admin:Button>
 
                 <twig:Xutim:Admin:Button
@@ -217,38 +216,38 @@
                     hidden
                 >
                     <span data-split-view-target="scrollLockIconLocked">
-                        <twig:ux:icon name="tabler:lock" class="w-3 h-3" />
+                        <twig:ux:icon name="ph:lock-simple" class="w-3 h-3" />
                     </span>
-                    <span data-split-view-target="scrollLockIconUnlocked" class="d-none">
-                        <twig:ux:icon name="tabler:lock-open" class="w-3 h-3" />
+                    <span data-split-view-target="scrollLockIconUnlocked" class="hidden">
+                        <twig:ux:icon name="ph:lock-simple-open" class="w-3 h-3" />
                     </span>
                 </twig:Xutim:Admin:Button>
 
                 <twig:Xutim:Admin:Button
                     tag="button"
                     variant="default"
-                    class="text-dark d-flex align-items-center text-nowrap btn-sm"
+                    class="text-content flex items-center whitespace-nowrap btn-sm"
                     data-action="split-view#toggle"
                     title="{{ 'Toggle split view'|trans({}, 'admin') }}"
                 >
                     <span
                         data-split-view-target="iconOn"
-                        class="d-flex align-items-center"
+                        class="flex items-center"
                     >
                         <twig:ux:icon
-                            name="tabler:columns-2"
-                            class="w-3 h-3 me-1"
+                            name="ph:columns"
+                            class="w-3 h-3 mr-1"
                         />
                         Split view
                     </span>
 
                     <span
                         data-split-view-target="iconOff"
-                        class="d-none d-flex align-items-center"
+                        class="hidden flex items-center"
                     >
                         <twig:ux:icon
-                            name="tabler:columns-1"
-                            class="w-3 h-3 me-1"
+                            name="ph:square"
+                            class="w-3 h-3 mr-1"
                         />
                         Single view
                     </span>
@@ -256,9 +255,9 @@
             </div>
         </div>
 
-        <div class="card-body p-0">
-            <div class="row g-0" data-split-view-target="container">
-                <div class="col-12 p-4" data-split-view-target="left">
+        <div class="p-0">
+            <div class="flex" data-split-view-target="container">
+                <div class="w-full p-4" data-split-view-target="left">
                     {{
                         include('@XutimCore/admin/content_translation/_form.html.twig', {
                         disableEditing: not is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_DEVELOPER')),
@@ -267,14 +266,14 @@
                 </div>
 
                 <div
-                    class="col-12 col-lg-6 border-start d-none p-4"
+                    class="w-full lg:w-1/2 border-l border-border hidden p-4"
                     data-split-view-target="right"
                 >
                     {% if referenceHasChanged %}
-                    <div class="alert alert-warning d-flex align-items-center justify-content-between mb-3"
+                    <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 flex items-center justify-between mb-3"
                          data-split-view-target="changedBanner">
                         <div>
-                            <twig:ux:icon name="tabler:alert-triangle" class="w-4 h-4 me-2" />
+                            <twig:ux:icon name="ph:warning" class="w-4 h-4 mr-2" />
                             {{ 'Reference has changed since your last save'|trans({}, 'admin') }}
                         </div>
                         <twig:Xutim:Admin:Button
@@ -287,14 +286,14 @@
                             <span data-split-view-target="diffToggleBtnShowText">
                                 {{ 'Show changes'|trans({}, 'admin') }}
                             </span>
-                            <span data-split-view-target="diffToggleBtnHideText" class="d-none">
+                            <span data-split-view-target="diffToggleBtnHideText" class="hidden">
                                 {{ 'Show current'|trans({}, 'admin') }}
                             </span>
                         </twig:Xutim:Admin:Button>
                     </div>
                     {% endif %}
 
-                    <div data-split-view-target="diffContainer" class="d-none"></div>
+                    <div data-split-view-target="diffContainer" class="hidden"></div>
 
                     <div data-split-view-target="referenceContainer">
                         <div class="mb-3">

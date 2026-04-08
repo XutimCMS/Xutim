@@ -21,3 +21,7 @@ After schema changes, update the test DB:
 ```bash
 cd tests/Application && bin/console doctrine:schema:update --force
 ```
+
+# Tailwind Migration
+
+When working on admin template migration (Tabler to Tailwind), **always read `TAILWIND_MIGRATION.md`** first. It contains the complete design system reference, component inventory, class mappings, and rules.

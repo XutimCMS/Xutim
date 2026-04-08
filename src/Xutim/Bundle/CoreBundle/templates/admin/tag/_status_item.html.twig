@@ -9,7 +9,7 @@
                 <twig:block name="content">
                     <div>
                         <span
-                            class="badge me-2 text-bg-{{ translation.status.colorClass }}"
+                            class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-{{ translation.status.colorClass }}-100 text-{{ translation.status.colorClass }}-800 dark:bg-{{ translation.status.colorClass }}-900/30 dark:text-{{ translation.status.colorClass }}-300 mr-2"
                         >
                             {{ translation.status.name }}
                         </span>
@@ -28,13 +28,13 @@
 
                             {% if translation.status.canPublish %}
                                 {{
-                                    modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload')
+                                    modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-arrow-up')
                                 }}
                             {% endif %}
 
                             {% if translation.status.canSubmitForEvaluation %}
                                 {{
-                                    modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert')
+                                    modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'arrows-clockwise')
                                 }}
                             {% endif %}
 

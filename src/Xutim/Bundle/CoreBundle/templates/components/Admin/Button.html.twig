@@ -1,11 +1,5 @@
-{% if 'nav' in this.variant %}
-    <li class="nav-item">
-{% endif %}
-<{{ this.tag }} {{ attributes.defaults({class: this.variantClasses}) }}
-    {% if this.disabled %}disabled="disabled"{% endif %}
+<{{ this.tag }} {{ attributes.defaults({class: this.variantClasses ~ ' cursor-pointer'}) }}
+    {% if this.disabled %}disabled aria-disabled="true" class="{{ this.variantClasses }} opacity-50 pointer-events-none"{% endif %}
 >
     {% block content %}{% endblock %}
 </{{ this.tag }}>
-{% if 'nav' in this.variant %}
-    </li>
-{% endif %}

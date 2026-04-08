@@ -1,25 +1,20 @@
-{% macro alertIcon(type) %}
-    {% if type == 'success' %}
-        <twig:Xutim:Admin:Icon name="check" />
-    {% endif %}
-    {% if type == 'error' %}
-        <twig:Xutim:Admin:Icon name="x" />
-    {% endif %}
-    {% if type == 'warning' %}
-        <twig:Xutim:Admin:Icon name="alert-circle" />
-    {% endif %}
-    {% if type == 'info' %}
-        <twig:Xutim:Admin:Icon name="info-circle" />
-    {% endif %}
-{% endmacro %}
+{% set colors = {
+    success: 'border-green-500/30 bg-green-50 text-green-800 dark:bg-green-500/10 dark:text-green-300',
+    error: 'border-red-500/30 bg-red-50 text-red-800 dark:bg-red-500/10 dark:text-red-300',
+    warning: 'border-amber-500/30 bg-amber-50 text-amber-800 dark:bg-amber-500/10 dark:text-amber-300',
+    info: 'border-border bg-surface-raised text-content'
+} %}
+{% set icons = {
+    success: 'ph:check-circle',
+    error: 'ph:x-circle',
+    warning: 'ph:warning',
+    info: 'ph:info'
+} %}
 
-<div
-    class="alert alert-{{ this.type }} alert-dismissible bg-white border-{{this.type}} text-{{this.type}}"
-    role="alert"
->
-    <div class="d-flex">
-        <div>{{ _self.alertIcon(this.type) }}</div>
-        <div>{{ this.message|raw }}</div>
-    </div>
-    <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+<div {{ attributes.defaults({class: 'flex items-start gap-3 rounded-lg border p-3 text-[13px] ' ~ (colors[this.type] ?? colors.info), role: 'alert'}) }}>
+    <twig:ux:icon :name="icons[this.type] ?? icons.info" class="shrink-0 mt-0.5" />
+    <div class="flex-1 min-w-0">{{ this.message|raw }}</div>
+    <button onclick="this.closest('[role=alert]').remove()" class="shrink-0 rounded-md p-0.5 opacity-60 hover:opacity-100 transition-opacity">
+        <twig:ux:icon name="ph:x" class="h-3.5 w-3.5" />
+    </button>
 </div>

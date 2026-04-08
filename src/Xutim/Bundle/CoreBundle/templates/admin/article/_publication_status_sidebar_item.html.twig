@@ -1,14 +1,8 @@
 <twig:Xutim:Admin:SidebarItem id="translation-status-item">
     <twig:block name="header">
-        {{ 'status'|trans({}, 'admin')|capitalize }}:
+        {{ 'status'|trans({}, 'admin')|capitalize }}
     </twig:block>
-
     <twig:block name="content">
-        {{
-            include('@XutimCore/admin/publication_status/_status_buttons.html.twig', {
-                translation: translation,
-                articleEntity: translation.article
-            })
-        }}
+        {{ include('@XutimCore/admin/publication_status/_status_buttons.html.twig', {translation: translation, articleEntity: translation.article}) }}
     </twig:block>
 </twig:Xutim:Admin:SidebarItem>

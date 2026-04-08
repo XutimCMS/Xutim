@@ -2,12 +2,14 @@
     <div class="block-picker" data-controller="block-picker">
         <div class="block-picker__header">
             <h4 class="block-picker__title">Add Block</h4>
-            <button type="button" class="btn-close" data-action="block-picker#close"></button>
+            <button type="button" class="flex items-center justify-center w-6 h-6 rounded-md text-content-secondary hover:text-content hover:bg-surface-raised" data-action="block-picker#close">
+                <twig:ux:icon name="ph:x" class="w-4 h-4" />
+            </button>
         </div>
 
         <div class="block-picker__search">
             <input type="text"
-                   class="form-control"
+                   class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-content placeholder:text-content-secondary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
                    placeholder="Search blocks..."
                    data-action="input->block-picker#filter"
                    data-block-picker-target="search">
@@ -23,7 +25,7 @@
                        data-block-type="{{ blockType.type }}"
                        data-block-label="{{ blockType.label }}">
                         <div class="block-picker__item-icon">
-                            <twig:ux:icon :name="'tabler:' ~ blockType.icon" class="icon" />
+                            <twig:ux:icon :name="'ph:' ~ blockType.icon" class="icon" />
                         </div>
                         <div class="block-picker__item-label">{{ blockType.label }}</div>
                         <div class="block-picker__item-description">{{ blockType.description }}</div>
@@ -40,7 +42,7 @@
                        data-block-type="{{ blockType.type }}"
                        data-block-label="{{ blockType.label }}">
                         <div class="block-picker__item-icon">
-                            <twig:ux:icon :name="'tabler:' ~ blockType.icon" class="icon" />
+                            <twig:ux:icon :name="'ph:' ~ blockType.icon" class="icon" />
                         </div>
                         <div class="block-picker__item-label">{{ blockType.label }}</div>
                         <div class="block-picker__item-description">{{ blockType.description }}</div>
@@ -57,7 +59,7 @@
                        data-block-type="{{ blockType.type }}"
                        data-block-label="{{ blockType.label }}">
                         <div class="block-picker__item-icon">
-                            <twig:ux:icon :name="'tabler:' ~ blockType.icon" class="icon" />
+                            <twig:ux:icon :name="'ph:' ~ blockType.icon" class="icon" />
                         </div>
                         <div class="block-picker__item-label">{{ blockType.label }}</div>
                         <div class="block-picker__item-description">{{ blockType.description }}</div>
@@ -78,7 +80,7 @@
                             <div class="block-picker__item-description">{{ template.description }}</div>
                             <div class="block-picker__item-slots">
                                 {% for templateSlot in template.slots %}
-                                    <span class="badge bg-secondary">{{ templateSlot.label }}</span>
+                                    <span class="inline-flex items-center rounded-md bg-surface-raised px-2 py-0.5 text-xs font-medium text-content-secondary">{{ templateSlot.label }}</span>
                                 {% endfor %}
                             </div>
                         </a>

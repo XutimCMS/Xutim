@@ -93,7 +93,7 @@
                             <twig:Xutim:Admin:SidebarItem>
                                 <twig:block name="content">
                                     <twig:Xutim:Admin:Button
-                                        class="btn-link clipboard-input d-flex justify-content-start"
+                                        class="text-accent hover:text-accent/80 flex justify-start"
                                         variant="default"
                                         data-controller="clipboard"
                                         data-clipboard-text="/media/{{ media.originalPath }}"
@@ -126,25 +126,25 @@
 {% block pageMenu %}
     <twig:Xutim:Admin:Button
         tag="button"
-        id="sidebar-toggle"
+        onclick="window.dispatchEvent(new Event('sidebar:toggle'))"
         variant="nav"
     >
-        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        <twig:ux:icon name="ph:sidebar-simple" class="icon mr-1" />
         Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}
 
 {% block body %}
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4 d-flex align-items-center justify-content-center">
-                    <div class="media-container d-flex justify-content-center align-items-center">
+    <div class="rounded-xl border border-border mb-4">
+        <div class="p-4">
+            <div class="flex flex-wrap -mx-2">
+                <div class="md:w-1/3 flex items-center justify-center">
+                    <div class="media-container flex justify-center items-center">
                         <button
                             data-lightbox-url-value="/media/{{ media.originalPath }}"
                             data-controller="lightbox"
                             data-action="click->lightbox#open"
-                            class="btn-link"
+                            class="text-accent hover:text-accent/80"
                         >
                             <twig:XutimMedia:Admin:Picture
                                 :media="media"
@@ -156,9 +156,9 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <dl class="row">
+                <div class="md:w-2/3">
+                    <div class="p-4">
+                        <dl class="flex flex-wrap -mx-2">
                             <dt class="col-sm-4">{{ 'Path'|trans({}, 'admin') }}</dt>
                             <dd class="col-sm-8"><code>{{ media.originalPath }}</code></dd>
 
@@ -170,7 +170,7 @@
                                 {% if media.blurHash %}
                                     <code>{{ media.blurHash }}</code>
                                 {% else %}
-                                    <span class="text-muted">{{ 'Not generated'|trans({}, 'admin') }}</span>
+                                    <span class="text-content-secondary">{{ 'Not generated'|trans({}, 'admin') }}</span>
                                 {% endif %}
                             </dd>
 
@@ -183,12 +183,12 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header h3">
+    <div class="rounded-xl border border-border">
+        <div class="border-b border-border px-4 py-3 text-base font-semibold">
             {{ 'Generated image sizes'|trans({}, 'admin') }}
         </div>
-        <div class="card-body d-flex flex-column align-items-start p-0">
-            <table class="table table-hover">
+        <div class="card-body flex flex-col items-start p-0">
+            <table class="w-full text-[13px]">
                 <thead>
                     <tr>
                         <th>{{ 'Preset'|trans({}, 'admin') }}</th>
@@ -204,13 +204,13 @@
                         <tr>
                             <td><strong>{{ data.preset.name }}</strong></td>
                             <td>{{ data.preset.maxWidth }}×{{ data.preset.maxHeight }}</td>
-                            <td><span class="badge bg-green-lt">{{ data.preset.fitMode.value }}</span></td>
+                            <td><span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400">{{ data.preset.fitMode.value }}</span></td>
                             <td>{% for fmt, q in data.preset.quality %}{{ fmt }} {{ q }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
                             <td>
                                 {% if data.variants is empty %}
-                                    <span class="badge bg-warning">{{ 'Not generated'|trans({}, 'admin') }}</span>
+                                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400">{{ 'Not generated'|trans({}, 'admin') }}</span>
                                 {% else %}
-                                    <span class="badge bg-success">{{ data.variants|length }}</span>
+                                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400">{{ data.variants|length }}</span>
                                 {% endif %}
                             </td>
                             <td>
@@ -219,9 +219,9 @@
                                         data-lightbox-url-value="{{ data.variants|first.url }}"
                                         data-controller="lightbox"
                                         data-action="click->lightbox#open"
-                                        class="btn-link"
+                                        class="text-accent hover:text-accent/80"
                                     >
-                                        <twig:ux:icon name="tabler:search" class="w-3 h-3" />
+                                        <twig:ux:icon name="ph:magnifying-glass" class="w-3 h-3" />
                                     </button>
                                 {% endif %}
                             </td>
@@ -234,20 +234,20 @@
 
     {% for data in previewData %}
         {% if data.variants is not empty %}
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h3 class="card-title">{{ data.preset.name }} - {{ 'All widths'|trans({}, 'admin') }}</h3>
+            <div class="rounded-xl border border-border mt-3">
+                <div class="border-b border-border px-4 py-3">
+                    <h3 class="text-base font-semibold">{{ data.preset.name }} - {{ 'All widths'|trans({}, 'admin') }}</h3>
                 </div>
-                <div class="card-body">
-                    <div class="row g-3">
+                <div class="p-4">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                         {% for item in data.variants %}
-                            <div class="col-md-4 col-lg-3">
-                                <div class="card card-sm">
+                            <div class="md:w-1/3 lg:w-1/4">
+                                <div class="rounded-xl border border-border">
                                     <a href="{{ item.url }}" target="_blank">
-                                        <img src="{{ item.url }}" alt="{{ data.preset.name }}" class="card-img-top">
+                                        <img src="{{ item.url }}" alt="{{ data.preset.name }}" class="w-full rounded-t-xl object-cover">
                                     </a>
-                                    <div class="card-body">
-                                        <p class="text-muted mb-0 small">
+                                    <div class="p-4">
+                                        <p class="text-content-secondary mb-0 text-sm">
                                             {{ item.variant.width }}×{{ item.variant.height }}
                                             <span class="badge bg-secondary">{{ item.variant.format }}</span>
                                         </p>

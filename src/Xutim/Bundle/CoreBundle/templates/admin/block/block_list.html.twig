@@ -15,7 +15,7 @@
             variant="nav"
             href="{{ admin_path('admin_block_new') }}"
         >
-            <twig:Xutim:Admin:Icon name="block" />
+            <twig:ux:icon name="ph:squares-four" class="icon" />
             {{ 'New block'|trans({}, 'admin') }}
         </twig:Xutim:Admin:Button>
     {% endif %}
@@ -82,8 +82,8 @@
         </th>
         <th>{{ 'description'|trans({}, 'admin')|capitalize }}</th>
         <th>{{ 'layout'|trans({}, 'admin')|capitalize }}</th>
-        <th class="w-1">{{ 'articles'|trans({}, 'admin')|capitalize }}</th>
-        <th class="w-1">{{ 'pages'|trans({}, 'admin')|capitalize }}</th>
+        <th class="w-px">{{ 'articles'|trans({}, 'admin')|capitalize }}</th>
+        <th class="w-px">{{ 'pages'|trans({}, 'admin')|capitalize }}</th>
     {% endblock %}
 
     {% block body %}

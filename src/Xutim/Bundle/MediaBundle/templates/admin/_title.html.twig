@@ -1,4 +1,4 @@
-<div class="d-flex align-items-center gap-3" id="page-title-wrapper">
+<div class="flex items-center gap-3" id="page-title-wrapper">
     <h1 class="page-title mb-0">
         {{ 'Media'|trans({}, 'admin') }}
         {% if currentFolder %}
@@ -12,7 +12,7 @@
             aria-label="{{ 'Edit folder'|trans({}, 'admin') }}"
             class="text-primary"
         >
-            <twig:Xutim:Admin:Icon name="edit" />
+            <twig:ux:icon name="ph:pencil-simple" class="icon" />
         </a>
         {% if currentFolder.children() is empty and currentFolder.media() is empty %}
             <a
@@ -21,7 +21,7 @@
                 aria-label="{{ 'Delete folder'|trans({}, 'admin') }}"
                 class="text-danger"
             >
-                <twig:Xutim:Admin:Icon name="trash" />
+                <twig:ux:icon name="ph:trash" class="icon" />
             </a>
         {% endif %}
     {% endif %}

@@ -10,7 +10,7 @@
 
 {% block pageMenu %}
     <twig:Xutim:Admin:ModalForm
-        class="btn btn-primary d-none d-sm-inline-block"
+        class="btn btn-primary hidden sm:inline-block"
         action="{{ admin_path('admin_user_change_password') }}"
         title="{{ 'new password'|trans({}, 'admin')|capitalize }}"
     >
@@ -21,7 +21,7 @@
 {% block body %}
     <div class="card">
         <div class="row g-0">
-            <div class="col d-flex flex-column">
+            <div class="col flex flex-column">
                 <div class="card-body">
                     <div class="datagrid">
                         <div class="datagrid-item">
@@ -29,9 +29,9 @@
                                 {{ 'user'|trans({}, 'admin') }}
                             </div>
                             <div class="datagrid-content">
-                                <div class="d-flex align-items-center">
+                                <div class="flex align-items-center">
                                     <span
-                                        class="avatar avatar-xs me-2 rounded"
+                                        class="avatar avatar-xs mr-2 rounded"
                                         style="background-image: url({{ user.avatar }})"
                                     ></span>
                                     {{ user.name }}

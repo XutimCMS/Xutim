@@ -1,77 +1,95 @@
+{% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 {% import _self as macro %}
 
-<div class="d-flex flex-column justify-content-start">
-    {% set activeLocale = content_context_language() %}
-    {% set translatedLabel = 'Translated'|trans({}, 'admin') %}
+{% set activeLocale = content_context_language() %}
 
-    {# main languages #}
-    {%
-        set mainLanguages = site_context.locales
-        |filter(locale => app.user.canTranslate(locale))|sort((loc1, loc2) => loc1 <=> loc2)
-    %}
-    {% if mainLanguages is not empty %}
-        <div class="d-flex justify-content-end align-items-center mb-2">
-            {% for locale in mainLanguages %}
-                {{
-                    macro.renderLocale(locale, this.entity, this.simpleTranslation, activeLocale, translatedLabel)
-                }}
-            {% endfor %}
-        </div>
-    {% endif %}
+{% set mainLanguages = site_context.locales|filter(locale => app.user.canTranslate(locale))|sort((loc1, loc2) => loc1 <=> loc2) %}
+{% set extendedLanguages = this.showExtendedLanguages ? site_context.extendedContentLocales|filter(locale => app.user.canTranslate(locale))|sort((loc1, loc2) => loc1 <=> loc2) : [] %}
+{% set allLanguages = mainLanguages|merge(extendedLanguages) %}
+{% set needsDropdown = allLanguages|length > 10 %}
 
-    {# extended languages #}
-    {% if this.showExtendedLanguages is same as(true) %}
-        {%
-            set extendedLanguages = site_context.extendedContentLocales
-            |filter(locale => app.user.canTranslate(locale))|sort((loc1, loc2) => loc1 <=> loc2)
-        %}
-        {% if extendedLanguages is not empty %}
-            <div class="d-flex justify-content-end align-items-center flex-wrap row-gap-1">
-                {% for locale in extendedLanguages %}
-                    {{
-                        macro.renderLocale(locale, this.entity, this.simpleTranslation, activeLocale, translatedLabel)
-                    }}
-                {% endfor %}
+<div class="flex items-center gap-1 flex-wrap">
+    {% if needsDropdown %}
+        {% for locale in mainLanguages %}
+            {{ macro.renderLocale(locale, this.entity, this.simpleTranslation, activeLocale) }}
+        {% endfor %}
+
+        <div class="relative" data-controller="locale-dropdown">
+            <twig:Xutim:Admin:Button variant="dashed" type="button" data-action="click->locale-dropdown#toggle">
+                <twig:ux:icon name="ph:plus" class="h-3 w-3" />
+                {{ extendedLanguages|length }} {{ 'more'|trans({}, 'admin') }}
+            </twig:Xutim:Admin:Button>
+            <div data-locale-dropdown-target="panel" class="hidden z-50 rounded-lg border border-border bg-surface shadow-lg p-1.5">
+                <div class="grid grid-cols-[repeat(5,minmax(2.5rem,auto))] gap-px sm:grid-cols-[repeat(7,minmax(3rem,auto))]">
+                    {% for locale in extendedLanguages %}
+                        {{ macro.renderExtendedLocale(locale, this.entity, this.simpleTranslation, activeLocale) }}
+                    {% endfor %}
+                </div>
             </div>
+        </div>
+
+        {% if activeLocale in extendedLanguages %}
+            {{ macro.renderLocale(activeLocale, this.entity, this.simpleTranslation, activeLocale) }}
         {% endif %}
+    {% else %}
+        {% for locale in allLanguages %}
+            {{ macro.renderLocale(locale, this.entity, this.simpleTranslation, activeLocale) }}
+        {% endfor %}
     {% endif %}
 </div>
 
-{%
-    macro renderLocale(locale, entity, simpleTranslation, activeLocale, translatedLabel)
-%}
+{% macro renderLocale(locale, entity, simpleTranslation, activeLocale) %}
     {% set localeAllowed = entity is null or not (entity.translationLocales is defined) or entity.isLocaleAllowed(locale) %}
+    {% set isActive = locale == activeLocale %}
 
     {% if localeAllowed %}
-        <a
-            href="{{ admin_current_path_with({_content_locale: locale}) }}"
-            data-turbo-prefetch="false"
-        >
-    {% endif %}
-        {% set isActive = locale == activeLocale %}
-        {%
-            set classes = isActive ? ' bg-outline-primary border-3 border-primary' : ' text-secondary'
-        %}
-
-        <twig:Xutim:Admin:Badge class="{{ classes }}{{ not localeAllowed ? ' opacity-50' : '' }}">
-            {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-            {% if not localeAllowed %}
-                {{ badges.badge('text-bg-secondary', 'not translatable'|trans({}, 'admin')) }}
-            {% elseif entity is not null %}
+        <a href="{{ admin_current_path_with({_content_locale: locale}) }}" data-turbo-prefetch="false"
+           class="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium transition-colors {{ isActive ? 'border-accent bg-accent text-white dark:text-black' : 'border-border text-content-secondary hover:border-border-strong' }}{{ not localeAllowed ? ' opacity-50' : '' }}">
+            {% if entity is not null %}
                 {% set trans = entity.translationByLocale(locale) %}
                 {% if trans is null %}
-                    {{ badges.missingBadge() }}
+                    <span class="h-1.5 w-1.5 rounded-full bg-gray-300 dark:bg-neutral-600"></span>
+                {% elseif simpleTranslation %}
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
                 {% else %}
-                    {% if simpleTranslation == true %}
-                        {{ badges.badge('text-bg-green', translatedLabel) }}
-                    {% else %}
-                        {{ badges.publicationStatusBadge(trans) }}
-                    {% endif %}
+                    {% set statusColors = {success: 'bg-green-500', primary: 'bg-blue-500', warning: 'bg-amber-400', secondary: 'bg-gray-400', purple: 'bg-purple-500', green: 'bg-green-500', blue: 'bg-blue-500', yellow: 'bg-amber-400'} %}
+                    <span class="h-1.5 w-1.5 rounded-full {{ statusColors[trans.status.colorClass] ?? 'bg-gray-400' }}"></span>
                 {% endif %}
             {% endif %}
             {{ locale }}
-        </twig:Xutim:Admin:Badge>
-    {% if localeAllowed %}
         </a>
+    {% else %}
+        <span class="inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 text-[11px] font-medium text-content-tertiary opacity-50">
+            <span class="h-1.5 w-1.5 rounded-full bg-gray-300 dark:bg-neutral-600"></span>
+            {{ locale }}
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{% macro renderExtendedLocale(locale, entity, simpleTranslation, activeLocale) %}
+    {% set localeAllowed = entity is null or not (entity.translationLocales is defined) or entity.isLocaleAllowed(locale) %}
+    {% set isActive = locale == activeLocale %}
+
+    {% if localeAllowed %}
+        <a href="{{ admin_current_path_with({_content_locale: locale}) }}" data-turbo-prefetch="false" data-locale-dropdown-target="option" data-locale="{{ locale }}"
+           class="relative rounded px-1.5 py-1 text-[11px] font-medium text-content-secondary hover:bg-surface-raised transition-colors text-center {{ isActive ? 'bg-accent-subtle text-accent ring-1 ring-accent/20' : '' }}">
+            {% if entity is not null %}
+                {% set trans = entity.translationByLocale(locale) %}
+                {% set statusColors = {success: 'bg-green-500', primary: 'bg-blue-500', warning: 'bg-amber-400', secondary: 'bg-gray-400', purple: 'bg-purple-500', green: 'bg-green-500', blue: 'bg-blue-500', yellow: 'bg-amber-400'} %}
+                {% if trans is null %}
+                    <span class="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-gray-300 dark:bg-neutral-600"></span>
+                {% elseif simpleTranslation %}
+                    <span class="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                {% else %}
+                    <span class="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full {{ statusColors[trans.status.colorClass] ?? 'bg-gray-400' }}"></span>
+                {% endif %}
+            {% endif %}
+            {{ locale }}
+        </a>
+    {% else %}
+        <span data-locale-dropdown-target="option" data-locale="{{ locale }}" class="relative rounded px-1.5 py-1 text-[11px] font-medium text-content-tertiary opacity-50 text-center">
+            <span class="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-gray-300 dark:bg-neutral-600"></span>
+            {{ locale }}
+        </span>
     {% endif %}
 {% endmacro %}

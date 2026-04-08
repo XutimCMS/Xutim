@@ -1,32 +1,28 @@
 {% block image_choice_widget %}
-    <div class="mb-3">
-        <label class="form-label">{{ form.vars.label }}</label>
-        <div class="row g-2">
+    <div class="mb-4">
+        <label class="block text-[12px] font-medium text-content-secondary mb-1.5">{{ form.vars.label }}</label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {% for child in form %}
-                <div class="col-6 col-sm-4">
-                    <label class="form-imagecheck mb-2">
-                        <input
-                            type="radio"
-                            id="{{ child.vars.name }}"
-                            name="{{ child.vars.full_name }}"
-                            value="{{ child.vars.value }}"
-                            class="form-imagecheck-input"
-                            {% if child.vars.checked %}
-                                checked
-                            {% endif %}
-                            {{ block('widget_attributes') }}
+                <label class="relative cursor-pointer">
+                    <input
+                        type="radio"
+                        id="{{ child.vars.name }}"
+                        name="{{ child.vars.full_name }}"
+                        value="{{ child.vars.value }}"
+                        class="peer sr-only"
+                        {% if child.vars.checked %}checked{% endif %}
+                        {{ block('widget_attributes') }}
+                    />
+                    <div class="rounded-lg border-2 border-border overflow-hidden peer-checked:border-accent peer-checked:ring-1 peer-checked:ring-accent transition-colors">
+                        <img
+                            src="{{ child.vars.attr['data-image'] }}"
+                            alt="{{ child.vars.label }}"
+                            width="124"
+                            height="82"
+                            class="w-full h-auto"
                         />
-                        <span class="form-imagecheck-figure">
-                            <img
-                                src="{{ child.vars.attr['data-image'] }}"
-                                alt="{{ child.vars.label }}"
-                                width="124px"
-                                height="82px"
-                                class="form-imagecheck-image"
-                            />
-                        </span>
-                    </label>
-                </div>
+                    </div>
+                </label>
             {% endfor %}
         </div>
     </div>

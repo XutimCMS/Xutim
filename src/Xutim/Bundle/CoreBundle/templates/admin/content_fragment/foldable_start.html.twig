@@ -1,11 +1,11 @@
 {% if row.body_html is defined and row.body_html %}
     <div class="foldable-start-block p-2 text-center diff-inline">
-        <span class="text-muted" style="font-size: 0.75rem">▼</span>
-        <span class="text-muted small">{{ row.body_html|raw }}</span>
+        <span class="text-content-tertiary" style="font-size: 0.75rem">&blacktriangledown;</span>
+        <span class="text-content-secondary text-sm">{{ row.body_html|raw }}</span>
     </div>
 {% else %}
     <div class="foldable-start-block p-2 text-center">
-        <span class="text-muted" style="font-size: 0.75rem">▼</span>
-        <span class="text-muted small"></span>
+        <span class="text-content-tertiary" style="font-size: 0.75rem">&blacktriangledown;</span>
+        <span class="text-content-secondary text-sm"></span>
     </div>
 {% endif %}

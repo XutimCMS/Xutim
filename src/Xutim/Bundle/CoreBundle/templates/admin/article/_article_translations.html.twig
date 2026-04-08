@@ -1,38 +1,38 @@
 {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 
-<div class="card mb-3">
-    <div class="card-header">
-        <h3 class="card-title">
-            <twig:Xutim:Admin:Icon name="language" />{{
+<div class="rounded-xl border border-border mb-3">
+    <div class="border-b border-border px-4 py-3">
+        <h3 class="text-sm font-semibold">
+            <twig:ux:icon name="ph:translate" class="icon" />{{
                 'all translations'|trans({}, 'admin')|capitalize
             }}
         </h3>
     </div>
-    <div class="table-responsive">
-        <table class="table table-vcenter card-table">
+    <div class="overflow-x-auto">
+        <table class="w-full text-[13px]">
             <thead>
-                <tr>
-                    <th class="w-6" title="Status" data-controller="tooltip">
+                <tr class="border-b border-border bg-surface-raised text-left">
+                    <th class="px-4 py-2.5 font-medium text-content-tertiary w-6" title="Status" data-controller="tooltip">
                         S
                     </th>
                     <th
-                        class="w-1"
+                        class="px-4 py-2.5 font-medium text-content-tertiary w-1"
                         title="Translation reference"
                         data-controller="tooltip"
                     >
                         T
                     </th>
-                    <th>{{ 'title'|trans({}, 'admin') }}</th>
-                    <th>{{ 'language'|trans({}, 'admin') }}</th>
-                    <th class="w-15 text-end">
+                    <th class="px-4 py-2.5 font-medium text-content-tertiary">{{ 'title'|trans({}, 'admin') }}</th>
+                    <th class="px-4 py-2.5 font-medium text-content-tertiary">{{ 'language'|trans({}, 'admin') }}</th>
+                    <th class="px-4 py-2.5 font-medium text-content-tertiary text-right">
                         {{ 'actions'|trans({}, 'admin') }}
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-border">
                 {% for translation in article.translations %}
                     <tr>
-                        <td class="w-6">
+                        <td class="px-4 py-2.5 w-6">
                             <button
                                 type="button"
                                 role="button"
@@ -46,28 +46,29 @@
                             </button>
                         </td>
                         <td
+                            class="px-4 py-2.5"
                             title="Translation reference"
                             data-controller="tooltip"
                         >
                             {%
                                 if article.defaultTranslation.id == translation.id
                             %}
-                                <span class="fw-bold text-green">
-                                    <twig:Xutim:Admin:Icon name="language" />
+                                <span class="font-bold text-green-600 dark:text-green-400">
+                                    <twig:ux:icon name="ph:translate" class="icon" />
                                 </span>
                             {% else %}
                                 <twig:Xutim:Admin:ModalDialog
-                                    class="btn-link d-sm-inline-block px-0 border-0"
+                                    class="btn-link sm:inline-block px-0 border-0"
                                     action="{{ admin_path('admin_page_mark_default_translation', {id: article.id, transId: translation.id}) }}"
                                     confirmActionLabel="{{ 'action.mark_as_default'|trans({}, 'admin')|capitalize }}"
                                 >
                                     <span
-                                        class="badge text-bg-secondary"
+                                        class="inline-block h-2 w-2 rounded-full bg-content-secondary"
                                     ></span>
                                 </twig:Xutim:Admin:ModalDialog>
                             {% endif %}
                         </td>
-                        <td class="text-muted">
+                        <td class="px-4 py-2.5 text-content-secondary">
                             {{ translation.title }}
                             {%
                                 if article.defaultTranslation.id == translation.id
@@ -77,20 +78,18 @@
                                 }})
                             {% endif %}
                         </td>
-                        <td class="text-muted">
+                        <td class="px-4 py-2.5 text-content-secondary">
                             {{ translation.locale|locale_name }}
                         </td>
-                        <td>
-                            <div class="d-flex justify-content-end align-items-center">
+                        <td class="px-4 py-2.5">
+                            <div class="flex justify-end items-center">
                                 <a
                                     href="{{ path('content_translation_show', {_locale: translation.locale, slug: translation.slug}) }}"
-                                    class="btn-link me-2 {% if not translation.status.isPublished() %}disabled{% endif %}"
+                                    class="btn-link mr-2 {% if not translation.status.isPublished() %}disabled{% endif %}"
                                     aria-label="{{ 'Show on public page'|trans({}, 'admin') }}"
                                     data-turbo="false"
                                 >
-                                    <twig:Xutim:Admin:Icon
-                                        name="cloud-search"
-                                    />
+                                    <twig:ux:icon name="ph:globe-simple" class="icon" />
                                 </a>
 
                                 {%
@@ -101,7 +100,7 @@
                                         class="btn-link"
                                         aria-label="{{ 'revisions'|trans({}, 'admin') }}"
                                     >
-                                        <twig:Xutim:Admin:Icon name="history" />
+                                        <twig:ux:icon name="ph:clock-counter-clockwise" class="icon" />
                                     </a>
                                 {% endif %}
                             </div>
@@ -111,5 +110,5 @@
             </tbody>
         </table>
     </div>
-    <div class="card-footer p-3"></div>
+    <div class="border-t border-border px-4 py-3"></div>
 </div>

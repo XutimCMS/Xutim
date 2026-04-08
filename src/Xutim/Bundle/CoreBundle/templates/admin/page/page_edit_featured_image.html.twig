@@ -7,11 +7,11 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-header p-3">
-            <h3 class="card-title">{{ title }}</h3>
+    <div class="rounded-xl border border-border">
+        <div class="border-b border-border px-4 py-3">
+            <h3 class="text-sm font-semibold">{{ title }}</h3>
         </div>
-        <div class="card-body">
+        <div class="p-4">
             {{ form_start(form) }}
             <div
                 data-controller="featured-image"
@@ -19,7 +19,7 @@
                 class="cursor-pointer mb-3"
             >
                 <div
-                    class="media-container-extended d-flex justify-content-center align-items-center"
+                    class="media-container-extended flex justify-center items-center"
                     data-action="click->featured-image#openModal"
                 >
                     <div
@@ -43,7 +43,7 @@
 
                         <button
                             type="button"
-                            class="btn btn-sm btn-danger position-absolute top-0 end-0 mt-4 me-5 {{ form.featuredImage.vars.value ? '' : 'd-none' }}"
+                            class="rounded-md bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700 absolute top-0 right-0 mt-4 mr-5 {{ form.featuredImage.vars.value ? '' : 'hidden' }}"
                             data-featured-image-target="removeButton"
                             data-action="featured-image#removeImage"
                             aria-label="Remove featured image"
@@ -84,7 +84,7 @@
                             </div>
                             <div class="modal-body">
                                 <div
-                                    class="row g-3"
+                                    class="grid grid-cols-3 gap-3"
                                     data-featured-image-target="imageGallery"
                                 >
                                 </div>
@@ -92,7 +92,7 @@
                             <div class="modal-footer">
                                 <button
                                     type="button"
-                                    class="btn btn-secondary"
+                                    class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised"
                                     data-bs-dismiss="modal"
                                 >
                                     {{ 'Close'|trans({}, 'admin') }}

@@ -7,28 +7,28 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">{{ title }}</h3>
+    <div class="rounded-xl border border-border">
+        <div class="border-b border-border px-4 py-3">
+            <h3 class="text-base font-semibold">{{ title }}</h3>
         </div>
-        <div class="card-body">
+        <div class="p-4">
             <div class="mb-3">
                 <label class="form-label">
                     {{ 'Select destination folder'|trans({}, 'admin') }}
                 </label>
-                <div class="list-group">
+                <div class="flex flex-col divide-y divide-border rounded-xl border border-border">
                     <a
                         href="{{ admin_path('admin_media_move', {id: media.id, folderId: ''}) }}"
-                        class="list-group-item list-group-item-action {% if currentFolder is null %}active{% endif %}"
+                        class="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-raised rounded-lg {% if currentFolder is null %}active{% endif %}"
                         data-turbo-method="post"
                     >
-                        <div class="d-flex align-items-center">
-                            <twig:Xutim:Admin:Icon name="home" class="me-2" />
+                        <div class="flex items-center">
+                            <twig:ux:icon name="ph:house" class="icon mr-2" />
                             <div>
-                                <div class="fw-medium">
+                                <div class="font-medium">
                                     {{ 'Root'|trans({}, 'admin') }}
                                 </div>
-                                <div class="text-secondary small">
+                                <div class="text-content-secondary text-sm">
                                     {{ 'No folder'|trans({}, 'admin') }}
                                 </div>
                             </div>
@@ -37,16 +37,16 @@
                     {% for folder in folders %}
                         <a
                             href="{{ admin_path('admin_media_move', {id: media.id, folderId: folder.id}) }}"
-                            class="list-group-item list-group-item-action {% if currentFolder and currentFolder.id == folder.id %}active{% endif %}"
+                            class="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-raised rounded-lg {% if currentFolder and currentFolder.id == folder.id %}active{% endif %}"
                             data-turbo-method="post"
                         >
-                            <div class="d-flex align-items-center">
-                                <twig:Xutim:Admin:Icon name="folder" class="me-2" />
-                                <div class="flex-fill">
-                                    <div class="fw-medium">
+                            <div class="flex items-center">
+                                <twig:ux:icon name="ph:folder-simple" class="icon mr-2" />
+                                <div class="grow">
+                                    <div class="font-medium">
                                         {{ folder.name }}
                                     </div>
-                                    <div class="text-secondary small">
+                                    <div class="text-content-secondary text-sm">
                                         {% set path = folder.folderPath %}
                                         {% if path|length > 1 %}
                                             {% for pathFolder in path %}

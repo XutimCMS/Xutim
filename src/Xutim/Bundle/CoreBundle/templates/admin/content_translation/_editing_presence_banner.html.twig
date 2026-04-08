@@ -1,6 +1,6 @@
 <div data-editing-presence-target="banner"
-     class="alert alert-info d-flex align-items-center mb-3 {{ editingUser is not defined or editingUser is null ? 'd-none' : '' }}">
-    <twig:ux:icon name="tabler:user-edit" class="w-4 h-4 me-2 flex-shrink-0" />
+     class="rounded-lg border border-blue-300 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-700 p-3 flex items-center mb-3 {{ editingUser is not defined or editingUser is null ? 'hidden' : '' }}">
+    <twig:ux:icon name="ph:user-gear" class="w-4 h-4 mr-2 shrink-0" />
     <span>
         <strong data-editing-presence-target="userName">{{ editingUser is defined and editingUser ? editingUser.name : '' }}</strong>
         {{ 'is currently editing this content'|trans({}, 'admin') }}

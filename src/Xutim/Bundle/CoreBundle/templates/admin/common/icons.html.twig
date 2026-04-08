@@ -6,10 +6,9 @@
     >
         {% for name in names %}
             {% set svg %}{% apply spaceless %}<twig:ux:icon
-                        :name="'tabler:'~name"
+                        :name="'ph:'~name"
                     />{% endapply %}{% endset %}
 
-            {# Replace outer <svg …>…</svg> with <symbol id="icon-name">…</symbol> #}
             {{
                 svg
         |replace({
@@ -31,23 +30,36 @@
 {% macro order_arrow(currentField, order, orderDirection) %}
     {% if currentField == order %}
         {% if orderDirection == 'asc' %}
-            <twig:Xutim:Admin:Icon name="arrow-up" />
+            <twig:ux:icon name="ph:arrow-up" class="icon" />
         {% else %}
-            <twig:Xutim:Admin:Icon name="arrow-down" />
+            <twig:ux:icon name="ph:arrow-down" class="icon" />
         {% endif %}
     {% else %}
-        <twig:Xutim:Admin:Icon name="arrows-sort" />
+        <twig:ux:icon name="ph:arrows-down-up" class="icon" />
     {% endif %}
 {% endmacro %}
 
 {% macro fileType(extension) %}
-    {%
-        set availableExtensions = ['bmp', 'css', 'css', 'csv', 'doc', 'docx', 'html',
-        'js', 'pdf', 'ppt', 'sql', 'svg', 'txt', 'xls', 'xml', 'zip']
-    %}
-    {% if extension in availableExtensions %}
-        <twig:Xutim:Admin:Icon name="file-type-{{ extension }}" />
+    {% set extensionIconMap = {
+        'bmp': 'image',
+        'css': 'file-css',
+        'csv': 'file-csv',
+        'doc': 'file-doc',
+        'docx': 'file-doc',
+        'html': 'file-html',
+        'js': 'file-js',
+        'pdf': 'file-pdf',
+        'ppt': 'file-ppt',
+        'sql': 'file-code',
+        'svg': 'file-svg',
+        'txt': 'file-text',
+        'xls': 'file-xls',
+        'xml': 'file-code',
+        'zip': 'file-zip',
+    } %}
+    {% if extension in extensionIconMap|keys %}
+        <twig:ux:icon :name="'ph:' ~ extensionIconMap[extension]" class="icon" />
     {% else %}
-        <twig:Xutim:Admin:Icon name="file" />
+        <twig:ux:icon name="ph:file" class="icon" />
     {% endif %}
 {% endmacro %}

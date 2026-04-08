@@ -11,7 +11,7 @@
         data-turbo-frame="modal"
         href="{{ admin_path('admin_redirect_new') }}"
     >
-        <twig:ux:icon name="tabler:directions" class="w-4" />
+        <twig:ux:icon name="ph:signpost" class="w-4" />
         {{ 'add a new redirect'|trans({}, 'admin')|capitalize }}
     </twig:Xutim:Admin:Button>
 {% endblock %}
@@ -30,8 +30,8 @@
 {% endblock %}
 
 {% block settingsBody %}
-    <div class="row">
-        <div class="col-md-12">
+    <div class="flex flex-wrap -mx-2">
+        <div class="w-full">
             <h2 class="mb-2 py-2">
                 {{ 'redirects'|trans({}, 'admin')|capitalize }}
             </h2>
@@ -65,18 +65,6 @@
                         }}
                     </a>
                 </th>
-                {#
-                <th>
-                    <a
-                        href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'locale', orderDirection: filter.reverseDirection('locale')}) }}"
-                    >
-                        {{ 'locale'|trans({}, 'admin')|capitalize }}
-                        {{
-                            icons.order_arrow('locale', filter.orderColumn, filter.orderDirection)
-                        }}
-                    </a>
-                </th>
-                #}
                 <th>
                     <a
                         href="{{ admin_path(app.current_route, {...app.request.query.all(), orderColumn: 'permanent', orderDirection: filter.reverseDirection('permanent')}) }}"

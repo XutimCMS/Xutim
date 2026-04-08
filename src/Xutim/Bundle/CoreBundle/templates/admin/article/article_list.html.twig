@@ -10,14 +10,14 @@
         variant="nav"
         href="{{ admin_path('admin_article_new') }}"
     >
-        <twig:Xutim:Admin:Icon name="article" />
+        <twig:ux:icon name="ph:newspaper" class="icon" />
         {{ 'New article'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 {% endblock %}
 
 {% block languageBar %}
     <twig:Xutim:Admin:LanguageContextBar
-        class="d-flex justify-content-end align-items-center mb-2"
+        class="flex justify-end items-center mb-2"
     />
 {% endblock %}
 
@@ -173,11 +173,11 @@
                 </td>
                 <td>
                     {% if translation.locale == content_context_language() %}
-                        <span class="status status-green">
+                        <span class="inline-flex items-center text-[12px] font-medium text-green-600 dark:text-green-400">
                             {{ 'Translated'|trans({}, 'admin') }}
                         </span>
                     {% else %}
-                        <span class="status status-warning">
+                        <span class="inline-flex items-center text-[12px] font-medium text-amber-600 dark:text-amber-400">
                             {{ translation.locale|upper }}
                         </span>
                     {% endif %}
@@ -201,7 +201,7 @@
                     </twig:Xutim:Admin:Button>
                 </td>
                 <td class="text-wrap" style="max-width: 240px;">
-                    <div class="d-flex flex-wrap gap-1">
+                    <div class="flex flex-wrap gap-1">
                         {% for tag in article.tags %}
                             {% set tagName = tag.translationByLocaleOrAny(content_context_language(), default_locale).name %}
                             <twig:Xutim:Admin:Tag :color="tag.color" :title="tagName|length > 30 ? tagName : null">
@@ -218,11 +218,11 @@
                         {% endif %}
                     {% endfor %}
                     {% if excludeFromNews %}
-                        <span class="status status-danger">
+                        <span class="inline-flex items-center text-[12px] font-medium text-red-600 dark:text-red-400">
                             {{ 'no'|trans({}, 'admin') }}
                         </span>
                     {% else %}
-                        <span class="status status-green">
+                        <span class="inline-flex items-center text-[12px] font-medium text-green-600 dark:text-green-400">
                             {{ 'yes'|trans({}, 'admin') }}
                         </span>
                     {% endif %}

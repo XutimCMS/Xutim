@@ -2,7 +2,7 @@
     {{ attributes.defaults({}) }}
     id="{{ this.frameId }}-list"
     data-turbo-action="advance"
-    class="{{ this.borderless ? 'd-flex flex-column flex-grow-1' : '' }}"
+    class="{{ this.borderless ? 'flex flex-col flex-grow' : '' }}"
 >
     {% block filterChips %}
         {% if this.showChips %}
@@ -11,70 +11,47 @@
 
             {% for filter in this.filters %}
                 {% set filterValue = activeFilters[filter.key]|default('') %}
-                {% if filterValue is iterable %}
-                    {% set filterValue = filterValue|filter(v => v is not empty) %}
-                {% endif %}
-                {% if filterValue is not empty %}
-                    {% set hasActiveFilters = true %}
-                {% endif %}
+                {% if filterValue is iterable %}{% set filterValue = filterValue|filter(v => v is not empty) %}{% endif %}
+                {% if filterValue is not empty %}{% set hasActiveFilters = true %}{% endif %}
             {% endfor %}
-
             {% for column in this.columns %}
                 {% set wantChip = column.chip|default(false) is same as(true) or column.chip|default(false) is iterable %}
-                {% if wantChip and activeFilters[column.key]|default('') is not empty %}
-                    {% set hasActiveFilters = true %}
-                {% endif %}
+                {% if wantChip and activeFilters[column.key]|default('') is not empty %}{% set hasActiveFilters = true %}{% endif %}
             {% endfor %}
 
             {% if hasActiveFilters %}
-                <div class="d-flex flex-wrap gap-2 align-items-center{{ this.borderless ? ' px-4 py-3 border-bottom' : ' mb-3' }}">
-                    <span class="text-muted small">{{ 'Filters:'|trans({}, 'admin') }}</span>
+                <div class="flex flex-wrap gap-1.5 items-center {{ this.borderless ? 'px-4 py-3 border-b border-border' : 'mb-3' }}">
+                    <span class="text-[11px] text-content-tertiary">{{ 'Filters:'|trans({}, 'admin') }}</span>
 
                     {% for filter in this.filters %}
                         {% set filterKey = filter.key %}
                         {% set filterValue = activeFilters[filterKey]|default('') %}
-
                         {% if filterValue is not empty %}
                             {% set displayValue = filterValue %}
-
                             {% if (filter.type == 'multiselect' or filter.type == 'columnVisibility') and filter.options is defined %}
                                 {% set values = filterValue is iterable ? filterValue : [filterValue] %}
                                 {% set displayLabels = [] %}
                                 {% for val in values %}
                                     {% for option in filter.options|default([]) %}
                                         {% if not option.separator|default(false) %}
-                                            {% set optionValue = option.value|default(option) %}
-                                            {% set optionLabel = option.label|default(optionValue) %}
-                                            {% if optionValue == val %}
-                                                {% set displayLabels = displayLabels|merge([optionLabel]) %}
-                                            {% endif %}
+                                            {% if (option.value|default(option)) == val %}{% set displayLabels = displayLabels|merge([option.label|default(option.value|default(option))]) %}{% endif %}
                                         {% endif %}
                                     {% endfor %}
                                 {% endfor %}
                                 {% set displayValue = displayLabels|join(', ') %}
-
                             {% elseif filter.type == 'select' and filter.options is defined %}
                                 {% for option in filter.options|default([]) %}
-                                    {% if not option.separator|default(false) %}
-                                        {% set optionValue = option.value|default(option) %}
-                                        {% set optionLabel = option.label|default(optionValue) %}
-                                        {% if optionValue == filterValue %}
-                                            {% set displayValue = optionLabel %}
-                                        {% endif %}
+                                    {% if not option.separator|default(false) and (option.value|default(option)) == filterValue %}
+                                        {% set displayValue = option.label|default(option.value|default(option)) %}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}
-
                             {% set filtersWithoutCurrent = activeFilters|filter((v, k) => k != filterKey) %}
                             {% set removeFilterCol = filtersWithoutCurrent|length > 0 ? filtersWithoutCurrent : {_clear: '1'} %}
-                            <span class="badge bg-primary text-white d-inline-flex align-items-center">
-                                <span class="me-1">{{ filter.chipLabel }}: {{ displayValue }}</span>
-                                <a
-                                    class="btn-close btn-close-white ms-1 text-decoration-none"
-                                    aria-label="{{ 'Remove filter'|trans({}, 'admin') }}"
-                                    href="{{ admin_current_path_with({col: removeFilterCol, page: 1}) }}"
-                                ></a>
-                            </span>
+                            <a href="{{ admin_current_path_with({col: removeFilterCol, page: 1}) }}" class="inline-flex items-center gap-1 rounded-md bg-accent-subtle border border-accent/20 px-2 py-0.5 text-[11px] font-medium text-accent hover:bg-accent/10 transition-colors">
+                                {{ filter.chipLabel }}: {{ displayValue }}
+                                <twig:ux:icon name="ph:x" class="h-3 w-3" />
+                            </a>
                         {% endif %}
                     {% endfor %}
 
@@ -82,456 +59,235 @@
                         {% set columnKey = column.key %}
                         {% set wantChip = column.chip|default(false) is same as(true) or column.chip|default(false) is iterable %}
                         {% set filterValue = activeFilters[columnKey]|default('') %}
-
                         {% if wantChip and filterValue is not empty %}
                             {% set chipConfig = column.chip|default(false) is iterable ? column.chip : {} %}
                             {% set chipLabel = chipConfig.label|default(column.label) %}
                             {% set displayValue = filterValue %}
                             {% set formatter = chipConfig.formatter|default(column.filter.formatter|default('')) %}
-
                             {% if column.filter.type|default('none') == 'select' and column.filter.options is defined %}
-                                {% set matched = false %}
                                 {% for option in column.filter.options %}
-                                    {% set optionValue = option.value|default(option) %}
-                                    {% set optionLabel = option.label|default(optionValue) %}
-                                    {% if optionValue == filterValue %}
-                                        {% set displayValue = optionLabel %}
-                                        {% set matched = true %}
-                                    {% endif %}
+                                    {% if (option.value|default(option)) == filterValue %}{% set displayValue = option.label|default(option.value|default(option)) %}{% endif %}
                                 {% endfor %}
-                                {% if not matched and chipConfig.fallbackLabel|default('') is not empty %}
-                                    {% set displayValue = chipConfig.fallbackLabel|replace({'%value%': filterValue}) %}
-                                {% endif %}
                             {% endif %}
-
-                            {% if formatter == 'upper' %}
-                                {% set displayValue = displayValue|upper %}
-                            {% elseif formatter == 'lower' %}
-                                {% set displayValue = displayValue|lower %}
-                            {% endif %}
-
+                            {% if formatter == 'upper' %}{% set displayValue = displayValue|upper %}{% elseif formatter == 'lower' %}{% set displayValue = displayValue|lower %}{% endif %}
                             {% set filtersWithoutCurrent = activeFilters|filter((v, k) => k != columnKey) %}
                             {% set removeFilterCol = filtersWithoutCurrent|length > 0 ? filtersWithoutCurrent : {_clear: '1'} %}
-                            <span class="badge bg-primary text-white d-inline-flex align-items-center">
-                                <span class="me-1">{{ chipLabel }}: {{ displayValue }}</span>
-                                <a
-                                    class="btn-close btn-close-white ms-1 text-decoration-none"
-                                    aria-label="{{ 'Remove filter'|trans({}, 'admin') }}"
-                                    href="{{ admin_current_path_with({col: removeFilterCol, page: 1}) }}"
-                                ></a>
-                            </span>
+                            <a href="{{ admin_current_path_with({col: removeFilterCol, page: 1}) }}" class="inline-flex items-center gap-1 rounded-md bg-accent-subtle border border-accent/20 px-2 py-0.5 text-[11px] font-medium text-accent hover:bg-accent/10 transition-colors">
+                                {{ chipLabel }}: {{ displayValue }}
+                                <twig:ux:icon name="ph:x" class="h-3 w-3" />
+                            </a>
                         {% endif %}
                     {% endfor %}
 
-                    <a
-                        class="btn btn-link btn-sm text-decoration-none"
-                        href="{{ admin_current_path_with({col: {_clear: '1'}, page: 1}) }}"
-                    >
+                    <a href="{{ admin_current_path_with({col: {_clear: '1'}, page: 1}) }}" class="text-[11px] text-content-tertiary hover:text-content transition-colors">
                         {{ 'Clear all'|trans({}, 'admin') }}
                     </a>
                 </div>
             {% endif %}
         {% endif %}
     {% endblock %}
-    <div class="card {{ this.borderless ? 'border-0 shadow-none d-flex flex-column flex-grow-1' : 'mb-3' }}">
+
+    <div class="rounded-xl border border-border {{ this.borderless ? 'border-0 shadow-none flex flex-col flex-grow' : '' }}">
         {% set _formId = this.filterFormId ?: this.frameId ~ '-filters' %}
-        <div class="px-4 border-bottom py-3" data-table-target="cardBody">
-            <div class="d-flex align-items-center flex-wrap gap-3">
-                <div class="text-muted">
-                    {{ 'show'|trans({}, 'admin')|capitalize }}
-                    <div class="mx-2 d-inline-block">
-                        <div class="dropdown">
-                            <a
-                                href="#"
-                                class="btn btn-sm dropdown-toggle"
-                                data-bs-toggle="dropdown"
-                            >{{ filter.pageLength }}</a>
-                            <div class="dropdown-menu">
-                                <a
-                                    class="dropdown-item"
-                                    href="{{ admin_current_path_with({pageLength: 10, page: 1}) }}"
-                                >
-                                    10
-                                </a>
-                                <a
-                                    class="dropdown-item"
-                                    href="{{ admin_current_path_with({pageLength: 20, page: 1}) }}"
-                                >
-                                    20
-                                </a>
-                                <a
-                                    class="dropdown-item"
-                                    href="{{ admin_current_path_with({pageLength: 50, page: 1}) }}"
-                                >
-                                    50
-                                </a>
-                                <a
-                                    class="dropdown-item"
-                                    href="{{ admin_current_path_with({pageLength: 100, page: 1}) }}"
-                                >
-                                    100
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    {{ 'entries'|trans({}, 'admin') }}
-                </div>
 
-                {% block toolbarFilters %}
-                    {% set activeFilters = this.filter.cols %}
-                    {% for filter in this.filters %}
-                        {% set filterKey = filter.key %}
-                        {% set filterLabel = filter.label %}
-                        {% set filterType = filter.type %}
-                        {% set popoverId = this.frameId ~ '-toolbar-pop-' ~ filterKey %}
-                        {% set minWidth = filter.minWidth|default('220px') %}
-                        {% set selectedValues = activeFilters[filterKey]|default([]) %}
-                        {% if selectedValues is not iterable %}
-                            {% set selectedValues = [selectedValues] %}
-                        {% endif %}
-                        {% set selectedValues = selectedValues|filter(v => v is not empty) %}
-                        {% if selectedValues is empty and filter.defaultSelected is defined %}
-                            {% set selectedValues = filter.defaultSelected %}
-                        {% endif %}
-                        {% set hasActiveFilter = selectedValues|length > 0 %}
-                        {% set buttonIcon = filterType == 'columnVisibility' ? 'tabler:columns' : 'tabler:filter' %}
-
-                        <div class="position-relative" data-controller="dt-filter">
-                            <button
-                                type="button"
-                                class="btn btn-sm {{ hasActiveFilter ? 'btn-primary' : 'btn-outline-secondary' }}"
-                                aria-haspopup="dialog"
-                                aria-expanded="false"
-                                data-action="click->dt-filter#toggle"
-                                data-dt-filter-popover-id="{{ popoverId }}"
-                            >
-                                <twig:ux:icon :name="buttonIcon" class="icon" />
-                                {{ filterLabel }}
-                                {% if hasActiveFilter %}
-                                    <span class="badge bg-white text-primary ms-1">{{ selectedValues|filter(v => v is not empty)|length }}</span>
-                                {% endif %}
-                            </button>
-
-                            <div
-                                id="{{ popoverId }}"
-                                class="card shadow-sm p-3 position-absolute d-none"
-                                style="min-width: {{ minWidth }}; z-index: 1050; top: 100%; left: 0; margin-top: 4px;"
-                                data-dt-filter-popover
-                                data-min-width="{{ minWidth }}"
-                            >
-                                <label class="form-label mb-2">
-                                    {{ 'Filter by %label%'|trans({'%label%': filterLabel}, 'admin') }}
-                                </label>
-
-                                {% if filterType == 'text' %}
-                                    <input
-                                        type="text"
-                                        class="form-control form-control-sm"
-                                        name="col[{{ filterKey }}]"
-                                        value="{{ activeFilters[filterKey]|default('') }}"
-                                        placeholder="{{ filter.placeholder|default('Type to search'|trans({}, 'admin')) }}"
-                                        form="{{ _formId }}"
-                                    >
-
-                                {% elseif filterType == 'select' %}
-                                    <select
-                                        name="col[{{ filterKey }}]"
-                                        class="form-select form-select-sm"
-                                        form="{{ _formId }}"
-                                    >
-                                        <option value="">{{ filter.placeholder|default('Any'|trans({}, 'admin')) }}</option>
-
-                                        {% for option in filter.options|default([]) %}
-                                            {% set optionValue = option.value|default(option) %}
-                                            {% set optionLabel = option.label|default(optionValue) %}
-                                            <option value="{{ optionValue }}" {{ activeFilters[filterKey]|default('') == optionValue ? 'selected' }}>
-                                                {{ optionLabel }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
-
-                                {% elseif filterType == 'multiselect' %}
-                                    <div class="d-flex flex-column gap-2" style="max-height: 200px; overflow-y: auto;">
-                                        {% for option in filter.options|default([]) %}
-                                            {% if option.separator|default(false) %}
-                                                <hr class="my-1">
-                                            {% else %}
-                                                {% set optionValue = option.value|default(option) %}
-                                                {% set optionLabel = option.label|default(optionValue) %}
-                                                <label class="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        class="form-check-input"
-                                                        name="col[{{ filterKey }}][]"
-                                                        value="{{ optionValue }}"
-                                                        form="{{ _formId }}"
-                                                        {{ optionValue in selectedValues ? 'checked' }}
-                                                    >
-                                                    <span class="form-check-label">{{ optionLabel }}</span>
-                                                </label>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
-
-                                {% elseif filterType == 'columnVisibility' %}
-                                    <div class="d-flex flex-column gap-2" style="max-height: 200px; overflow-y: auto;">
-                                        {% for option in filter.options|default([]) %}
-                                            {% if option.separator|default(false) %}
-                                                <hr class="my-1">
-                                            {% else %}
-                                                {% set optionValue = option.value|default(option) %}
-                                                {% set optionLabel = option.label|default(optionValue) %}
-                                                <label class="form-check">
-                                                    <input
-                                                        type="checkbox"
-                                                        class="form-check-input"
-                                                        name="col[{{ filterKey }}][]"
-                                                        value="{{ optionValue }}"
-                                                        form="{{ _formId }}"
-                                                        {{ optionValue in selectedValues ? 'checked' }}
-                                                    >
-                                                    <span class="form-check-label">{{ optionLabel }}</span>
-                                                </label>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-
-                                <div class="mt-3 d-flex justify-content-between">
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-secondary"
-                                        data-action="click->dt-filter#resetField"
-                                        data-dt-filter-form-id="{{ _formId }}"
-                                        data-dt-filter-field="col[{{ filterKey }}]"
-                                    >
-                                        {{ 'Reset'|trans({}, 'admin') }}
-                                    </button>
-                                    <button type="submit" class="btn btn-sm btn-primary" form="{{ _formId }}">
-                                        {{ 'Apply'|trans({}, 'admin') }}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+        <div class="flex items-center flex-wrap gap-3 px-4 py-3 border-b border-border">
+            <div class="flex items-center gap-1.5 text-[12px] text-content-secondary">
+                {{ 'show'|trans({}, 'admin')|capitalize }}
+                <select onchange="window.location=this.value" class="rounded-md border border-border bg-surface px-2 py-1 text-[12px] focus:border-accent focus:outline-none">
+                    {% for len in [10, 20, 50, 100] %}
+                        <option value="{{ admin_current_path_with({pageLength: len, page: 1}) }}" {{ filter.pageLength == len ? 'selected' }}>{{ len }}</option>
                     {% endfor %}
-                {% endblock %}
+                </select>
+                {{ 'entries'|trans({}, 'admin') }}
+            </div>
 
-                <div class="ms-auto text-muted" data-turbo-permanent id="{{ this.frameId }}-search-container">
-                    {{ 'search'|trans({}, 'admin')|capitalize }}:
-                    <div class="ms-2 d-inline-block">
-                        <form
-                            method="GET"
-                            action=""
-                            data-controller="auto-submit"
+            {% block toolbarFilters %}
+                {% set activeFilters = this.filter.cols %}
+                {% for filter in this.filters %}
+                    {% set filterKey = filter.key %}
+                    {% set filterLabel = filter.label %}
+                    {% set filterType = filter.type %}
+                    {% set popoverId = this.frameId ~ '-toolbar-pop-' ~ filterKey %}
+                    {% set minWidth = filter.minWidth|default('220px') %}
+                    {% set selectedValues = activeFilters[filterKey]|default([]) %}
+                    {% if selectedValues is not iterable %}{% set selectedValues = [selectedValues] %}{% endif %}
+                    {% set selectedValues = selectedValues|filter(v => v is not empty) %}
+                    {% if selectedValues is empty and filter.defaultSelected is defined %}{% set selectedValues = filter.defaultSelected %}{% endif %}
+                    {% set hasActiveFilter = selectedValues|length > 0 %}
+                    {% set buttonIcon = filterType == 'columnVisibility' ? 'ph:columns' : 'ph:funnel' %}
+
+                    <div class="relative" data-controller="dt-filter">
+                        <button type="button"
+                            class="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[12px] font-medium transition-colors {{ hasActiveFilter ? 'border-accent bg-accent-subtle text-accent' : 'border-border text-content-secondary hover:border-border-strong' }}"
+                            data-action="click->dt-filter#toggle"
+                            data-dt-filter-popover-id="{{ popoverId }}"
                         >
-                            {% for key, value in this.filter.cols %}
-                                {% if value is iterable %}
-                                    {% for v in value %}
-                                        <input type="hidden" name="col[{{ key }}][]" value="{{ v }}">
+                            <twig:ux:icon :name="buttonIcon" class="h-3.5 w-3.5" />
+                            {{ filterLabel }}
+                            {% if hasActiveFilter %}
+                                <span class="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white dark:text-black">{{ selectedValues|filter(v => v is not empty)|length }}</span>
+                            {% endif %}
+                        </button>
+
+                        <div id="{{ popoverId }}" class="absolute left-0 top-full mt-1 z-50 hidden rounded-lg border border-border bg-surface p-3 shadow-lg" style="min-width: {{ minWidth }}" data-dt-filter-popover data-min-width="{{ minWidth }}">
+                            <label class="block text-[12px] font-medium text-content-secondary mb-2">
+                                {{ 'Filter by %label%'|trans({'%label%': filterLabel}, 'admin') }}
+                            </label>
+
+                            {% if filterType == 'text' %}
+                                <input type="text" class="w-full rounded-md border border-border bg-surface px-2.5 py-1.5 text-[12px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" name="col[{{ filterKey }}]" value="{{ activeFilters[filterKey]|default('') }}" placeholder="{{ filter.placeholder|default('Type to search'|trans({}, 'admin')) }}" form="{{ _formId }}">
+                            {% elseif filterType == 'select' %}
+                                <select name="col[{{ filterKey }}]" class="w-full rounded-md border border-border bg-surface px-2.5 py-1.5 text-[12px] focus:border-accent focus:outline-none" form="{{ _formId }}">
+                                    <option value="">{{ filter.placeholder|default('Any'|trans({}, 'admin')) }}</option>
+                                    {% for option in filter.options|default([]) %}
+                                        {% set optionValue = option.value|default(option) %}
+                                        <option value="{{ optionValue }}" {{ activeFilters[filterKey]|default('') == optionValue ? 'selected' }}>{{ option.label|default(optionValue) }}</option>
                                     {% endfor %}
-                                {% else %}
-                                    <input type="hidden" name="col[{{ key }}]" value="{{ value }}">
-                                {% endif %}
-                            {% endfor %}
-                            <input
-                                type="text"
-                                id="{{ this.frameId }}-searchTerm"
-                                name="searchTerm"
-                                autofocus
-                                class="form-control form-control-sm"
-                                aria-label="{{ 'search'|trans({}, 'admin')|capitalize }}"
-                                value="{{ filter.searchTerm }}"
-                                data-action="auto-submit#debouncedSubmit"
-                                onfocus="var temp_value=this.value; this.value=''; this.value=temp_value"
-                            />
-                        </form>
+                                </select>
+                            {% elseif filterType == 'multiselect' or filterType == 'columnVisibility' %}
+                                <div class="flex flex-col gap-2 max-h-[200px] overflow-y-auto">
+                                    {% for option in filter.options|default([]) %}
+                                        {% if option.separator|default(false) %}
+                                            <hr class="border-border my-1">
+                                        {% else %}
+                                            {% set optionValue = option.value|default(option) %}
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="checkbox" class="h-4 w-4 rounded border-border text-accent focus:ring-accent" name="col[{{ filterKey }}][]" value="{{ optionValue }}" form="{{ _formId }}" {{ optionValue in selectedValues ? 'checked' }}>
+                                                <span class="text-[12px]">{{ option.label|default(optionValue) }}</span>
+                                            </label>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <div class="mt-3 flex justify-between">
+                                <button type="button" class="rounded-md border border-border px-2.5 py-1 text-[12px] hover:bg-surface-raised transition-colors" data-action="click->dt-filter#resetField" data-dt-filter-form-id="{{ _formId }}" data-dt-filter-field="col[{{ filterKey }}]">
+                                    {{ 'Reset'|trans({}, 'admin') }}
+                                </button>
+                                <button type="submit" class="rounded-md bg-accent px-2.5 py-1 text-[12px] font-medium text-white hover:bg-accent-hover dark:text-black transition-colors" form="{{ _formId }}">
+                                    {{ 'Apply'|trans({}, 'admin') }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                {% endfor %}
+            {% endblock %}
+
+            <div class="ml-auto" data-turbo-permanent id="{{ this.frameId }}-search-container">
+                <form method="GET" action="" data-controller="auto-submit" class="flex items-center gap-1.5">
+                    {% for key, value in this.filter.cols %}
+                        {% if value is iterable %}
+                            {% for v in value %}<input type="hidden" name="col[{{ key }}][]" value="{{ v }}">{% endfor %}
+                        {% else %}
+                            <input type="hidden" name="col[{{ key }}]" value="{{ value }}">
+                        {% endif %}
+                    {% endfor %}
+                    <div class="relative">
+                        <twig:ux:icon name="ph:magnifying-glass" class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-content-tertiary pointer-events-none" />
+                        <input type="text" id="{{ this.frameId }}-searchTerm" name="searchTerm" autofocus class="w-40 sm:w-52 rounded-md border border-border bg-surface py-1.5 pl-8 pr-3 text-[12px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" aria-label="{{ 'search'|trans({}, 'admin')|capitalize }}" value="{{ filter.searchTerm }}" placeholder="{{ 'search'|trans({}, 'admin')|capitalize }}..." data-action="auto-submit#debouncedSubmit" onfocus="var t=this.value;this.value='';this.value=t" />
+                    </div>
+                </form>
             </div>
         </div>
+
         <form id="{{ _formId }}" method="get" action="">
             <input type="hidden" name="page" value="1">
-            {% if filter.searchTerm %}
-                <input type="hidden" name="searchTerm" value="{{ filter.searchTerm }}">
-            {% endif %}
+            {% if filter.searchTerm %}<input type="hidden" name="searchTerm" value="{{ filter.searchTerm }}">{% endif %}
         </form>
 
-        <div class="{{ this.responsive ? 'table-responsive' : '' }}{{ this.borderless ? ' overflow-auto' : '' }}" data-table-target="tableContainer">
+        <div class="{{ this.responsive ? 'overflow-x-auto' : '' }}{{ this.borderless ? ' overflow-auto' : '' }}">
             {% import '@XutimCore/admin/common/icons.html.twig' as icons %}
             {% set colFilters = this.filter.cols %}
-<table class="table table-hover card-table table-vcenter text-nowrap datatable">
-        <thead>
-          <tr>
-            {% for column in this.columns %}
-              {% if column.headerVisible|default(true) %}
-                {% set columnKey = column.key %}
-                {% set columnLabel = column.label %}
-                {% set sortable = column.sortable|default(false) %}
-                {% set orderKey = column.order|default(columnKey) %}
-                {% set filterConfig = column.filter|default({type: 'none'}) %}
-                {% set filterType = filterConfig.type|default('none') %}
-                {% set popoverId = this.frameId ~ '-col-pop-' ~ columnKey %}
-                {% set minWidth = filterConfig.minWidth|default('220px') %}
+            <table class="w-full text-[13px]">
+                <thead>
+                    <tr class="border-b border-border bg-surface-raised text-left">
+                        {% for column in this.columns %}
+                            {% if column.headerVisible|default(true) %}
+                                {% set columnKey = column.key %}
+                                {% set columnLabel = column.label %}
+                                {% set sortable = column.sortable|default(false) %}
+                                {% set orderKey = column.order|default(columnKey) %}
+                                {% set filterConfig = column.filter|default({type: 'none'}) %}
+                                {% set filterType = filterConfig.type|default('none') %}
+                                {% set popoverId = this.frameId ~ '-col-pop-' ~ columnKey %}
+                                {% set minWidth = filterConfig.minWidth|default('220px') %}
 
-                <th class="{{ filterType != 'none' ? 'position-relative' }}">
-                  <div class="d-flex align-items-center gap-2" {{ filterType != 'none' ? 'data-controller="dt-filter"' }}>
-                    {% if filterType != 'none' %}
-                      <button
-                        type="button"
-                        class="btn-reset"
-                        aria-haspopup="dialog"
-                        aria-expanded="false"
-                        data-action="click->dt-filter#toggle"
-                        data-dt-filter-popover-id="{{ popoverId }}"
-                      >
-                        {{ columnLabel }}
-                      </button>
-                    {% else %}
-                      <span>{{ columnLabel }}</span>
-                    {% endif %}
+                                <th class="px-4 py-2.5 font-medium text-content-tertiary whitespace-nowrap {{ filterType != 'none' ? 'relative' : '' }}">
+                                    <div class="flex items-center gap-1.5" {{ filterType != 'none' ? 'data-controller="dt-filter"' }}>
+                                        {% if filterType != 'none' %}
+                                            <button type="button" class="hover:text-content transition-colors" data-action="click->dt-filter#toggle" data-dt-filter-popover-id="{{ popoverId }}">
+                                                {{ columnLabel }}
+                                            </button>
+                                        {% else %}
+                                            <span>{{ columnLabel }}</span>
+                                        {% endif %}
 
-                    {% if sortable %}
-                      <a href="{{ admin_current_path_with({orderColumn: orderKey, orderDirection: this.filter.reverseDirection(orderKey)}) }}">
-                        {{ icons.order_arrow(orderKey, this.filter.orderColumn, this.filter.orderDirection) }}
-                      </a>
-                    {% endif %}
-                  </div>
+                                        {% if sortable %}
+                                            <a href="{{ admin_current_path_with({orderColumn: orderKey, orderDirection: this.filter.reverseDirection(orderKey)}) }}" class="text-content-tertiary hover:text-content transition-colors">
+                                                {{ icons.order_arrow(orderKey, this.filter.orderColumn, this.filter.orderDirection) }}
+                                            </a>
+                                        {% endif %}
+                                    </div>
 
-                  {% if filterType != 'none' %}
-                    <div
-                      id="{{ popoverId }}"
-                      class="card shadow-sm p-3 position-absolute d-none"
-                      style="min-width: {{ minWidth }}; z-index: 1050; top: 100%; left: 0;"
-                      data-dt-filter-popover
-                      data-min-width="{{ minWidth }}"
-                    >
-                      <label class="form-label mb-2">
-                        {{ 'Filter by %label%'|trans({'%label%': columnLabel}, 'admin') }}
-                      </label>
-
-                      {% if filterType == 'text' %}
-                        <input
-                          type="text"
-                          class="form-control form-control-sm"
-                          name="col[{{ columnKey }}]"
-                          value="{{ colFilters[columnKey]|default('') }}"
-                          placeholder="{{ filterConfig.placeholder|default('Type to search'|trans({}, 'admin')) }}"
-                          form="{{ _formId }}"
-                        >
-
-                      {% elseif filterType == 'select' %}
-                        {% set options = filterConfig.options|default([]) %}
-                        <select
-                          name="col[{{ columnKey }}]"
-                          class="form-select form-select-sm"
-                          form="{{ _formId }}"
-                        >
-                          <option value="">{{ filterConfig.placeholder|default('Any'|trans({}, 'admin')) }}</option>
-
-                          {% for option in options %}
-                            {% set optionValue = option.value|default(option) %}
-                            {% set optionLabel = option.label|default(optionValue) %}
-                            <option value="{{ optionValue }}" {{ colFilters[columnKey]|default('') == optionValue ? 'selected' }}>
-                              {{ optionLabel }}
-                            </option>
-                          {% endfor %}
-                        </select>
-                      {% endif %}
-
-                      <div class="mt-3 d-flex justify-content-between">
-                        <button
-                          type="button"
-                          class="btn btn-sm btn-secondary"
-                          data-action="click->dt-filter#resetField"
-                          data-dt-filter-form-id="{{ _formId }}"
-                          data-dt-filter-field="col[{{ columnKey }}]"
-                        >
-                          {{ 'Reset'|trans({}, 'admin') }}
-                        </button>
-                        <button type="submit" class="btn btn-sm btn-primary" form="{{ _formId }}">
-                          {{ 'Apply'|trans({}, 'admin') }}
-                        </button>
-                      </div>
-                    </div>
-                  {% endif %}
-                </th>
-              {% endif %}
-            {% endfor %}
-          </tr>
-        </thead>
-
-        <tbody
-          data-table-target="tableBody"
-          {% if this.tableBodyId is defined %}
-            id="{{ this.tableBodyId }}"
-          {% endif %}
-        >
-          {% block body %}{% endblock %}
-        </tbody>
-      </table>
+                                    {% if filterType != 'none' %}
+                                        <div id="{{ popoverId }}" class="absolute left-0 top-full mt-1 z-50 hidden rounded-lg border border-border bg-surface p-3 shadow-lg" style="min-width: {{ minWidth }}" data-dt-filter-popover data-min-width="{{ minWidth }}">
+                                            <label class="block text-[12px] font-medium text-content-secondary mb-2">
+                                                {{ 'Filter by %label%'|trans({'%label%': columnLabel}, 'admin') }}
+                                            </label>
+                                            {% if filterType == 'text' %}
+                                                <input type="text" class="w-full rounded-md border border-border bg-surface px-2.5 py-1.5 text-[12px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" name="col[{{ columnKey }}]" value="{{ colFilters[columnKey]|default('') }}" placeholder="{{ filterConfig.placeholder|default('Type to search'|trans({}, 'admin')) }}" form="{{ _formId }}">
+                                            {% elseif filterType == 'select' %}
+                                                <select name="col[{{ columnKey }}]" class="w-full rounded-md border border-border bg-surface px-2.5 py-1.5 text-[12px] focus:border-accent focus:outline-none" form="{{ _formId }}">
+                                                    <option value="">{{ filterConfig.placeholder|default('Any'|trans({}, 'admin')) }}</option>
+                                                    {% for option in filterConfig.options|default([]) %}
+                                                        {% set optionValue = option.value|default(option) %}
+                                                        <option value="{{ optionValue }}" {{ colFilters[columnKey]|default('') == optionValue ? 'selected' }}>{{ option.label|default(optionValue) }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            {% endif %}
+                                            <div class="mt-3 flex justify-between">
+                                                <button type="button" class="rounded-md border border-border px-2.5 py-1 text-[12px] hover:bg-surface-raised transition-colors" data-action="click->dt-filter#resetField" data-dt-filter-form-id="{{ _formId }}" data-dt-filter-field="col[{{ columnKey }}]">{{ 'Reset'|trans({}, 'admin') }}</button>
+                                                <button type="submit" class="rounded-md bg-accent px-2.5 py-1 text-[12px] font-medium text-white hover:bg-accent-hover dark:text-black transition-colors" form="{{ _formId }}">{{ 'Apply'|trans({}, 'admin') }}</button>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-border" {% if this.tableBodyId is defined %}id="{{ this.tableBodyId }}"{% endif %} data-table-target="tableBody">
+                    {% block body %}{% endblock %}
+                </tbody>
+            </table>
         </div>
-        <div class="card-footer d-flex align-items-center border-top{{ this.borderless ? ' mt-auto' : '' }}">
-            <p class="m-0 text-muted">
-                {{ 'page'|trans({}, 'admin')|capitalize }}
-                {{ pager.currentPage }}
-                {{ 'of'|trans({}, 'admin') }}
-                {{ pager.nbPages }}
-                ({{ pager.count }}
-                {{ 'entries'|trans({}, 'admin') }})
-            </p>
-            <ul class="pagination m-0 ms-auto">
+
+        <div class="flex items-center justify-between border-t border-border px-4 py-2.5 text-[13px] {{ this.borderless ? 'mt-auto' : '' }}">
+            <span class="text-content-secondary">
+                {{ 'page'|trans({}, 'admin')|capitalize }} {{ pager.currentPage }} {{ 'of'|trans({}, 'admin') }} {{ pager.nbPages }}
+                ({{ pager.count }} {{ 'entries'|trans({}, 'admin') }})
+            </span>
+            <div class="flex items-center gap-1">
                 {% if pager.hasPreviousPage %}
-                    <li class="page-item">
-                        <a
-                            href="{{ pagerfanta_page_url(pager, pager.previousPage) }}"
-                            class="page-link"
-                            tabindex="-1"
-                            aria-disabled="true"
-                        >
-                            <twig:Xutim:Admin:Icon name="chevron-left" />
-                            {{ 'prev'|trans({}, 'admin') }}
-                        </a>
-                    </li>
+                    <a href="{{ pagerfanta_page_url(pager, pager.previousPage) }}" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised transition-colors">
+                        <twig:ux:icon name="ph:caret-left" class="h-3.5 w-3.5" /> {{ 'prev'|trans({}, 'admin') }}
+                    </a>
                 {% else %}
-                    <li class="page-item disabled">
-                        <a
-                            href="#"
-                            class="page-link"
-                            tabindex="-1"
-                            aria-disabled="true"
-                        >
-                            <twig:Xutim:Admin:Icon name="chevron-left" />
-                            {{ 'prev'|trans({}, 'admin') }}
-                        </a>
-                    </li>
+                    <span class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-content-tertiary">
+                        <twig:ux:icon name="ph:caret-left" class="h-3.5 w-3.5" /> {{ 'prev'|trans({}, 'admin') }}
+                    </span>
                 {% endif %}
 
                 {% if pager.hasNextPage %}
-                    <li class="page-item">
-                        <a
-                            href="{{ pagerfanta_page_url(pager, pager.nextPage) }}"
-                            class="page-link"
-                            tabindex="-1"
-                            aria-disabled="true"
-                        >
-                            {{ 'next'|trans({}, 'admin') }}
-                            <twig:Xutim:Admin:Icon name="chevron-right" />
-                        </a>
-                    </li>
+                    <a href="{{ pagerfanta_page_url(pager, pager.nextPage) }}" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised transition-colors">
+                        {{ 'next'|trans({}, 'admin') }} <twig:ux:icon name="ph:caret-right" class="h-3.5 w-3.5" />
+                    </a>
                 {% else %}
-                    <li class="page-item disabled">
-                        <a
-                            href="#"
-                            class="page-link"
-                            tabindex="-1"
-                            aria-disabled="true"
-                        >
-                            {{ 'next'|trans({}, 'admin') }}
-                            <twig:Xutim:Admin:Icon name="chevron-right" />
-                        </a>
-                    </li>
+                    <span class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-content-tertiary">
+                        {{ 'next'|trans({}, 'admin') }} <twig:ux:icon name="ph:caret-right" class="h-3.5 w-3.5" />
+                    </span>
                 {% endif %}
-            </ul>
+            </div>
         </div>
     </div>
 </turbo-frame>

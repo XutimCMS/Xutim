@@ -1,125 +1,97 @@
 {% macro publicationStatusBadge(object, extraClass, referenceHasChanged) %}
+    {% set colors = {
+        success: 'bg-green-500',
+        primary: 'bg-blue-500',
+        warning: 'bg-amber-400',
+        secondary: 'bg-gray-400',
+        purple: 'bg-purple-500',
+        green: 'bg-green-500',
+        blue: 'bg-blue-500',
+        yellow: 'bg-amber-400'
+    } %}
     {% if referenceHasChanged|default(false) and object.isPublished() %}
-        <span class="badge text-bg-green"></span>
-        <span
-            class="badge text-bg-yellow"
-            style="margin-left: -6px"
-            title="{{ 'Reference has changed'|trans({}, 'admin') }}"
-            data-controller="tooltip"
-        ></span>
+        <span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500" title="{{ object.status.value|trans({}, 'admin') }}" data-controller="tooltip"></span>
+        <span class="inline-block h-2.5 w-2.5 rounded-full bg-amber-400 -ml-1" title="{{ 'Reference has changed'|trans({}, 'admin') }}" data-controller="tooltip"></span>
     {% else %}
-        <span
-            class="badge text-bg-{{ object.status.colorClass }} {{ extraClass }}"
-            title="{{ object.status.value|trans({}, 'admin') }}"
-            data-controller="tooltip"
-        ></span>
+        <span class="inline-block h-2.5 w-2.5 rounded-full {{ colors[object.status.colorClass] ?? 'bg-gray-400' }} {{ extraClass }}" title="{{ object.status.value|trans({}, 'admin') }}" data-controller="tooltip"></span>
     {% endif %}
 {% endmacro %}
 
 {% macro publicationStatusBadgeSimple(object, extraClass) %}
-    <span
-        class="badge text-bg-{{ object.status.colorClass }} {{ extraClass }}"
-        title="{{ object.status.value|trans({}, 'admin') }}"
-        data-controller="tooltip"
-    ></span>
+    {% set colors = {success: 'bg-green-500', primary: 'bg-blue-500', warning: 'bg-amber-400', secondary: 'bg-gray-400', purple: 'bg-purple-500', green: 'bg-green-500', blue: 'bg-blue-500', yellow: 'bg-amber-400'} %}
+    <span class="inline-block h-2.5 w-2.5 rounded-full {{ colors[object.status.colorClass] ?? 'bg-gray-400' }} {{ extraClass }}" title="{{ object.status.value|trans({}, 'admin') }}" data-controller="tooltip"></span>
 {% endmacro %}
 
 {% macro languageBadge(object) %}
     <span
         data-controller="tooltip"
         title="{{ 'There is no translation for language %language%.'|trans({'%language%': content_context_language()|language_name}, 'admin') }}"
-        class="badge badge-outline text-primary me-1"
+        class="inline-flex items-center rounded border border-border px-1 py-0.5 text-[10px] font-medium text-content-tertiary"
     >
         {{ object.locale }}
     </span>
 {% endmacro %}
 
-{# {% macro publicationStatusBadge(status, extraClass) %} #}
-{# <span class="badge text-bg-{{ status.colorClass }} {{ extraClass }}" title="{{ status.value|trans({}, 'admin') }}" data-controller="tooltip"></span> #}
-{# {% endmacro %} #}
-
 {% macro squareBadge(color, extraClass) %}
-    <div
-        class="avatar avatar-xs {{ extraClass }}"
-        style="background-color: {{ color }};"
-    ></div>
+    <div class="h-4 w-4 rounded {{ extraClass }}" style="background-color: {{ color }};"></div>
 {% endmacro %}
 
 {% macro articleColorBadge(article, extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-    {% set color = '6c7a91' %}
-
-    {{ badges.squareBadge(color, extraClass) }}
+    {{ badges.squareBadge('#6c7a91', extraClass) }}
 {% endmacro %}
 
 {% macro pageColorBadge(page, extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-
     {{ badges.squareBadge(page.color.HTMLHex, extraClass) }}
 {% endmacro %}
 
-{% macro translatedBadge(translation, extraClass) %}
-    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-
-    {{ badges.squareBadge(page.color.HTMLHex, extraClass) }}
-{% endmacro %}
-
-{% macro badge(extraClass, title) %}
-    {% if extraClass %}
-        {% set class = extraClass ~ ' badge' %}
-    {% else %}
-        {% set class = 'badge' %}
-    {% endif %}
-    <span
-        class="{{ class }}"
-        title="{{ title }}"
-        data-controller="tooltip"
-    ></span>
+{% macro badge(colorClass, title) %}
+    {% set colors = {
+        'text-bg-green': 'bg-green-500',
+        'text-bg-blue': 'bg-blue-500',
+        'text-bg-yellow': 'bg-amber-400',
+        'text-bg-secondary': 'bg-gray-400',
+        'text-bg-success': 'bg-green-500',
+        'text-bg-primary': 'bg-blue-500',
+        'text-bg-warning': 'bg-amber-400',
+        'text-bg-purple': 'bg-purple-500'
+    } %}
+    <span class="inline-block h-2.5 w-2.5 rounded-full {{ colors[colorClass] ?? 'bg-gray-400' }}" title="{{ title }}" data-controller="tooltip"></span>
 {% endmacro %}
 
 {% macro publishedBadge(extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-
-    {{ badges.badge('text-bg-green ' ~ extraClass, 'Published'|trans({}, 'admin')) }}
+    {{ badges.badge('text-bg-success', 'Published'|trans({}, 'admin')) }}
 {% endmacro %}
 
 {% macro missingBadge(extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-
-    {{ badges.badge('text-bg-secondary ' ~ extraClass, 'Translation is missing'|trans({}, 'admin')) }}
+    {{ badges.badge('text-bg-secondary', 'Translation is missing'|trans({}, 'admin')) }}
 {% endmacro %}
 
 {% macro draftBadge(extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-
-    {{ badges.badge('text-bg-blue ' ~ extraClass, 'Not published'|trans({}, 'admin')) }}
+    {{ badges.badge('text-bg-primary', 'Not published'|trans({}, 'admin')) }}
 {% endmacro %}
 
 {% macro translatedBadge(extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-
-    {{ badges.badge('text-bg-green ' ~ extraClass, 'Translated'|trans({}, 'admin')) }}
+    {{ badges.badge('text-bg-success', 'Translated'|trans({}, 'admin')) }}
 {% endmacro %}
 
 {% macro untranslatedBadge(extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-
-    {{ badges.badge('text-bg-yellow ' ~ extraClass, 'Untranslated'|trans({}, 'admin')) }}
+    {{ badges.badge('text-bg-warning', 'Untranslated'|trans({}, 'admin')) }}
 {% endmacro %}
 
 {% macro untranslatedChangeBadge(extraClass) %}
-    <span class="badge text-bg-green"></span>
-    <span
-        class="badge text-bg-yellow"
-        style="margin-left: -6px"
-        title="{{ 'Untranslated changes'|trans({}, 'admin') }}"
-        data-controller="tooltip"
-    ></span>
+    <span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500"></span>
+    <span class="inline-block h-2.5 w-2.5 rounded-full bg-amber-400 -ml-1" title="{{ 'Untranslated changes'|trans({}, 'admin') }}" data-controller="tooltip"></span>
 {% endmacro %}
 
 {% macro translationStatusBadge(status, extraClass, referenceHasChanged) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-
     {% if status.isPublished %}
         {{ badges.translatedBadge(extraClass) }}
     {% endif %}

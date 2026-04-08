@@ -1,20 +1,8 @@
-{% set contentColumns = block('header') != '' ? 8 : 12 %}
 {% set content = block('content') %}
-<div {{
-        attributes.defaults({
-            class: 'row py-2',
-        })
-    }}>
-    {% if block('header') != '' %}
-        <div class="col-4 d-flex align-items-center">
-            {% block header %}{% endblock %}
-        </div>
-    {% endif %}
-
-    {% if block('header') != '' %}
-        <div class="col-{{ contentColumns }} d-flex align-items-center justify-content-between">
-            {{ content|raw }}
-        </div>
+<div {{ attributes.defaults({class: 'flex items-center justify-between gap-2 px-4 py-2.5 min-w-0'}) }}>
+    {% if block('header') is not empty %}
+        <span class="text-[12px] text-content-secondary shrink-0">{% block header %}{% endblock %}</span>
+        <span class="text-[13px] text-right truncate">{{ content|raw }}</span>
     {% else %}
         {{ content|raw }}
     {% endif %}

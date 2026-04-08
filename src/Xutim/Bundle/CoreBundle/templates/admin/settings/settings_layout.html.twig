@@ -11,8 +11,9 @@
 
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
-        <li class="breadcrumb-item">
-            <a href="{{ admin_path('admin_settings_site') }}">
+        <li><span class="text-content-tertiary/50">/</span></li>
+        <li>
+            <a href="{{ admin_path('admin_settings_site') }}" class="hover:text-content transition-colors">
                 {{ 'settings'|trans({}, 'admin')|capitalize }}
             </a>
         </li>
@@ -20,18 +21,12 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="row g-0">
-            <div class="col-12 col-md-3 border-end">
-                {{
-                    include('@XutimCore/admin/settings/_settings_navigation.html.twig')
-                }}
-            </div>
-            <div class="col-12 col-md-9 d-flex flex-column">
-                <div class="card-body">
-                    {% block settingsBody %}{% endblock %}
-                </div>
-            </div>
+    <div class="flex flex-col gap-6 lg:flex-row">
+        <nav class="flex lg:w-44 lg:flex-col shrink-0">
+            {{ include('@XutimCore/admin/settings/_settings_navigation.html.twig') }}
+        </nav>
+        <div class="flex-1 max-w-2xl">
+            {% block settingsBody %}{% endblock %}
         </div>
     </div>
 {% endblock %}

@@ -7,11 +7,11 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-header p-3">
-            <h3 class="card-title">{{ title }}</h3>
+    <div class="rounded-xl border border-border">
+        <div class="border-b border-border px-4 py-3">
+            <h3 class="text-base font-semibold">{{ title }}</h3>
         </div>
-        <div class="card-body">
+        <div class="p-4">
             {{ form_start(form) }}
             {{ form_row(form.innerName) }}
             {{ form_row(form.submit) }}
@@ -31,7 +31,7 @@
                 <twig:block name="content">
                     {{ media.innerName }}
 
-                    <div class="btn-group float-end">
+                    <div class="inline-flex ml-auto">
                         <twig:Xutim:Admin:Button
                             tag="a"
                             variant="link"
@@ -39,7 +39,7 @@
                             data-turbo-frame="modal"
                             href="{{ admin_path('admin_media_inner_name_edit', {id: media.id}) }}"
                         >
-                            <twig:Xutim:Admin:Icon name="edit" />
+                            <twig:ux:icon name="ph:pencil-simple" class="icon" />
                         </twig:Xutim:Admin:Button>
                     </div>
                 </twig:block>

@@ -1,29 +1,33 @@
 <!DOCTYPE html>
-<html lang="{{ app.request.locale }}">
+<html lang="{{ app.request.locale }}" class="h-full">
     <head>
         <meta charset="{{ _charset }}" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, viewport-fit=cover"
-        />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="robots" content="noindex,nofollow" />
+        <meta name="color-scheme" content="light dark" />
+        <title>{% block title %}{% endblock %}</title>
 
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
         {% block javascripts %}
             {{ importmap('app-admin') }}
         {% endblock %}
-
-        <title>{% block title %}{% endblock %}</title>
     </head>
-    <body class="hold-transition login-page">
-        <div class="page page-center">
-            <div class="container container-tight py-4">
-                <div id="flash-messages">
+    <body class="h-full bg-surface font-sans text-content antialiased">
+        <div class="flex min-h-full items-center justify-center px-4">
+            <div class="w-full max-w-sm">
+                <div id="flash-messages" class="mb-4">
                     {{ include('@XutimCore/admin/_flashes.html.twig') }}
                 </div>
-
                 {% block body %}{% endblock %}
             </div>
         </div>
+
+        <script>
+            if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        </script>
     </body>
 </html>

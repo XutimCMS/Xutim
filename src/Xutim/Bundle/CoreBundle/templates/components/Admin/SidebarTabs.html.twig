@@ -1,11 +1,3 @@
-<ul
-    {{
-        attributes.defaults({
-            class: 'nav mb-0 pt-0 pb-1',
-            id: 'offcanvasTabs',
-            role: 'tablist',
-        })
-    }}
->
+<div {{ attributes.defaults({class: 'flex border-b border-border shrink-0', role: 'tablist'}) }}>
     {% block content %}{% endblock %}
-</ul>
+</div>

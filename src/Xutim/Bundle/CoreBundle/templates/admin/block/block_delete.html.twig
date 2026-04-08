@@ -8,42 +8,21 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card mt-np1">
-        <div class="card-status-top bg-danger" style=""></div>
-        <div class="card-body">
+    <div class="rounded-xl border border-border -mt-px">
+        <div class="h-1 bg-red-600 rounded-t-xl"></div>
+        <div class="p-4">
             <div class="text-center">
                 <p>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="icon mb-2 text-danger icon-lg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        stroke-width="2"
-                        stroke="currentColor"
-                        fill="none"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path
-                            stroke="none"
-                            d="M0 0h24v24H0z"
-                            fill="none"
-                        >
-                        </path>
-                        <path d="M12 9v2m0 4v.01"></path>
-                        <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75">
-                        </path>
-                    </svg>
+                    <twig:ux:icon name="ph:warning" class="w-12 h-12 text-red-600 mb-2" />
                 </p>
                 <h3>{{ title }}</h3>
             </div>
         </div>
-        <div class="card-footer">
-            {{ form_start(form, {attr: {class: 'd-flex align-items-center'}}) }}
+        <div class="px-4 py-3 border-t border-border">
+            {{ form_start(form, {attr: {class: 'flex items-center'}}) }}
             <a
                 href="{{ admin_path('admin_block_edit', {id: block.id}) }}"
-                class="text-sm font-medium me-auto"
+                class="text-sm font-medium mr-auto"
             >
                 {{ 'Back to list'|trans({}, 'admin') }}
             </a>
@@ -53,11 +32,11 @@
                 tag="button"
                 id="{{ form.delete.vars.id }}"
                 name="{{ form.delete.vars.full_name }}"
-                class="btn btn-danger ms-auto"
+                class="ml-auto"
                 type="submit"
                 data-turbo-frame="{{ app.request.headers.get('turbo-frame') ? '_top' : '' }}"
             >
-                <twig:Xutim:Admin:Icon name="trash" />
+                <twig:ux:icon name="ph:trash" class="icon" />
                 {{ 'delete'|trans({}, 'admin')|capitalize }}
             </twig:Xutim:Admin:Button>
             {{ form_row(form._token) }}

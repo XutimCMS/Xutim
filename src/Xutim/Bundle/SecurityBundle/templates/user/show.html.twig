@@ -16,7 +16,7 @@
         variant="nav"
         href="{{ path('homepage') }}"
     >
-        <twig:Xutim:Admin:Icon name="external-link" class="me-1" />
+        <twig:ux:icon name="ph:arrow-square-out" class="icon mr-1" />
         Public page
     </twig:Xutim:Admin:Button>
     <twig:Xutim:Admin:Button
@@ -26,7 +26,7 @@
         data-turbo-frame="modal"
         href="{{ admin_path('admin_user_edit', {id: user.id}) }}"
     >
-        <twig:Xutim:Admin:Icon name="edit" class="me-1" />
+        <twig:ux:icon name="ph:pencil-simple" class="icon mr-1" />
         {{ 'Edit'|trans({}, 'admin')|capitalize }}
     </twig:Xutim:Admin:Button>
     <twig:Xutim:Admin:ModalDialog
@@ -36,7 +36,7 @@
         action="{{ admin_path('admin_user_delete', {id: user.id}) }}"
         confirmActionLabel="{{ 'action.delete'|trans({}, 'admin')|capitalize }}"
     >
-        <twig:Xutim:Admin:Icon name="trash" />
+        <twig:ux:icon name="ph:trash" class="icon" />
         {{ 'Delete'|trans({}, 'admin') }}
     </twig:Xutim:Admin:ModalDialog>
 {% endblock %}
@@ -58,9 +58,9 @@
         <div class="datagrid-item">
             <div class="datagrid-title">{{ 'user'|trans({}, 'admin') }}</div>
             <div class="datagrid-content">
-                <div class="d-flex align-items-center">
+                <div class="flex align-items-center">
                     <span
-                        class="avatar avatar-xs me-2 rounded"
+                        class="avatar avatar-xs mr-2 rounded"
                         style="background-image: url({{ user.avatar }})"
                     ></span>
                     {{ user.name }}
@@ -135,7 +135,7 @@
                         action="{{ admin_path('admin_reset_password_send_token', {id: user.id}) }}"
                         confirmActionLabel="{{ 'action.approve'|trans({}, 'admin')|capitalize }}"
                     >
-                        <twig:ux:icon name="tabler:checks" class="icon" />
+                        <twig:ux:icon name="ph:checks" class="icon" />
 
                         {{ 'send reset password link'|trans({}, 'admin') }}
                     </twig:Xutim:Admin:ModalDialog>

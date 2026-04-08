@@ -1,7 +1,6 @@
 import TomSelect from 'tom-select';
 import { Controller } from '@hotwired/stimulus';
-import 'tom-select/dist/css/tom-select.bootstrap5.min.css';
-import '../styles/tom-select.css';
+import 'tom-select/dist/css/tom-select.default.min.css';
 
 export default class extends Controller {
     connect() {

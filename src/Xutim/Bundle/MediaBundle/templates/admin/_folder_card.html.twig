@@ -1,7 +1,7 @@
 {% set childrenCnt = folder.children|length %}
 {% set mediaCnt = folder.media|length %}
 <div
-    class="col"
+    class="flex-1"
     id="folder-{{ folder.id }}"
     data-controller="drop-target"
     data-drop-target-id-value="{{ folder.id }}"
@@ -9,21 +9,21 @@
     data-action="dragover->drop-target#over dragleave->drop-target#leave drop->drop-target#drop"
 >
     <a
-        class="card card-link"
+        class="rounded-xl border border-border block hover:border-accent transition-colors"
         href="{{ admin_path('admin_media_list', {id: folder.id}) }}"
         data-drop-target-target="folderCard"
     >
         <div
-            class="card-body"
+            class="p-4"
             data-drop-target-target="folderCard"
         >
-            <div class="d-flex align-items-center gap-2 mb-2">
-                <twig:Xutim:Admin:Icon name="folder" />
-                <div class="flex-fill text-truncate fw-medium" title="{{ folder.name }}">
+            <div class="flex items-center gap-2 mb-2">
+                <twig:ux:icon name="ph:folder-simple" class="icon" />
+                <div class="grow truncate font-medium" title="{{ folder.name }}">
                     {{ folder.name }}
                 </div>
             </div>
-            <div class="text-secondary small">
+            <div class="text-content-secondary text-sm">
                 {{ childrenCnt|default(0) }}
                 {{ 'folders'|trans({}, 'admin') }},
                 {{ mediaCnt|default(0) }}

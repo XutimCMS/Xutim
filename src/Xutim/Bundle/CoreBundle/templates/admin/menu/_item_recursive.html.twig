@@ -1,11 +1,11 @@
 {% set isSelectedItem = selectedItem and selectedItem.id.equals(item.id) %}
 
 <li
-    class="my-2 ms-3{{ isSelectedItem ? ' bg-yellow-lt' : '' }}"
+    class="my-2 ml-3{{ isSelectedItem ? ' bg-amber-50 dark:bg-amber-900/20' : '' }}"
     id="menu-item-tree-{{ item.id }}"
 >
     {% if node.children is empty %}
-        <twig:Xutim:Admin:Icon name="chevron-down-left" class="text-black" />
+        <twig:ux:icon name="ph:caret-down" class="icon text-content" />
         {{
             _self.itemLine(items, node, item, child, loop.first, loop.last, selectedItem)
         }}
@@ -14,8 +14,8 @@
         {%
             set detailsOpened = path|reduce((carry, sec, k) => carry is same as(true) or item.id.equals(sec.id), false)
         %}
-        <details {{ detailsOpened ? ' open="open"' : '' }} class="text-black">
-            <summary class="ms-2{{ isSelectedItem ? ' fw-bold' : '' }}">
+        <details {{ detailsOpened ? ' open="open"' : '' }} class="text-content">
+            <summary class="ml-2{{ isSelectedItem ? ' font-bold' : '' }}">
                 {{
                     _self.itemLine(items, node, item, child, loop.first, loop.last, selectedItem)
                 }}
@@ -27,7 +27,7 @@
 
 {% macro subTree(items, node, item, child, path, selectedItem) %}
     {% if node.children is not empty %}
-        <ul class="list-unstyled">
+        <ul class="list-none">
             {% for childId in node.children %}
                 {{
                     include('@XutimCore/admin/menu/_item_recursive.html.twig', {
@@ -47,7 +47,7 @@
     {% set isSelectedItem = selectedItem and selectedItem.id.equals(item.id) %}
     {% set translation = item.objectTranslation(content_context_language()) %}
 
-    <span class="me-1"></span>
+    <span class="mr-1"></span>
 
     {%
         import '@XutimCore/admin/common/translatable.html.twig' as translatable
@@ -55,14 +55,14 @@
     {{ translatable.languageBadge(translation) }}
 
     {% if item.hasArticle() %}
-        <twig:Xutim:Admin:Icon name="article" class="me-2" />
+        <twig:ux:icon name="ph:newspaper" class="icon mr-2" />
     {% elseif item.hasPage() %}
-        <twig:Xutim:Admin:Icon name="folder" class="me-2" />
+        <twig:ux:icon name="ph:folder-simple" class="icon mr-2" />
     {% else %}
-        <twig:Xutim:Admin:Icon name="tag" class="me-2" />
+        <twig:ux:icon name="ph:tag" class="icon mr-2" />
     {% endif %}
     <a href="{{ admin_path('admin_menu_list', {id: item.id}) }}">
-        <span class="text-black{{ isSelectedItem ? ' fw-bold' : '' }}">
+        <span class="text-content{{ isSelectedItem ? ' font-bold' : '' }}">
             {{
                 translation.title is defined ? translation.title : translation.name
             }}
@@ -72,9 +72,9 @@
     {%
         if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
     %}
-        <div class="dropdown float-end">
-            <a href="#" class="link-secondary" data-bs-toggle="dropdown">
-                <twig:Xutim:Admin:Icon name="dots" />
+        <div class="dropdown float-right relative">
+            <a href="#" class="text-content-secondary" data-bs-toggle="dropdown">
+                <twig:ux:icon name="ph:dots-three" class="icon" />
             </a>
             <div class="dropdown-menu dropdown-menu-end">
                 {% set showUrl = null %}
@@ -90,7 +90,7 @@
                         variant="dropdown"
                         href="{{ admin_path(showUrl, {id: item.object.id}) }}"
                     >
-                        <twig:Xutim:Admin:Icon name="search" class="me-2" />
+                        <twig:ux:icon name="ph:magnifying-glass" class="icon mr-2" />
                         {{ 'show'|trans|capitalize }}
                     </twig:Xutim:Admin:Button>
                 {% endif %}
@@ -100,7 +100,7 @@
                     data-turbo-frame="modal"
                     href="{{ admin_path('admin_menu_item_edit', {id: item.id}) }}"
                 >
-                    <twig:Xutim:Admin:Icon name="edit" class="me-2" />
+                    <twig:ux:icon name="ph:pencil-simple" class="icon mr-2" />
                     {{ 'edit'|trans|capitalize }}
                 </twig:Xutim:Admin:Button>
                 <twig:Xutim:Admin:Button
@@ -109,7 +109,7 @@
                     data-turbo-frame="modal"
                     href="{{ admin_path('admin_menu_item_delete', {id: item.id}) }}"
                 >
-                    <twig:Xutim:Admin:Icon name="trash" class="me-2" />
+                    <twig:ux:icon name="ph:trash" class="icon mr-2" />
                     {{ 'delete'|trans|capitalize }}
                 </twig:Xutim:Admin:Button>
 
@@ -121,7 +121,7 @@
                     data-turbo-frame="modal"
                     href="{{ admin_path('admin_menu_item_new', {id: item.id}) }}"
                 >
-                    <twig:Xutim:Admin:Icon name="plus" />
+                    <twig:ux:icon name="ph:plus" class="icon" />
                     {{ 'New menu item'|trans({}, 'admin') }}
                 </twig:Xutim:Admin:Button>
 
@@ -129,29 +129,25 @@
                     <div class="dropdown-divider"></div>
 
                     {% if first is not same as(true) %}
-                        <a
-                            class="dropdown-item"
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="dropdown"
                             href="{{ admin_path('admin_menu_item_move', {id: item.id, dir: 'up'}) }}"
                         >
-                            <twig:Xutim:Admin:Icon
-                                name="arrow-up"
-                                class="me-2"
-                            />
+                            <twig:ux:icon name="ph:arrow-up" class="icon mr-2" />
                             {{ 'move up'|trans({}, 'admin')|capitalize }}
-                        </a>
+                        </twig:Xutim:Admin:Button>
                     {% endif %}
 
                     {% if last is not same as(true) %}
-                        <a
-                            class="dropdown-item"
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="dropdown"
                             href="{{ admin_path('admin_menu_item_move', {id: item.id, dir: 'down'}) }}"
                         >
-                            <twig:Xutim:Admin:Icon
-                                name="arrow-down"
-                                class="me-2"
-                            />
+                            <twig:ux:icon name="ph:arrow-down" class="icon mr-2" />
                             {{ 'move down'|trans({}, 'admin')|capitalize }}
-                        </a>
+                        </twig:Xutim:Admin:Button>
                     {% endif %}
                 {% endif %}
             </div>

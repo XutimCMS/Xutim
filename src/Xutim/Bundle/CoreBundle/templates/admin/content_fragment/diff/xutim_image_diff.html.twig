@@ -3,17 +3,17 @@
 {% set changed = urlMeta and urlMeta.status is defined and urlMeta.status != 'same' %}
 
 {% macro image_row(label, url) %}
-    <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
-        <div class="small text-muted me-2" style="width: 3rem">{{ label }}</div>
+    <div class="flex items-center gap-2 flex-wrap mb-2">
+        <div class="text-sm text-content-secondary mr-2" style="width: 3rem">{{ label }}</div>
         {% if url %}
             <img
                 src="{{ url }}"
                 alt=""
-                class="img-thumbnail"
+                class="border border-border rounded"
                 style="max-width: 120px; height: auto"
             >
         {% else %}
-            <div class="small text-secondary">—</div>
+            <div class="text-sm text-content-secondary">&mdash;</div>
         {% endif %}
     </div>
 {% endmacro %}
@@ -26,7 +26,7 @@
     {% set oldUrl = urlMeta.old ?? '' %}
     {% set newUrl = urlMeta.new ?? currentUrl %}
     {{ I.image_row('Old', oldUrl) }}
-    <div class="text-muted my-1">→</div>
+    <div class="text-content-secondary my-1">&rarr;</div>
     {{ I.image_row('New', newUrl) }}
 {% else %}
     {{ I.image_row('', currentUrl) }}

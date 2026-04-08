@@ -14,15 +14,15 @@
         </twig:Xutim:Admin:Button>
 
         <div class="navbar-nav flex-row order-md-last">
-            <div class="d-flex align-items-center me-2">
+            <div class="flex align-items-center mr-2">
                     {{ publicLinkBlock|raw }}
                     <a href="{{ admin_path('admin_article_list', {searchTerm: ''}) }}" class="nav-link px-2" title="Search">
-                        <twig:ux:icon name="tabler:search" class="icon"/>
+                        <twig:ux:icon name="ph:magnifying-glass" class="icon"/>
                     </a>
-                    <a href="{{ admin_path('admin_notification_list') }}" class="nav-link px-2 d-flex align-items-center" title="Notifications">
-                        <twig:ux:icon name="tabler:bell" class="icon"/>
+                    <a href="{{ admin_path('admin_notification_list') }}" class="nav-link px-2 flex align-items-center" title="Notifications">
+                        <twig:ux:icon name="ph:bell" class="icon"/>
                         {% if notification_center.unreadCount > 0 %}
-                            <span class="badge bg-danger text-white ms-1" style="font-size: .6rem; min-width: .9rem; height: .9rem; padding: 0; line-height: .9rem; border-radius: 50%;">
+                            <span class="badge bg-danger text-white ml-1" style="font-size: .6rem; min-width: .9rem; height: .9rem; padding: 0; line-height: .9rem; border-radius: 50%;">
                                 {{ notification_center.unreadCount > 99 ? '99+' : notification_center.unreadCount }}
                             </span>
                         {% endif %}
@@ -31,7 +31,7 @@
             <div class="nav-item dropdown">
                 <a
                     href="#"
-                    class="nav-link d-flex lh-1 text-reset p-0"
+                    class="nav-link flex lh-1 text-reset p-0"
                     data-bs-toggle="dropdown"
                     aria-label="Open user menu"
                 >
@@ -39,9 +39,9 @@
                         class="avatar avatar-sm"
                         style="background-image: url({{ app.user.avatar }})"
                     ></span>
-                    <div class="d-none d-xl-block ps-2">
+                    <div class="hidden d-xl-block ps-2">
                         <div>{{ app.user.name }}</div>
-                        <div class="mt-1 small text-muted">
+                        <div class="mt-1 text-sm text-content-secondary">
                             {{ app.user.userIdentifier }}
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                     <div class="dropdown-divider"></div>
                     <a href="{{ admin_path('admin_logout') }}" class="dropdown-item">
                         <span class="me-2">
-                            <twig:Xutim:Admin:Icon name="logout" />
+                            <twig:ux:icon name="ph:sign-out" class="icon" />
                         </span>
                         Logout
                     </a>
@@ -72,8 +72,8 @@
                     class="nav-item{{ app.current_route == 'admin_homepage' ? ' active' : '' }}"
                 >
                     <a class="nav-link" href="{{ admin_path('admin_homepage') }}">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <twig:Xutim:Admin:Icon name="home" />
+                        <span class="nav-link-icon md:hidden d-lg-inline-block">
+                            <twig:ux:icon name="ph:house" class="icon" />
                         </span>
                         <span class="nav-link-title">
                             {{ 'dashboard'|trans({}, 'admin')|capitalize }}
@@ -84,8 +84,8 @@
                     class="nav-item{{ app.current_route starts with 'admin_page' ? ' active' : '' }}"
                 >
                     <a class="nav-link" href="{{ admin_path('admin_page_list') }}">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <twig:Xutim:Admin:Icon name="folder" />
+                        <span class="nav-link-icon md:hidden d-lg-inline-block">
+                            <twig:ux:icon name="ph:folder-simple" class="icon" />
                         </span>
                         <span class="nav-link-title">
                             {{ 'pages'|trans({}, 'admin')|capitalize }}
@@ -99,8 +99,8 @@
                         class="nav-link"
                         href="{{ admin_path('admin_article_list', {searchTerm: ''}) }}"
                     >
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <twig:Xutim:Admin:Icon name="article" />
+                        <span class="nav-link-icon md:hidden d-lg-inline-block">
+                            <twig:ux:icon name="ph:newspaper" class="icon" />
                         </span>
                         <span class="nav-link-title">
                             {{ 'articles'|trans({}, 'admin')|capitalize }}
@@ -115,8 +115,8 @@
                         class="nav-link"
                         href="{{ admin_path('admin_tag_list', {searchTerm: ''}) }}"
                     >
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <twig:Xutim:Admin:Icon name="tag" />
+                        <span class="nav-link-icon md:hidden d-lg-inline-block">
+                            <twig:ux:icon name="ph:tag" class="icon" />
                         </span>
                         <span class="nav-link-title">
                             {{ 'tags'|trans({}, 'admin')|capitalize }}
@@ -131,8 +131,8 @@
                         class="nav-link"
                         href="{{ admin_path('admin_snippet_list', {searchTerm: ''}) }}"
                     >
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <twig:Xutim:Admin:Icon name="text" />
+                        <span class="nav-link-icon md:hidden d-lg-inline-block">
+                            <twig:ux:icon name="ph:text-aa" class="icon" />
                         </span>
                         <span class="nav-link-title">
                             {{ 'snippets'|trans({}, 'admin')|capitalize }}
@@ -147,8 +147,8 @@
                         class="nav-link"
                         href="{{ admin_path('admin_media_list', {searchTerm: ''}) }}"
                     >
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <twig:Xutim:Admin:Icon name="photo" />
+                        <span class="nav-link-icon md:hidden d-lg-inline-block">
+                            <twig:ux:icon name="ph:image" class="icon" />
                         </span>
                         <span class="nav-link-title">
                             {{ 'media'|trans({}, 'admin')|capitalize }}
@@ -165,9 +165,9 @@
                             href="{{ admin_path('admin_block_list', {searchTerm: ''}) }}"
                         >
                             <span
-                                class="nav-link-icon d-md-none d-lg-inline-block"
+                                class="nav-link-icon md:hidden d-lg-inline-block"
                             >
-                                <twig:Xutim:Admin:Icon name="block" />
+                                <twig:ux:icon name="ph:squares-four" class="icon" />
                             </span>
                             <span class="nav-link-title">
                                 {{ 'blocks'|trans({}, 'admin')|capitalize }}
@@ -185,9 +185,9 @@
                             href="{{ admin_path('admin_settings_site') }}"
                         >
                             <span
-                                class="nav-link-icon d-md-none d-lg-inline-block"
+                                class="nav-link-icon md:hidden d-lg-inline-block"
                             >
-                                <twig:Xutim:Admin:Icon name="settings" />
+                                <twig:ux:icon name="ph:gear" class="icon" />
                             </span>
                             <span class="nav-link-title">
                                 {{ 'settings'|trans({}, 'admin')|capitalize }}

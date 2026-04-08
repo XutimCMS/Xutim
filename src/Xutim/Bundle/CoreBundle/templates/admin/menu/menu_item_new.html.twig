@@ -6,8 +6,8 @@
 %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-body">
+    <div class="rounded-xl border border-border">
+        <div class="p-4">
             {{
                 form_start(form, {attr: {
                 id: form.vars.id,
@@ -17,46 +17,46 @@
             }}
             {% if item is not defined or item is same as(null) %}
                 <div class="mb-3">
-                    <label class="form-label">
+                    <label class="text-sm font-medium text-content">
                         {{ 'Select a type of a menu item'|trans({}, 'admin') }}
                     </label>
-                    <div class="form-selectgroup">
-                        <label class="form-selectgroup-item">
+                    <div class="inline-flex rounded-lg border border-border mt-2">
+                        <label class="flex items-center gap-1 px-3 py-2 cursor-pointer border-r border-border text-sm has-[:checked]:bg-accent/10 has-[:checked]:text-accent rounded-l-lg">
                             <input
                                 type="radio"
                                 name="menu-item-type"
                                 value="page"
-                                class="form-selectgroup-input"
+                                class="sr-only"
                                 data-action="click->menu-item#showPage"
                             />
-                            <span class="form-selectgroup-label">
-                                <twig:Xutim:Admin:Icon name="folder" />
+                            <span class="flex items-center gap-1">
+                                <twig:ux:icon name="ph:folder-simple" class="icon" />
                                 {{ 'page'|trans({}, 'admin')|capitalize }}
                             </span>
                         </label>
-                        <label class="form-selectgroup-item">
+                        <label class="flex items-center gap-1 px-3 py-2 cursor-pointer border-r border-border text-sm has-[:checked]:bg-accent/10 has-[:checked]:text-accent">
                             <input
                                 type="radio"
                                 name="menu-item-type"
                                 value="article"
-                                class="form-selectgroup-input"
+                                class="sr-only"
                                 data-action="click->menu-item#showArticle"
                             />
-                            <span class="form-selectgroup-label">
-                                <twig:Xutim:Admin:Icon name="article" />
+                            <span class="flex items-center gap-1">
+                                <twig:ux:icon name="ph:newspaper" class="icon" />
                                 {{ 'article'|trans({}, 'admin')|capitalize }}
                             </span>
                         </label>
-                        <label class="form-selectgroup-item">
+                        <label class="flex items-center gap-1 px-3 py-2 cursor-pointer text-sm has-[:checked]:bg-accent/10 has-[:checked]:text-accent rounded-r-lg">
                             <input
                                 type="radio"
                                 name="menu-item-type"
                                 value="tag"
-                                class="form-selectgroup-input"
+                                class="sr-only"
                                 data-action="click->menu-item#showTag"
                             />
-                            <span class="form-selectgroup-label">
-                                <twig:Xutim:Admin:Icon name="tag" />
+                            <span class="flex items-center gap-1">
+                                <twig:ux:icon name="ph:tag" class="icon" />
                                 {{ 'tag'|trans({}, 'admin')|capitalize }}
                             </span>
                         </label>
@@ -67,35 +67,29 @@
             <div data-menu-item-target="pageForm">
                 {{ form_row(form.page) }}
                 <div class="mb-3" data-menu-item-target="overwriteCheckbox">
-                    <div class="form-check">
+                    <label class="flex items-center gap-2 cursor-pointer">
                         <input
                             type="checkbox"
                             id="menu-item-overwrite"
-                            class="form-check-input"
+                            class="rounded border-border text-accent focus:ring-accent"
                             value="0"
                             data-action="click->menu-item#togglePageOverwriteLink"
                         />
-                        <label
-                            class="form-check-label"
-                            for="menu-item-overwrite"
-                        >
+                        <span class="text-sm text-content">
                             {{ 'Overwrite link'|trans({}, 'admin') }}
-                        </label>
-                    </div>
+                        </span>
+                    </label>
                 </div>
                 <div
-                    class="row align-items-start mb-3"
+                    class="grid grid-cols-2 items-start gap-4 mb-3"
                     id="page-overwrite-link-form"
                     data-menu-item-target="pageOverwriteLinkForm"
                 >
-                    {{ form_row(form.pageLink, {row_attr: {class: 'col'}}) }}
+                    {{ form_row(form.pageLink, {row_attr: {class: ''}}) }}
                     {{
-                        form_row(form.anchorSnippet, {row_attr: {class: 'col'}})
+                        form_row(form.anchorSnippet, {row_attr: {class: ''}})
                     }}
                 </div>
-                {#
-                <div class="mb-3">{{ form_row(form.hasLink) }}</div>
-                #}
             </div>
             <div data-menu-item-target="articleForm">
                 {{ form_row(form.article) }}

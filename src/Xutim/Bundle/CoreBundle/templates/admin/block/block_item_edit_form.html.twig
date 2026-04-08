@@ -5,11 +5,11 @@
 {% block pageTitle %}{{ title }}{% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-header">
-            <h3>{{ title }}</h3>
+    <div class="rounded-xl border border-border">
+        <div class="px-4 py-3 border-b border-border">
+            <h3 class="text-base font-semibold text-content">{{ title }}</h3>
         </div>
-        <div class="card-body">
+        <div class="p-4">
             {{ include('@XutimCore/admin/block/_block_form.html.twig') }}
         </div>
     </div>

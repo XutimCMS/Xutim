@@ -4,14 +4,14 @@
     data-sortable-index-value="{{ item.position }}"
     id="block-item-{{ item.id }}"
 >
-    <td style="cursor: grab;" class="draggable-handle w-6">
-        <twig:ux:icon name="tabler:grip-vertical" />
+    <td style="cursor: grab;" class="draggable-handle w-24">
+        <twig:ux:icon name="ph:dots-six-vertical" />
     </td>
     <td>
-        <div class="d-flex justify-content-start">
+        <div class="flex justify-start">
             {% if item.hasArticle %}
                 <twig:ux:icon
-                    name="tabler:news"
+                    name="ph:newspaper"
                     title="{{ 'article'|trans({}, 'admin') }}"
                     data-controller="tooltip"
                     class="w-4"
@@ -19,7 +19,7 @@
             {% endif %}
             {% if item.hasPage %}
                 <twig:ux:icon
-                    name="tabler:folder"
+                    name="ph:folder-simple"
                     title="{{ 'page'|trans({}, 'admin') }}"
                     data-controller="tooltip"
                     class="w-4"
@@ -27,7 +27,7 @@
             {% endif %}
             {% if item.hasSnippet() %}
                 <twig:ux:icon
-                    name="tabler:abc"
+                    name="ph:text-aa"
                     title="{{ 'snippet'|trans({}, 'admin') }}"
                     data-controller="tooltip"
                     class="w-4"
@@ -36,14 +36,14 @@
             {% if item.hasFile() %}
             {% if item.file.isImage() %}
                 <twig:ux:icon
-                    name="tabler:photo"
+                    name="ph:image"
                     title="{{ 'image'|trans({}, 'admin') }}"
                     data-controller="tooltip"
                     class="w-4"
                 />
             {% else %}
                 <twig:ux:icon
-                    name="tabler:file"
+                    name="ph:file"
                     title="{{ 'file'|trans({}, 'admin') }}"
                     data-controller="tooltip"
                     class="w-4"
@@ -53,7 +53,7 @@
             {% endif %}
             {% if item.hasTag() %}
                 <twig:ux:icon
-                    name="tabler:tag"
+                    name="ph:tag"
                     title="{{ 'tag'|trans({}, 'admin') }}"
                     data-controller="tooltip"
                     class="w-4"
@@ -61,7 +61,7 @@
             {% endif %}
             {% if item.hasMediaFolder() %}
                 <twig:ux:icon
-                    name="tabler:folders"
+                    name="ph:folders"
                     title="{{ 'Media folder'|trans({}, 'admin') }}"
                     data-controller="tooltip"
                     class="w-4"
@@ -70,16 +70,16 @@
         </div>
     </td>
     {% if block.blockItems|filter(item => item.file) is not empty %}
-        <td class="w-6">
+        <td class="w-24">
             {% if item.file %}
                 <button
                     data-lightbox-url-value="{{ uploaded_asset(item.file.originalPath) }}"
                     data-controller="lightbox"
                     data-action="click->lightbox#open"
-                    class="btn-link"
+                    class="text-accent hover:text-accent/80"
                 >
                     <span
-                        class="avatar me-2"
+                        class="inline-block w-8 h-8 rounded-full bg-cover bg-center mr-2"
                         style="background-image: url({{ media_url(item.file, 'thumb_small') }})"
                     ></span>
                 </button>
@@ -148,16 +148,16 @@
             data-turbo-frame="modal"
             href="{{ admin_path('admin_block_edit_item', {id: item.id}) }}"
         >
-            <twig:Xutim:Admin:Icon name="edit" />
+            <twig:ux:icon name="ph:pencil-simple" class="icon" />
         </twig:Xutim:Admin:Button>
 
         <twig:Xutim:Admin:ModalDialog
-            class="btn-link text-danger px-0"
+            class="text-red-600 hover:text-red-700 px-0"
             action="{{ admin_path('admin_block_remove_item', {id: item.id}) }}"
             confirmActionLabel="{{ 'action.remove'|trans({}, 'admin')|capitalize }}"
             modalDialogColor="danger"
         >
-            <twig:Xutim:Admin:Icon name="x" />
+            <twig:ux:icon name="ph:x" class="icon" />
         </twig:Xutim:Admin:ModalDialog>
     </td>
 </tr>

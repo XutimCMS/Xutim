@@ -1,26 +1,32 @@
-<div {{
-        attributes.defaults({
-            class: 'bg-white border-start border-show',
-            style: 'width: 300px; top: 112px;',
-            tabindex: '-1',
-            id: 'local-sidebar',
-            'aria-modal': 'false',
-            role: 'dialog',
-            'data-controller': 'sidebar',
-            'data-action': 'scroll@window->sidebar#updateSidebarPosition',
-        })
-    }}>
-    <div class="d-flex justify-content-between align-items-center ps-2 pe-3 pt-2 pb-0 border-bottom">
-        {% block header %}{% endblock %}
+<div data-controller="sidebar" data-sidebar-open-class="article-sidebar-open">
+    <div data-sidebar-target="backdrop" data-action="click->sidebar#toggle" class="fixed inset-0 z-40 bg-black/50 xl:hidden hidden"></div>
 
-        <twig:Xutim:Admin:Button
-            variant="link"
-            type="button"
-            class="btn-close text-reset"
-            data-action="click->sidebar#close"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-        ></twig:Xutim:Admin:Button>
-    </div>
-    <div class="p-0">{% block content %}{% endblock %}</div>
+    <button data-sidebar-target="openTab" data-action="click->sidebar#toggle" class="fixed right-0 top-1/2 z-40 -translate-y-1/2 hidden rounded-l-lg border border-r-0 border-border bg-surface px-1 py-3 shadow-md hover:bg-surface-raised transition-colors cursor-pointer" title="{{ 'Open sidebar'|trans({}, 'admin') }}">
+        <twig:ux:icon name="ph:caret-left" class="h-3.5 w-3.5 text-content-tertiary" />
+    </button>
+
+    <button data-sidebar-target="closeTab" data-action="click->sidebar#toggle" class="fixed top-1/2 z-[51] -translate-y-1/2 hidden rounded-l-lg border border-r-0 border-border bg-surface px-1 py-3 shadow-md hover:bg-surface-raised transition-colors cursor-pointer right-72" title="{{ 'Close sidebar'|trans({}, 'admin') }}">
+        <twig:ux:icon name="ph:caret-right" class="h-3.5 w-3.5 text-content-tertiary" />
+    </button>
+
+    <aside {{
+            attributes.defaults({
+                class: 'fixed inset-y-0 right-0 z-50 flex w-72 translate-x-full flex-col border-l border-border bg-surface transition-transform duration-200',
+                tabindex: '-1',
+                'aria-modal': 'false',
+                role: 'dialog',
+            })
+        }}
+        data-sidebar-target="panel"
+    >
+        <div class="flex items-center justify-between border-b border-border shrink-0">
+            {% block header %}{% endblock %}
+            <button type="button" class="px-3 py-2.5 text-content-tertiary hover:text-content xl:hidden cursor-pointer" data-action="click->sidebar#toggle" aria-label="Close">
+                <twig:ux:icon name="ph:x" class="h-4 w-4" />
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto">
+            {% block content %}{% endblock %}
+        </div>
+    </aside>
 </div>

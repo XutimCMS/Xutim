@@ -14,19 +14,19 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row row-cards">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">{{ 'Visitors by Country'|trans({}, 'admin') }}</h3>
+    <div class="grid grid-cols-1 gap-4">
+        <div class="col-span-full">
+            <div class="rounded-xl border border-border">
+                <div class="border-b border-border px-4 py-3">
+                    <h3 class="text-base font-semibold">{{ 'Visitors by Country'|trans({}, 'admin') }}</h3>
                 </div>
-                <div class="table-responsive">
+                <div class="overflow-x-auto">
                     {% set maxCountryCount = countries|map(c => c.visits)|sort|last|default(1) %}
-                    <table class="table table-vcenter card-table table-borderless">
+                    <table class="w-full text-[13px]">
                         <thead>
                             <tr>
-                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Country'|trans({}, 'admin') }}</th>
-                                <th class="text-uppercase text-secondary text-xxs fw-bold opacity-7">{{ 'Visitors'|trans({}, 'admin') }}</th>
+                                <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Country'|trans({}, 'admin') }}</th>
+                                <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Visitors'|trans({}, 'admin') }}</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -34,16 +34,16 @@
                             {% for country in countries %}
                                 <tr>
                                     <td>{{ country.country|country_name|default(country.country ?: 'Unknown') }}</td>
-                                    <td class="text-secondary">{{ country.visits|number_format }}</td>
-                                    <td class="w-50">
-                                        <div class="progress progress-xs">
-                                            <div class="progress-bar bg-warning" style="width: {{ (country.visits / maxCountryCount * 100)|round }}%"></div>
+                                    <td class="text-content-secondary">{{ country.visits|number_format }}</td>
+                                    <td class="w-1/2">
+                                        <div class="h-1 w-full rounded-full bg-surface-raised overflow-hidden">
+                                            <div class="h-full rounded-full bg-amber-500" style="width: {{ (country.visits / maxCountryCount * 100)|round }}%"></div>
                                         </div>
                                     </td>
                                 </tr>
                             {% else %}
                                 <tr>
-                                    <td colspan="3" class="text-muted">{{ 'No data'|trans({}, 'admin') }}</td>
+                                    <td colspan="3" class="text-content-secondary">{{ 'No data'|trans({}, 'admin') }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

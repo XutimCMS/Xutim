@@ -1,33 +1,33 @@
 <turbo-frame id="sidebar-history">
-    <div class="list-group list-group-flush">
+    <div class="divide-y divide-border">
         {% set latestEvent = events|first %}
         {% for event in events|slice(0, 10) %}
             {% set userData = usersData[event.userIdentifier]|default({}) %}
             <a
                 href="{{ admin_path('admin_content_translation_revisions', {id: translationId, oldId: event.id, newId: latestEvent.id}) }}"
-                class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2"
+                class="flex items-center gap-2 py-2 px-1 hover:bg-surface-raised"
                 data-turbo-frame="_top"
             >
                 <span
-                    class="avatar avatar-xs"
+                    class="w-6 h-6 rounded-full bg-surface-raised bg-cover bg-center shrink-0"
                     {% if userData.avatar|default('') %}
                     style="background-image: url({{ userData.avatar }})"
                     {% endif %}
                 ></span>
-                <div class="flex-fill">
-                    <div class="small fw-semibold">
+                <div class="flex-1 min-w-0">
+                    <div class="text-sm font-semibold">
                         {{ event.recordedAt|date('d M H:i') }}
                     </div>
-                    <div class="small text-secondary">
+                    <div class="text-sm text-content-secondary">
                         {% if not is_content_event(event) %}
-                            <span class="badge bg-muted-lt">{{ revision_event_label(event) }}</span>
+                            <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-surface-raised text-content-secondary">{{ revision_event_label(event) }}</span>
                         {% endif %}
                         {{ userData.name|default(event.userIdentifier) }}
                     </div>
                 </div>
             </a>
         {% else %}
-            <div class="p-3 text-muted small">
+            <div class="p-3 text-content-secondary text-sm">
                 {{ 'No revision history'|trans({}, 'admin') }}
             </div>
         {% endfor %}
@@ -35,7 +35,7 @@
     {% if events|length > 10 %}
         <a
             href="{{ admin_path('admin_content_translation_revisions', {id: translationId}) }}"
-            class="small d-block text-center py-2 border-top"
+            class="text-sm block text-center py-2 border-t border-border"
             data-turbo-frame="_top"
         >
             {{ 'View all {count} revisions'|trans({'{count}': events|length}, 'admin') }}

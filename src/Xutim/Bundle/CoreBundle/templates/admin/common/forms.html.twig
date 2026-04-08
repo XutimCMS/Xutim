@@ -1,17 +1,17 @@
 {% macro colorInput(name, checkedValue) %}
-    <div class="row g-2">
+    <div class="flex flex-wrap gap-2">
         {% for color in constant('Xutim\\CoreBundle\\Entity\\Color::COLORS') %}
-            <div class="col-auto">
-                <label class="form-colorinput">
+            <div>
+                <label class="relative inline-flex cursor-pointer">
                     <input
                         name="{{ name }}"
                         type="radio"
                         value="{{ color }}"
-                        class="form-colorinput-input"
+                        class="sr-only peer"
                         {{ checkedValue == color ? ' checked="checked"' : '' }}
                     />
                     <span
-                        class="form-colorinput-color"
+                        class="w-6 h-6 rounded-full border-2 border-transparent peer-checked:border-content peer-checked:ring-2 peer-checked:ring-accent/50"
                         style="background-color: #{{ color }}"
                     ></span>
                 </label>

@@ -22,10 +22,10 @@
 >
     {{ '30 days'|trans({}, 'admin') }}
 </twig:Xutim:Admin:Button>
-<li class="nav-item dropdown">
+<li class="relative">
     <button
         type="button"
-        class="nav-link dropdown-toggle {{ preset == 'custom' ? 'active' : '' }}"
+        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-surface-raised {{ preset == 'custom' ? 'active' : '' }}"
         data-bs-toggle="dropdown"
     >
         {% if preset == 'custom' %}
@@ -34,7 +34,7 @@
             {{ 'Custom'|trans({}, 'admin') }}
         {% endif %}
     </button>
-    <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 280px;">
+    <div class="absolute right-0 top-full mt-1 rounded-xl border border-border bg-surface shadow-lg p-3 z-50" style="min-width: 280px;">
         <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.query.all|filter((v, k) => k not in ['preset', 'from', 'to'])) }}">
             <input type="hidden" name="preset" value="custom">
             {% for key, value in app.request.query.all|filter((v, k) => k not in ['preset', 'from', 'to']) %}
@@ -48,7 +48,7 @@
                 <label class="form-label">{{ 'To'|trans({}, 'admin') }}</label>
                 <input type="date" name="to" class="form-control" value="{{ range.to|date('Y-m-d') }}">
             </div>
-            <button type="submit" class="btn btn-primary w-100">{{ 'Apply'|trans({}, 'admin') }}</button>
+            <button type="submit" class="inline-flex items-center justify-center rounded-md bg-accent text-white px-3 py-1.5 text-[13px] font-medium hover:bg-accent/90 w-full">{{ 'Apply'|trans({}, 'admin') }}</button>
         </form>
     </div>
 </li>

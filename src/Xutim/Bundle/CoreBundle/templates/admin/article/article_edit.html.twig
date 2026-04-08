@@ -1,14 +1,7 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 
-{% block title %}
-    {{ article.defaultTranslation.title }}
-{% endblock %}
-
-{% block pageTitle %}
-    <twig:Xutim:Admin:Icon name="article" />
-    {{ article.defaultTranslation.title }}
-{% endblock %}
+{% block title %}{{ article.defaultTranslation.title }}{% endblock %}
 
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:BreadcrumbsArticle :article="article" />
@@ -18,94 +11,77 @@
     <twig:Xutim:Admin:PublicPageLink :contentTranslation="translation" />
 {% endblock %}
 
+{% block pageTitle %}
+    {{ article.defaultTranslation.title }}
+    {% if translation and translation.locale != article.defaultTranslation.locale %}
+        <span class="block text-[13px] font-normal text-content-tertiary">{{ translation.title }}</span>
+    {% endif %}
+{% endblock %}
+
 {% block pageMenu %}
     {% if translation is not same as(null) %}
-        <twig:Xutim:Admin:Button
-            tag="a"
-            variant="nav"
-            href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
-        >
-            <twig:Xutim:Admin:Icon name="history" class="me-1" />
+        <twig:Xutim:Admin:Button tag="a" variant="secondary" href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}">
+            <twig:ux:icon name="ph:clock-counter-clockwise" width="14" height="14" />
             {{ 'History'|trans({}, 'admin') }}
         </twig:Xutim:Admin:Button>
     {% endif %}
-
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ admin_path('admin_article_show', {id: article.id}) }}"
-    >
-        <twig:Xutim:Admin:Icon name="search" class="me-1" />
-        Show
+    <twig:Xutim:Admin:Button tag="a" variant="secondary" href="{{ admin_path('admin_article_show', {id: article.id}) }}">
+        <twig:ux:icon name="ph:eye" width="14" height="14" />
+        Preview
     </twig:Xutim:Admin:Button>
-
-    <twig:Xutim:Admin:Button
-        tag="button"
-        id="sidebar-toggle"
-        variant="nav"
-    >
-        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+    <twig:Xutim:Admin:Button tag="button" variant="secondary" onclick="window.dispatchEvent(new Event('sidebar:toggle'))">
+        <twig:ux:icon name="ph:sidebar-simple" width="14" height="14" />
         Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}
 
 {% block languageBar %}
-    <twig:Xutim:Admin:LanguageContextBar
-        :entity="article"
-        class="d-flex justify-content-end align-items-center mb-2"
-    />
+    <twig:Xutim:Admin:LanguageContextBar :entity="article" />
 {% endblock %}
 
 {% block sidebar %}
     <twig:Xutim:Admin:Sidebar :title="">
         <twig:block name="header">
             <twig:Xutim:Admin:SidebarTabs>
-                <twig:Xutim:Admin:SidebarTab target="general-tab">
-                    <twig:Xutim:Admin:Button
-                        variant="tab"
-                        type="a"
-                        class="active"
-                        data-bs-toggle="tab"
+                <twig:Xutim:Admin:SidebarTab>
+                    <button
+                        class="w-full px-3 py-2.5 text-[13px] font-medium border-b-2 border-accent cursor-pointer"
+                        data-action="click->tab#switch"
+                        data-tab-target="btn"
+                        data-tab-target="#general-tab"
                         href="#general-tab"
-                        role="tab"
-                        aria-controls="general-tab"
-                        aria-selected="true"
                     >
                         {{ 'General'|trans({}, 'admin') }}
-                    </twig:Xutim:Admin:Button>
+                    </button>
                 </twig:Xutim:Admin:SidebarTab>
                 {% if translation is not same as(null) %}
-                <twig:Xutim:Admin:SidebarTab target="history-tab">
-                    <twig:Xutim:Admin:Button
-                        variant="tab"
-                        type="a"
-                        data-bs-toggle="tab"
+                <twig:Xutim:Admin:SidebarTab>
+                    <button
+                        class="w-full px-3 py-2.5 text-[13px] text-content-secondary cursor-pointer"
+                        data-action="click->tab#switch"
+                        data-tab-target="btn"
+                        data-tab-target="#history-tab"
                         href="#history-tab"
-                        role="tab"
-                        aria-controls="history-tab"
-                        aria-selected="false"
                     >
                         {{ 'History'|trans({}, 'admin') }}
-                    </twig:Xutim:Admin:Button>
+                    </button>
                 </twig:Xutim:Admin:SidebarTab>
                 {% endif %}
             </twig:Xutim:Admin:SidebarTabs>
         </twig:block>
         <twig:block name="content">
-            <div class="tab-content">
-                <div id="general-tab" class="tab-pane active" role="tabpanel">
-                    {{
-                        include('@XutimCore/admin/article/_article_sidebar.html.twig', {referenceHasChanged: referenceHasChanged})
-                    }}
+            <div data-controller="tab">
+                <div id="general-tab" data-tab-target="panel">
+                    {{ include('@XutimCore/admin/article/_article_sidebar.html.twig', {referenceHasChanged: referenceHasChanged}) }}
                 </div>
                 {% if translation is not same as(null) %}
-                <div id="history-tab" class="tab-pane" role="tabpanel">
+                <div id="history-tab" class="hidden" data-tab-target="panel">
                     <turbo-frame
                         id="sidebar-history"
                         src="{{ admin_path('admin_content_translation_sidebar_history', {id: translation.id}) }}"
                         loading="lazy"
                     >
-                        <div class="p-3 text-muted small">{{ 'Loading...'|trans({}, 'admin') }}</div>
+                        <div class="p-3 text-content-secondary text-sm">{{ 'Loading...'|trans({}, 'admin') }}</div>
                     </turbo-frame>
                 </div>
                 {% endif %}
@@ -116,246 +92,179 @@
 
 {% block body %}
     {% if localeBlocked|default(false) %}
-        <div class="alert alert-info mb-3">
+        <div class="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400 mb-3">
             {{ 'This article is not translatable into the selected locale.'|trans({}, 'admin') }}
         </div>
     {% else %}
-    {% if translation is not null and translation.published %}
-    <div data-controller="editing-presence"
-         data-editing-presence-heartbeat-url-value="{{ admin_path('admin_content_translation_heartbeat', {id: translation.id}) }}"
-         data-editing-presence-stop-url-value="{{ admin_path('admin_content_translation_stop_editing', {id: translation.id}) }}"
-         data-editing-presence-mercure-topic-value="{{ mercure('content-translation/' ~ translation.id ~ '/presence') }}"
-         data-editing-presence-current-user-id-value="{{ app.user.id }}">
-        {{ include('@XutimCore/admin/content_translation/_editing_presence_banner.html.twig') }}
-        {{ include('@XutimCore/admin/content_translation/_draft_changed_banner.html.twig') }}
-    </div>
-    {% endif %}
-    {{ include('@XutimCore/admin/content_draft/_draft_banner.html.twig') }}
-    {% if not referenceExists %}
-    <div class="alert alert-warning mb-3">
-        {{ 'Reference translation ({locale}) is missing for this content.'|trans({'{locale}': referenceLocale|upper}, 'admin') }}
-    </div>
-    {% endif %}
-    <div
-        data-controller="split-view"
-        data-split-view-target="root"
-        data-split-view-reference-url-value="{{ referenceTranslation ? admin_path('admin_json_content_translation_show', {id: referenceTranslation.id}) : (article.translations|length > 0 ? admin_path('admin_json_content_translation_show', {id: article.translations|first.id}) : '') }}"
-        data-split-view-current-translation-id-value="{{ translation ? translation.id : '' }}"
-        class="card mb-3"
-        data-split-view-block-codes-value="{{ fetch_block_codes()|json_encode }}"
-        data-split-view-tags-value="{{ fetch_tags()|json_encode }}"
-        data-split-view-fetch-files-url-value="{{ admin_path('admin_json_file_list') }}"
-        data-split-view-fetch-all-files-url-value="{{ admin_path('admin_json_file_all_list') }}"
-        data-split-view-fetch-file-url-value="{{ admin_path('admin_json_file_show', {id: ':id:'}) }}"
-        data-split-view-fetch-images-url-value="{{ admin_path('admin_json_image_list') }}"
-        data-split-view-page-ids-url-value="{{ admin_path('admin_json_page_list') }}"
-        data-split-view-article-ids-url-value="{{ admin_path('admin_json_article_list') }}"
-        data-split-view-tag-ids-url-value="{{ admin_path('admin_json_tag_list') }}"
-        data-split-view-fetch-anchor-snippets-url-value="{{ admin_path('admin_json_snippet_list', {type: 'anchor'}) }}"
-        {% if translation %}
-        data-split-view-reference-diff-url-value="{{ admin_path('admin_content_translation_reference_diff', {id: translation.id}) }}"
-        data-split-view-reference-has-changed-value="{{ referenceHasChanged ? 'true' : 'false' }}"
+        {% if translation is not null and translation.published %}
+            <div data-controller="editing-presence"
+                 data-editing-presence-heartbeat-url-value="{{ admin_path('admin_content_translation_heartbeat', {id: translation.id}) }}"
+                 data-editing-presence-stop-url-value="{{ admin_path('admin_content_translation_stop_editing', {id: translation.id}) }}"
+                 data-editing-presence-mercure-topic-value="{{ mercure('content-translation/' ~ translation.id ~ '/presence') }}"
+                 data-editing-presence-current-user-id-value="{{ app.user.id }}">
+                {{ include('@XutimCore/admin/content_translation/_editing_presence_banner.html.twig') }}
+                {{ include('@XutimCore/admin/content_translation/_draft_changed_banner.html.twig') }}
+            </div>
         {% endif %}
-    >
-        <div class="card-header d-flex align-items-center justify-content-between bg-white" style="position: sticky; top: 0; z-index: 10;">
-            <div class="d-flex align-items-center gap-2 text-truncate">
-                {% if translation is not null %}
-                    {{ badges.publicationStatusBadge(translation, '', referenceHasChanged) }}
-                    <span class="fw-bold text-truncate">{{ translation.title }}</span>
-                {% else %}
-                    <span class="fw-bold">{{ 'Translate into'|trans({}, 'admin') }} {{ content_context_language()|upper }}</span>
-                {% endif %}
+        {{ include('@XutimCore/admin/content_draft/_draft_banner.html.twig') }}
+
+        {% if not referenceExists %}
+            <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 mb-3">
+                {{ 'Reference translation ({locale}) is missing for this content.'|trans({'{locale}': referenceLocale|upper}, 'admin') }}
             </div>
+        {% endif %}
 
-            <div class="d-none d-md-flex align-items-center gap-2">
-                <select
-                    class="form-select form-select-sm"
-                    data-split-view-target="localeSelect"
-                    data-action="change->split-view#loadReference"
-                    hidden
-                >
-                    {% for tr in article.translations %}
-                        <option
-                            value="{{ admin_path('admin_json_content_translation_show', {id: tr.id}) }}"
-                            {% if referenceTranslation and referenceTranslation.id == tr.id %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ tr.locale|locale_name }}{%
-                                if referenceTranslation and referenceTranslation.id == tr.id
-                            %}
-                                — {{
-                                    'reference for translations'|trans({}, 'admin')
-                                }}{% endif %}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <twig:Xutim:Admin:Button
-                    tag="button"
-                    variant="default"
-                    class="btn-sm"
-                    data-split-view-target="localeSelectClipboard"
-                    data-action="split-view#copyAllBlocks"
-                    title="{{ 'Copy all blocks'|trans({}, 'admin') }}"
-                    hidden
-                >
-                    <twig:ux:icon name="tabler:clipboard" class="w-3 h-3" />
-                </twig:Xutim:Admin:Button>
-
-                <twig:Xutim:Admin:Button
-                    tag="button"
-                    variant="default"
-                    class="btn-sm"
-                    data-split-view-target="scrollLockBtn"
-                    data-action="split-view#toggleScrollLock"
-                    title="{{ 'Toggle reference scroll'|trans({}, 'admin') }}"
-                    hidden
-                >
-                    <span data-split-view-target="scrollLockIconLocked">
-                        <twig:ux:icon name="tabler:lock" class="w-3 h-3" />
-                    </span>
-                    <span data-split-view-target="scrollLockIconUnlocked" class="d-none">
-                        <twig:ux:icon name="tabler:lock-open" class="w-3 h-3" />
-                    </span>
-                </twig:Xutim:Admin:Button>
-
-                <twig:Xutim:Admin:Button
-                    tag="button"
-                    variant="default"
-                    class="text-dark d-flex align-items-center text-nowrap btn-sm"
-                    data-action="split-view#toggle"
-                    title="{{ 'Toggle split view'|trans({}, 'admin') }}"
-                >
-                    <span
+        <div
+            data-controller="split-view"
+            data-split-view-target="root"
+            data-split-view-reference-url-value="{{ referenceTranslation ? admin_path('admin_json_content_translation_show', {id: referenceTranslation.id}) : (article.translations|length > 0 ? admin_path('admin_json_content_translation_show', {id: article.translations|first.id}) : '') }}"
+            data-split-view-current-translation-id-value="{{ translation ? translation.id : '' }}"
+            data-split-view-block-codes-value="{{ fetch_block_codes()|json_encode }}"
+            data-split-view-tags-value="{{ fetch_tags()|json_encode }}"
+            data-split-view-fetch-files-url-value="{{ admin_path('admin_json_file_list') }}"
+            data-split-view-fetch-all-files-url-value="{{ admin_path('admin_json_file_all_list') }}"
+            data-split-view-fetch-file-url-value="{{ admin_path('admin_json_file_show', {id: ':id:'}) }}"
+            data-split-view-fetch-images-url-value="{{ admin_path('admin_json_image_list') }}"
+            data-split-view-page-ids-url-value="{{ admin_path('admin_json_page_list') }}"
+            data-split-view-article-ids-url-value="{{ admin_path('admin_json_article_list') }}"
+            data-split-view-tag-ids-url-value="{{ admin_path('admin_json_tag_list') }}"
+            data-split-view-fetch-anchor-snippets-url-value="{{ admin_path('admin_json_snippet_list', {type: 'anchor'}) }}"
+            {% if translation %}
+            data-split-view-reference-diff-url-value="{{ admin_path('admin_content_translation_reference_diff', {id: translation.id}) }}"
+            data-split-view-reference-has-changed-value="{{ referenceHasChanged ? 'true' : 'false' }}"
+            {% endif %}
+        >
+            <div class="mb-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    {% if translation is not null %}
+                        {{ badges.publicationStatusBadge(translation, '', referenceHasChanged) }}
+                        <span class="text-[13px] font-medium">{{ translation.title }}</span>
+                    {% else %}
+                        <span class="text-[13px] font-medium">{{ 'Translate into'|trans({}, 'admin') }} {{ content_context_language()|upper }}</span>
+                    {% endif %}
+                </div>
+                <div class="hidden sm:flex items-center gap-1 rounded-md border border-border p-0.5">
+                    <button type="button"
+                        class="rounded px-2.5 py-1 text-[12px] font-medium text-content-secondary hover:bg-surface-raised cursor-pointer"
+                        data-action="split-view#toggle"
                         data-split-view-target="iconOn"
-                        class="d-flex align-items-center"
-                    >
-                        <twig:ux:icon
-                            name="tabler:columns-2"
-                            class="w-3 h-3 me-1"
-                        />
-                        Split view
-                    </span>
-
-                    <span
+                    >{{ 'Split view'|trans({}, 'admin') }}</button>
+                    <button type="button"
+                        class="rounded px-2.5 py-1 text-[12px] font-medium bg-surface-raised cursor-pointer hidden"
+                        data-action="split-view#toggle"
                         data-split-view-target="iconOff"
-                        class="d-none d-flex align-items-center"
-                    >
-                        <twig:ux:icon
-                            name="tabler:columns-1"
-                            class="w-3 h-3 me-1"
-                        />
-                        Single view
-                    </span>
-                </twig:Xutim:Admin:Button>
+                    >{{ 'Single view'|trans({}, 'admin') }}</button>
+                </div>
             </div>
-        </div>
 
-        <div class="card-body p-0">
-            <div class="row g-0" data-split-view-target="container">
-                <div class="col-12 p-4" data-split-view-target="left">
-                    {{
-                        include('@XutimCore/admin/content_translation/_form.html.twig')
-                    }}
-                    {%
-                        if not translation and article.translations|length > 0 and form.slug.vars.value is empty and form.vars.disabled == false
-                    %}
-                        {{
-                            include('@XutimCore/admin/article_translation/new_translation_modal.html.twig', {article: article})
-                        }}
+            <div class="grid gap-4" data-split-view-target="container">
+                <div class="space-y-4" data-split-view-target="left">
+                    <div class="rounded-lg border border-border bg-surface-raised/50 p-0.5 hidden" data-split-view-target="referenceHeader">
+                        <div class="px-3 py-1.5 text-[13px] font-medium">{{ content_context_language()|locale_name }} ({{ content_context_language() }}) — {{ 'translation'|trans({}, 'admin') }}</div>
+                    </div>
+                    {{ include('@XutimCore/admin/content_translation/_form.html.twig') }}
+                    {% if not translation and article.translations|length > 0 and form.slug.vars.value is empty and form.vars.disabled == false %}
+                        {{ include('@XutimCore/admin/article_translation/new_translation_modal.html.twig', {article: article}) }}
                     {% endif %}
                 </div>
 
-                <div
-                    class="col-12 col-lg-6 border-start d-none p-4"
-                    data-split-view-target="right"
-                >
-                    {% if referenceHasChanged %}
-                    <div class="alert alert-warning d-flex align-items-center justify-content-between mb-3"
-                         data-split-view-target="changedBanner">
-                        <div>
-                            <twig:ux:icon name="tabler:alert-triangle" class="w-4 h-4 me-2" />
-                            {{ 'Reference has changed since your last save'|trans({}, 'admin') }}
-                        </div>
-                        <div class="d-flex gap-2">
-                            <twig:Xutim:Admin:Button
-                                tag="button"
-                                variant="warning"
-                                class="btn-sm"
-                                data-split-view-target="diffToggleBtn"
-                                data-action="split-view#toggleDiff"
-                            >
-                                <span data-split-view-target="diffToggleBtnShowText">
-                                    {{ 'Show changes'|trans({}, 'admin') }}
-                                </span>
-                                <span data-split-view-target="diffToggleBtnHideText" class="d-none">
-                                    {{ 'Show current'|trans({}, 'admin') }}
-                                </span>
-                            </twig:Xutim:Admin:Button>
-                            <twig:Xutim:Admin:Button
-                                tag="button"
-                                variant="secondary"
-                                class="btn-sm"
-                                data-split-view-target="markReviewedBtn"
-                                data-action="split-view#markReviewed"
-                                data-split-view-mark-reviewed-url-param="{{ admin_path('admin_content_translation_mark_reference_reviewed', {id: translation.id}) }}"
-                            >
-                                {{ 'Mark as reviewed'|trans({}, 'admin') }}
-                            </twig:Xutim:Admin:Button>
-                        </div>
+                <div class="space-y-4 hidden" data-split-view-target="right">
+                    <div class="rounded-lg border border-border bg-surface-raised/50 p-0.5 flex items-center gap-1">
+                        <select
+                            class="w-full rounded-md bg-transparent px-3 py-1.5 text-[13px] text-content-secondary focus:outline-none cursor-pointer"
+                            data-split-view-target="localeSelect"
+                            data-action="change->split-view#loadReference"
+                        >
+                            {% for tr in article.translations %}
+                                <option
+                                    value="{{ admin_path('admin_json_content_translation_show', {id: tr.id}) }}"
+                                    {{ referenceTranslation and referenceTranslation.id == tr.id ? 'selected' }}
+                                >
+                                    {{ tr.locale|locale_name }}{{ referenceTranslation and referenceTranslation.id == tr.id ? ' — ' ~ 'reference for translations'|trans({}, 'admin') : '' }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="rounded-md p-2 hover:bg-surface-raised cursor-pointer" data-split-view-target="localeSelectClipboard" data-action="split-view#copyAllBlocks" title="{{ 'Copy all blocks'|trans({}, 'admin') }}">
+                            <twig:ux:icon name="ph:clipboard" class="h-3.5 w-3.5 text-content-tertiary" />
+                        </button>
+                        <button type="button" class="rounded-md p-2 hover:bg-surface-raised cursor-pointer" data-split-view-target="scrollLockBtn" data-action="split-view#toggleScrollLock" title="{{ 'Toggle reference scroll'|trans({}, 'admin') }}">
+                            <span data-split-view-target="scrollLockIconLocked"><twig:ux:icon name="ph:lock-simple" class="h-3.5 w-3.5 text-content-tertiary" /></span>
+                            <span data-split-view-target="scrollLockIconUnlocked" class="hidden"><twig:ux:icon name="ph:lock-simple-open" class="h-3.5 w-3.5 text-content-tertiary" /></span>
+                        </button>
                     </div>
-                    {% endif %}
 
-                    <div data-split-view-target="diffContainer" class="d-none"></div>
-
-                    <div data-split-view-target="referenceContainer">
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'Intro title'|trans({}, 'admin') }}</label>
-                            <input type="text" class="form-control" disabled
-                                data-split-view-target="metaPretitle"
-                                value="{{ referenceTranslation ? referenceTranslation.pretitle : '' }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'Title'|trans({}, 'admin') }}</label>
-                            <input type="text" class="form-control" disabled
-                                data-split-view-target="metaTitle"
-                                value="{{ referenceTranslation ? referenceTranslation.title : '' }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'Subtitle'|trans({}, 'admin') }}</label>
-                            <input type="text" class="form-control" disabled
-                                data-split-view-target="metaSubtitle"
-                                value="{{ referenceTranslation ? referenceTranslation.subtitle : '' }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'Slug'|trans({}, 'admin') }}</label>
-                            <input type="text" class="form-control" disabled
-                                data-split-view-target="metaSlug"
-                                value="{{ referenceTranslation ? referenceTranslation.slug : '' }}">
-                        </div>
-
-                        <div class="mb-6">
-                            <label class="form-label">{{ 'Description'|trans({}, 'admin') }}</label>
-                            <textarea class="form-control" disabled
-                                data-split-view-target="metaDescription">{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</textarea>
-                        </div>
-
-                        <div class="pt-6">
-                            <div
-                                id="reference-editor"
-                                data-split-view-target="reference"
-                            >
+                    {% if referenceHasChanged %}
+                        <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 flex items-center justify-between"
+                             data-split-view-target="changedBanner">
+                            <div class="flex items-center">
+                                <twig:ux:icon name="ph:warning" width="16" height="16" class="mr-2" />
+                                {{ 'Reference has changed since your last save'|trans({}, 'admin') }}
+                            </div>
+                            <div class="flex gap-2">
+                                <twig:Xutim:Admin:Button tag="button" variant="warning" data-split-view-target="diffToggleBtn" data-action="split-view#toggleDiff">
+                                    <span data-split-view-target="diffToggleBtnShowText">{{ 'Show changes'|trans({}, 'admin') }}</span>
+                                    <span data-split-view-target="diffToggleBtnHideText" class="hidden">{{ 'Show current'|trans({}, 'admin') }}</span>
+                                </twig:Xutim:Admin:Button>
+                                <twig:Xutim:Admin:Button tag="button" variant="secondary" data-split-view-target="markReviewedBtn" data-action="split-view#markReviewed" data-split-view-mark-reviewed-url-param="{{ admin_path('admin_content_translation_mark_reference_reviewed', {id: translation.id}) }}">
+                                    {{ 'Mark as reviewed'|trans({}, 'admin') }}
+                                </twig:Xutim:Admin:Button>
                             </div>
                         </div>
+                    {% endif %}
+
+                    <div data-split-view-target="diffContainer" class="hidden"></div>
+
+                    <div data-split-view-target="referenceContainer" class="space-y-4">
+                        <div>
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Intro title'|trans({}, 'admin') }}</label>
+                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaPretitle" value="{{ referenceTranslation ? referenceTranslation.pretitle : '' }}">
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Title'|trans({}, 'admin') }}</label>
+                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaTitle" value="{{ referenceTranslation ? referenceTranslation.title : '' }}">
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Subtitle'|trans({}, 'admin') }}</label>
+                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaSubtitle" value="{{ referenceTranslation ? referenceTranslation.subtitle : '' }}">
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Slug'|trans({}, 'admin') }}</label>
+                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaSlug" value="{{ referenceTranslation ? referenceTranslation.slug : '' }}">
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Description'|trans({}, 'admin') }}</label>
+                            <textarea rows="3" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaDescription">{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</textarea>
+                        </div>
+                        <div id="reference-editor" data-split-view-target="reference"></div>
                     </div>
                 </div>
             </div>
 
+            {% if form.vars.disabled == false %}
+            <div class="sticky bottom-0 mt-6 flex items-center gap-2 rounded-lg border border-border bg-surface p-3 shadow-lg z-10" data-controller="dropdown" data-dropdown-placement-value="top-start">
+                <button type="submit" form="{{ form.vars.id }}" class="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black cursor-pointer" data-editorjs-form-target="primaryBtn">
+                    {{ 'Save and publish'|trans({}, 'admin') }}
+                </button>
+                <button type="button" class="inline-flex items-center justify-center rounded-md bg-accent px-2 py-2 text-white hover:bg-accent-hover dark:text-black cursor-pointer" data-action="click->dropdown#toggle">
+                    <twig:ux:icon name="ph:caret-down" class="h-3 w-3" />
+                </button>
+                <div class="hidden z-50 min-w-[180px] rounded-lg border border-border bg-surface shadow-lg py-1" data-dropdown-target="menu">
+                    <button type="button" class="flex w-full items-center px-3 py-1.5 text-[13px] hover:bg-surface-raised transition-colors cursor-pointer"
+                        data-action="click->editorjs-form#chooseSaveAction click->dropdown#hide"
+                        data-editorjs-form-action-param="publish"
+                    >
+                        {{ 'Save and publish'|trans({}, 'admin') }}
+                    </button>
+                    <button type="button" class="flex w-full items-center px-3 py-1.5 text-[13px] hover:bg-surface-raised transition-colors cursor-pointer"
+                        data-action="click->editorjs-form#chooseSaveAction click->dropdown#hide"
+                        data-editorjs-form-action-param="draft"
+                    >
+                        {{ 'Save as draft'|trans({}, 'admin') }}
+                    </button>
+                </div>
+                <div class="ml-auto text-[11px] text-content-tertiary" data-editorjs-form-target="lastSaved"></div>
+            </div>
+            {% endif %}
         </div>
-    </div>
     {% endif %}
 {% endblock %}

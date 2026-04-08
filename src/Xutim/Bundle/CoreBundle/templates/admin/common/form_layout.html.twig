@@ -1,14 +1,19 @@
-{% use 'bootstrap_5_layout.html.twig' %}
+{% use 'tailwind_2_layout.html.twig' %}
+
+{%- block form_row -%}
+    {%- set row_class = 'mb-4' -%}
+    {{- parent() -}}
+{%- endblock form_row -%}
+
+{%- block form_label -%}
+    {%- set label_class = 'block text-[12px] font-medium text-content-secondary mb-1' -%}
+    {{- parent() -}}
+{%- endblock form_label -%}
 
 {%- block form_label_content -%}
     {%- if label is empty -%}
         {%- if label_format is not empty -%}
-            {%
-                set label = label_format|replace({
-                    '%name%': name,
-                    '%id%': id,
-                })
-            %}
+            {% set label = label_format|replace({'%name%': name, '%id%': id}) %}
         {%- else -%}
             {% set label = name|humanize %}
         {%- endif -%}
@@ -27,3 +32,77 @@
         {%- endif -%}
     {%- endif -%}
 {%- endblock form_label_content -%}
+
+{%- block widget_attributes -%}
+    {%- set widget_class = 'w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent' -%}
+    {%- set widget_disabled_class = 'opacity-50 cursor-not-allowed' -%}
+    {%- set widget_errors_class = 'border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-500/50' -%}
+    {{- parent() -}}
+{%- endblock widget_attributes -%}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul class="mt-1">
+            {%- for error in errors -%}
+                <li class="text-[11px] text-red-600 dark:text-red-400">{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{%- block form_help -%}
+    {%- set help_class = 'mt-1 text-[11px] text-content-tertiary' -%}
+    {{- parent() -}}
+{%- endblock form_help -%}
+
+{%- block checkbox_widget -%}
+    {%- set widget_class = 'h-4 w-4 rounded border-border text-accent focus:ring-accent mr-2' -%}
+    {{- parent() -}}
+{%- endblock checkbox_widget -%}
+
+{%- block checkbox_row -%}
+    {%- set row_class = 'mb-4' -%}
+    {%- set widget_attr = {} -%}
+    {%- if help -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~ '_help'}} -%}
+    {%- endif -%}
+    <div{% with {attr: row_attr|merge({class: row_attr.class|default(row_class|default('mb-4'))})} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_errors(form) -}}
+        <label class="inline-flex items-center gap-2 cursor-pointer">
+            {{- form_widget(form, widget_attr) -}}
+            <span class="text-[13px]">{{ form.vars.label is defined and form.vars.label is not null ? (translation_domain is same as(false) ? form.vars.label : form.vars.label|trans({}, translation_domain)) : '' }}</span>
+        </label>
+        {{- form_help(form) -}}
+    </div>
+{%- endblock checkbox_row -%}
+
+{%- block radio_widget -%}
+    {%- set widget_class = 'h-4 w-4 border-border text-accent focus:ring-accent mr-2' -%}
+    {{- parent() -}}
+{%- endblock radio_widget -%}
+
+{%- block choice_widget_collapsed -%}
+    {%- set attr = attr|merge({class: attr.class|default('w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent') ~ (disabled ? ' opacity-50 cursor-not-allowed' : '') ~ (errors|length ? ' border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-500/50' : '')}) -%}
+    {{- parent() -}}
+{%- endblock choice_widget_collapsed -%}
+
+{%- block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }} class="mt-1 space-y-2">
+        {%- for child in form %}
+            <label class="flex items-center gap-2 cursor-pointer">
+                {{- form_widget(child) -}}
+                <span class="text-[13px]">{{ child.vars.label is defined ? (choice_translation_domain is same as(false) ? child.vars.label : child.vars.label|trans({}, choice_translation_domain)) : '' }}</span>
+            </label>
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{%- block textarea_widget -%}
+    {%- set attr = attr|merge({class: attr.class|default('w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent') ~ (disabled ? ' opacity-50 cursor-not-allowed' : '') ~ (errors|length ? ' border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-500/50' : '')}) -%}
+    {{- parent() -}}
+{%- endblock textarea_widget -%}
+
+{%- block button_widget -%}
+    {%- set attr = attr|merge({class: attr.class|default('inline-flex items-center justify-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black transition-colors')}) -%}
+    {{- parent() -}}
+{%- endblock button_widget -%}

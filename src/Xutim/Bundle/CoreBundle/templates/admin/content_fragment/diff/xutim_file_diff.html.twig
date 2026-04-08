@@ -20,8 +20,8 @@
     if op == 'added' or op == 'removed' or meta is not defined or meta is empty
 %}
     <div>
-        <span class="text-muted fw-bold">
-            <twig:ux:icon name="tabler:file" class="w-4 h-4" />
+        <span class="text-content-secondary font-bold">
+            <twig:ux:icon name="ph:file" class="w-4 h-4" />
             {{ 'File:'|trans({}, 'admin') }}
         </span>
         {% if curUrl %}
@@ -29,7 +29,7 @@
                 curName
             }}</a>
         {% else %}
-            <span class="small text-secondary">—</span>
+            <span class="text-sm text-content-secondary">&mdash;</span>
         {% endif %}
     </div>
 {% elseif changed %}
@@ -54,7 +54,7 @@
     {% set newName = newTrans ? newTrans.name|striptags|raw : newId %}
 
     <div>
-        <span class="text-muted fw-bold">{{ 'File'|trans({}, 'admin') }}:</span>
+        <span class="text-content-secondary font-bold">{{ 'File'|trans({}, 'admin') }}:</span>
         <del>
             {% if oldUrl %}
                 <a
@@ -66,7 +66,7 @@
                 {{ oldName }}
             {% endif %}
         </del>
-        &nbsp;→&nbsp;
+        &nbsp;&rarr;&nbsp;
         <ins>
             {% if newUrl %}
                 <a
@@ -81,13 +81,13 @@
     </div>
 {% else %}
     <div>
-        <span class="text-muted fw-bold">{{ 'File'|trans({}, 'admin') }}:</span>
+        <span class="text-content-secondary font-bold">{{ 'File'|trans({}, 'admin') }}:</span>
         {% if curUrl %}
             <a href="{{ curUrl }}" target="_blank" rel="noopener noreferrer">{{
                 curName
             }}</a>
         {% else %}
-            <span class="small text-secondary">—</span>
+            <span class="text-sm text-content-secondary">&mdash;</span>
         {% endif %}
     </div>
 {% endif %}

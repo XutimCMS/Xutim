@@ -2,10 +2,12 @@
 
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
-        <li class="breadcrumb-item">
-            <a href="{{ admin_path('admin_settings_site') }}">Settings</a>
+        <li><span class="text-content-tertiary/50">/</span></li>
+        <li>
+            <a href="{{ admin_path('admin_settings_site') }}" class="hover:text-content transition-colors">Settings</a>
         </li>
-        <li class="breadcrumb-item">Site</li>
+        <li><span class="text-content-tertiary/50">/</span></li>
+        <li class="text-content">Site</li>
     </twig:Xutim:Admin:Breadcrumbs>
 {% endblock %}
 

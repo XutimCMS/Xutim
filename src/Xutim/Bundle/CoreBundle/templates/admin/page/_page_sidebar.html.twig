@@ -38,7 +38,7 @@
                 <twig:Xutim:Admin:SidebarItem>
                     <a
                         href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
-                        class="fw-bold"
+                        class="font-bold"
                     >
                         {{
                             'New changes in reference translation'|trans({}, 'admin')
@@ -116,7 +116,7 @@
                 <twig:Xutim:Admin:SidebarSection>
                     <twig:Xutim:Admin:SidebarItem>
                         <twig:block name="content">
-                            <span class="text-muted small">{{
+                            <span class="text-content-secondary text-sm">{{
                                 'Loading analytics...'|trans({}, 'admin')
                             }}</span>
                         </twig:block>
@@ -129,8 +129,8 @@
             <twig:Xutim:Admin:SidebarSection>
                 <twig:Xutim:Admin:SidebarItem>
                     <twig:block name="content">
-                        <a href="{{ admin_path('admin_page_notify_translators', {id: page.id}) }}" class="btn btn-sm btn-outline-primary w-100" data-turbo-frame="modal">
-                            <twig:Xutim:Admin:Icon name="bell" class="me-1" />
+                        <a href="{{ admin_path('admin_page_notify_translators', {id: page.id}) }}" class="inline-flex items-center justify-center rounded-md border border-accent px-3 py-1.5 text-[13px] font-medium text-accent hover:bg-accent/5 w-full" data-turbo-frame="modal">
+                            <twig:ux:icon name="ph:bell" class="icon mr-1" />
                             {{ 'Notify translators'|trans({}, 'admin') }}
                         </a>
                     </twig:block>
@@ -142,29 +142,29 @@
             <twig:Xutim:Admin:SidebarSection>
                 <twig:Xutim:Admin:SidebarItem>
                     <twig:block name="content">
-                        <div class="btn-group">
+                        <div class="inline-flex rounded-md shadow-sm">
                             {% if translation.status.canBeArchived %}
                                 {%
                                     set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived')
                                 %}
                                 <twig:Xutim:Admin:ModalDialog
-                                    class="btn btn-outline-{{ archiveStatus.colorClass }}"
+                                    class="inline-flex items-center rounded-md border border-current px-3 py-1.5 text-[13px] font-medium text-{{ archiveStatus.colorClass }}-600 hover:bg-{{ archiveStatus.colorClass }}-50 dark:text-{{ archiveStatus.colorClass }}-400 dark:hover:bg-{{ archiveStatus.colorClass }}-500/10"
                                     modalDialogColor="{{ archiveStatus.colorClass }}"
                                     action="{{ admin_path('admin_publication_status_edit', {id: translation.id, status: archiveStatus.value}) }}"
                                     confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
                                 >
-                                    <twig:Xutim:Admin:Icon name="archive" />
+                                    <twig:ux:icon name="ph:archive" class="icon" />
                                     {{ 'archive'|trans({}, 'admin')|capitalize }}
                                 </twig:Xutim:Admin:ModalDialog>
                             {% endif %}
 
                             <twig:Xutim:Admin:ModalDialog
-                                class="btn btn-outline-danger"
+                                class="inline-flex items-center rounded-md border border-red-300 px-3 py-1.5 text-[13px] font-medium text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
                                 modalDialogColor="danger"
                                 action="{{ admin_path('admin_content_translation_delete', {id: translation.id}) }}"
                                 confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
                             >
-                                <twig:Xutim:Admin:Icon name="trash" />
+                                <twig:ux:icon name="ph:trash" class="icon" />
                                 {{ 'delete'|trans({}, 'admin')|capitalize }}
                             </twig:Xutim:Admin:ModalDialog>
                         </div>

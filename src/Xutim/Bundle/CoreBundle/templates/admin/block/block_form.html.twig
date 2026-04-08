@@ -22,14 +22,14 @@
             variant="nav"
             href="{{ admin_path('admin_block_show', {id: block.id}) }}"
         >
-            <twig:Xutim:Admin:Icon name="search" class="me-1" />
+            <twig:ux:icon name="ph:magnifying-glass" class="icon mr-1" />
             {{ 'Show'|trans({}, 'admin') }}
         </twig:Xutim:Admin:Button>
     {% endif %}
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-body">{{ form(form) }}</div>
+    <div class="rounded-xl border border-border">
+        <div class="p-4">{{ form(form) }}</div>
     </div>
 {% endblock %}

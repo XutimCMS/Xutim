@@ -4,8 +4,8 @@
 
 {% block breadcrumbHeader %}
     <twig:Xutim:Admin:Breadcrumbs>
-        <li class="breadcrumb-item"><a href="{{ admin_path('admin_homepage') }}">Dashboard</a></li>
-        <li class="breadcrumb-item">Notifications</li>
+        <li><span class="text-content-tertiary/50">/</span></li>
+        <li class="text-content">Notifications</li>
     </twig:Xutim:Admin:Breadcrumbs>
 {% endblock %}
 
@@ -13,8 +13,7 @@
     {% set unreadCount = notifications|filter(n => not n.read)|length %}
     {% if unreadCount > 0 %}
         <form method="post" action="{{ admin_path('admin_notification_read_all') }}">
-            <twig:Xutim:Admin:Button variant="nav" tag="button" type="submit">
-                <twig:ux:icon name="tabler:checks" class="icon me-1" />
+            <twig:Xutim:Admin:Button variant="secondary" tag="button" type="submit">
                 Mark all read ({{ unreadCount }})
             </twig:Xutim:Admin:Button>
         </form>
@@ -23,32 +22,32 @@
 
 {% block body %}
     {% if notifications is empty %}
-        <div class="card">
-            <div class="empty">
-                <div class="empty-icon">
-                    <twig:ux:icon name="tabler:bell-off" style="width: 3rem; height: 3rem;" class="text-muted" />
+        <div class="rounded-xl border border-border">
+            <div class="flex flex-col items-center justify-center py-12">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-surface-raised mb-3">
+                    <twig:ux:icon name="ph:bell-slash" width="24" height="24" class="text-content-tertiary" />
                 </div>
-                <p class="empty-title">No notifications</p>
-                <p class="empty-subtitle text-secondary">You're all caught up.</p>
+                <p class="text-[13px] font-medium">No notifications</p>
+                <p class="text-[12px] text-content-tertiary mt-1">You're all caught up.</p>
             </div>
         </div>
     {% else %}
         <div data-controller="notification-select">
-            <div class="card mb-3 d-none" data-notification-select-target="actions">
-                <div class="card-body py-2">
-                    <form method="post" action="{{ admin_path('admin_notification_bulk') }}" class="d-flex align-items-center gap-2">
+            <div class="rounded-xl border border-border mb-3 hidden" data-notification-select-target="actions">
+                <div class="px-4 py-2.5">
+                    <form method="post" action="{{ admin_path('admin_notification_bulk') }}" class="flex items-center gap-3">
                         <input type="hidden" name="action" value="" />
-                        <span class="text-secondary">
+                        <span class="text-[13px] text-content-secondary">
                             <span data-notification-select-target="count">0</span> selected
                         </span>
-                        <button type="button" class="btn btn-sm btn-primary" data-action="notification-select#markRead">
-                            <twig:ux:icon name="tabler:mail-opened" class="icon me-1" />
+                        <twig:Xutim:Admin:Button variant="primary" type="button" data-action="notification-select#markRead">
+                            <twig:ux:icon name="ph:envelope-open" width="14" height="14" />
                             Mark read
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-primary" data-action="notification-select#markUnread">
-                            <twig:ux:icon name="tabler:mail" class="icon me-1" />
+                        </twig:Xutim:Admin:Button>
+                        <twig:Xutim:Admin:Button variant="secondary" type="button" data-action="notification-select#markUnread">
+                            <twig:ux:icon name="ph:envelope" width="14" height="14" />
                             Mark unread
-                        </button>
+                        </twig:Xutim:Admin:Button>
                     </form>
                 </div>
             </div>
@@ -57,20 +56,20 @@
             {% set read = notifications|filter(n => n.read) %}
 
             {% if unread is not empty %}
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h3 class="card-title d-flex align-items-center gap-2">
+                <div class="rounded-xl border border-border mb-3">
+                    <div class="border-b border-border px-4 py-3">
+                        <label class="text-sm font-semibold flex items-center gap-2 cursor-pointer">
                             <input
                                 type="checkbox"
-                                class="form-check-input m-0"
+                                class="h-4 w-4 rounded border-border text-accent focus:ring-accent"
                                 data-notification-select-target="selectAll"
                                 data-action="notification-select#toggleAll"
                             />
                             Unread
-                            <span class="badge bg-primary text-white rounded-circle" style="width: 1.2rem; height: 1.2rem; font-size: .65rem; padding: 0; line-height: 1.2rem;">{{ unread|length }}</span>
-                        </h3>
+                            <span class="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[10px] font-semibold text-white dark:text-black">{{ unread|length }}</span>
+                        </label>
                     </div>
-                    <div class="list-group list-group-flush list-group-hoverable">
+                    <div class="divide-y divide-border">
                         {% for notification in unread %}
                             {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
                         {% endfor %}
@@ -79,13 +78,13 @@
             {% endif %}
 
             {% if read is not empty %}
-                <div class="card">
+                <div class="rounded-xl border border-border">
                     {% if unread is not empty %}
-                        <div class="card-header">
-                            <h3 class="card-title text-secondary">Earlier</h3>
+                        <div class="border-b border-border px-4 py-3">
+                            <h3 class="text-sm font-semibold text-content-secondary">Earlier</h3>
                         </div>
                     {% endif %}
-                    <div class="list-group list-group-flush list-group-hoverable">
+                    <div class="divide-y divide-border">
                         {% for notification in read %}
                             {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
                         {% endfor %}
@@ -95,31 +94,29 @@
         </div>
 
         {% if notifications.nbPages > 1 %}
-            <div class="card mt-3">
-                <div class="card-footer d-flex align-items-center border-top">
-                    <p class="m-0 text-muted">
-                        Page {{ notifications.currentPage }} of {{ notifications.nbPages }}
-                    </p>
-                    <ul class="pagination m-0 ms-auto">
-                        <li class="page-item{{ not notifications.hasPreviousPage ? ' disabled' }}">
-                            <a
-                                href="{{ notifications.hasPreviousPage ? admin_path('admin_notification_list', {page: notifications.previousPage}) : '#' }}"
-                                class="page-link"
-                            >
-                                <twig:Xutim:Admin:Icon name="chevron-left" />
-                                prev
-                            </a>
-                        </li>
-                        <li class="page-item{{ not notifications.hasNextPage ? ' disabled' }}">
-                            <a
-                                href="{{ notifications.hasNextPage ? admin_path('admin_notification_list', {page: notifications.nextPage}) : '#' }}"
-                                class="page-link"
-                            >
-                                next
-                                <twig:Xutim:Admin:Icon name="chevron-right" />
-                            </a>
-                        </li>
-                    </ul>
+            <div class="flex items-center justify-between mt-4 text-[13px]">
+                <span class="text-content-secondary">
+                    Page {{ notifications.currentPage }} of {{ notifications.nbPages }}
+                </span>
+                <div class="flex items-center gap-1">
+                    {% if notifications.hasPreviousPage %}
+                        <a href="{{ admin_path('admin_notification_list', {page: notifications.previousPage}) }}" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised transition-colors">
+                            <twig:ux:icon name="ph:caret-left" width="14" height="14" /> prev
+                        </a>
+                    {% else %}
+                        <span class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-content-tertiary">
+                            <twig:ux:icon name="ph:caret-left" width="14" height="14" /> prev
+                        </span>
+                    {% endif %}
+                    {% if notifications.hasNextPage %}
+                        <a href="{{ admin_path('admin_notification_list', {page: notifications.nextPage}) }}" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised transition-colors">
+                            next <twig:ux:icon name="ph:caret-right" width="14" height="14" />
+                        </a>
+                    {% else %}
+                        <span class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-content-tertiary">
+                            next <twig:ux:icon name="ph:caret-right" width="14" height="14" />
+                        </span>
+                    {% endif %}
                 </div>
             </div>
         {% endif %}

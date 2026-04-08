@@ -38,7 +38,7 @@
                         event.startsAt|date('d/m/Y H:i')
                     }}</span>
 
-                    <div class="btn-group float-end">
+                    <div class="inline-flex ml-auto">
                         <twig:Xutim:Admin:Button
                             tag="a"
                             variant="link"
@@ -46,7 +46,7 @@
                             data-turbo-frame="modal"
                             href="{{ admin_path('admin_event_dates_edit', {id: event.id}) }}"
                         >
-                            <twig:Xutim:Admin:Icon name="edit" />
+                            <twig:ux:icon name="ph:pencil-simple" class="icon" />
                         </twig:Xutim:Admin:Button>
                     </div>
                 </twig:block>
@@ -61,7 +61,7 @@
                         event.endsAt|date('d/m/Y H:i')
                     }}</span>
 
-                    <div class="btn-group float-end">
+                    <div class="inline-flex ml-auto">
                         <twig:Xutim:Admin:Button
                             tag="a"
                             variant="link"
@@ -69,7 +69,7 @@
                             data-turbo-frame="modal"
                             href="{{ admin_path('admin_event_dates_edit', {id: event.id}) }}"
                         >
-                            <twig:Xutim:Admin:Icon name="edit" />
+                            <twig:ux:icon name="ph:pencil-simple" class="icon" />
                         </twig:Xutim:Admin:Button>
                     </div>
                 </twig:block>
@@ -88,7 +88,7 @@
                         {% endif %}
                     </span>
 
-                    <div class="btn-group float-end">
+                    <div class="inline-flex ml-auto">
                         <twig:Xutim:Admin:Button
                             tag="a"
                             variant="link"
@@ -96,7 +96,7 @@
                             data-turbo-frame="modal"
                             href="{{ admin_path('admin_event_article_edit', {id: event.id}) }}"
                         >
-                            <twig:Xutim:Admin:Icon name="edit" />
+                            <twig:ux:icon name="ph:pencil-simple" class="icon" />
                         </twig:Xutim:Admin:Button>
                     </div>
                 </twig:block>
@@ -115,7 +115,7 @@
                         {% endif %}
                     </span>
 
-                    <div class="btn-group float-end">
+                    <div class="inline-flex ml-auto">
                         <twig:Xutim:Admin:Button
                             tag="a"
                             variant="link"
@@ -123,7 +123,7 @@
                             data-turbo-frame="modal"
                             href="{{ admin_path('admin_event_page_edit', {id: event.id}) }}"
                         >
-                            <twig:Xutim:Admin:Icon name="edit" />
+                            <twig:ux:icon name="ph:pencil-simple" class="icon" />
                         </twig:Xutim:Admin:Button>
                     </div>
                 </twig:block>
@@ -131,28 +131,28 @@
 
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="content">
-                    <div class="btn-group">
+                    <div class="inline-flex gap-2">
                         {% if event.status.canBeArchived %}
                             {%
                                 set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived')
                             %}
                             <twig:Xutim:Admin:ModalDialog
-                                class="btn btn-outline-{{ archiveStatus.colorClass }}"
+                                class="inline-flex items-center rounded-md border border-current px-3 py-1.5 text-[13px] font-medium text-{{ archiveStatus.colorClass }}-600 hover:bg-{{ archiveStatus.colorClass }}-50 dark:text-{{ archiveStatus.colorClass }}-400 dark:hover:bg-{{ archiveStatus.colorClass }}-500/10"
                                 modalDialogColor="{{ archiveStatus.colorClass }}"
                                 action="{{ admin_path('admin_event_publication_status_edit', {id: event.id, status: archiveStatus.value}) }}"
                                 confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
                             >
-                                <twig:Xutim:Admin:Icon name="archive" />
+                                <twig:ux:icon name="ph:archive" class="icon" />
                                 {{ 'archive'|trans({}, 'admin')|capitalize }}
                             </twig:Xutim:Admin:ModalDialog>
                         {% endif %}
                         <twig:Xutim:Admin:ModalDialog
-                            class="btn btn-outline-danger"
+                            class="inline-flex items-center rounded-md border border-red-300 px-3 py-1.5 text-[13px] font-medium text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
                             modalDialogColor="danger"
                             action="{{ admin_path('admin_event_delete', {id: event.id}) }}"
                             confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
                         >
-                            <twig:Xutim:Admin:Icon name="trash" />
+                            <twig:ux:icon name="ph:trash" class="icon" />
                             {{ 'delete'|trans({}, 'admin')|capitalize }}
                         </twig:Xutim:Admin:ModalDialog>
                     </div>

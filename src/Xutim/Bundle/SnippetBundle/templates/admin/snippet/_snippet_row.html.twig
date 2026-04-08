@@ -1,6 +1,5 @@
 {% set activeTranslation = snippet.translationByLocale(activeLocale) %}
 
-{# Always show default locale + any selected references, deduplicated #}
 {% set refLocales = [default_locale] %}
 {% for locale in visibleReferenceLocales|default([]) %}
     {% if locale != default_locale and locale != activeLocale %}
@@ -8,38 +7,37 @@
     {% endif %}
 {% endfor %}
 
-<div class="card">
-    <div class="card-header">
-        <div class="d-flex align-items-center gap-2 flex-wrap">
+<div class="rounded-xl border border-border">
+    <div class="border-b border-border px-4 py-3">
+        <div class="flex items-center gap-2 flex-wrap">
             <twig:Xutim:Admin:Badge>{{ snippet.category.value }}</twig:Xutim:Admin:Badge>
 
             <a
                 href="{{ admin_path('admin_snippet_edit', {id: snippet.id}) }}"
                 data-turbo-frame="modal"
-                class="fw-bold text-decoration-none"
+                class="font-bold no-underline"
             >{{ snippet.code }}</a>
 
             {% if snippet.description %}
-                <span class="text-muted">
+                <span class="text-content-secondary">
                     &mdash; {{ snippet.description }}
                 </span>
             {% endif %}
         </div>
     </div>
 
-    <div class="card-body">
-        {# Reference translations (default locale always shown + selected extras) #}
+    <div class="p-4">
         {% if activeLocale != default_locale or refLocales|length > 1 %}
             {% for refLocale in refLocales %}
                 {% if refLocale != activeLocale %}
                     {% set refTranslation = snippet.translationByLocale(refLocale) %}
-                    <div class="mb-2 p-2 rounded" style="background: var(--tblr-bg-surface-secondary);">
-                        <div class="d-flex align-items-baseline gap-2">
-                            <span class="badge bg-muted text-muted-fg flex-shrink-0">{{ refLocale|language_name|capitalize }}</span>
+                    <div class="mb-2 p-2 rounded-lg bg-surface-raised">
+                        <div class="flex items-baseline gap-2">
+                            <span class="inline-flex rounded border border-border px-1 py-0.5 text-[10px] font-medium text-content-secondary shrink-0">{{ refLocale|language_name|capitalize }}</span>
                             {% if refTranslation is not null %}
-                                <span class="text-muted text-wrap">{{ refTranslation.content }}</span>
+                                <span class="text-content-secondary text-wrap">{{ refTranslation.content }}</span>
                             {% else %}
-                                <span class="text-muted fst-italic">{{ 'No translation'|trans({}, 'admin') }}</span>
+                                <span class="text-content-secondary italic">{{ 'No translation'|trans({}, 'admin') }}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -47,11 +45,11 @@
             {% endfor %}
         {% endif %}
 
-        <div class="d-flex align-items-start gap-2">
-            <span class="badge bg-blue text-white mt-1">{{ activeLocale|upper }}</span>
+        <div class="flex items-start gap-2">
+            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-blue-600 text-white mt-1">{{ activeLocale|upper }}</span>
             <textarea
                 rows="2"
-                class="form-control flex-grow-1"
+                class="form-control grow"
                 data-snippet-editor-target="input"
                 data-action="blur->snippet-editor#save"
                 data-snippet-id="{{ snippet.id }}"

@@ -1,31 +1,20 @@
 <twig:Xutim:Admin:SidebarItem id="featured-image-sidebar-item">
-    <twig:block name="header">
-        {{ 'featured image'|trans({}, 'admin')|capitalize }}:
-    </twig:block>
+    <twig:block name="header">{{ 'featured image'|trans({}, 'admin')|capitalize }}</twig:block>
     <twig:block name="content">
-        {% if article.featuredImage %}
-            <a
-                href="{{ admin_path('admin_media_edit', {id: article.featuredImage.id}) }}"
-            >
-                <img
-                    src="{{ media_url(article.featuredImage, 'thumb_small') }}"
-                    alt="Featured Image"
-                    class="avatar avatar-1"
-                />
-            </a>
-        {% endif %}
         {% if is_granted('ROLE_EDITOR') %}
-            <div {% if article.featuredImage is null %}class="ms-auto"{% endif %}>
-                <twig:Xutim:Admin:Button
-                    tag="a"
-                    variant="link"
-                    class="p-0"
-                    data-turbo-frame="modal"
-                    href="{{ admin_path('admin_article_featured_image_edit', {id: article.id}) }}"
-                >
-                    <twig:Xutim:Admin:Icon name="edit" />
-                </twig:Xutim:Admin:Button>
-            </div>
+            <a href="{{ admin_path('admin_article_featured_image_edit', {id: article.id}) }}" data-turbo-frame="modal">
+                {% if article.featuredImage %}
+                    <img src="{{ media_url(article.featuredImage, 'thumb_small') }}" alt="" class="h-10 w-14 rounded border border-border object-cover hover:border-accent transition-colors" />
+                {% else %}
+                    <div class="h-10 w-14 rounded border border-border bg-surface-raised hover:border-accent transition-colors"></div>
+                {% endif %}
+            </a>
+        {% else %}
+            {% if article.featuredImage %}
+                <img src="{{ media_url(article.featuredImage, 'thumb_small') }}" alt="" class="h-10 w-14 rounded border border-border object-cover" />
+            {% else %}
+                <div class="h-10 w-14 rounded border border-border bg-surface-raised"></div>
+            {% endif %}
         {% endif %}
     </twig:block>
 </twig:Xutim:Admin:SidebarItem>

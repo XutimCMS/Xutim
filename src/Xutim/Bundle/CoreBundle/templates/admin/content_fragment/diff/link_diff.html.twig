@@ -22,7 +22,6 @@
 {% set oldId = idMeta and idMeta.old is defined ? idMeta.old : '' %}
 {% set newId = idMeta and idMeta.new is defined ? idMeta.new : id %}
 
-{# Helper to render a link to the admin route for a given ID #}
 {% macro link_for(routeName, idValue, type) %}
     {% if type == 'page_link' %}
         {%
@@ -52,11 +51,11 @@
 {% endmacro %}
 {% import _self as H %}
 
-<div class="small text-muted mb-1">
-    <twig:ux:icon name="tabler:link" class="w-4 h-4" />
-    <span class="fw-bold">{{ label }}:</span>
+<div class="text-sm text-content-secondary mb-1">
+    <twig:ux:icon name="ph:link" class="w-4 h-4" />
+    <span class="font-bold">{{ label }}:</span>
     {% if idChanged %}
-        <del>{{ H.link_for(route, oldId, type) }}</del> &nbsp;→&nbsp;
+        <del>{{ H.link_for(route, oldId, type) }}</del> &nbsp;&rarr;&nbsp;
         <ins>{{ H.link_for(route, newId, type) }}</ins>
     {% else %}
         {{ H.link_for(route, id, type) }}
@@ -75,16 +74,16 @@
     %}
 
     {% if layoutChanged %}
-        <div class="small">
-            <span class="text-muted fw-bold">{{
+        <div class="text-sm">
+            <span class="text-content-secondary font-bold">{{
                     'Layout'|trans({}, 'admin')
                 }}:</span>
-            <del>{{ layoutMeta.old ?? '' }}</del> &nbsp;→&nbsp;
+            <del>{{ layoutMeta.old ?? '' }}</del> &nbsp;&rarr;&nbsp;
             <ins>{{ layoutMeta.new ?? '' }}</ins>
         </div>
     {% elseif curLayout %}
-        <div class="small">
-            <span class="text-muted fw-bold">{{
+        <div class="text-sm">
+            <span class="text-content-secondary font-bold">{{
                     'Layout'|trans({}, 'admin')
                 }}:</span>
             {{ curLayout }}

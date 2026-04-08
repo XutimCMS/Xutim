@@ -16,7 +16,6 @@
 {% endif %}
 {% if form.file is defined %}
     {{ form_row(form.file) }}
-    {# hidden row #}
     {{ include('@XutimCore/admin/form/_file_widget.html.twig') }}
     {{ form_row(form.fileDescription) }}
 {% endif %}

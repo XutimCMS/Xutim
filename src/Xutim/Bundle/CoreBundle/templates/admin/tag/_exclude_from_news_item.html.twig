@@ -4,35 +4,35 @@
     </twig:block>
     <twig:block name="content">
         {% if tag.excludeFromNews %}
-            <span class="status status-green">
+            <span class="inline-flex items-center text-[12px] font-medium text-green-600 dark:text-green-400">
                 {{ 'yes'|trans({}, 'admin') }}
             </span>
         {% else %}
-            <span class="status status-danger">
+            <span class="inline-flex items-center text-[12px] font-medium text-red-600 dark:text-red-400">
                 {{ 'no'|trans({}, 'admin') }}
             </span>
         {% endif %}
         {% if tag.excludeFromNews %}
             <twig:Xutim:Admin:ModalDialog
-                class="btn-link"
+                class="text-accent hover:text-accent/80"
                 modalDialogColor="secondary"
                 action="{{ admin_path('admin_tag_exclude_from_news_toggle', {id: tag.id}) }}"
                 confirmActionLabel="{{ 'include in news'|trans({}, 'admin')|capitalize }}"
             >
                 <twig:ux:icon
-                    name="tabler:toggle-right"
+                    name="ph:toggle-right"
                     class="w-4 h-4"
                 />
             </twig:Xutim:Admin:ModalDialog>
         {% else %}
             <twig:Xutim:Admin:ModalDialog
-                class="btn-link"
+                class="text-accent hover:text-accent/80"
                 modalDialogColor="secondary"
                 action="{{ admin_path('admin_tag_exclude_from_news_toggle', {id: tag.id}) }}"
                 confirmActionLabel="{{ 'exclude form news'|trans({}, 'admin')|capitalize }}"
             >
                 <twig:ux:icon
-                    name="tabler:toggle-left"
+                    name="ph:toggle-left"
                     class="w-4 h-4"
                 />
             </twig:Xutim:Admin:ModalDialog>

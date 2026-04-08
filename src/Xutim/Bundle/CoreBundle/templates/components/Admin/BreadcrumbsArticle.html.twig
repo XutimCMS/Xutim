@@ -1,27 +1,13 @@
-{% macro parentBreadcrumb(page, init) %}
-    {% if page.parent is not null %}
-        {{ _self.parentBreadcrumb(page.parent, false) }}
-    {% endif %}
-    {% set params = {id: page.id, locale: content_context_language()} %}
-    <li class="breadcrumb-item">
-        <a href="{{ admin_path('admin_page_list', params) }}">
-            {{
-                page.translationByLocaleOrDefault(content_context_language()).title
-            }}
-        </a>
-    </li>
-{% endmacro %}
-
-<ol class="breadcrumb breadcrumb-arrows" aria-label="breadcrumbs">
-    <li class="breadcrumb-item">
-        <a href="{{ admin_path('admin_page_list') }}"><twig:Xutim:Admin:Icon
-                name="home"
-            /></a>
-    </li>
-
-    <li class="breadcrumb-item active" aria-current="page">
-        {{
-            article.translationByLocaleOrDefault(content_context_language()).title
-        }}
-    </li>
-</ol>
+<nav aria-label="breadcrumbs">
+    <ol class="flex items-center gap-1.5 text-[13px] text-content-tertiary">
+        <li>
+            <a href="{{ admin_path('admin_page_list') }}" class="hover:text-content transition-colors">
+                <twig:ux:icon name="ph:house" class="h-3.5 w-3.5" />
+            </a>
+        </li>
+        <li><span class="text-content-tertiary/50">/</span></li>
+        <li class="text-content truncate max-w-[200px]" aria-current="page">
+            {{ article.translationByLocaleOrDefault(content_context_language()).title }}
+        </li>
+    </ol>
+</nav>

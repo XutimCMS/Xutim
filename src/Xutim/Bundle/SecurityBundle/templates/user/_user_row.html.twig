@@ -25,16 +25,16 @@
         {% endfor %}
     </td>
     <td class="w-8 justify-end">
-        <div class="d-flex justify-content-end">
+        <div class="flex justify-content-end">
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="link"
                 href="{{ path('admin_homepage_redirect', {_switch_user: user.email}) }}"
                 data-turbo-frame="_top"
                 data-turbo-prefetch="false"
-                class="mt-1 align-text-top pe-1"
+                class="mt-1 align-text-top pr-1"
             >
-                <twig:Xutim:Admin:Icon name="spy" />
+                <twig:ux:icon name="ph:user-switch" class="icon" />
             </twig:Xutim:Admin:Button>
         </div>
     </td>

@@ -7,7 +7,7 @@
     <dialog
         data-modal-target="dialog"
         id="xutim-dialog"
-        class="shadow-lg dialog-md overflow-y-auto"
+        class="fixed inset-0 z-[60] m-auto w-full max-w-lg rounded-xl border border-border bg-surface shadow-xl backdrop:bg-black/50 p-0 overflow-y-auto max-h-[80vh]"
         data-action="close->modal#close mousedown->modal#mouseDown mouseup->modal#mouseUp"
     >
         {% block content %}{% endblock %}

@@ -5,7 +5,6 @@
     </template>
 </turbo-stream>
 {% elseif parentBlockId is defined and parentBlockId %}
-{# Block being added to a layout slot - append to the slot content, remove empty placeholder #}
 <turbo-stream action="remove" target="slot-empty-{{ parentBlockId }}-{{ slot }}">
 </turbo-stream>
 <turbo-stream action="append" target="slot-content-{{ parentBlockId }}-{{ slot }}">

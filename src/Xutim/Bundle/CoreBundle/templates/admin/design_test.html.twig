@@ -1,0 +1,2411 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta name="robots" content="noindex,nofollow"/>
+    <title>Design Test - Xutim Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.29.1/dist/editorjs.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.7/dist/header.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@1.9.0/dist/list.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@2.7.2/dist/quote.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/code@2.9.0/dist/code.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@1.4.2/dist/delimiter.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@2.7.4/dist/embed.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/checklist@1.6.0/dist/checklist.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@2.3.0/dist/table.umd.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        surface: {
+                            DEFAULT: 'rgb(var(--color-surface) / <alpha-value>)',
+                            raised: 'rgb(var(--color-surface-raised) / <alpha-value>)',
+                            overlay: 'rgb(var(--color-surface-overlay) / <alpha-value>)',
+                        },
+                        border: {
+                            DEFAULT: 'rgb(var(--color-border) / <alpha-value>)',
+                            strong: 'rgb(var(--color-border-strong) / <alpha-value>)',
+                        },
+                        content: {
+                            DEFAULT: 'rgb(var(--color-content) / <alpha-value>)',
+                            secondary: 'rgb(var(--color-content-secondary) / <alpha-value>)',
+                            tertiary: 'rgb(var(--color-content-tertiary) / <alpha-value>)',
+                        },
+                        accent: {
+                            DEFAULT: 'rgb(var(--color-accent) / <alpha-value>)',
+                            hover: 'rgb(var(--color-accent-hover) / <alpha-value>)',
+                            subtle: 'rgb(var(--color-accent-subtle) / <alpha-value>)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --color-surface: 255 255 255;
+            --color-surface-raised: 249 250 251;
+            --color-surface-overlay: 255 255 255;
+            --color-border: 229 231 235;
+            --color-border-strong: 209 213 219;
+            --color-content: 17 24 39;
+            --color-content-secondary: 107 114 128;
+            --color-content-tertiary: 156 163 175;
+            --color-accent: 24 24 27;
+            --color-accent-hover: 39 39 42;
+            --color-accent-subtle: 244 244 245;
+        }
+        .dark {
+            --color-surface: 15 15 15;
+            --color-surface-raised: 23 23 23;
+            --color-surface-overlay: 30 30 30;
+            --color-border: 38 38 38;
+            --color-border-strong: 64 64 64;
+            --color-content: 245 245 245;
+            --color-content-secondary: 163 163 163;
+            --color-content-tertiary: 115 115 115;
+            --color-accent: 228 228 231;
+            --color-accent-hover: 212 212 216;
+            --color-accent-subtle: 39 39 42;
+        }
+        .tree-indent { padding-left: calc(var(--depth, 0) * 1.5rem); }
+        /* When article sidebar is open on xl+, the whole main wrapper gets right padding */
+        @media (min-width: 1280px) {
+            body.article-sidebar-open #main-wrapper {
+                padding-right: 18rem;
+            }
+        }
+        /* Hide stray EditorJS elements and ensure hidden views stay hidden */
+        .view.hidden, .view[style*="display: none"] { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
+        body > .ct, body > .codex-editor-overlay { display: none !important; }
+        /* EditorJS overrides for new design */
+        .codex-editor { font-family: 'Inter', system-ui, sans-serif; }
+        .codex-editor__redactor { padding-bottom: 100px !important; }
+        .ce-block__content { max-width: 100%; padding: 0 1.25rem; }
+        .ce-toolbar__content { max-width: 100%; }
+        .ce-toolbar__plus, .ce-toolbar__settings-btn { color: rgb(var(--color-content-tertiary)); }
+        .ce-toolbar__plus:hover, .ce-toolbar__settings-btn:hover { color: rgb(var(--color-content)); background: rgb(var(--color-surface-raised)); }
+        .ce-block--selected .ce-block__content { background: rgb(var(--color-accent-subtle)); }
+        .ce-inline-toolbar { background: rgb(var(--color-surface-overlay)); border-color: rgb(var(--color-border)); }
+        .ce-inline-tool:hover { background: rgb(var(--color-surface-raised)); }
+        .ce-popover { background: rgb(var(--color-surface-overlay)); border-color: rgb(var(--color-border)); }
+        .ce-popover-item:hover { background: rgb(var(--color-surface-raised)); }
+        .dark .ce-inline-toolbar, .dark .ce-popover, .dark .ce-conversion-toolbar { background: rgb(var(--color-surface-overlay)); border-color: rgb(var(--color-border)); color: rgb(var(--color-content)); }
+        .dark .ce-popover-item:hover, .dark .ce-inline-tool:hover { background: rgb(var(--color-surface-raised)); }
+        .dark .ce-block--selected .ce-block__content { background: rgb(var(--color-accent-subtle)); }
+        .dark .cdx-input { background: rgb(var(--color-surface)); border-color: rgb(var(--color-border)); color: rgb(var(--color-content)); }
+        .ce-paragraph { font-size: 15px; line-height: 1.7; }
+        h2.ce-header { font-size: 1.5rem; font-weight: 700; }
+        h3.ce-header { font-size: 1.25rem; font-weight: 600; }
+        h4.ce-header { font-size: 1.125rem; font-weight: 600; }
+        .cdx-quote__text { font-style: italic; border-left: 3px solid rgb(var(--color-accent) / 0.3); padding-left: 1rem; }
+        .cdx-quote__caption { font-size: 13px; color: rgb(var(--color-content-tertiary)); }
+        .cdx-checklist__item-checkbox { border-color: rgb(var(--color-border-strong)); border-radius: 4px; }
+        .cdx-checklist__item--checked .cdx-checklist__item-checkbox { background: rgb(var(--color-accent)); border-color: rgb(var(--color-accent)); }
+        .ce-code__textarea { background: #0a0a0a; color: #e5e5e5; border-radius: 0.5rem; border: none; font-family: ui-monospace, monospace; font-size: 13px; }
+        .dark .ce-code__textarea { background: rgb(23 23 23); }
+        .embed-tool__caption { font-size: 12px; color: rgb(var(--color-content-tertiary)); text-align: center; }
+        .tc-table { border-color: rgb(var(--color-border)); }
+        .tc-row { border-color: rgb(var(--color-border)); }
+        .tc-cell { border-color: rgb(var(--color-border)); font-size: 13px; }
+        .dark .tc-table, .dark .tc-row, .dark .tc-cell { border-color: rgb(var(--color-border)); }
+        .ce-delimiter::before { color: rgb(var(--color-content-tertiary)); }
+        @keyframes slide-in { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+        .animate-slide-in { animation: slide-in 0.3s ease-out; }
+        /* Simple sparkline for analytics */
+        .sparkline { display: flex; align-items: flex-end; gap: 2px; height: 40px; }
+        .sparkline-bar { flex: 1; background: rgb(var(--color-accent) / 0.2); border-radius: 2px; min-width: 4px; transition: background 0.15s; }
+        .sparkline-bar:hover { background: rgb(var(--color-accent) / 0.5); }
+    </style>
+</head>
+<body class="h-full bg-surface font-sans text-content antialiased">
+
+{# ==================== SIDEBAR ==================== #}
+<div id="sidebar-backdrop" class="fixed inset-0 z-40 bg-black/50 lg:hidden hidden" onclick="toggleSidebar()"></div>
+
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex w-60 -translate-x-full flex-col border-r border-border bg-surface transition-transform duration-200 lg:translate-x-0">
+    <div class="flex h-14 items-center gap-3 border-b border-border px-4">
+        <svg class="h-6 w-6 shrink-0" viewBox="0 0 28 28" fill="currentColor">
+            <circle cx="7" cy="7" r="2.5"/><circle cx="19" cy="7" r="2.5"/>
+            <circle cx="7" cy="15" r="2.5"/><circle cx="14" cy="15" r="2.5"/>
+            <circle cx="14" cy="23" r="2.5"/><circle cx="21" cy="23" r="2.5"/>
+        </svg>
+        <span class="text-sm font-semibold tracking-tight">Xutim</span>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-2 py-2">
+        <div class="space-y-0.5">
+            <a href="#" onclick="showView('dashboard'); return false;" data-nav="dashboard" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                <i class="ph ph-house shrink-0"></i>
+                Dashboard
+            </a>
+            <a href="#" onclick="showView('pages'); return false;" data-nav="pages" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                <i class="ph ph-file-text shrink-0"></i>
+                Pages
+            </a>
+            <a href="#" onclick="showView('articles'); return false;" data-nav="articles" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                <i class="ph ph-newspaper shrink-0"></i>
+                Articles
+            </a>
+            <a href="#" data-nav="tags" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                <i class="ph ph-tag shrink-0"></i>
+                Tags
+            </a>
+            <a href="#" data-nav="snippets" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                <i class="ph ph-code shrink-0"></i>
+                Snippets
+            </a>
+            <a href="#" data-nav="media" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                <i class="ph ph-image shrink-0"></i>
+                Media
+            </a>
+            <a href="#" data-nav="blocks" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                <i class="ph ph-squares-four shrink-0"></i>
+                Blocks
+            </a>
+        </div>
+
+        <div class="mt-5">
+            <p class="mb-1 px-2.5 text-[11px] font-medium uppercase tracking-wider text-content-tertiary">System</p>
+            <div class="space-y-0.5">
+                <a href="#" onclick="showView('notifications'); return false;" data-nav="notifications" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                    <i class="ph ph-bell shrink-0"></i>
+                    Notifications
+                    <span class="ml-auto flex h-4.5 min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">3</span>
+                </a>
+                <a href="#" onclick="showView('settings'); return false;" data-nav="settings" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                    <i class="ph ph-gear shrink-0"></i>
+                    Settings
+                </a>
+                <a href="#" onclick="showView('media'); return false;" data-nav="media" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                    <i class="ph ph-image shrink-0"></i>
+                    Media
+                </a>
+                <a href="#" onclick="showView('analytics'); return false;" data-nav="analytics" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                    <i class="ph ph-chart-line-up shrink-0"></i>
+                    Analytics
+                </a>
+                <a href="#" onclick="showView('components'); return false;" data-nav="components" class="nav-link group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content">
+                    <i class="ph ph-swatches shrink-0"></i>
+                    Components
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="border-t border-border px-2 py-2">
+        <button class="flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left hover:bg-surface-raised">
+            <div class="h-7 w-7 rounded-full bg-accent/10 flex items-center justify-center text-content-secondary text-[11px] font-semibold">TG</div>
+            <div class="flex-1 min-w-0">
+                <div class="text-[13px] font-medium truncate">Tomas</div>
+                <div class="text-[11px] text-content-tertiary truncate">tomasjaki@tomsgu.com</div>
+            </div>
+        </button>
+    </div>
+</aside>
+
+{# ==================== MAIN CONTENT ==================== #}
+<div id="main-wrapper" class="lg:pl-60 transition-[padding] duration-200">
+    {# Top Bar #}
+    <header class="sticky top-0 z-30 border-b border-border bg-surface/80 backdrop-blur-sm">
+        <div class="mx-auto flex h-12 max-w-7xl items-center gap-3 px-4 lg:px-6">
+            <button onclick="toggleSidebar()" class="lg:hidden -ml-1 rounded-md p-1.5 hover:bg-surface-raised">
+                <i class="ph ph-list text-lg"></i>
+            </button>
+
+            <nav id="breadcrumb" class="flex items-center gap-1 text-[13px] text-content-tertiary">
+                <span>Dashboard</span>
+            </nav>
+
+            <div class="ml-auto flex items-center gap-1.5">
+                <button class="hidden sm:flex items-center gap-2 rounded-md border border-border px-2.5 py-1 text-[13px] text-content-tertiary hover:border-border-strong">
+                    <i class="ph ph-magnifying-glass text-xs"></i>
+                    Search...
+                    <kbd class="rounded border border-border px-1 py-0.5 text-[10px]">/</kbd>
+                </button>
+                <a href="#" class="rounded-md p-1.5 hover:bg-surface-raised text-content-tertiary hover:text-content" title="View site">
+                    <i class="ph ph-arrow-square-out"></i>
+                </a>
+                <button onclick="toggleDark()" class="rounded-md p-1.5 hover:bg-surface-raised" title="Toggle theme">
+                    <i id="icon-sun" class="ph ph-sun hidden"></i>
+                    <i id="icon-moon" class="ph ph-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    {# ================================================================ #}
+    {# VIEW: DASHBOARD                                                  #}
+    {# ================================================================ #}
+    <main id="view-dashboard" class="view p-4 lg:p-6 max-w-7xl mx-auto">
+        <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 class="text-lg font-semibold">Dashboard</h1>
+        </div>
+
+        {# Translation Stats — with per-locale breakdown #}
+        {% set translationStats = [
+            {label: 'Pages', icon: 'doc', total: 12, untranslated: 10, outdated: 2, unpublished: 0,
+             locales: [{code: 'cs', count: 5}, {code: 'de', count: 4}, {code: 'en', count: 3}]},
+            {label: 'Articles', icon: 'article', total: 9, untranslated: 7, outdated: 1, unpublished: 1,
+             locales: [{code: 'cs', count: 4}, {code: 'de', count: 3}, {code: 'en', count: 2}]},
+            {label: 'Tags', icon: 'tag', total: 5, untranslated: 5, outdated: 0, unpublished: 0,
+             locales: [{code: 'cs', count: 3}, {code: 'de', count: 1}, {code: 'en', count: 1}]},
+            {label: 'Snippets', icon: 'code', total: 3, untranslated: 3, outdated: 0, unpublished: 0,
+             locales: [{code: 'cs', count: 2}, {code: 'de', count: 1}]},
+            {label: 'Events', icon: 'calendar', total: 2, untranslated: 2, outdated: 0, unpublished: 0,
+             locales: [{code: 'cs', count: 2}]}
+        ] %}
+        <div class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            {% for stat in translationStats %}
+            <div class="rounded-xl border border-border p-3.5 hover:border-border-strong transition-colors">
+                <div class="flex items-center gap-2.5">
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-raised text-content-secondary">
+                        {% if stat.icon == 'doc' %}
+                            <i class="ph ph-file-text"></i>
+                        {% elseif stat.icon == 'article' %}
+                            <i class="ph ph-newspaper"></i>
+                        {% elseif stat.icon == 'tag' %}
+                            <i class="ph ph-tag"></i>
+                        {% elseif stat.icon == 'code' %}
+                            <i class="ph ph-code"></i>
+                        {% else %}
+                            <i class="ph ph-calendar-blank"></i>
+                        {% endif %}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[11px] font-medium uppercase tracking-wide text-content-tertiary">{{ stat.label }}</div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-xl font-semibold leading-tight">{{ stat.total }}</span>
+                            {# Type breakdown icons when multiple types #}
+                            {% set typeCount = (stat.untranslated > 0 ? 1 : 0) + (stat.outdated > 0 ? 1 : 0) + (stat.unpublished > 0 ? 1 : 0) %}
+                            {% if typeCount > 1 %}
+                                <span class="flex items-center gap-1.5 ml-auto text-content-tertiary">
+                                    {% if stat.untranslated > 0 %}
+                                        <a href="#" class="inline-flex items-center gap-0.5 text-[11px] hover:text-content transition-colors" title="To translate">
+                                            <i class="ph ph-translate text-xs"></i>
+                                            {{ stat.untranslated }}
+                                        </a>
+                                    {% endif %}
+                                    {% if stat.outdated > 0 %}
+                                        <a href="#" class="inline-flex items-center gap-0.5 text-[11px] hover:text-content transition-colors" title="To update">
+                                            <i class="ph ph-arrows-clockwise text-xs"></i>
+                                            {{ stat.outdated }}
+                                        </a>
+                                    {% endif %}
+                                    {% if stat.unpublished > 0 %}
+                                        <a href="#" class="inline-flex items-center gap-0.5 text-[11px] hover:text-content transition-colors" title="To publish">
+                                            <i class="ph ph-paper-plane-tilt text-xs"></i>
+                                            {{ stat.unpublished }}
+                                        </a>
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {# Per-locale breakdown with links #}
+                {% if stat.locales|length > 1 %}
+                    <div class="mt-2.5 flex flex-wrap gap-1">
+                        {% for locale in stat.locales %}
+                            <a href="#" class="inline-flex items-center gap-1 rounded-md bg-accent-subtle px-1.5 py-0.5 text-[11px] font-medium text-accent hover:bg-accent/10 transition-colors">
+                                {{ locale.code|upper }}: <span class="font-semibold">{{ locale.count }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {# Translation Tables #}
+        <div class="grid gap-6 lg:grid-cols-2 min-w-0">
+            {# Articles to translate #}
+            <div class="rounded-xl border border-border min-w-0">
+                <div class="border-b border-border px-4 py-3">
+                    <h2 class="text-sm font-semibold">Articles to translate</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-[13px]">
+                        <thead>
+                            <tr class="border-b border-border bg-surface-raised text-left">
+                                <th class="px-4 py-2 font-medium text-content-tertiary w-6">S</th>
+                                <th class="px-4 py-2 font-medium text-content-tertiary">Title</th>
+                                <th class="hidden px-4 py-2 font-medium text-content-tertiary sm:table-cell">Created at</th>
+                                <th class="px-4 py-2 font-medium text-content-tertiary">Missing</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                            {% set translations = [
+                                {title: 'The Mystery of the Passover', lang: 'en', date: 'Mar 29, 2026', missing: ['cs']},
+                                {title: 'A brother went to Palestine, Israel and Jordan', lang: 'en', date: 'Mar 23, 2026', missing: ['cs']},
+                                {title: 'GENESIS - 30th anniversary celebration', lang: 'pl', date: 'Mar 22, 2026', missing: ['cs', 'en']},
+                                {title: 'Brother Matthew received in a private audience by Pope Leo XIV', lang: 'en', date: 'Mar 22, 2026', missing: ['cs']},
+                                {title: 'New Album: Dona Nobis Pacem', lang: 'en', date: 'Mar 22, 2026', missing: ['cs']},
+                                {title: 'The Light Was Not Extinguished During the Night of the War', lang: 'en', date: 'Mar 21, 2026', missing: ['cs']},
+                                {title: 'Multimedia resources', lang: 'en', date: 'Mar 6, 2026', missing: ['cs']},
+                                {title: 'Let us ask for the grace to love', lang: 'en', date: 'Feb 21, 2026', missing: ['cs']}
+                            ] %}
+                            {% for t in translations %}
+                            <tr class="hover:bg-surface-raised transition-colors">
+                                <td class="px-4 py-2.5"><span class="inline-block h-2 w-2 rounded-full bg-green-500"></span></td>
+                                <td class="px-4 py-2.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center rounded border border-border px-1 py-0.5 text-[10px] font-medium text-content-tertiary">{{ t.lang }}</span>
+                                        <span class="truncate max-w-[200px] lg:max-w-none">{{ t.title }}</span>
+                                    </div>
+                                </td>
+                                <td class="hidden px-4 py-2.5 text-content-secondary whitespace-nowrap sm:table-cell">{{ t.date }}</td>
+                                <td class="px-4 py-2.5">
+                                    <div class="flex gap-1">
+                                        {% for m in t.missing %}
+                                            <span class="inline-flex rounded border border-border px-1.5 py-0.5 text-[10px] font-medium text-content-secondary">{{ m }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {# Articles to update #}
+            <div class="rounded-xl border border-border min-w-0">
+                <div class="border-b border-border px-4 py-3">
+                    <h2 class="text-sm font-semibold">Articles to update</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-[13px]">
+                        <thead>
+                            <tr class="border-b border-border bg-surface-raised text-left">
+                                <th class="px-4 py-2 font-medium text-content-tertiary w-6">S</th>
+                                <th class="px-4 py-2 font-medium text-content-tertiary">Title</th>
+                                <th class="hidden px-4 py-2 font-medium text-content-tertiary sm:table-cell">Updated at</th>
+                                <th class="px-4 py-2 font-medium text-content-tertiary">Changed</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                            <tr class="hover:bg-surface-raised transition-colors">
+                                <td class="px-4 py-2.5"><span class="inline-block h-2 w-2 rounded-full bg-green-500"></span></td>
+                                <td class="px-4 py-2.5">
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex rounded border border-border px-1 py-0.5 text-[10px] font-medium text-content-tertiary">en</span>
+                                        Practical information
+                                    </div>
+                                </td>
+                                <td class="hidden px-4 py-2.5 text-content-secondary sm:table-cell">Dec 20, 2025</td>
+                                <td class="px-4 py-2.5">
+                                    <span class="inline-flex rounded border border-border px-1.5 py-0.5 text-[10px] font-medium text-content-secondary">cs</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="px-4 py-8 text-center text-[13px] text-content-tertiary">No more articles to update</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {# ================================================================ #}
+    {# VIEW: ARTICLE LIST                                               #}
+    {# ================================================================ #}
+    <main id="view-articles" class="view hidden p-4 lg:p-6 max-w-7xl mx-auto">
+        <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 class="text-lg font-semibold">Articles</h1>
+            <div class="flex items-center gap-2">
+                <button class="inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">
+                    <i class="ph ph-plus text-xs"></i>
+                    New article
+                </button>
+            </div>
+        </div>
+
+        {# Language Selector #}
+        {% set mainLocales = ['de', 'en', 'es', 'fr', 'it', 'pl', 'pt', 'zh_Hant'] %}
+        {% set extLocales = ['ar', 'be', 'bn', 'ca', 'cs', 'da', 'el', 'et', 'fi', 'hi', 'hr', 'hu', 'id', 'ja', 'km', 'ko', 'lt', 'lv', 'my', 'nl', 'no', 'ro', 'ru', 'sk', 'sl', 'sq', 'sr', 'sv', 'sw', 'th', 'tl', 'uk', 'vl', 'zh_Hans'] %}
+        <div class="mb-4 flex items-center gap-1 flex-wrap">
+            {% for l in mainLocales %}
+                <button onclick="selectLang(this)" class="lang-btn rounded-md border px-2 py-0.5 text-[11px] font-medium transition-colors {{ l == 'en' ? 'border-accent bg-accent text-white dark:text-black' : 'border-border text-content-secondary hover:border-border-strong' }}">{{ l }}</button>
+            {% endfor %}
+            <div class="relative">
+                <button onclick="this.nextElementSibling.classList.toggle('hidden'); this.nextElementSibling.querySelector('input')?.focus()" class="lang-more-btn rounded-md border border-dashed border-border-strong px-2 py-0.5 text-[11px] font-medium text-content-tertiary hover:border-accent hover:text-accent transition-colors">
+                    + {{ extLocales|length }} more
+                </button>
+                <div class="hidden absolute left-0 top-full mt-1 z-50 w-64 rounded-lg border border-border bg-surface shadow-lg">
+                    <div class="p-2 border-b border-border">
+                        <input type="text" placeholder="Search language..." oninput="filterLangs(this)" class="w-full rounded-md border border-border bg-surface px-2.5 py-1.5 text-[12px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                    </div>
+                    <div class="p-1.5 max-h-48 overflow-y-auto grid grid-cols-4 gap-0.5">
+                        {% for l in extLocales %}
+                            <button onclick="selectLang(this); this.closest('.relative').querySelector('.lang-more-btn').nextElementSibling.classList.add('hidden')" class="lang-btn lang-option rounded-md px-2 py-1.5 text-[11px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content transition-colors {{ l == 'cs' ? 'bg-accent-subtle text-accent ring-1 ring-accent/20' : '' }}" data-lang="{{ l }}">{{ l }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {# Show active extended locale if selected #}
+            <button class="lang-btn rounded-md border border-accent bg-accent text-white dark:text-black px-2 py-0.5 text-[11px] font-medium" id="articles-active-ext">cs</button>
+        </div>
+
+        {# Search & Filters #}
+        <div class="mb-3 space-y-2.5">
+            {# Search row #}
+            <div class="flex items-center gap-2">
+                <div class="relative flex-1 max-w-sm">
+                    <i class="ph ph-magnifying-glass absolute left-2.5 top-1/2 text-xs -translate-y-1/2 text-content-tertiary pointer-events-none"></i>
+                    <input type="text" placeholder="Search articles..." class="w-full rounded-md border border-border bg-surface py-1.5 pl-8 pr-3 text-[13px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    {# Filter dropdowns #}
+                    {% set filters = [
+                        {id: 'status', label: 'Status', options: ['All', 'Published', 'Draft', 'In Review', 'Archived']},
+                        {id: 'tags', label: 'Tags', options: ['All tags', 'Visits', 'Monthly Bible commentaries', 'Local prayers', 'Local Events', 'Paris 2025/2026', 'Lodz 2026/2027']},
+                        {id: 'news', label: 'In news', options: ['All', 'Yes', 'No']}
+                    ] %}
+                    {% for filter in filters %}
+                    <div class="relative">
+                        <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="filter-trigger inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[12px] font-medium text-content-secondary hover:border-border-strong hover:text-content transition-colors">
+                            {{ filter.label }}
+                            <i class="ph ph-caret-down text-xs text-content-tertiary"></i>
+                        </button>
+                        <div class="hidden absolute left-0 top-full mt-1 z-50 min-w-[160px] rounded-lg border border-border bg-surface shadow-lg py-1">
+                            {% for opt in filter.options %}
+                            <button onclick="applyFilter(this, '{{ filter.id }}', '{{ opt }}')" class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12px] hover:bg-surface-raised transition-colors {{ loop.first ? 'text-accent font-medium' : 'text-content-secondary' }}">
+                                {% if loop.first %}
+                                    <i class="ph ph-check text-xs"></i>
+                                {% else %}
+                                    <span class="w-3.5"></span>
+                                {% endif %}
+                                {{ opt }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {# Sort #}
+                    <div class="relative">
+                        <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="filter-trigger inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[12px] font-medium text-content-secondary hover:border-border-strong hover:text-content transition-colors">
+                            <i class="ph ph-arrows-down-up text-xs"></i>
+                            Sort
+                        </button>
+                        <div class="hidden absolute right-0 top-full mt-1 z-50 min-w-[180px] rounded-lg border border-border bg-surface shadow-lg py-1">
+                            {% for opt in ['Updated at (newest)', 'Updated at (oldest)', 'Published at (newest)', 'Published at (oldest)', 'Title (A-Z)', 'Title (Z-A)'] %}
+                            <button class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12px] hover:bg-surface-raised transition-colors {{ loop.first ? 'text-accent font-medium' : 'text-content-secondary' }}">
+                                {% if loop.first %}
+                                    <i class="ph ph-check text-xs"></i>
+                                {% else %}
+                                    <span class="w-3.5"></span>
+                                {% endif %}
+                                {{ opt }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Active filters row — shown when filters are applied #}
+            <div id="active-filters" class="hidden flex items-center gap-1.5 flex-wrap">
+                <span class="text-[11px] text-content-tertiary">Filtered by:</span>
+                {# Filter chips get inserted here by JS #}
+            </div>
+        </div>
+
+        {# Table #}
+        <div class="overflow-hidden rounded-xl border border-border min-w-0">
+            <div class="overflow-x-auto">
+                <table class="w-full text-[13px]">
+                    <thead>
+                        <tr class="border-b border-border bg-surface-raised text-left">
+                            <th class="px-4 py-2.5 font-medium text-content-tertiary w-6">S</th>
+                            <th class="px-4 py-2.5 font-medium text-content-tertiary w-20">Translation</th>
+                            <th class="px-4 py-2.5 font-medium text-content-tertiary">Title</th>
+                            <th class="hidden px-4 py-2.5 font-medium text-content-tertiary md:table-cell">Tags</th>
+                            <th class="hidden px-4 py-2.5 font-medium text-content-tertiary sm:table-cell w-20">In news</th>
+                            <th class="hidden px-4 py-2.5 font-medium text-content-tertiary lg:table-cell">Updated at</th>
+                            <th class="hidden px-4 py-2.5 font-medium text-content-tertiary lg:table-cell">Published at</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        {% set articles = [
+                            {title: 'A brother went to Palestine, Israel and Jordan', lang: 'EN', srcLang: 'en', tags: ['Visits'], news: false, updated: '35 minutes ago', published: '4 hours ago'},
+                            {title: 'The Mystery of the Passover', lang: 'EN', srcLang: 'en', tags: ['Monthly Bible commentaries'], news: false, updated: '1 day ago', published: '1 day ago'},
+                            {title: 'GENESIS - 30th anniversary celebration', lang: 'PL', srcLang: 'pl', tags: ['Local prayers', 'Local Events', 'Lodz 2026/2027'], news: false, updated: '1 week ago', published: '1 week ago'},
+                            {title: 'New Album: Dona Nobis Pacem', lang: 'EN', srcLang: 'en', tags: [], news: true, updated: '1 week ago', published: '1 week ago'},
+                            {title: 'Brother Matthew received in a private audience by Pope Leo XIV', lang: 'EN', srcLang: 'en', tags: [], news: true, updated: '1 week ago', published: '1 week ago'},
+                            {title: 'The Light Was Not Extinguished During the Night of the War', lang: 'EN', srcLang: 'en', tags: ['Visits'], news: false, updated: '1 week ago', published: '1 week ago'},
+                            {title: 'Multimedia resources - Paris', lang: 'EN', srcLang: 'en', tags: ['Paris 2025/2026'], news: false, updated: '2 weeks ago', published: '1 year ago'},
+                            {title: 'Multimedia resources - City', lang: 'EN', srcLang: 'en', tags: ['Lodz 2026/2027'], news: false, updated: '2 weeks ago', published: '2 weeks ago'},
+                            {title: 'The pilgrimage of trust continues: from Paris to the city', lang: 'EN', srcLang: 'en', tags: ['Lodz 2026/2027'], news: false, updated: '3 weeks ago', published: '3 months ago'},
+                            {title: '2026 Hong Kong meeting for Asian Youth', lang: 'EN', srcLang: 'en', tags: [], news: true, updated: '4 weeks ago', published: '4 weeks ago'}
+                        ] %}
+                        {% for article in articles %}
+                        <tr class="hover:bg-surface-raised transition-colors cursor-pointer">
+                            <td class="px-4 py-2.5"><span class="inline-block h-2 w-2 rounded-full {{ article.news ? 'bg-green-500' : 'bg-gray-400 dark:bg-neutral-500' }}"></span></td>
+                            <td class="px-4 py-2.5 font-medium text-accent">{{ article.lang }}</td>
+                            <td class="px-4 py-2.5">
+                                <div class="flex items-center gap-2">
+                                    <span class="inline-flex rounded border border-border px-1 py-0.5 text-[10px] font-medium text-content-tertiary">{{ article.srcLang }}</span>
+                                    <span class="text-accent hover:underline">{{ article.title }}</span>
+                                </div>
+                                <div class="mt-0.5 text-[11px] text-content-tertiary sm:hidden">{{ article.updated }}</div>
+                            </td>
+                            <td class="hidden px-4 py-2.5 md:table-cell">
+                                <div class="flex flex-wrap gap-1">
+                                    {% for tag in article.tags %}
+                                        <span class="inline-flex rounded-md px-1.5 py-0.5 text-[11px] font-medium bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400">{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td class="hidden px-4 py-2.5 sm:table-cell text-center">
+                                {% if article.news %}
+                                    <span class="text-green-600 dark:text-green-400 text-[12px] font-medium">yes</span>
+                                {% else %}
+                                    <span class="text-red-500 dark:text-red-400 text-[12px] font-medium">no</span>
+                                {% endif %}
+                            </td>
+                            <td class="hidden px-4 py-2.5 text-content-secondary whitespace-nowrap lg:table-cell">{{ article.updated }}</td>
+                            <td class="hidden px-4 py-2.5 text-content-secondary whitespace-nowrap lg:table-cell">{{ article.published }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex items-center justify-between border-t border-border px-4 py-2.5 text-[13px]">
+                <div class="text-content-secondary">Page 1 of 14 (136 entries)</div>
+                <div class="flex items-center gap-1">
+                    <button class="rounded-md px-2.5 py-1 text-content-tertiary" disabled>&lsaquo; prev</button>
+                    <button class="rounded-md bg-accent px-2.5 py-1 font-medium text-white dark:text-black">1</button>
+                    <button class="rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised">2</button>
+                    <button class="rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised">3</button>
+                    <button class="rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised">next &rsaquo;</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {# ================================================================ #}
+    {# VIEW: ARTICLE EDIT                                               #}
+    {# ================================================================ #}
+
+    {# Article Right Sidebar — fixed panel #}
+    <div id="article-sidebar-backdrop" class="fixed inset-0 z-40 bg-black/50 xl:hidden hidden" onclick="toggleArticleSidebar()"></div>
+    {# Edge tab — visible when sidebar is closed (< to open) #}
+    <button id="article-sidebar-edge-tab" onclick="toggleArticleSidebar()" class="fixed right-0 top-1/2 z-40 -translate-y-1/2 hidden rounded-l-lg border border-r-0 border-border bg-surface px-1 py-3 shadow-md hover:bg-surface-raised transition-colors" title="Open sidebar">
+        <i class="ph ph-caret-left text-content-tertiary"></i>
+    </button>
+    {# Edge tab — visible when sidebar is open (> to close), anchored to sidebar's left edge #}
+    <button id="article-sidebar-collapse-tab" onclick="toggleArticleSidebar()" class="fixed top-1/2 z-[51] -translate-y-1/2 hidden rounded-l-lg border border-r-0 border-border bg-surface px-1 py-3 shadow-md hover:bg-surface-raised transition-colors" style="right: 18rem;" title="Close sidebar">
+        <i class="ph ph-caret-right text-content-tertiary"></i>
+    </button>
+    <aside id="article-sidebar" class="fixed inset-y-0 right-0 z-50 flex w-72 translate-x-full flex-col border-l border-border bg-surface transition-transform duration-200" data-open="false">
+        {# Sidebar tabs #}
+        <div class="flex border-b border-border shrink-0">
+            <button class="flex-1 border-b-2 border-accent px-3 py-2.5 text-[13px] font-medium">General</button>
+            <button class="flex-1 px-3 py-2.5 text-[13px] text-content-secondary hover:text-content">History</button>
+            <button onclick="toggleArticleSidebar()" class="px-3 py-2.5 text-content-tertiary hover:text-content xl:hidden">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+
+        {# Scrollable content #}
+        <div class="flex-1 overflow-y-auto">
+            {# === TRANSLATION section === #}
+            <div class="px-4 pt-3 pb-1">
+                <p class="text-[11px] font-medium uppercase tracking-wider text-content-tertiary">Translation (EN)</p>
+            </div>
+            <div class="divide-y divide-border">
+                <div class="px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-[12px] text-content-secondary">Status</span>
+                    <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20">Published</span>
+                </div>
+                <div class="px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-[12px] text-content-secondary">Published on</span>
+                    <span class="text-[13px]">Apr 3, 2026</span>
+                </div>
+                <div class="px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-[12px] text-content-secondary">Author</span>
+                    <span class="text-[13px]">john@example.com</span>
+                </div>
+                <div class="px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-[12px] text-content-secondary">Updated at</span>
+                    <span class="text-[13px]">Apr 3, 2026</span>
+                </div>
+                <div class="px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-[12px] text-content-secondary">Revisions</span>
+                    <a href="#" class="text-[13px] text-accent hover:underline">42</a>
+                </div>
+            </div>
+
+            {# Analytics chart #}
+            <div class="px-4 py-3 border-t border-border">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-medium uppercase tracking-wider text-content-tertiary">Analytics (30 days)</span>
+                </div>
+                <div class="sparkline mb-2">
+                    {% set bars = [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 1, 0] %}
+                    {% for val in bars %}
+                        <div class="sparkline-bar" style="height: {{ val == 0 ? 2 : (val * 16 + 4) }}px" title="{{ val }} views"></div>
+                    {% endfor %}
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div>
+                        <div class="text-base font-semibold">7</div>
+                        <div class="text-[10px] text-content-tertiary">Views</div>
+                    </div>
+                    <div>
+                        <div class="text-base font-semibold">2</div>
+                        <div class="text-[10px] text-content-tertiary">Visitors</div>
+                    </div>
+                    <div>
+                        <div class="text-base font-semibold">0%</div>
+                        <div class="text-[10px] text-content-tertiary">Bounce</div>
+                    </div>
+                </div>
+            </div>
+
+            {# === ARTICLE section === #}
+            <div class="px-4 pt-3 pb-1 border-t border-border">
+                <p class="text-[11px] font-medium uppercase tracking-wider text-content-tertiary">Article</p>
+            </div>
+            <div class="divide-y divide-border">
+                <div class="px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-[12px] text-content-secondary">Color</span>
+                    <div class="h-5 w-5 rounded bg-orange-400"></div>
+                </div>
+                <div class="px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-[12px] text-content-secondary">Layout</span>
+                    <span class="text-[13px]">default-regular</span>
+                </div>
+                <div class="px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-[12px] text-content-secondary">Translate into</span>
+                    <span class="text-[13px]">all languages</span>
+                </div>
+                <div class="px-4 py-2.5">
+                    <span class="text-[12px] text-content-secondary">Tags</span>
+                    <div class="mt-1.5 flex flex-wrap gap-1">
+                        <span class="inline-flex rounded-md bg-green-50 px-1.5 py-0.5 text-[11px] font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400">Visits</span>
+                    </div>
+                </div>
+                <div class="px-4 py-2.5">
+                    <span class="text-[12px] text-content-secondary">Countries</span>
+                    <div class="mt-1.5 flex flex-wrap gap-1">
+                        <span class="inline-flex rounded-md bg-blue-50 px-1.5 py-0.5 text-[11px] font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">Palestinian Territories</span>
+                        <span class="inline-flex rounded-md bg-blue-50 px-1.5 py-0.5 text-[11px] font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-400">Jordan</span>
+                    </div>
+                </div>
+                <div class="px-4 py-2.5 flex items-center justify-between">
+                    <span class="text-[12px] text-content-secondary">Featured image</span>
+                    <div class="h-10 w-14 rounded border border-border bg-surface-raised"></div>
+                </div>
+            </div>
+        </div>
+
+        {# Sticky actions at bottom #}
+        <div class="shrink-0 border-t border-border px-4 py-3 space-y-2">
+            <button class="w-full rounded-md border border-border px-3 py-2 text-[13px] font-medium text-content-secondary hover:bg-surface-raised flex items-center justify-center gap-2">
+                <i class="ph ph-bell-ringing"></i>
+                Notify translators
+            </button>
+            <div class="flex gap-2">
+                <button class="flex-1 rounded-md border border-border px-3 py-2 text-[13px] text-content-secondary hover:bg-surface-raised">Archive</button>
+                <button class="flex-1 rounded-md border border-red-200 px-3 py-2 text-[13px] text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10">Delete</button>
+            </div>
+        </div>
+    </aside>
+
+    <main id="view-article-edit" class="view hidden">
+        {# Article Edit Top Bar #}
+        <div class="border-b border-border">
+            <div class="mx-auto max-w-7xl flex items-center justify-between px-4 py-2.5 lg:px-6">
+                <div class="min-w-0">
+                    <h1 class="text-[13px] font-semibold truncate">A brother went to Palestine, Israel and Jordan</h1>
+                    <p class="text-[11px] text-content-tertiary truncate">Un frere s'est rendu en Palestine, Israel et Jordanie</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0 ml-3">
+                    <button class="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-[13px] text-content-secondary hover:bg-surface-raised">
+                        <i class="ph ph-clock text-xs"></i>
+                        History
+                    </button>
+                    <button class="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-[13px] text-content-secondary hover:bg-surface-raised">
+                        <i class="ph ph-eye text-xs"></i>
+                        Preview
+                    </button>
+                    <button onclick="toggleArticleSidebar()" class="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-[13px] text-content-secondary hover:bg-surface-raised">
+                        <i class="ph ph-sidebar text-xs"></i>
+                        Sidebar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {# Language bar #}
+        <div class="border-b border-border">
+            <div class="mx-auto max-w-7xl px-4 py-2 lg:px-6">
+                <div class="flex items-center gap-1 flex-wrap">
+                    {% set editMainLocales = ['de', 'en', 'es', 'fr', 'it', 'pl', 'pt', 'zh_Hant'] %}
+                    {% set editExtLocales = ['ar', 'be', 'bn', 'ca', 'cs', 'da', 'el', 'et', 'fi', 'hi', 'hr', 'hu', 'id', 'ja', 'km', 'ko', 'lt', 'lv', 'my', 'nl', 'no', 'ro', 'ru', 'sk', 'sl', 'sq', 'sr', 'sv', 'sw', 'th', 'tl', 'uk', 'vl', 'zh_Hans'] %}
+                    {% for l in editMainLocales %}
+                        <button onclick="selectLang(this)" class="lang-btn inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-medium transition-colors {{ l == 'en' ? 'border-accent bg-accent text-white dark:text-black' : 'border-border text-content-secondary hover:border-border-strong' }}">
+                            <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                            {{ l }}
+                        </button>
+                    {% endfor %}
+                    <div class="relative">
+                        <button onclick="this.nextElementSibling.classList.toggle('hidden'); this.nextElementSibling.querySelector('input')?.focus()" class="lang-more-btn inline-flex items-center gap-1 rounded-md border border-dashed border-border-strong px-1.5 py-0.5 text-[11px] font-medium text-content-tertiary hover:border-accent hover:text-accent transition-colors">
+                            <i class="ph ph-plus text-xs"></i>
+                            {{ editExtLocales|length }} more
+                        </button>
+                        <div class="hidden absolute left-0 top-full mt-1 z-50 w-64 rounded-lg border border-border bg-surface shadow-lg">
+                            <div class="p-2 border-b border-border">
+                                <input type="text" placeholder="Search language..." oninput="filterLangs(this)" class="w-full rounded-md border border-border bg-surface px-2.5 py-1.5 text-[12px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                            </div>
+                            <div class="p-1.5 max-h-48 overflow-y-auto grid grid-cols-4 gap-0.5">
+                                {% for l in editExtLocales %}
+                                    {% set hasTranslation = l in ['cs', 'da', 'nl'] %}
+                                    <button onclick="selectLang(this); this.closest('.relative').querySelector('.lang-more-btn').nextElementSibling.classList.add('hidden')" class="lang-btn lang-option relative rounded-md px-2 py-1.5 text-[11px] font-medium text-content-secondary hover:bg-surface-raised transition-colors" data-lang="{{ l }}">
+                                        <span class="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full {{ hasTranslation ? 'bg-green-500' : 'bg-gray-300 dark:bg-neutral-600' }}"></span>
+                                        {{ l }}
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Editor Area #}
+        <div class="mx-auto max-w-7xl p-4 lg:p-6">
+            {# View mode selector #}
+            <div class="mb-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-[11px] font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20">Published</span>
+                    <span class="text-[13px] font-medium">A brother went to Palestine, Israel and Jordan</span>
+                </div>
+                <div class="hidden sm:flex items-center gap-1 rounded-md border border-border p-0.5">
+                    <button class="rounded px-2.5 py-1 text-[12px] font-medium bg-surface-raised">Split view</button>
+                    <button class="rounded px-2.5 py-1 text-[12px] font-medium text-content-secondary hover:bg-surface-raised">Single view</button>
+                </div>
+            </div>
+
+            {# Split editor #}
+            <div class="grid gap-4 lg:grid-cols-2">
+                {# Left column - reference #}
+                <div class="space-y-4">
+                    <div class="rounded-lg border border-border bg-surface-raised/50 p-0.5">
+                        <select class="w-full rounded-md bg-transparent px-3 py-1.5 text-[13px] text-content-secondary focus:outline-none">
+                            <option>English — reference for translations</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Intro title</label>
+                        <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Title <span class="text-red-500">*</span></label>
+                        <input type="text" value="A brother went to Palestine, Israel and Jordan" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Subtitle</label>
+                        <input type="text" value="in February" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Slug <span class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-1">
+                            <input type="text" value="a-brother-went-to-palestine-israel-and-jordan" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                            <button class="rounded-md p-2 hover:bg-surface-raised">
+                                <i class="ph ph-lock text-content-tertiary"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Description</label>
+                        <textarea rows="3" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"></textarea>
+                        <p class="mt-1 text-[11px] text-content-tertiary">Appears in search engine results and social sharing. Max 160 characters.</p>
+                    </div>
+                    <div class="rounded-lg border border-border p-4">
+                        <div class="prose prose-sm max-w-none text-[13px] text-content-secondary leading-relaxed">
+                            The threat of war with Iran was already looming when I flew to Tel Aviv on January 31. Was I going to be able to return? I couldn't count on it too much. My first night at the Tantur Ecumenical Institute allowed me to see the team again. Many young people have bright memories of the beauty of the place and where the first welcome took place during our meeting in the Holy Land in May 2022. The wall that separates Israel from Palestine is only a few hundred meters away...
+                        </div>
+                    </div>
+                </div>
+
+                {# Right column - translation #}
+                <div class="space-y-4">
+                    <div class="rounded-lg border border-border bg-surface-raised/50 p-0.5">
+                        <div class="px-3 py-1.5 text-[13px] font-medium">Czech (cs) — translation</div>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Intro title</label>
+                        <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Title <span class="text-red-500">*</span></label>
+                        <input type="text" value="A brother went to Palestine, Israel and Jordan" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Subtitle</label>
+                        <input type="text" value="in February" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Slug</label>
+                        <input type="text" value="a-brother-went-to-palestine-israel-and-jordan" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                    </div>
+                    <div>
+                        <label class="block text-[12px] font-medium text-content-secondary mb-1">Description</label>
+                        <textarea rows="3" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"></textarea>
+                    </div>
+                    <div class="rounded-lg border border-border p-4">
+                        <div class="prose prose-sm max-w-none text-[13px] leading-relaxed">
+                            The threat of war with Iran was already looming when I flew to Tel Aviv on January 31. Was I going to be able to return? I couldn't count on it too much. My first night at the Tantur Ecumenical Institute allowed me to see the team again. Many young people have bright memories of the beauty of the place and where the first welcome took place during our meeting in the Holy Land in May 2022. The wall that separates Israel from Palestine is only a few hundred meters away...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Save bar #}
+            <div class="sticky bottom-0 mt-6 flex items-center gap-2 rounded-lg border border-border bg-surface p-3 shadow-lg">
+                <button class="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">
+                    Save and publish
+                    <i class="ph ph-caret-down text-xs"></i>
+                </button>
+                <div class="ml-auto text-[11px] text-content-tertiary">Last saved 2 min ago</div>
+            </div>
+        </div>
+    </main>
+
+    {# ================================================================ #}
+    {# VIEW: PAGE LIST (tree)                                           #}
+    {# ================================================================ #}
+    <main id="view-pages" class="view hidden p-4 lg:p-6 max-w-7xl mx-auto">
+        <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 class="text-lg font-semibold">Pages</h1>
+            <div class="flex items-center gap-2">
+                <button class="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-[13px] text-content-secondary hover:bg-surface-raised">Translation list</button>
+                <button class="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-[13px] text-content-secondary hover:bg-surface-raised">
+                    <i class="ph ph-plus text-xs"></i>
+                    New article
+                </button>
+                <button class="inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">
+                    <i class="ph ph-plus text-xs"></i>
+                    New page
+                </button>
+            </div>
+        </div>
+
+        {# Language selector #}
+        <div class="mb-4 flex items-center gap-1 flex-wrap">
+            {% for l in mainLocales %}
+                <button onclick="selectLang(this)" class="lang-btn rounded-md border px-2 py-0.5 text-[11px] font-medium transition-colors {{ l == 'en' ? 'border-accent bg-accent text-white dark:text-black' : 'border-border text-content-secondary hover:border-border-strong' }}">{{ l }}</button>
+            {% endfor %}
+            <div class="relative">
+                <button onclick="this.nextElementSibling.classList.toggle('hidden'); this.nextElementSibling.querySelector('input')?.focus()" class="lang-more-btn rounded-md border border-dashed border-border-strong px-2 py-0.5 text-[11px] font-medium text-content-tertiary hover:border-accent hover:text-accent transition-colors">
+                    + {{ extLocales|length }} more
+                </button>
+                <div class="hidden absolute left-0 top-full mt-1 z-50 w-64 rounded-lg border border-border bg-surface shadow-lg">
+                    <div class="p-2 border-b border-border">
+                        <input type="text" placeholder="Search language..." oninput="filterLangs(this)" class="w-full rounded-md border border-border bg-surface px-2.5 py-1.5 text-[12px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                    </div>
+                    <div class="p-1.5 max-h-48 overflow-y-auto grid grid-cols-4 gap-0.5">
+                        {% for l in extLocales %}
+                            <button onclick="selectLang(this); this.closest('.relative').querySelector('.lang-more-btn').nextElementSibling.classList.add('hidden')" class="lang-btn lang-option rounded-md px-2 py-1.5 text-[11px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content transition-colors" data-lang="{{ l }}">{{ l }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Tree View #}
+        <div class="rounded-xl border border-border min-w-0">
+            {% set pages = [
+                {name: 'The Community', depth: 0, hasChildren: true, expanded: false, status: 'published'},
+                {name: 'Prayer & Reflection', depth: 0, hasChildren: true, expanded: false, status: 'published'},
+                {name: 'Coming to the retreat', depth: 0, hasChildren: true, expanded: true, status: 'published'},
+                {name: 'Registration', depth: 1, hasChildren: true, expanded: false, status: 'published'},
+                {name: 'Arriving with a group', depth: 1, hasChildren: false, expanded: false, status: 'published', lang: 'es'},
+                {name: 'Program of a typical day', depth: 1, hasChildren: false, expanded: false, status: 'published'},
+                {name: 'Become a volunteer', depth: 1, hasChildren: false, expanded: false, status: 'published'},
+                {name: 'One week of silent retreat', depth: 1, hasChildren: false, expanded: false, status: 'published'},
+                {name: 'Financial contribution', depth: 1, hasChildren: true, expanded: true, status: 'published'},
+                {name: 'Banking details', depth: 2, hasChildren: false, expanded: false, status: 'published'},
+                {name: 'Contributions by country', depth: 2, hasChildren: false, expanded: false, status: 'partial'},
+                {name: 'Accommodation', depth: 1, hasChildren: false, expanded: false, status: 'published'},
+                {name: 'Plan your journey', depth: 1, hasChildren: false, expanded: false, status: 'published'},
+                {name: 'Around the World', depth: 0, hasChildren: true, expanded: false, status: 'published'},
+                {name: 'Other', depth: 0, hasChildren: true, expanded: false, status: 'published'},
+                {name: 'Multimedia', depth: 0, hasChildren: true, expanded: false, status: 'published'},
+                {name: 'Safeguarding', depth: 0, hasChildren: true, expanded: false, status: 'published'}
+            ] %}
+
+            <div class="divide-y divide-border">
+                {% for page in pages %}
+                <div class="group flex items-center hover:bg-surface-raised transition-colors" style="--depth: {{ page.depth }}">
+                    <div class="tree-indent flex flex-1 items-center gap-1.5 px-4 py-2.5">
+                        {% if page.depth > 0 %}
+                            <span class="text-content-tertiary text-[13px] mr-0.5">└</span>
+                        {% endif %}
+                        {% if page.hasChildren %}
+                            <button class="rounded p-0.5 hover:bg-surface-raised">
+                                <i class="ph ph-caret-down text-xs text-content-tertiary {{ page.expanded ? '' : '-rotate-90' }} transition-transform"></i>
+                            </button>
+                        {% else %}
+                            <span class="w-[22px]"></span>
+                        {% endif %}
+                        <span class="h-2 w-2 rounded-full shrink-0 {{ page.status == 'published' ? 'bg-green-500' : (page.status == 'partial' ? 'bg-blue-500' : 'bg-gray-400') }}"></span>
+                        {% if page.lang is defined %}
+                            <span class="inline-flex rounded border border-border px-1 py-0.5 text-[10px] font-medium text-content-tertiary">{{ page.lang }}</span>
+                        {% endif %}
+                        <span class="text-[13px] font-medium">{{ page.name }}</span>
+                    </div>
+                    <button class="opacity-0 group-hover:opacity-100 mr-3 rounded-md p-1 hover:bg-surface-raised transition-opacity">
+                        <i class="ph ph-dots-three text-content-tertiary"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="border-t border-border px-4 py-3 space-y-1.5">
+                <a href="#" class="flex items-center gap-2 text-[13px] text-accent hover:underline">
+                    <i class="ph ph-archive text-xs"></i>
+                    Show archived pages
+                </a>
+                <a href="#" class="flex items-center gap-2 text-[13px] text-accent hover:underline">
+                    <i class="ph ph-translate text-xs"></i>
+                    Show only translated pages
+                </a>
+            </div>
+        </div>
+    </main>
+
+    {# ================================================================ #}
+    {# VIEW: COMPONENTS                                                  #}
+    {# ================================================================ #}
+    <main id="view-components" class="view hidden p-4 lg:p-6 max-w-5xl mx-auto">
+        <div class="mb-8">
+            <h1 class="text-lg font-semibold">Components</h1>
+            <p class="mt-1 text-[13px] text-content-secondary">UI patterns for the redesign</p>
+        </div>
+
+        {# ---- TOAST NOTIFICATIONS ---- #}
+        <section class="mb-10">
+            <h2 class="text-sm font-semibold mb-4 pb-2 border-b border-border">Demos</h2>
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button onclick="toggleImpersonation()" class="rounded-md border border-amber-300 bg-amber-50 px-3 py-1.5 text-[13px] font-medium text-amber-700 hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400">Toggle impersonation bar</button>
+                <a href="#" onclick="openModal('login-modal'); return false;" class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised">Preview login page</a>
+            </div>
+
+            <h3 class="text-sm font-semibold mb-4 pb-2 border-b border-border">Toast Notifications</h3>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button onclick="showToast('success', 'Article published', 'The article has been published successfully.')" class="rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white dark:text-black hover:bg-accent-hover">Success toast</button>
+                <button onclick="showToast('error', 'Failed to save', 'There was an error saving the article. Please try again.')" class="rounded-md bg-red-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-red-700">Error toast</button>
+                <button onclick="showToast('warning', 'Unsaved changes', 'You have unsaved changes that will be lost.')" class="rounded-md bg-amber-500 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-amber-600">Warning toast</button>
+                <button onclick="showToast('info', 'Translation synced', 'Czech translation has been synced with the reference.')" class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised">Info toast</button>
+            </div>
+        </section>
+
+        {# ---- MODALS ---- #}
+        <section class="mb-10">
+            <h2 class="text-sm font-semibold mb-4 pb-2 border-b border-border">Modals & Dialogs</h2>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button onclick="openModal('delete-modal')" class="rounded-md border border-red-200 px-3 py-1.5 text-[13px] font-medium text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10">Delete confirmation</button>
+                <button onclick="openModal('form-modal')" class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised">Form modal</button>
+                <button onclick="openModal('media-modal')" class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised">Media picker</button>
+            </div>
+        </section>
+
+        {# ---- FORM ELEMENTS ---- #}
+        <section class="mb-10">
+            <h2 class="text-sm font-semibold mb-4 pb-2 border-b border-border">Form Elements</h2>
+            <div class="max-w-2xl space-y-5">
+                {# Text input #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Text input</label>
+                    <input type="text" value="Sample value" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                </div>
+
+                {# Input with error #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Input with error <span class="text-red-500">*</span></label>
+                    <input type="text" value="" class="w-full rounded-lg border border-red-300 bg-surface px-3 py-2 text-[13px] focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 dark:border-red-500/50"/>
+                    <p class="mt-1 text-[11px] text-red-600 dark:text-red-400">This field is required.</p>
+                </div>
+
+                {# Textarea #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Textarea</label>
+                    <textarea rows="3" placeholder="Add a description..." class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"></textarea>
+                    <p class="mt-1 text-[11px] text-content-tertiary">Helper text goes here. Max 160 characters.</p>
+                </div>
+
+                {# Select #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Select</label>
+                    <select class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent">
+                        <option>default-regular</option>
+                        <option>full-width</option>
+                        <option>sidebar-layout</option>
+                    </select>
+                </div>
+
+                {# Multi-select / Tag input #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Tag input (multi-select)</label>
+                    <div class="flex flex-wrap gap-1.5 rounded-lg border border-border p-2 focus-within:border-accent focus-within:ring-1 focus-within:ring-accent">
+                        {% for tag in ['Visits', 'Monthly Bible commentaries', 'Local Events'] %}
+                        <span class="inline-flex items-center gap-1 rounded-md bg-surface-raised px-2 py-1 text-[12px] font-medium">
+                            {{ tag }}
+                            <button class="text-content-tertiary hover:text-content"><i class="ph ph-x text-[10px]"></i></button>
+                        </span>
+                        {% endfor %}
+                        <input type="text" placeholder="Add tag..." class="flex-1 min-w-[80px] border-0 bg-transparent px-1 py-1 text-[12px] placeholder:text-content-tertiary focus:outline-none"/>
+                    </div>
+                </div>
+
+                {# Checkbox group #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-2">Checkboxes</label>
+                    <div class="space-y-2">
+                        {% for opt in ['Show in news feed', 'Allow comments', 'Pin to top'] %}
+                        <label class="flex items-center gap-2.5 cursor-pointer">
+                            <input type="checkbox" {{ loop.first ? 'checked' : '' }} class="h-4 w-4 rounded border-border text-accent focus:ring-accent"/>
+                            <span class="text-[13px]">{{ opt }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {# Radio group #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-2">Radio buttons</label>
+                    <div class="space-y-2">
+                        {% for opt in ['All languages', 'Selected languages only', 'None'] %}
+                        <label class="flex items-center gap-2.5 cursor-pointer">
+                            <input type="radio" name="translate-demo" {{ loop.first ? 'checked' : '' }} class="h-4 w-4 border-border text-accent focus:ring-accent"/>
+                            <span class="text-[13px]">{{ opt }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {# Toggle switch #}
+                <div class="flex items-center justify-between rounded-lg border border-border p-4">
+                    <div>
+                        <div class="text-[13px] font-medium">Published</div>
+                        <div class="text-[11px] text-content-secondary mt-0.5">Make this visible on the public site</div>
+                    </div>
+                    <button onclick="this.dataset.on = this.dataset.on === 'true' ? 'false' : 'true'" data-on="true" class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors [&[data-on='true']]:bg-green-500 [&[data-on='false']]:bg-gray-300 dark:[&[data-on='false']]:bg-neutral-600">
+                        <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform [button[data-on='true']_&]:translate-x-6 [button[data-on='false']_&]:translate-x-1"></span>
+                    </button>
+                </div>
+
+                {# Date picker #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Date & time</label>
+                    <div class="flex gap-2">
+                        <div class="relative flex-1">
+                            <i class="ph ph-calendar-blank absolute left-3 top-1/2 -translate-y-1/2 text-content-tertiary"></i>
+                            <input type="text" value="Apr 3, 2026" class="w-full rounded-lg border border-border bg-surface py-2 pl-9 pr-3 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                        </div>
+                        <div class="relative w-32">
+                            <i class="ph ph-clock absolute left-3 top-1/2 -translate-y-1/2 text-content-tertiary"></i>
+                            <input type="text" value="15:30" class="w-full rounded-lg border border-border bg-surface py-2 pl-9 pr-3 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                        </div>
+                    </div>
+                </div>
+
+                {# File upload / Dropzone #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">File upload</label>
+                    <div class="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-surface-raised/50 p-8 text-center hover:border-border-strong transition-colors cursor-pointer">
+                        <i class="ph ph-cloud-arrow-up text-3xl text-content-tertiary mb-2"></i>
+                        <p class="text-[13px] font-medium">Drop files here or click to upload</p>
+                        <p class="text-[11px] text-content-tertiary mt-1">PNG, JPG, GIF up to 10MB</p>
+                    </div>
+                </div>
+
+                {# Color picker #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Color</label>
+                    <div class="flex items-center gap-2">
+                        {% for color in ['bg-red-500', 'bg-orange-400', 'bg-amber-400', 'bg-green-500', 'bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500'] %}
+                        <button class="h-7 w-7 rounded-full {{ color }} {{ color == 'bg-orange-400' ? 'ring-2 ring-accent ring-offset-2 ring-offset-surface' : '' }} hover:scale-110 transition-transform"></button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {# Buttons #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-2">Buttons</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">Primary</button>
+                        <button class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised">Secondary</button>
+                        <button class="rounded-md bg-red-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-red-700">Danger</button>
+                        <button class="rounded-md px-3 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised">Ghost</button>
+                        <button class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium text-content-tertiary" disabled>Disabled</button>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <button class="inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">
+                            <i class="ph ph-plus text-xs"></i> With icon
+                        </button>
+                        <button class="rounded-md p-1.5 hover:bg-surface-raised" title="Icon only">
+                            <i class="ph ph-dots-three text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                {# Badges #}
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-2">Badges</label>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="inline-flex items-center rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20">Published</span>
+                        <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-400 dark:ring-amber-500/20">Draft</span>
+                        <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-400 dark:ring-blue-500/20">In Review</span>
+                        <span class="inline-flex items-center rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-medium text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-500/10 dark:text-red-400 dark:ring-red-500/20">Archived</span>
+                        <span class="inline-flex items-center rounded-full bg-purple-50 px-2.5 py-1 text-[11px] font-medium text-purple-700 ring-1 ring-inset ring-purple-600/20 dark:bg-purple-500/10 dark:text-purple-400 dark:ring-purple-500/20">Scheduled</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {# ---- EMPTY STATES ---- #}
+        <section class="mb-10">
+            <h2 class="text-sm font-semibold mb-4 pb-2 border-b border-border">Empty States</h2>
+            <div class="grid gap-6 lg:grid-cols-2">
+                {# Empty table #}
+                <div class="rounded-xl border border-border">
+                    <div class="border-b border-border px-4 py-3">
+                        <h3 class="text-[13px] font-semibold">Articles</h3>
+                    </div>
+                    <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-surface-raised mb-3">
+                            <i class="ph ph-newspaper text-xl text-content-tertiary"></i>
+                        </div>
+                        <p class="text-[13px] font-medium">No articles yet</p>
+                        <p class="text-[12px] text-content-tertiary mt-1 max-w-[240px]">Create your first article to get started with content management.</p>
+                        <button class="mt-4 inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">
+                            <i class="ph ph-plus text-xs"></i> New article
+                        </button>
+                    </div>
+                </div>
+
+                {# Empty search #}
+                <div class="rounded-xl border border-border">
+                    <div class="border-b border-border px-4 py-3">
+                        <h3 class="text-[13px] font-semibold">Search results</h3>
+                    </div>
+                    <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-surface-raised mb-3">
+                            <i class="ph ph-magnifying-glass text-xl text-content-tertiary"></i>
+                        </div>
+                        <p class="text-[13px] font-medium">No results found</p>
+                        <p class="text-[12px] text-content-tertiary mt-1 max-w-[240px]">Try adjusting your search or filter to find what you're looking for.</p>
+                    </div>
+                </div>
+
+                {# No translations #}
+                <div class="rounded-xl border border-border">
+                    <div class="border-b border-border px-4 py-3">
+                        <h3 class="text-[13px] font-semibold">Articles to translate</h3>
+                    </div>
+                    <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-50 dark:bg-green-500/10 mb-3">
+                            <i class="ph ph-check-circle text-xl text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <p class="text-[13px] font-medium">All caught up!</p>
+                        <p class="text-[12px] text-content-tertiary mt-1">There are no articles waiting for translation.</p>
+                    </div>
+                </div>
+
+                {# Empty media #}
+                <div class="rounded-xl border border-border">
+                    <div class="border-b border-border px-4 py-3">
+                        <h3 class="text-[13px] font-semibold">Media</h3>
+                    </div>
+                    <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-surface-raised mb-3">
+                            <i class="ph ph-image text-xl text-content-tertiary"></i>
+                        </div>
+                        <p class="text-[13px] font-medium">No media files</p>
+                        <p class="text-[12px] text-content-tertiary mt-1 max-w-[240px]">Upload images, documents, and other files to use in your content.</p>
+                        <button class="mt-4 inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised">
+                            <i class="ph ph-cloud-arrow-up text-xs"></i> Upload files
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {# ---- EDITOR CONTENT BLOCKS ---- #}
+        <section class="mb-10">
+            <h2 class="text-sm font-semibold mb-4 pb-2 border-b border-border">EditorJS Instance</h2>
+            <p class="text-[12px] text-content-secondary mb-4">Live EditorJS editor with standard blocks. Custom Xutim blocks (foldable, image-row, tag-list, content-link, layout) shown as static previews below.</p>
+
+            {# Real EditorJS instance #}
+            <div class="max-w-3xl rounded-xl border border-border overflow-hidden">
+                <div id="editorjs" class="min-h-[200px]"></div>
+            </div>
+
+            {# Custom blocks that can't load in standard EditorJS — static preview #}
+            <h3 class="text-[13px] font-semibold mt-8 mb-3">Custom Xutim blocks (static preview)</h3>
+            <div class="max-w-3xl rounded-xl border border-border divide-y divide-border">
+                {# Main Header #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Main Header</div>
+                    <div class="space-y-1">
+                        <p class="text-[13px] font-medium uppercase tracking-wider text-content-tertiary">Letter from the community</p>
+                        <h2 class="text-2xl font-bold leading-tight">The pilgrimage of trust continues</h2>
+                        <p class="text-base text-content-secondary">From Paris to the world, spring 2026</p>
+                    </div>
+                </div>
+                {# Image Row #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Image Row</div>
+                    <div class="flex gap-2">
+                        <div class="flex-1 aspect-[4/3] rounded-lg bg-surface-raised border border-border flex items-center justify-center"><i class="ph ph-image text-2xl text-content-tertiary/30"></i></div>
+                        <div class="flex-1 aspect-[4/3] rounded-lg bg-surface-raised border border-border flex items-center justify-center"><i class="ph ph-image text-2xl text-content-tertiary/30"></i></div>
+                        <div class="flex-1 aspect-[4/3] rounded-lg bg-surface-raised border border-border flex items-center justify-center"><i class="ph ph-image text-2xl text-content-tertiary/30"></i></div>
+                    </div>
+                </div>
+                {# File attachment #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">File Attachment</div>
+                    <div class="flex items-center gap-3 rounded-lg border border-border p-3">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 dark:bg-red-500/10">
+                            <span class="text-[11px] font-bold text-red-600 dark:text-red-400">PDF</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[13px] font-medium">Programme-2026.pdf</div>
+                            <div class="text-[11px] text-content-tertiary">245 KiB</div>
+                        </div>
+                        <i class="ph ph-download-simple text-lg text-content-tertiary"></i>
+                    </div>
+                </div>
+                {# Foldable #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Foldable Section</div>
+                    <details class="rounded-lg border border-border" open>
+                        <summary class="flex items-center gap-2 px-4 py-3 cursor-pointer select-none hover:bg-surface-raised transition-colors text-[14px] font-medium">
+                            <i class="ph ph-caret-right text-xs text-content-tertiary transition-transform [details[open]_&]:rotate-90"></i>
+                            Practical information
+                        </summary>
+                        <div class="px-4 pb-4 text-[14px] leading-relaxed text-content-secondary border-t border-border pt-3">
+                            <p>Bring comfortable clothes, a sleeping bag, and a Bible.</p>
+                        </div>
+                    </details>
+                </div>
+                {# Tag list #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Tag List</div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <a href="#" class="inline-flex items-center rounded-md bg-accent-subtle px-2.5 py-1 text-[12px] font-medium text-accent hover:bg-accent/10">Visits</a>
+                        <a href="#" class="inline-flex items-center rounded-md bg-accent-subtle px-2.5 py-1 text-[12px] font-medium text-accent hover:bg-accent/10">Holy Land</a>
+                        <a href="#" class="inline-flex items-center rounded-md bg-accent-subtle px-2.5 py-1 text-[12px] font-medium text-accent hover:bg-accent/10">Peace</a>
+                    </div>
+                </div>
+                {# Content link #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Content Link</div>
+                    <a href="#" class="flex items-center gap-3 rounded-lg border border-border p-3 hover:bg-surface-raised transition-colors group">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-raised"><i class="ph ph-newspaper text-lg text-content-tertiary"></i></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[12px] text-content-tertiary">Linked article</div>
+                            <div class="text-[13px] font-medium truncate group-hover:text-accent transition-colors">The Mystery of the Passover</div>
+                        </div>
+                        <i class="ph ph-arrow-right text-content-tertiary group-hover:text-accent transition-colors"></i>
+                    </a>
+                </div>
+                {# Layout #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Layout Block</div>
+                    <div class="rounded-lg border border-dashed border-border-strong">
+                        <div class="flex items-center gap-2 px-3 py-2 border-b border-dashed border-border-strong">
+                            <span class="inline-flex items-center rounded bg-surface-raised px-1.5 py-0.5 text-[10px] font-medium text-content-tertiary">Sidebar left</span>
+                        </div>
+                        <div class="grid grid-cols-[1fr_2fr] divide-x divide-dashed divide-border-strong min-h-[80px]">
+                            <div class="p-3">
+                                <div class="text-[11px] text-content-tertiary mb-2">Sidebar</div>
+                                <div class="rounded border border-dashed border-border p-3 text-center text-[12px] text-content-tertiary"><i class="ph ph-plus text-xs"></i> Add</div>
+                            </div>
+                            <div class="p-3">
+                                <div class="text-[11px] text-content-tertiary mb-2">Main content</div>
+                                <p class="text-[13px] text-content-secondary">Content area</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {# Predefined block #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Predefined Block</div>
+                    <div class="rounded-lg border border-border p-4 bg-surface-raised/50">
+                        <div class="flex items-center gap-2 text-[13px]">
+                            <i class="ph ph-puzzle-piece text-content-tertiary"></i>
+                            <span class="font-medium">registration-form</span>
+                            <span class="text-content-tertiary">— Custom block</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+                {# --- Heading block --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Heading (h2)</div>
+                    <h2 class="text-2xl font-bold leading-tight">The pilgrimage of trust continues</h2>
+                </div>
+
+                {# --- Heading h3 --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Heading (h3)</div>
+                    <h3 class="text-xl font-semibold leading-tight">A journey through the Holy Land</h3>
+                </div>
+
+                {# --- Heading h4 --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Heading (h4)</div>
+                    <h4 class="text-lg font-semibold leading-tight">Meeting with local communities</h4>
+                </div>
+
+                {# --- Main Header (pretitle + title + subtitle) --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Main Header</div>
+                    <div class="space-y-1">
+                        <p class="text-[13px] font-medium uppercase tracking-wider text-content-tertiary">Letter from the community</p>
+                        <h2 class="text-2xl font-bold leading-tight">The pilgrimage of trust continues</h2>
+                        <p class="text-base text-content-secondary">From Paris to the world, spring 2026</p>
+                    </div>
+                </div>
+
+                {# --- Paragraph --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Paragraph</div>
+                    <p class="text-[15px] leading-relaxed">The threat of war was already looming when I flew to Tel Aviv on January 31. Was I going to be able to return? I couldn't count on it too much. My first night at the <strong>Tantur Ecumenical Institute</strong> allowed me to see the team again. Many young people have <em>bright memories</em> of the beauty of the place.</p>
+                </div>
+
+                {# --- Paragraph with alignment --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Paragraph (centered)</div>
+                    <p class="text-[15px] leading-relaxed text-center">Nothing is more responsible than prayer.</p>
+                </div>
+
+                {# --- Paragraph with inline link and footnote --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Paragraph with inline links & footnote</div>
+                    <p class="text-[15px] leading-relaxed">
+                        Read more about the <a href="#" class="text-accent underline underline-offset-2 decoration-accent/40 hover:decoration-accent">community gatherings</a> and the
+                        <a href="#" class="text-accent underline underline-offset-2 decoration-accent/40 hover:decoration-accent">pilgrimage route</a>.
+                        This event changed many lives<sup class="inline-flex items-center justify-center h-4 min-w-[16px] rounded-full bg-amber-100 text-amber-700 text-[10px] font-semibold cursor-help dark:bg-amber-500/20 dark:text-amber-300" title="Based on survey data from 2025 participants">1</sup>.
+                    </p>
+                </div>
+
+                {# --- Quote --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Quote</div>
+                    <blockquote class="border-l-[3px] border-accent/30 pl-4 py-1">
+                        <p class="text-[15px] leading-relaxed italic text-content-secondary">Whoever you are, wherever you come from, you are welcome here. Come as you are.</p>
+                        <cite class="mt-2 block text-[13px] not-italic text-content-tertiary">— Brother Roger</cite>
+                    </blockquote>
+                </div>
+
+                {# --- Unordered list --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">List (unordered)</div>
+                    <ul class="space-y-1.5 text-[15px] leading-relaxed">
+                        <li class="flex items-start gap-2"><span class="mt-2.5 h-1.5 w-1.5 rounded-full bg-content-tertiary shrink-0"></span>Morning prayer and meditation</li>
+                        <li class="flex items-start gap-2"><span class="mt-2.5 h-1.5 w-1.5 rounded-full bg-content-tertiary shrink-0"></span>Small group discussions and sharing</li>
+                        <li class="flex items-start gap-2"><span class="mt-2.5 h-1.5 w-1.5 rounded-full bg-content-tertiary shrink-0"></span>Workshops and creative activities
+                            <ul class="mt-1.5 ml-4 space-y-1.5">
+                                <li class="flex items-start gap-2"><span class="mt-2.5 h-1 w-1 rounded-full bg-content-tertiary/50 shrink-0"></span>Music and singing</li>
+                                <li class="flex items-start gap-2"><span class="mt-2.5 h-1 w-1 rounded-full bg-content-tertiary/50 shrink-0"></span>Art and icon painting</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                {# --- Ordered list --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">List (ordered)</div>
+                    <ol class="space-y-1.5 text-[15px] leading-relaxed list-decimal list-inside marker:text-content-tertiary marker:font-medium">
+                        <li>Register for the event online</li>
+                        <li>Receive your confirmation email</li>
+                        <li>Arrive at the meeting point by 14:00</li>
+                    </ol>
+                </div>
+
+                {# --- Checklist --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Checklist</div>
+                    <div class="space-y-2 text-[15px]">
+                        <label class="flex items-center gap-2.5">
+                            <input type="checkbox" checked disabled class="h-4 w-4 rounded border-border text-accent"/>
+                            <span class="line-through text-content-tertiary">Pack your sleeping bag</span>
+                        </label>
+                        <label class="flex items-center gap-2.5">
+                            <input type="checkbox" checked disabled class="h-4 w-4 rounded border-border text-accent"/>
+                            <span class="line-through text-content-tertiary">Bring your Bible</span>
+                        </label>
+                        <label class="flex items-center gap-2.5">
+                            <input type="checkbox" disabled class="h-4 w-4 rounded border-border"/>
+                            <span>Download the songbook</span>
+                        </label>
+                    </div>
+                </div>
+
+                {# --- Image --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Image</div>
+                    <figure>
+                        <div class="aspect-video rounded-lg bg-surface-raised border border-border flex items-center justify-center">
+                            <i class="ph ph-image text-4xl text-content-tertiary/30"></i>
+                        </div>
+                        <figcaption class="mt-2 text-center text-[12px] text-content-tertiary">Young people gathering for evening prayer, summer 2025</figcaption>
+                    </figure>
+                </div>
+
+                {# --- Image Row --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Image Row (3 images)</div>
+                    <div class="flex gap-2">
+                        {% for i in 1..3 %}
+                        <div class="flex-1 aspect-[4/3] rounded-lg bg-surface-raised border border-border flex items-center justify-center">
+                            <i class="ph ph-image text-2xl text-content-tertiary/30"></i>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {# --- File attachment --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">File Attachment</div>
+                    <a href="#" class="flex items-center gap-3 rounded-lg border border-border p-3 hover:bg-surface-raised transition-colors group">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 dark:bg-red-500/10">
+                            <span class="text-[11px] font-bold text-red-600 dark:text-red-400">PDF</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[13px] font-medium truncate">Programme-2026.pdf</div>
+                            <div class="text-[11px] text-content-tertiary">245 KiB</div>
+                        </div>
+                        <i class="ph ph-download-simple text-lg text-content-tertiary group-hover:text-content transition-colors"></i>
+                    </a>
+                </div>
+
+                {# --- Code block --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Code Block</div>
+                    <pre class="rounded-lg bg-gray-950 dark:bg-neutral-900 p-4 overflow-x-auto"><code class="text-[13px] text-gray-100 font-mono leading-relaxed">&lt;div class="prayer-times"&gt;
+  &lt;h3&gt;Daily schedule&lt;/h3&gt;
+  &lt;ul&gt;
+    &lt;li&gt;08:15 - Morning prayer&lt;/li&gt;
+    &lt;li&gt;12:20 - Midday prayer&lt;/li&gt;
+    &lt;li&gt;20:30 - Evening prayer&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+                </div>
+
+                {# --- Embed (YouTube) --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Embed (YouTube)</div>
+                    <div class="aspect-video rounded-lg bg-gray-950 border border-border flex items-center justify-center">
+                        <div class="text-center">
+                            <i class="ph ph-youtube-logo text-4xl text-red-500 mb-2"></i>
+                            <p class="text-[12px] text-gray-400">youtube.com/embed/dQw4w9WgXcQ</p>
+                        </div>
+                    </div>
+                    <p class="mt-2 text-center text-[12px] text-content-tertiary">Songs and prayers from the community</p>
+                </div>
+
+                {# --- Delimiter --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Delimiter</div>
+                    <div class="flex items-center justify-center py-2">
+                        <span class="text-content-tertiary tracking-[0.5em] text-lg">***</span>
+                    </div>
+                </div>
+
+                {# --- Foldable section --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Foldable Section</div>
+                    <details class="rounded-lg border border-border" open>
+                        <summary class="flex items-center gap-2 px-4 py-3 cursor-pointer select-none hover:bg-surface-raised transition-colors text-[14px] font-medium">
+                            <i class="ph ph-caret-right text-xs text-content-tertiary transition-transform [details[open]_&]:rotate-90"></i>
+                            Practical information for your stay
+                        </summary>
+                        <div class="px-4 pb-4 text-[14px] leading-relaxed text-content-secondary border-t border-border pt-3">
+                            <p>Bring comfortable clothes, a sleeping bag, and a Bible. Meals are provided. Please arrive before 14:00 on the first day.</p>
+                        </div>
+                    </details>
+                </div>
+
+                {# --- Tag list block --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Tag List</div>
+                    <div class="flex flex-wrap gap-1.5">
+                        {% for tag in ['Visits', 'Holy Land', 'Peace', 'Ecumenism'] %}
+                        <a href="#" class="inline-flex items-center rounded-md bg-accent-subtle px-2.5 py-1 text-[12px] font-medium text-accent hover:bg-accent/10 transition-colors">{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {# --- Content link (article) --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Content Link (Article)</div>
+                    <a href="#" class="flex items-center gap-3 rounded-lg border border-border p-3 hover:bg-surface-raised transition-colors group">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-raised">
+                            <i class="ph ph-newspaper text-lg text-content-tertiary"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[12px] text-content-tertiary">Linked article</div>
+                            <div class="text-[13px] font-medium truncate group-hover:text-accent transition-colors">The Mystery of the Passover</div>
+                        </div>
+                        <i class="ph ph-arrow-right text-content-tertiary group-hover:text-accent transition-colors"></i>
+                    </a>
+                </div>
+
+                {# --- Content link (page) --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Content Link (Page)</div>
+                    <a href="#" class="flex items-center gap-3 rounded-lg border border-border p-3 hover:bg-surface-raised transition-colors group">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-raised">
+                            <i class="ph ph-file-text text-lg text-content-tertiary"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-[12px] text-content-tertiary">Linked page</div>
+                            <div class="text-[13px] font-medium truncate group-hover:text-accent transition-colors">Coming to the retreat</div>
+                        </div>
+                        <i class="ph ph-arrow-right text-content-tertiary group-hover:text-accent transition-colors"></i>
+                    </a>
+                </div>
+
+                {# --- Layout block (2 columns) --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Layout Block (2 columns)</div>
+                    <div class="rounded-lg border border-dashed border-border-strong">
+                        <div class="flex items-center gap-2 px-3 py-2 border-b border-dashed border-border-strong">
+                            <span class="inline-flex items-center rounded bg-surface-raised px-1.5 py-0.5 text-[10px] font-medium text-content-tertiary">Sidebar left</span>
+                        </div>
+                        <div class="grid grid-cols-[1fr_2fr] divide-x divide-dashed divide-border-strong">
+                            <div class="p-3">
+                                <div class="text-[11px] text-content-tertiary mb-2">Sidebar</div>
+                                <div class="rounded border border-dashed border-border p-3 text-center text-[12px] text-content-tertiary">
+                                    <i class="ph ph-plus text-xs"></i> Add block
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <div class="text-[11px] text-content-tertiary mb-2">Main content</div>
+                                <p class="text-[14px] leading-relaxed text-content-secondary">This is the main content area of the layout. It takes up 2/3 of the width while the sidebar takes 1/3.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# --- Block selector (predefined code block) --- #}
+                <div class="p-5">
+                    <div class="text-[10px] font-medium uppercase tracking-wider text-content-tertiary mb-2">Code Block (predefined)</div>
+                    <div class="rounded-lg border border-border p-4 bg-surface-raised/50">
+                        <div class="flex items-center gap-2 text-[13px]">
+                            <i class="ph ph-puzzle-piece text-content-tertiary"></i>
+                            <span class="font-medium">registration-form</span>
+                            <span class="text-content-tertiary">— Custom block</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    {# ==================== GLOBAL MODALS ==================== #}
+
+    {# Delete confirmation modal #}
+    <div id="delete-modal" class="modal-overlay fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 p-4" onclick="if(event.target===this)closeModal(this.id)">
+        <div class="w-full max-w-sm rounded-xl bg-surface border border-border shadow-xl">
+            <div class="p-5">
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-50 dark:bg-red-500/10 mb-3">
+                    <i class="ph ph-trash text-lg text-red-600 dark:text-red-400"></i>
+                </div>
+                <h3 class="text-[15px] font-semibold">Delete article?</h3>
+                <p class="mt-2 text-[13px] text-content-secondary leading-relaxed">This will permanently delete <strong>"A brother went to Palestine, Israel and Jordan"</strong> and all its translations. This action cannot be undone.</p>
+            </div>
+            <div class="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
+                <button onclick="closeModal('delete-modal')" class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised">Cancel</button>
+                <button onclick="closeModal('delete-modal'); showToast('success', 'Article deleted', 'The article has been permanently deleted.')" class="rounded-md bg-red-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-red-700">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    {# Form modal #}
+    <div id="form-modal" class="modal-overlay fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 p-4" onclick="if(event.target===this)closeModal(this.id)">
+        <div class="w-full max-w-lg rounded-xl bg-surface border border-border shadow-xl">
+            <div class="flex items-center justify-between border-b border-border px-5 py-3.5">
+                <h3 class="text-[15px] font-semibold">Create new tag</h3>
+                <button onclick="closeModal('form-modal')" class="rounded-md p-1 hover:bg-surface-raised">
+                    <i class="ph ph-x text-content-tertiary"></i>
+                </button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Name <span class="text-red-500">*</span></label>
+                    <input type="text" placeholder="Enter tag name" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                </div>
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Slug</label>
+                    <input type="text" placeholder="auto-generated-from-name" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                </div>
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Color</label>
+                    <div class="flex items-center gap-2">
+                        {% for color in ['bg-gray-400', 'bg-red-500', 'bg-orange-400', 'bg-green-500', 'bg-blue-500', 'bg-purple-500'] %}
+                        <button class="h-6 w-6 rounded-full {{ color }} {{ loop.first ? 'ring-2 ring-accent ring-offset-2 ring-offset-surface' : '' }} hover:scale-110 transition-transform"></button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
+                <button onclick="closeModal('form-modal')" class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised">Cancel</button>
+                <button onclick="closeModal('form-modal'); showToast('success', 'Tag created', 'New tag has been created successfully.')" class="rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">Create tag</button>
+            </div>
+        </div>
+    </div>
+
+    {# Media picker modal #}
+    <div id="media-modal" class="modal-overlay fixed inset-0 z-[60] hidden items-center justify-center bg-black/50 p-4" onclick="if(event.target===this)closeModal(this.id)">
+        <div class="w-full max-w-3xl max-h-[80vh] flex flex-col rounded-xl bg-surface border border-border shadow-xl">
+            <div class="flex items-center justify-between border-b border-border px-5 py-3.5 shrink-0">
+                <h3 class="text-[15px] font-semibold">Select media</h3>
+                <button onclick="closeModal('media-modal')" class="rounded-md p-1 hover:bg-surface-raised">
+                    <i class="ph ph-x text-content-tertiary"></i>
+                </button>
+            </div>
+            {# Toolbar #}
+            <div class="flex items-center gap-2 border-b border-border px-5 py-2.5 shrink-0">
+                <div class="relative flex-1 max-w-xs">
+                    <i class="ph ph-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-content-tertiary text-xs"></i>
+                    <input type="text" placeholder="Search media..." class="w-full rounded-md border border-border bg-surface py-1.5 pl-8 pr-3 text-[12px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                </div>
+                <select class="rounded-md border border-border bg-surface px-2 py-1.5 text-[12px] focus:border-accent focus:outline-none">
+                    <option>All types</option>
+                    <option>Images</option>
+                    <option>Documents</option>
+                    <option>Videos</option>
+                </select>
+                <button class="ml-auto inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-[12px] font-medium hover:bg-surface-raised">
+                    <i class="ph ph-cloud-arrow-up text-xs"></i> Upload
+                </button>
+            </div>
+            {# Image grid #}
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                    {% for i in 1..15 %}
+                    <button onclick="this.classList.toggle('ring-2'); this.classList.toggle('ring-accent')" class="group relative aspect-square rounded-lg overflow-hidden border border-border bg-surface-raised hover:border-border-strong transition-colors">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="ph ph-image text-2xl text-content-tertiary/50"></i>
+                        </div>
+                        {% if i <= 3 %}
+                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p class="text-[10px] text-white truncate">image-{{ i }}.jpg</p>
+                        </div>
+                        {% endif %}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {# Footer #}
+            <div class="flex items-center justify-between border-t border-border px-5 py-3 shrink-0">
+                <span class="text-[12px] text-content-secondary">0 selected</span>
+                <div class="flex gap-2">
+                    <button onclick="closeModal('media-modal')" class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised">Cancel</button>
+                    <button onclick="closeModal('media-modal'); showToast('info', 'Media selected', 'Image has been attached to the article.')" class="rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">Insert selected</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ================================================================ #}
+    {# VIEW: SETTINGS                                                   #}
+    {# ================================================================ #}
+    <main id="view-settings" class="view hidden p-4 lg:p-6 max-w-7xl mx-auto">
+        <div class="mb-5">
+            <h1 class="text-lg font-semibold">Settings</h1>
+        </div>
+        <div class="flex flex-col gap-6 lg:flex-row">
+            <nav class="flex lg:w-44 lg:flex-col gap-0.5 shrink-0">
+                <a href="#" class="rounded-md bg-accent-subtle px-3 py-2 text-[13px] font-medium text-accent">Site</a>
+                <a href="#" class="rounded-md px-3 py-2 text-[13px] text-content-secondary hover:bg-surface-raised">Users</a>
+                <a href="#" class="rounded-md px-3 py-2 text-[13px] text-content-secondary hover:bg-surface-raised">Menu</a>
+                <a href="#" class="rounded-md px-3 py-2 text-[13px] text-content-secondary hover:bg-surface-raised">Redirect</a>
+            </nav>
+            <div class="flex-1 max-w-2xl">
+                <div class="rounded-xl border border-border">
+                    <div class="border-b border-border px-5 py-4">
+                        <h3 class="text-[15px] font-semibold">Site Settings</h3>
+                        <p class="mt-1 text-[12px] text-content-secondary">Configure your site preferences</p>
+                    </div>
+                    <div class="divide-y divide-border">
+                        <div class="px-5 py-4">
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1.5">Content languages <span class="text-red-500">*</span></label>
+                            <div class="flex flex-wrap gap-1.5 rounded-lg border border-border p-2">
+                                {% for lang in ['English', 'French', 'German', 'Polish', 'Portuguese', 'Spanish'] %}
+                                <span class="inline-flex items-center gap-1 rounded-md bg-surface-raised px-2 py-1 text-[12px] font-medium">
+                                    {{ lang }}
+                                    <button class="text-content-tertiary hover:text-content"><i class="ph ph-x text-[10px]"></i></button>
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="px-5 py-4">
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1.5">Extended content languages</label>
+                            <div class="flex flex-wrap gap-1.5 rounded-lg border border-border p-2 max-h-24 overflow-y-auto">
+                                {% for lang in ['Albanian', 'Arabic', 'Bangla', 'Belarusian', 'Burmese', 'Catalan', 'Chinese (Simplified)', 'Croatian', 'Czech', 'Danish', 'Dutch', 'Estonian', 'Finnish'] %}
+                                <span class="inline-flex items-center gap-1 rounded-md bg-surface-raised px-2 py-1 text-[12px] font-medium">
+                                    {{ lang }}
+                                    <button class="text-content-tertiary hover:text-content"><i class="ph ph-x text-[10px]"></i></button>
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="px-5 py-4">
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1.5">Theme</label>
+                            <select class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent">
+                                <option>tailwind</option>
+                                <option>default</option>
+                            </select>
+                        </div>
+                        <div class="px-5 py-4">
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1.5">Mail sender</label>
+                            <input type="email" value="admin@example.com" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                        </div>
+                        <div class="px-5 py-4">
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1.5">Reference language</label>
+                            <select class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent">
+                                <option>English</option>
+                                <option>French</option>
+                            </select>
+                        </div>
+                        <div class="px-5 py-4">
+                            <label class="block text-[12px] font-medium text-content-secondary mb-1.5">Untranslated article age limit (days) <span class="text-red-500">*</span></label>
+                            <div class="flex items-center gap-2">
+                                <div class="flex rounded-lg border border-border overflow-hidden">
+                                    <button class="px-3 py-1.5 text-[12px] font-medium bg-accent text-white dark:text-black">1 month</button>
+                                    <button class="px-3 py-1.5 text-[12px] border-l border-border hover:bg-surface-raised">3 months</button>
+                                    <button class="px-3 py-1.5 text-[12px] border-l border-border hover:bg-surface-raised">6 months</button>
+                                </div>
+                                <input type="number" value="30" class="w-20 rounded-lg border border-border bg-surface px-3 py-1.5 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                                <span class="text-[13px] text-content-secondary">days</span>
+                            </div>
+                            <p class="mt-1.5 text-[11px] text-content-tertiary">Articles older than this will not appear in the translator dashboard.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
+                        <button class="rounded-md border border-border px-4 py-2 text-[13px] font-medium hover:bg-surface-raised">Cancel</button>
+                        <button class="rounded-md bg-accent px-4 py-2 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {# ================================================================ #}
+    {# VIEW: MEDIA GALLERY                                              #}
+    {# ================================================================ #}
+    <main id="view-media" class="view hidden p-4 lg:p-6 max-w-7xl mx-auto">
+        <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 class="text-lg font-semibold">Media</h1>
+            <div class="flex items-center gap-2">
+                <button class="inline-flex items-center gap-1.5 rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black">
+                    <i class="ph ph-cloud-arrow-up text-sm"></i> Upload
+                </button>
+            </div>
+        </div>
+        {# Toolbar #}
+        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-2">
+                <div class="relative flex-1 max-w-xs">
+                    <i class="ph ph-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-content-tertiary text-xs"></i>
+                    <input type="text" placeholder="Search media..." class="w-full rounded-md border border-border bg-surface py-1.5 pl-8 pr-3 text-[13px] placeholder:text-content-tertiary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"/>
+                </div>
+                <select class="rounded-md border border-border bg-surface px-2.5 py-1.5 text-[12px] focus:border-accent focus:outline-none">
+                    <option>All types</option>
+                    <option>Images</option>
+                    <option>Documents</option>
+                    <option>Videos</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-1">
+                <button class="rounded-md p-1.5 bg-surface-raised text-content" title="Grid view"><i class="ph ph-squares-four text-sm"></i></button>
+                <button class="rounded-md p-1.5 text-content-tertiary hover:bg-surface-raised" title="List view"><i class="ph ph-list text-sm"></i></button>
+                <span class="ml-2 text-[12px] text-content-tertiary">1,204 files &middot; 3.2 GB</span>
+            </div>
+        </div>
+        {# Grid #}
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+            {% for i in 1..18 %}
+            <div class="group relative rounded-lg border border-border overflow-hidden hover:border-border-strong transition-colors cursor-pointer {{ i == 3 ? 'ring-2 ring-accent' : '' }}">
+                <div class="aspect-square bg-surface-raised flex items-center justify-center">
+                    {% if i <= 12 %}
+                        <i class="ph ph-image text-3xl text-content-tertiary/20"></i>
+                    {% elseif i <= 15 %}
+                        <div class="flex flex-col items-center">
+                            <i class="ph ph-file-pdf text-2xl text-red-400"></i>
+                            <span class="text-[10px] text-content-tertiary mt-1">PDF</span>
+                        </div>
+                    {% else %}
+                        <div class="flex flex-col items-center">
+                            <i class="ph ph-file-doc text-2xl text-blue-400"></i>
+                            <span class="text-[10px] text-content-tertiary mt-1">DOC</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="px-2 py-1.5">
+                    <p class="text-[11px] font-medium truncate">{% if i <= 12 %}photo-{{ '%03d'|format(i) }}.jpg{% elseif i <= 15 %}document-{{ i }}.pdf{% else %}report-{{ i }}.docx{% endif %}</p>
+                    <p class="text-[10px] text-content-tertiary">{{ (i * 127) }} KB</p>
+                </div>
+                {# Hover actions #}
+                <div class="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                    <button class="flex h-6 w-6 items-center justify-center rounded-md bg-surface/90 border border-border shadow-sm hover:bg-surface" title="Download">
+                        <i class="ph ph-download-simple text-xs"></i>
+                    </button>
+                    <button class="flex h-6 w-6 items-center justify-center rounded-md bg-surface/90 border border-border shadow-sm hover:bg-surface" title="Delete">
+                        <i class="ph ph-trash text-xs text-red-500"></i>
+                    </button>
+                </div>
+                {% if i == 3 %}
+                <div class="absolute top-1.5 left-1.5">
+                    <div class="flex h-5 w-5 items-center justify-center rounded bg-accent text-white dark:text-black"><i class="ph ph-check text-xs font-bold"></i></div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {# Pagination #}
+        <div class="mt-4 flex items-center justify-between text-[13px]">
+            <span class="text-content-secondary">Showing 1-18 of 1,204</span>
+            <div class="flex items-center gap-1">
+                <button class="rounded-md px-2.5 py-1 text-content-tertiary" disabled>&lsaquo; prev</button>
+                <button class="rounded-md bg-accent px-2.5 py-1 font-medium text-white dark:text-black">1</button>
+                <button class="rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised">2</button>
+                <button class="rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised">3</button>
+                <button class="rounded-md px-2.5 py-1 text-content-secondary hover:bg-surface-raised">next &rsaquo;</button>
+            </div>
+        </div>
+    </main>
+
+    {# ================================================================ #}
+    {# VIEW: NOTIFICATIONS                                              #}
+    {# ================================================================ #}
+    <main id="view-notifications" class="view hidden p-4 lg:p-6 max-w-5xl mx-auto">
+        <div class="mb-5 flex items-center justify-between">
+            <h1 class="text-lg font-semibold">Notifications</h1>
+            <button class="rounded-md border border-border px-3 py-1.5 text-[13px] text-content-secondary hover:bg-surface-raised">Mark all as read</button>
+        </div>
+        <div class="rounded-xl border border-border divide-y divide-border">
+            {% set notifications = [
+                {title: 'New translation submitted', body: 'Maria submitted a Czech translation for "The Mystery of the Passover".', time: '2 min ago', read: false, severity: 'info'},
+                {title: 'Article published', body: '"A brother went to Palestine" has been published in English.', time: '1 hour ago', read: false, severity: 'success'},
+                {title: 'Media storage warning', body: 'You are using 85% of your media storage quota (3.2 GB of 4 GB).', time: '3 hours ago', read: false, severity: 'warning'},
+                {title: 'Translation updated', body: 'Jean updated the French translation for "Community gathering".', time: '5 hours ago', read: true, severity: 'info'},
+                {title: 'Article needs review', body: 'The article "Weekly reflection" has been submitted for review.', time: '1 day ago', read: true, severity: 'info'},
+                {title: 'New user registered', body: 'Anna (anna@example.com) has registered as a translator.', time: '2 days ago', read: true, severity: 'info'},
+                {title: 'Backup completed', body: 'Scheduled database backup completed successfully.', time: '3 days ago', read: true, severity: 'success'},
+                {title: 'Failed to sync', body: 'Translation sync for "Financial contribution" failed. Please retry.', time: '4 days ago', read: true, severity: 'error'}
+            ] %}
+            {% for n in notifications %}
+            <div class="flex items-start gap-3 px-4 py-3 {{ not n.read ? 'bg-accent-subtle/30' : '' }} hover:bg-surface-raised transition-colors cursor-pointer">
+                <div class="mt-1 shrink-0">
+                    {% if not n.read %}
+                        <span class="block h-2 w-2 rounded-full bg-accent"></span>
+                    {% else %}
+                        <span class="block h-2 w-2"></span>
+                    {% endif %}
+                </div>
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full {{ n.severity == 'success' ? 'bg-green-50 dark:bg-green-500/10' : (n.severity == 'warning' ? 'bg-amber-50 dark:bg-amber-500/10' : (n.severity == 'error' ? 'bg-red-50 dark:bg-red-500/10' : 'bg-surface-raised')) }}">
+                    {% if n.severity == 'success' %}
+                        <i class="ph ph-check-circle text-green-600 dark:text-green-400"></i>
+                    {% elseif n.severity == 'warning' %}
+                        <i class="ph ph-warning text-amber-600 dark:text-amber-400"></i>
+                    {% elseif n.severity == 'error' %}
+                        <i class="ph ph-x-circle text-red-600 dark:text-red-400"></i>
+                    {% else %}
+                        <i class="ph ph-info text-content-tertiary"></i>
+                    {% endif %}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[13px] font-medium {{ not n.read ? '' : 'text-content-secondary' }}">{{ n.title }}</span>
+                    </div>
+                    <p class="text-[12px] text-content-tertiary mt-0.5 line-clamp-2">{{ n.body }}</p>
+                </div>
+                <span class="text-[11px] text-content-tertiary whitespace-nowrap shrink-0">{{ n.time }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    {# ================================================================ #}
+    {# VIEW: ANALYTICS                                                  #}
+    {# ================================================================ #}
+    <main id="view-analytics" class="view hidden p-4 lg:p-6 max-w-7xl mx-auto">
+        <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h1 class="text-lg font-semibold">Analytics</h1>
+            <div class="flex items-center gap-2">
+                <div class="flex rounded-lg border border-border overflow-hidden">
+                    <button class="px-3 py-1.5 text-[12px] font-medium hover:bg-surface-raised">7 days</button>
+                    <button class="px-3 py-1.5 text-[12px] font-medium bg-accent text-white dark:text-black">30 days</button>
+                    <button class="px-3 py-1.5 text-[12px] font-medium hover:bg-surface-raised">90 days</button>
+                    <button class="px-3 py-1.5 text-[12px] font-medium hover:bg-surface-raised">Year</button>
+                </div>
+            </div>
+        </div>
+
+        {# Stats row #}
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            {% set aStats = [
+                {label: 'Page views', value: '12,847', change: '+14%', up: true},
+                {label: 'Unique visitors', value: '3,209', change: '+8%', up: true},
+                {label: 'Avg. session', value: '2m 34s', change: '-5%', up: false},
+                {label: 'Bounce rate', value: '42%', change: '-3%', up: true}
+            ] %}
+            {% for s in aStats %}
+            <div class="rounded-xl border border-border p-4">
+                <div class="text-[12px] text-content-secondary">{{ s.label }}</div>
+                <div class="mt-1 flex items-baseline gap-2">
+                    <span class="text-2xl font-semibold">{{ s.value }}</span>
+                    <span class="text-[11px] font-medium {{ s.up ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400' }}">{{ s.change }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {# Chart placeholder #}
+        <div class="rounded-xl border border-border p-5 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-[13px] font-semibold">Page views</h2>
+                <div class="flex items-center gap-3 text-[11px]">
+                    <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-accent"></span> Views</span>
+                    <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-content-tertiary/40"></span> Visitors</span>
+                </div>
+            </div>
+            {# SVG chart #}
+            <div class="h-48 flex items-end gap-[3px]">
+                {% set chartData = [120, 180, 95, 210, 340, 280, 190, 320, 410, 380, 290, 350, 420, 510, 480, 390, 440, 520, 470, 510, 380, 290, 420, 530, 610, 580, 490, 540, 620, 590] %}
+                {% for val in chartData %}
+                    <div class="flex-1 rounded-t bg-accent/20 hover:bg-accent/40 transition-colors relative group" style="height: {{ (val / 620 * 100) }}%">
+                        <div class="absolute -top-7 left-1/2 -translate-x-1/2 hidden group-hover:block rounded bg-accent px-1.5 py-0.5 text-[10px] font-medium text-white dark:text-black whitespace-nowrap">{{ val }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="flex justify-between mt-2 text-[10px] text-content-tertiary">
+                <span>Mar 5</span><span>Mar 12</span><span>Mar 19</span><span>Mar 26</span><span>Apr 3</span>
+            </div>
+        </div>
+
+        {# Top pages #}
+        <div class="rounded-xl border border-border">
+            <div class="border-b border-border px-4 py-3">
+                <h2 class="text-[13px] font-semibold">Top pages</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-[13px]">
+                    <thead>
+                        <tr class="border-b border-border bg-surface-raised text-left">
+                            <th class="px-4 py-2.5 font-medium text-content-tertiary">Page</th>
+                            <th class="px-4 py-2.5 font-medium text-content-tertiary text-right w-24">Views</th>
+                            <th class="px-4 py-2.5 font-medium text-content-tertiary text-right w-24">Visitors</th>
+                            <th class="hidden sm:table-cell px-4 py-2.5 font-medium text-content-tertiary text-right w-24">Bounce</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        {% set topPages = [
+                            {page: '/en/coming-to-the-retreat', views: 2841, visitors: 1203, bounce: '35%'},
+                            {page: '/en/prayer-and-reflection', views: 1923, visitors: 892, bounce: '28%'},
+                            {page: '/en/the-community', views: 1547, visitors: 734, bounce: '41%'},
+                            {page: '/en/registration', views: 1289, visitors: 601, bounce: '22%'},
+                            {page: '/en/become-a-volunteer', views: 987, visitors: 456, bounce: '38%'},
+                            {page: '/en/articles/new-album-dona-nobis', views: 876, visitors: 412, bounce: '45%'},
+                            {page: '/en/plan-your-journey', views: 743, visitors: 389, bounce: '33%'},
+                            {page: '/en/accommodation', views: 612, visitors: 298, bounce: '29%'}
+                        ] %}
+                        {% for p in topPages %}
+                        <tr class="hover:bg-surface-raised transition-colors">
+                            <td class="px-4 py-2.5"><span class="text-accent">{{ p.page }}</span></td>
+                            <td class="px-4 py-2.5 text-right font-medium">{{ p.views|number_format }}</td>
+                            <td class="px-4 py-2.5 text-right text-content-secondary">{{ p.visitors|number_format }}</td>
+                            <td class="hidden sm:table-cell px-4 py-2.5 text-right text-content-secondary">{{ p.bounce }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    {# ==================== IMPERSONATION BAR ==================== #}
+    <div id="impersonation-bar" class="hidden fixed top-0 left-0 right-0 z-[55] bg-amber-500 dark:bg-amber-600">
+        <div class="flex items-center justify-center gap-3 px-4 py-1.5 text-[12px] font-medium text-amber-950">
+            <i class="ph ph-user-switch"></i>
+            <span>You are impersonating <strong>Maria (maria@example.com)</strong></span>
+            <button onclick="document.getElementById('impersonation-bar').classList.add('hidden'); document.getElementById('main-wrapper').style.paddingTop=''; document.getElementById('sidebar').style.paddingTop='';" class="rounded-md bg-amber-600 dark:bg-amber-700 px-2.5 py-0.5 text-amber-50 hover:bg-amber-700 dark:hover:bg-amber-800 transition-colors">
+                Stop impersonating
+            </button>
+        </div>
+    </div>
+
+    {# ==================== LOGIN MODAL (fullscreen overlay) ==================== #}
+    <div id="login-modal" class="modal-overlay fixed inset-0 z-[70] hidden items-center justify-center bg-surface">
+        <div class="w-full max-w-sm mx-auto px-4">
+            {# Close #}
+            <button onclick="closeModal('login-modal')" class="absolute top-4 right-4 rounded-md p-2 hover:bg-surface-raised text-content-tertiary">
+                <i class="ph ph-x text-lg"></i>
+            </button>
+            {# Logo #}
+            <div class="flex justify-center mb-8">
+                <svg class="h-10 w-10" viewBox="0 0 28 28" fill="currentColor">
+                    <circle cx="7" cy="7" r="2.5"/><circle cx="19" cy="7" r="2.5"/>
+                    <circle cx="7" cy="15" r="2.5"/><circle cx="14" cy="15" r="2.5"/>
+                    <circle cx="14" cy="23" r="2.5"/><circle cx="21" cy="23" r="2.5"/>
+                </svg>
+            </div>
+            <h1 class="text-xl font-semibold text-center mb-1">Sign in to Xutim</h1>
+            <p class="text-[13px] text-content-secondary text-center mb-6">Enter your credentials to access the admin</p>
+            <form class="space-y-4" onsubmit="event.preventDefault(); closeModal('login-modal'); showToast('success', 'Signed in', 'Welcome back!')">
+                <div>
+                    <label class="block text-[12px] font-medium text-content-secondary mb-1">Email</label>
+                    <div class="relative">
+                        <i class="ph ph-envelope absolute left-3 top-1/2 -translate-y-1/2 text-content-tertiary"></i>
+                        <input type="email" value="tomasjaki@tomsgu.com" class="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" placeholder="you@example.com"/>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-[12px] font-medium text-content-secondary">Password</label>
+                        <a href="#" class="text-[11px] text-accent hover:underline">Forgot password?</a>
+                    </div>
+                    <div class="relative">
+                        <i class="ph ph-lock absolute left-3 top-1/2 -translate-y-1/2 text-content-tertiary"></i>
+                        <input type="password" value="password" class="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" placeholder="Enter your password"/>
+                    </div>
+                </div>
+                <button type="submit" class="w-full rounded-lg bg-accent py-2.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black transition-colors">
+                    Sign in
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {# ==================== TOAST CONTAINER ==================== #}
+    <div id="toast-container" class="fixed top-4 right-4 z-[70] flex flex-col gap-2 w-80 pointer-events-none"></div>
+</div>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const isOpen = !sidebar.classList.contains('-translate-x-full');
+    sidebar.classList.toggle('-translate-x-full');
+    backdrop.classList.toggle('hidden');
+}
+
+function toggleDark() {
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    document.getElementById('icon-sun').classList.toggle('hidden', !isDark);
+    document.getElementById('icon-moon').classList.toggle('hidden', isDark);
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+function showView(name) {
+    document.querySelectorAll('.view').forEach(v => { v.classList.add('hidden'); });
+    const el = document.getElementById('view-' + name);
+    if (el) { el.classList.remove('hidden'); }
+    window.scrollTo(0, 0);
+    // Destroy EditorJS when leaving components to prevent floating elements
+    if (name !== 'components' && editorInstance) {
+        editorInstance.destroy(); editorInstance = null;
+    }
+
+    // Show/hide article sidebar based on view
+    const sidebar = document.getElementById('article-sidebar');
+    if (name === 'article-edit') {
+        initArticleSidebar();
+    } else {
+        sidebar.classList.add('translate-x-full');
+        sidebar.dataset.open = 'false';
+        document.body.classList.remove('article-sidebar-open');
+        document.getElementById('article-sidebar-backdrop').classList.add('hidden');
+        document.getElementById('article-sidebar-edge-tab').classList.add('hidden');
+        document.getElementById('article-sidebar-collapse-tab').classList.add('hidden');
+    }
+
+    // For articles, clicking an article row shows the edit view
+    if (name === 'articles') {
+        document.getElementById('view-articles').querySelectorAll('tbody tr').forEach(row => {
+            row.onclick = () => showView('article-edit');
+        });
+    }
+
+    // Update nav highlight
+    document.querySelectorAll('.nav-link').forEach(l => {
+        l.classList.remove('bg-accent-subtle', 'text-accent');
+        l.classList.add('text-content-secondary');
+    });
+    const active = document.querySelector(`[data-nav="${name}"]`);
+    if (active) {
+        active.classList.add('bg-accent-subtle', 'text-accent');
+        active.classList.remove('text-content-secondary');
+    }
+
+    // Update breadcrumb
+    const labels = {dashboard: 'Dashboard', articles: 'Articles', 'article-edit': 'Articles > Edit', pages: 'Pages', settings: 'Settings', media: 'Media', notifications: 'Notifications', analytics: 'Analytics', components: 'Components'};
+    if (name === 'components') { setTimeout(initEditor, 100); }
+    document.getElementById('breadcrumb').innerHTML = '<span>' + (labels[name] || name) + '</span>';
+}
+
+if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+    document.getElementById('icon-sun').classList.remove('hidden');
+    document.getElementById('icon-moon').classList.add('hidden');
+}
+
+// Article sidebar toggle
+function toggleArticleSidebar() {
+    const sidebar = document.getElementById('article-sidebar');
+    const backdrop = document.getElementById('article-sidebar-backdrop');
+    const openTab = document.getElementById('article-sidebar-edge-tab');
+    const closeTab = document.getElementById('article-sidebar-collapse-tab');
+    const isOpen = sidebar.dataset.open === 'true';
+
+    if (isOpen) {
+        sidebar.classList.add('translate-x-full');
+        sidebar.dataset.open = 'false';
+        backdrop.classList.add('hidden');
+        document.body.classList.remove('article-sidebar-open');
+        openTab.classList.remove('hidden');
+        closeTab.classList.add('hidden');
+    } else {
+        sidebar.classList.remove('translate-x-full');
+        sidebar.dataset.open = 'true';
+        document.body.classList.add('article-sidebar-open');
+        openTab.classList.add('hidden');
+        closeTab.classList.remove('hidden');
+        if (window.innerWidth < 1280) {
+            backdrop.classList.remove('hidden');
+        }
+    }
+}
+
+function initArticleSidebar() {
+    const openTab = document.getElementById('article-sidebar-edge-tab');
+    const closeTab = document.getElementById('article-sidebar-collapse-tab');
+    if (window.innerWidth >= 1280) {
+        const sidebar = document.getElementById('article-sidebar');
+        sidebar.classList.remove('translate-x-full');
+        sidebar.dataset.open = 'true';
+        document.body.classList.add('article-sidebar-open');
+        openTab.classList.add('hidden');
+        closeTab.classList.remove('hidden');
+    } else {
+        openTab.classList.remove('hidden');
+        closeTab.classList.add('hidden');
+    }
+}
+
+// Language bar helpers
+function selectLang(btn) {
+    // Visual feedback only for demo
+    const container = btn.closest('.flex');
+    if (!container) return;
+    container.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.remove('border-accent', 'bg-accent', 'text-white', 'dark:text-black', 'bg-accent-subtle', 'ring-1', 'ring-accent/20');
+        b.classList.add('border-border', 'text-content-secondary');
+    });
+    btn.classList.remove('border-border', 'text-content-secondary');
+    btn.classList.add('border-accent', 'bg-accent', 'text-white', 'dark:text-black');
+}
+
+function filterLangs(input) {
+    const query = input.value.toLowerCase();
+    const grid = input.closest('.hidden, div')?.parentElement?.querySelector('.grid') || input.closest('div').nextElementSibling;
+    if (!grid) return;
+    grid.querySelectorAll('.lang-option').forEach(btn => {
+        const lang = (btn.dataset.lang || btn.textContent).toLowerCase().trim();
+        btn.style.display = lang.includes(query) ? '' : 'none';
+    });
+}
+
+// Close all dropdowns on outside click
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.relative')) {
+        document.querySelectorAll('.lang-more-btn + div, .filter-trigger + div').forEach(d => d.classList.add('hidden'));
+    }
+});
+
+// Filter apply (demo)
+const activeFilters = {};
+function applyFilter(btn, filterId, value) {
+    const dropdown = btn.closest('.relative').querySelector('.filter-trigger + div');
+    dropdown.classList.add('hidden');
+
+    // Update checkmark
+    dropdown.querySelectorAll('button').forEach(b => {
+        b.classList.remove('text-accent', 'font-medium');
+        b.classList.add('text-content-secondary');
+        const icon = b.querySelector('i.ph');
+        if (icon) icon.parentElement.replaceChild(Object.assign(document.createElement('span'), {className: 'w-3.5'}), icon);
+    });
+    const check = document.createElement('i');
+    check.className = 'ph ph-check text-xs';
+    btn.querySelector('span.w-3\\.5, i.ph')?.replaceWith(check);
+    btn.classList.add('text-accent', 'font-medium');
+    btn.classList.remove('text-content-secondary');
+
+    // Update trigger style
+    const trigger = btn.closest('.relative').querySelector('.filter-trigger');
+    const isDefault = btn === dropdown.querySelector('button:first-child');
+    if (isDefault) {
+        delete activeFilters[filterId];
+        trigger.classList.remove('border-accent', 'bg-accent-subtle', 'text-accent');
+        trigger.classList.add('border-border', 'text-content-secondary');
+    } else {
+        activeFilters[filterId] = value;
+        trigger.classList.add('border-accent', 'bg-accent-subtle', 'text-accent');
+        trigger.classList.remove('border-border', 'text-content-secondary');
+    }
+
+    // Update active filters row
+    const container = document.getElementById('active-filters');
+    const chips = container.querySelectorAll('.filter-chip');
+    chips.forEach(c => c.remove());
+
+    const keys = Object.keys(activeFilters);
+    if (keys.length > 0) {
+        container.classList.remove('hidden');
+        keys.forEach(k => {
+            const chip = document.createElement('button');
+            chip.className = 'filter-chip inline-flex items-center gap-1 rounded-md bg-accent-subtle border border-accent/20 px-2 py-0.5 text-[11px] font-medium text-accent hover:bg-accent/10 transition-colors';
+            chip.innerHTML = k + ': ' + activeFilters[k] + ' <i class="ph ph-x text-xs"></i>';
+            chip.onclick = () => {
+                const trigger = document.querySelector('[onclick*="' + k + '"]')?.closest('.relative')?.querySelector('.filter-trigger + div button:first-child');
+                if (trigger) applyFilter(trigger, k, 'All');
+            };
+            container.appendChild(chip);
+        });
+    } else {
+        container.classList.add('hidden');
+    }
+}
+
+// Toast notifications
+function showToast(type, title, message) {
+    const container = document.getElementById('toast-container');
+    const colors = {
+        success: 'border-green-500/30 bg-green-50 dark:bg-green-500/10',
+        error: 'border-red-500/30 bg-red-50 dark:bg-red-500/10',
+        warning: 'border-amber-500/30 bg-amber-50 dark:bg-amber-500/10',
+        info: 'border-border bg-surface'
+    };
+    const icons = {
+        success: 'ph-check-circle text-green-600 dark:text-green-400',
+        error: 'ph-x-circle text-red-600 dark:text-red-400',
+        warning: 'ph-warning text-amber-600 dark:text-amber-400',
+        info: 'ph-info text-blue-600 dark:text-blue-400'
+    };
+    const toast = document.createElement('div');
+    toast.className = `pointer-events-auto flex items-start gap-3 rounded-lg border ${colors[type]} p-3 shadow-lg animate-slide-in`;
+    toast.innerHTML = `
+        <i class="ph ${icons[type]} text-lg shrink-0 mt-0.5"></i>
+        <div class="flex-1 min-w-0">
+            <p class="text-[13px] font-medium">${title}</p>
+            <p class="text-[12px] text-content-secondary mt-0.5">${message}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="shrink-0 rounded-md p-0.5 hover:bg-black/5 dark:hover:bg-white/5">
+            <i class="ph ph-x text-xs text-content-tertiary"></i>
+        </button>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; toast.style.transition = 'all 0.3s'; setTimeout(() => toast.remove(), 300); }, 4000);
+}
+
+// Modals
+function openModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+// Impersonation bar
+function toggleImpersonation() {
+    const bar = document.getElementById('impersonation-bar');
+    const wrapper = document.getElementById('main-wrapper');
+    const sidebar = document.getElementById('sidebar');
+    if (bar.classList.contains('hidden')) {
+        bar.classList.remove('hidden');
+        wrapper.style.paddingTop = '2.25rem';
+        sidebar.style.paddingTop = '2.25rem';
+    } else {
+        bar.classList.add('hidden');
+        wrapper.style.paddingTop = '';
+        sidebar.style.paddingTop = '';
+    }
+}
+
+// EditorJS init
+let editorInstance = null;
+function initEditor() {
+    if (editorInstance) return;
+    const holder = document.getElementById('editorjs');
+    if (!holder || holder.offsetParent === null) return;
+    editorInstance = new EditorJS({
+        holder: 'editorjs',
+        tools: {
+            header: { class: window.Header, config: { levels: [2, 3, 4], defaultLevel: 2 } },
+            list: { class: window.EditorjsList || window.List, inlineToolbar: true },
+            quote: { class: window.Quote, inlineToolbar: true },
+            code: window.CodeTool,
+            delimiter: window.Delimiter,
+            embed: { class: window.Embed, config: { services: { youtube: true } } },
+            checklist: { class: window.Checklist },
+            table: { class: window.Table, inlineToolbar: true },
+        },
+        data: {
+            blocks: [
+                { type: 'header', data: { text: 'The pilgrimage of trust continues', level: 2 } },
+                { type: 'paragraph', data: { text: 'The threat of war was already looming when I flew to Tel Aviv on January 31. Was I going to be able to return? I couldn\'t count on it too much. My first night at the <b>Tantur Ecumenical Institute</b> allowed me to see the team again. Many young people have <i>bright memories</i> of the beauty of the place.' } },
+                { type: 'header', data: { text: 'A journey through the Holy Land', level: 3 } },
+                { type: 'paragraph', data: { text: 'Read more about the <a href="#">community gatherings</a> and the pilgrimage route. The wall that separates Israel from Palestine is only a few hundred meters away. The next day, I took the pedestrian crossing to arrive at Bethlehem.' } },
+                { type: 'quote', data: { text: 'Whoever you are, wherever you come from, you are welcome here. Come as you are.', caption: 'Brother Roger', alignment: 'left' } },
+                { type: 'list', data: { style: 'unordered', items: ['Morning prayer and meditation', 'Small group discussions and sharing', 'Workshops and creative activities'] } },
+                { type: 'list', data: { style: 'ordered', items: ['Register for the event online', 'Receive your confirmation email', 'Arrive at the meeting point by 14:00'] } },
+                { type: 'checklist', data: { items: [ { text: 'Pack your sleeping bag', checked: true }, { text: 'Bring your Bible', checked: true }, { text: 'Download the songbook', checked: false } ] } },
+                { type: 'delimiter', data: {} },
+                { type: 'header', data: { text: 'Schedule', level: 4 } },
+                { type: 'table', data: { withHeadings: true, content: [ ['Time', 'Activity', 'Location'], ['08:15', 'Morning prayer', 'Church'], ['12:20', 'Midday prayer', 'Church'], ['15:00', 'Workshops', 'Various rooms'], ['20:30', 'Evening prayer', 'Church'] ] } },
+                { type: 'code', data: { code: '<div class="prayer-times">\n  <h3>Daily schedule</h3>\n  <ul>\n    <li>08:15 - Morning prayer</li>\n    <li>12:20 - Midday prayer</li>\n    <li>20:30 - Evening prayer</li>\n  </ul>\n</div>' } },
+                { type: 'paragraph', data: { text: 'Nothing is more responsible than prayer. Come and join us for this journey of faith and discovery.' } },
+                { type: 'embed', data: { service: 'youtube', source: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', embed: 'https://www.youtube.com/embed/dQw4w9WgXcQ', width: 580, height: 320, caption: 'Songs and prayers from the community' } },
+                { type: 'delimiter', data: {} },
+            ]
+        },
+        placeholder: 'Start writing or press / to add a block...',
+    });
+}
+
+// Default view
+showView('dashboard');
+</script>
+</body>
+</html>

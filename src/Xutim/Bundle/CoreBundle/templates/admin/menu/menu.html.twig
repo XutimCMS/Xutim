@@ -2,7 +2,7 @@
 
 {% block languageBar %}
     <twig:Xutim:Admin:LanguageContextBar
-        class="d-flex justify-content-end align-items-center mb-2"
+        class="flex justify-end items-center mb-2"
     />
 {% endblock %}
 
@@ -18,13 +18,13 @@
 {% endblock %}
 
 {% block settingsBody %}
-    <div class="row">
-        <div class="col-md-12">
+    <div>
+        <div>
             <h2 class="mb-2 py-2">{{ 'Menu builder'|trans({}, 'admin') }}</h2>
 
-            <div class="card">
+            <div class="rounded-xl border border-border">
                 {% if items is not empty %}
-                    <ul class="list-unstyled list-group-flush me-2">
+                    <ul class="list-none mr-2">
                         {% for rootId in rootItemsId %}
                             {{
                                 include('@XutimCore/admin/menu/_item_recursive.html.twig', {
@@ -38,7 +38,7 @@
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <div class="card-body">
+                    <div class="p-4">
                         <p>
                             {{
                                 'There are no items in "%locale%" translation.'|trans({'%locale%': content_context_language()|language_name}, 'admin')
@@ -71,7 +71,7 @@
                         data-turbo-frame="modal"
                         href="{{ admin_path('admin_menu_item_new') }}"
                     >
-                        <twig:Xutim:Admin:Icon name="plus" />
+                        <twig:ux:icon name="ph:plus" class="icon" />
                         {{ 'Add a new menu item'|trans({}, 'admin') }}
                     </twig:Xutim:Admin:Button>
                 </p>

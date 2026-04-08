@@ -23,10 +23,10 @@
 {% block pageMenu %}
     <twig:Xutim:Admin:Button
         tag="button"
-        id="sidebar-toggle"
+        onclick="window.dispatchEvent(new Event('sidebar:toggle'))"
         variant="nav"
     >
-        <twig:Xutim:Admin:Icon name="layout-sidebar-right" class="me-1" />
+        <twig:ux:icon name="ph:sidebar-simple" class="icon mr-1" />
         Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}
@@ -35,7 +35,7 @@
     <twig:Xutim:Admin:LanguageContextBar
         :entity="tag"
         :simpleTranslation="true"
-        class="d-flex justify-content-end align-items-center mb-2"
+        class="flex justify-end items-center mb-2"
     />
 {% endblock %}
 
@@ -70,8 +70,8 @@
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-body">
+    <div class="rounded-xl border border-border">
+        <div class="p-4">
             {%
                 form_theme form '@XutimCore/admin/common/image_choice.html.twig'
             %}
@@ -85,8 +85,8 @@
                         },
                     })
             }}
-            <div class="row g-6">
-                <div class="col-sm-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
                     {{
                         form_row(form.name, {
                                 attr: {
@@ -96,7 +96,7 @@
                             })
                     }}
                     {{ form_label(form.slug) }}
-                    <div class="input-group mb-3">
+                    <div class="flex items-stretch mb-3">
                         {{
                             form_widget(form.slug, {
                                     attr: {
@@ -110,11 +110,11 @@
                             <twig:Xutim:Admin:Button
                                 variant="default"
                                 type="button"
-                                class="pe-1"
+                                class="pr-1"
                                 id="slug-unblock"
                                 data-action="click->slug-generator#unblockSlugField"
                             >
-                                <twig:Xutim:Admin:Icon name="lock" />
+                                <twig:ux:icon name="ph:lock-simple" class="icon" />
                             </twig:Xutim:Admin:Button>
                         {% endif %}
 
@@ -141,7 +141,7 @@
 
                     {{ form_row(form.layout) }}
                 </div>
-                <div class="col-sm-6">
+                <div>
                     {{ form_label(form.featuredImage) }}
                     <div
                         data-controller="featured-image"
@@ -149,7 +149,7 @@
                         class="cursor-pointer mb-3"
                     >
                         <div
-                            class="media-container-extended d-flex justify-content-center align-items-center"
+                            class="media-container-extended flex justify-center items-center"
                             data-action="click->featured-image#openModal"
                         >
                             <div
@@ -172,7 +172,7 @@
                                 </div>
                                 <button
                                     type="button"
-                                    class="btn btn-sm btn-danger position-absolute top-0 end-0 mt-5 me-5 {{ form.featuredImage.vars.value ? '' : 'd-none' }}"
+                                    class="absolute top-0 right-0 mt-5 mr-5 px-2 py-1 text-sm rounded bg-red-600 text-white hover:bg-red-700 {{ form.featuredImage.vars.value ? '' : 'hidden' }}"
                                     data-featured-image-target="removeButton"
                                     data-action="featured-image#removeImage"
                                     aria-label="Remove featured image"
@@ -196,35 +196,36 @@
                             data-featured-image-target="modal"
                         >
                             <div
-                                class="modal-dialog modal-lg"
+                                class="fixed inset-0 flex items-center justify-center p-4"
                                 role="document"
                             >
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">
+                                <div class="rounded-xl border border-border bg-surface w-full max-w-3xl max-h-[80vh] flex flex-col">
+                                    <div class="flex items-center justify-between px-4 py-3 border-b border-border">
+                                        <h5 class="text-base font-semibold text-content">
                                             {{
                                                 'Select Featured Image'|trans({}, 'admin')
                                             }}
                                         </h5>
                                         <button
                                             type="button"
-                                            class="btn-close"
+                                            class="text-content-secondary hover:text-content"
                                             data-bs-dismiss="modal"
                                             aria-label="{{ 'Close'|trans({}, 'admin') }}"
                                         >
+                                            <twig:ux:icon name="ph:x" class="w-5 h-5" />
                                         </button>
                                     </div>
-                                    <div class="modal-body">
+                                    <div class="p-4 overflow-y-auto">
                                         <div
-                                            class="row g-3"
+                                            class="grid grid-cols-3 gap-3"
                                             data-featured-image-target="imageGallery"
                                         >
                                         </div>
                                     </div>
-                                    <div class="modal-footer">
+                                    <div class="px-4 py-3 border-t border-border flex justify-end">
                                         <button
                                             type="button"
-                                            class="btn btn-secondary"
+                                            class="px-3 py-1.5 text-sm rounded-lg border border-border text-content-secondary hover:bg-surface-raised"
                                             data-bs-dismiss="modal"
                                         >
                                             {{ 'Close'|trans({}, 'admin') }}

@@ -8,14 +8,14 @@
         variant="nav"
         href="{{ admin_path('admin_event_new') }}"
     >
-        <twig:Xutim:Admin:Icon name="events" class="me-1" />
+        <twig:ux:icon name="ph:calendar-check" class="icon mr-1" />
         {{ 'New event'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 {% endblock %}
 
 {% block languageBar %}
     <twig:Xutim:Admin:LanguageContextBar
-        class="d-flex justify-content-end align-items-center mb-2"
+        class="flex justify-end items-center mb-2"
     />
 {% endblock %}
 
@@ -145,11 +145,11 @@
                 </td>
                 <td>
                     {% if translation.locale == content_context_language() %}
-                        <span class="status status-green">
+                        <span class="inline-flex items-center text-[12px] font-medium text-green-600 dark:text-green-400">
                             {{ 'Translated'|trans({}, 'admin') }}
                         </span>
                     {% else %}
-                        <span class="status status-warning">
+                        <span class="inline-flex items-center text-[12px] font-medium text-amber-600 dark:text-amber-400">
                             {{ translation.locale|upper }}
                         </span>
                     {% endif %}

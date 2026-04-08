@@ -4,15 +4,15 @@
 {%
     set captionChanged = captionMeta and captionMeta.status is defined and captionMeta.status != 'same'
 %}
-<div class="small text-muted mb-2">
-    <twig:ux:icon name="tabler:link" class="w-4 h-4" />
-    <span class="fw-bold">{{ 'Embed:'|trans({}, 'admin') }}</span>
+<div class="text-sm text-content-secondary mb-2">
+    <twig:ux:icon name="ph:link" class="w-4 h-4" />
+    <span class="font-bold">{{ 'Embed:'|trans({}, 'admin') }}</span>
     {% if url %}
         <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{
             url
         }}</a>
     {% else %}
-        <span class="text-secondary">—</span>
+        <span class="text-content-secondary">&mdash;</span>
     {% endif %}
 </div>
 
@@ -20,7 +20,7 @@
     <div>
         {{ 'Caption:'|trans({}, 'admin') }}
         <del>{{ captionMeta.old ?? '' }}</del>
-        →
+        &rarr;
         <ins>{{ captionMeta.new ?? '' }}</ins>
     </div>
 {% elseif caption %}

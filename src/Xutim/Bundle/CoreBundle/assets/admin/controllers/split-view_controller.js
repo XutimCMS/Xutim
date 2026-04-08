@@ -1,5 +1,4 @@
 import { Controller } from '@hotwired/stimulus';
-import * as bootstrap from 'bootstrap';
 import EditorJS from 'https://esm.sh/@editorjs/editorjs@2.31.0-rc.10';
 import { buildEditorTools } from '../lib/build_tools.js';
 
@@ -56,26 +55,14 @@ export default class extends Controller {
 
         if (this.isOn) {
             this.enable();
-            this.localeSelectTarget.hidden = false;
-            this.localeSelectClipboardTarget.hidden = false;
-            if (this.hasScrollLockBtnTarget)
-                this.scrollLockBtnTarget.hidden = false;
         } else {
-            this.leftTarget.classList.remove('col-lg-6');
-            this.rightTarget.classList.add('d-none');
-
-            if (this.hasIconOnTarget)
-                this.iconOnTarget.classList.remove('d-none');
-            if (this.hasIconOffTarget)
-                this.iconOffTarget.classList.add('d-none');
-
+            this.containerTarget.classList.remove('lg:grid-cols-2');
+            this.rightTarget.classList.add('hidden');
+            if (this.hasReferenceHeaderTarget)
+                this.referenceHeaderTarget.classList.add('hidden');
             this.isOn = false;
-
-            this.localeSelectTarget.hidden = true;
-            this.localeSelectClipboardTarget.hidden = true;
-            if (this.hasScrollLockBtnTarget)
-                this.scrollLockBtnTarget.hidden = true;
         }
+        this.#updateToggleButtons();
 
         this.#updateScrollLockButton();
     }
@@ -83,16 +70,8 @@ export default class extends Controller {
     async toggle() {
         if (this.isOn) {
             this.disable();
-            this.localeSelectTarget.hidden = true;
-            this.localeSelectClipboardTarget.hidden = true;
-            if (this.hasScrollLockBtnTarget)
-                this.scrollLockBtnTarget.hidden = true;
         } else {
             await this.enable();
-            this.localeSelectTarget.hidden = false;
-            this.localeSelectClipboardTarget.hidden = false;
-            if (this.hasScrollLockBtnTarget)
-                this.scrollLockBtnTarget.hidden = false;
         }
     }
 
@@ -100,16 +79,16 @@ export default class extends Controller {
         this.isOn = true;
         localStorage.setItem('xutim.splitView', '1');
 
-        this.leftTarget.classList.add('col-lg-6');
-        this.rightTarget.classList.remove('d-none');
+        this.containerTarget.classList.add('lg:grid-cols-2');
+        this.rightTarget.classList.remove('hidden');
+        if (this.hasReferenceHeaderTarget)
+            this.referenceHeaderTarget.classList.remove('hidden');
 
         if (!this.refEditor) {
             await this.loadReference();
         }
 
-        this.iconOnTarget.classList.add('d-none');
-        this.iconOffTarget.classList.remove('d-none');
-
+        this.#updateToggleButtons();
         this.#applyScrollLock();
     }
 
@@ -117,11 +96,24 @@ export default class extends Controller {
         this.isOn = false;
         localStorage.setItem('xutim.splitView', '0');
 
-        this.leftTarget.classList.remove('col-lg-6');
-        this.rightTarget.classList.add('d-none');
+        this.containerTarget.classList.remove('lg:grid-cols-2');
+        this.rightTarget.classList.add('hidden');
+        if (this.hasReferenceHeaderTarget)
+            this.referenceHeaderTarget.classList.add('hidden');
+        this.#updateToggleButtons();
+    }
 
-        this.iconOnTarget.classList.remove('d-none');
-        this.iconOffTarget.classList.add('d-none');
+    #updateToggleButtons() {
+        if (this.hasIconOnTarget && this.hasIconOffTarget) {
+            this.iconOnTarget.classList.remove('hidden');
+            this.iconOffTarget.classList.remove('hidden');
+
+            this.iconOnTarget.classList.toggle('bg-surface-raised', this.isOn);
+            this.iconOnTarget.classList.toggle('text-content-secondary', !this.isOn);
+
+            this.iconOffTarget.classList.toggle('bg-surface-raised', !this.isOn);
+            this.iconOffTarget.classList.toggle('text-content-secondary', this.isOn);
+        }
     }
 
     async loadReference() {
@@ -186,24 +178,22 @@ export default class extends Controller {
                 btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className =
-                    'x-copy-btn btn btn-sm btn-link p-0 text-center';
+                    'x-copy-btn opacity-0 group-hover/block:opacity-100 transition-opacity cursor-pointer rounded-md p-1 hover:bg-surface-raised';
                 btn.title = 'Copy';
                 btn.innerHTML =
-                    '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" width="24" height="24" ' +
+                    '<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-content-tertiary" width="24" height="24" ' +
                     'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
                     'stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />' +
                     '<path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /></svg>';
 
                 Object.assign(btn.style, {
                     position: 'absolute',
-                    left: '-1rem',
-                    top: '0rem',
-                    fontSize: '12px',
-                    marginLeft: '-0.5rem',
+                    left: '-1.5rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
                 });
                 node.style.position = 'relative';
+                node.classList.add('group/block');
                 node.appendChild(btn);
 
                 btn.addEventListener('click', async (e) => {
@@ -275,17 +265,10 @@ export default class extends Controller {
 
     flash(text) {
         const el = document.createElement('div');
-        el.className =
-            'toast align-items-center text-bg-secondary border-0 position-fixed top-0 end-0 m-3';
-        el.role = 'alert';
-        el.innerHTML = `<div class="d-flex">
-          <div class="toast-body">${text}</div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>`;
+        el.className = 'fixed top-4 right-4 z-[70] flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-[13px] shadow-lg animate-[fadeIn_0.2s]';
+        el.innerHTML = `${text}<button onclick="this.parentElement.remove()" class="ml-2 text-content-tertiary hover:text-content">&times;</button>`;
         document.body.appendChild(el);
-        const t = new bootstrap.Toast(el, { delay: 1500 });
-        t.show();
-        t._element.addEventListener('hidden.bs.toast', () => el.remove());
+        setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 1500);
     }
 
     #updateReferenceMeta(meta = {}) {
@@ -379,8 +362,8 @@ export default class extends Controller {
         if (!res.ok) return;
 
         this.diffContainerTarget.innerHTML = await res.text();
-        this.referenceContainerTarget.classList.add('d-none');
-        this.diffContainerTarget.classList.remove('d-none');
+        this.referenceContainerTarget.classList.add('hidden');
+        this.diffContainerTarget.classList.remove('hidden');
         this.#updateDiffButtonText(true);
     }
 
@@ -388,21 +371,21 @@ export default class extends Controller {
         if (!this.hasDiffContainerTarget || !this.hasReferenceContainerTarget)
             return;
 
-        this.diffContainerTarget.classList.add('d-none');
-        this.referenceContainerTarget.classList.remove('d-none');
+        this.diffContainerTarget.classList.add('hidden');
+        this.referenceContainerTarget.classList.remove('hidden');
         this.#updateDiffButtonText(false);
     }
 
     #updateDiffButtonText(showingDiff) {
         if (this.hasDiffToggleBtnShowTextTarget) {
             this.diffToggleBtnShowTextTarget.classList.toggle(
-                'd-none',
+                'hidden',
                 showingDiff,
             );
         }
         if (this.hasDiffToggleBtnHideTextTarget) {
             this.diffToggleBtnHideTextTarget.classList.toggle(
-                'd-none',
+                'hidden',
                 !showingDiff,
             );
         }
@@ -427,10 +410,10 @@ export default class extends Controller {
                 this.changedBannerTarget.remove();
             }
             if (this.hasDiffContainerTarget) {
-                this.diffContainerTarget.classList.add('d-none');
+                this.diffContainerTarget.classList.add('hidden');
             }
             if (this.hasReferenceContainerTarget) {
-                this.referenceContainerTarget.classList.remove('d-none');
+                this.referenceContainerTarget.classList.remove('hidden');
             }
             this.flash('Marked as reviewed');
         } else {
@@ -442,7 +425,7 @@ export default class extends Controller {
     toggleDiff() {
         if (!this.hasDiffContainerTarget) return;
 
-        if (this.diffContainerTarget.classList.contains('d-none')) {
+        if (this.diffContainerTarget.classList.contains('hidden')) {
             this.showDiff();
         } else {
             this.showCurrent();
@@ -483,13 +466,13 @@ export default class extends Controller {
         }
         if (this.hasScrollLockIconLockedTarget) {
             this.scrollLockIconLockedTarget.classList.toggle(
-                'd-none',
+                'hidden',
                 !this.scrollLocked,
             );
         }
         if (this.hasScrollLockIconUnlockedTarget) {
             this.scrollLockIconUnlockedTarget.classList.toggle(
-                'd-none',
+                'hidden',
                 this.scrollLocked,
             );
         }

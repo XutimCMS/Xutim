@@ -1,6 +1,6 @@
-<div class="small text-muted mb-2">
-    <twig:ux:icon name="tabler:blocks" class="w-4 h-4" />
-    <span class="fw-bold">
+<div class="text-sm text-content-secondary mb-2">
+    <twig:ux:icon name="ph:squares-four" class="w-4 h-4" />
+    <span class="font-bold">
         {{ 'Block:'|trans({}, 'admin') }}
     </span>
     {% if op == 'added' or op == 'removed' %}
@@ -17,7 +17,7 @@
         {%
             if codeMeta and codeMeta.status is defined and codeMeta.status != 'same'
         %}
-            <del>{{ oldCode|e }}</del> →
+            <del>{{ oldCode|e }}</del> &rarr;
             <ins>{{ newCode|e }}</ins>
         {% else %}
             {{ (row.attrs.code ?? '')|e }}

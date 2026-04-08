@@ -30,13 +30,25 @@ class SidebarWidgetAction
 
         $pageStats = $this->summaryRepo->getPageStats($path, $range);
         $bounceRate = $this->sessionRepo->getBounceRateForEntryPage($path, $range);
-        $sparklineData = $this->summaryRepo->getPageviewsByDayForPath($path, $range);
+        $rawSparkline = $this->summaryRepo->getPageviewsByDayForPath($path, $range);
 
+        $byDate = [];
+        foreach ($rawSparkline as $data) {
+            $byDate[$data['date'] instanceof \DateTimeInterface ? $data['date']->format('Y-m-d') : (string) $data['date']] = $data['pageviews'];
+        }
+
+        $sparklineData = [];
         $sparklineMax = 1;
-        foreach ($sparklineData as $data) {
-            if ($data['pageviews'] > $sparklineMax) {
-                $sparklineMax = $data['pageviews'];
+        $cursor = new \DateTimeImmutable($range->from->format('Y-m-d'));
+        $end = new \DateTimeImmutable($range->to->format('Y-m-d'));
+        while ($cursor <= $end) {
+            $key = $cursor->format('Y-m-d');
+            $views = $byDate[$key] ?? 0;
+            $sparklineData[] = ['date' => $key, 'pageviews' => $views];
+            if ($views > $sparklineMax) {
+                $sparklineMax = $views;
             }
+            $cursor = $cursor->modify('+1 day');
         }
 
         return new Response(

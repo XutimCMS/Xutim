@@ -3,15 +3,15 @@
 {% set title = 'Notify translators'|trans({}, 'admin') %}
 
 {% block pageTitle %}
-    <twig:Xutim:Admin:Icon name="bell" /> {{ title }}
+    <twig:ux:icon name="ph:bell" class="icon" /> {{ title }}
 {% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-header p-3">
-            <h3 class="card-title">{{ title }} — {{ entityType }}</h3>
+    <div class="rounded-xl border border-border">
+        <div class="border-b border-border px-4 py-3">
+            <h3 class="text-base font-semibold">{{ title }} — {{ entityType }}</h3>
         </div>
-        <div class="card-body">
+        <div class="p-4">
             {{ form_start(form) }}
             {{ form_row(form.title) }}
             {{ form_row(form.message) }}
@@ -19,11 +19,11 @@
             <div class="mb-3" data-controller="translation-locales">
                 {{ form_label(form.locales) }}
                 {{ form_errors(form.locales) }}
-                <div class="d-flex flex-wrap gap-1 align-items-center mt-2">
+                <div class="flex flex-wrap gap-1 items-center mt-2">
                     {% set childIndex = 0 %}
                     {% for group_label, children in form.locales.vars.choices %}
                         {% if not loop.first %}<span
-                                class="border-start align-self-stretch mx-1"
+                                class="border-l align-self-stretch mx-1"
                             ></span>{% endif %}
                         {% for choice in children %}
                             {% set child = form.locales.children[childIndex] %}
@@ -34,7 +34,7 @@
                                     type="checkbox"
                                     name="{{ child.vars.full_name }}"
                                     value="{{ child.vars.value }}"
-                                    class="d-none"
+                                    class="hidden"
                                     data-action="change->translation-locales#toggleBadge"
                                     {{ child.vars.checked ? ' checked' : '' }}
                                 >
