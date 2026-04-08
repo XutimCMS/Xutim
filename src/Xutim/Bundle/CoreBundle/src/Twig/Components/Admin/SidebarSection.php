@@ -6,4 +6,5 @@ namespace Xutim\CoreBundle\Twig\Components\Admin;
 
 final class SidebarSection
 {
+    public string $title = '';
 }

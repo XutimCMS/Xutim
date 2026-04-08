@@ -1,23 +1,38 @@
 {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
 
 <div class="mb-3">
-    {% if not translation %}
+    <twig:Xutim:Admin:SidebarSection :title="'Page'|trans({}, 'admin')">
+        {{ include('@XutimCore/admin/page/_parent_sidebar_item.html.twig') }}
+        {{ include('@XutimCore/admin/page/_color_sidebar_item.html.twig') }}
+        {{ include('@XutimCore/admin/page/_translation_locales_sidebar_item.html.twig') }}
+        {{ include('@XutimCore/admin/page/_layout_sidebar_item.html.twig') }}
+        {{ include('@XutimCore/admin/page/_featured_image_sidebar_item.html.twig') }}
+    </twig:Xutim:Admin:SidebarSection>
+
+    {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
         <twig:Xutim:Admin:SidebarSection>
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="content">
-                    {{
-                        '%locale% translation doesn\'t exist yet.'|trans({'%locale%': content_context_language()|language_name}, 'admin')
-                    }}
+                    <a href="{{ admin_path('admin_page_notify_translators', {id: page.id}) }}" class="btn btn-sm btn-outline-primary w-100" data-turbo-frame="modal">
+                        <twig:Xutim:Admin:Icon name="bell" class="me-1" />
+                        {{ 'Notify translators'|trans({}, 'admin') }}
+                    </a>
+                </twig:block>
+            </twig:Xutim:Admin:SidebarItem>
+        </twig:Xutim:Admin:SidebarSection>
+    {% endif %}
+
+    {% if not translation %}
+        <twig:Xutim:Admin:SidebarSection :title="'Translation'|trans({}, 'admin') ~ ' (' ~ content_context_language()|upper ~ ')'">
+            <twig:Xutim:Admin:SidebarItem>
+                <twig:block name="content">
+                    {{ '%locale% translation doesn\'t exist yet.'|trans({'%locale%': content_context_language()|language_name}, 'admin') }}
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
             {% if app.current_route != 'admin_page_edit' %}
                 <twig:Xutim:Admin:SidebarItem>
                     <twig:block name="content">
-                        <twig:Xutim:Admin:Button
-                            variant="primary"
-                            href="{{ admin_path('admin_page_edit', {id: page.id}) }}"
-                            tag="a"
-                        >
+                        <twig:Xutim:Admin:Button variant="primary" href="{{ admin_path('admin_page_edit', {id: page.id}) }}" tag="a">
                             {{ 'Add translation'|trans({}, 'admin') }}
                         </twig:Xutim:Admin:Button>
                     </twig:block>
@@ -25,44 +40,21 @@
             {% endif %}
         </twig:Xutim:Admin:SidebarSection>
     {% endif %}
-    {% if translation %}
-        <twig:Xutim:Admin:SidebarSection>
-            {{
-                include('@XutimCore/admin/page/_publication_status_sidebar_item.html.twig',
-            )
-            }}
 
-            {%
-                if referenceHasChanged|default(false) and translation is defined and translation is not same as(null)
-            %}
+    {% if translation %}
+        <twig:Xutim:Admin:SidebarSection :title="'Translation'|trans({}, 'admin') ~ ' (' ~ content_context_language()|upper ~ ')'">
+            {{ include('@XutimCore/admin/page/_publication_status_sidebar_item.html.twig') }}
+
+            {% if referenceHasChanged|default(false) and translation is defined and translation is not same as(null) %}
                 <twig:Xutim:Admin:SidebarItem>
-                    <a
-                        href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
-                        class="fw-bold"
-                    >
-                        {{
-                            'New changes in reference translation'|trans({}, 'admin')
-                        }}
+                    <a href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}" class="fw-bold">
+                        {{ 'New changes in reference translation'|trans({}, 'admin') }}
                     </a>
                 </twig:Xutim:Admin:SidebarItem>
             {% endif %}
 
-            {{
-                include('@XutimCore/admin/page/_parent_sidebar_item.html.twig')
-            }}
-            {{ include('@XutimCore/admin/page/_color_sidebar_item.html.twig') }}
-            {{ include('@XutimCore/admin/page/_translation_locales_sidebar_item.html.twig') }}
-            {{
-                include('@XutimCore/admin/page/_layout_sidebar_item.html.twig')
-            }}
-            {{
-                include('@XutimCore/admin/page/_featured_image_sidebar_item.html.twig')
-            }}
-
             <twig:Xutim:Admin:SidebarItem>
-                <twig:block name="header">
-                    {{ 'author'|trans({}, 'admin')|capitalize }}:
-                </twig:block>
+                <twig:block name="header">{{ 'author'|trans({}, 'admin')|capitalize }}:</twig:block>
                 <twig:block name="content">
                     {% if lastRevision %}
                         {{ lastRevision.userIdentifier }}
@@ -74,79 +66,29 @@
 
             {% set effectiveUpdatedAt = (draft is defined and draft and draft.updatedAt > translation.updatedAt) ? draft.updatedAt : translation.updatedAt %}
             <twig:Xutim:Admin:SidebarItem>
-                <twig:block name="header">
-                    {{ 'updated at'|trans({}, 'admin')|capitalize }}:
-                </twig:block>
+                <twig:block name="header">{{ 'updated at'|trans({}, 'admin')|capitalize }}:</twig:block>
                 <twig:block name="content">
-                    <span
-                        title="{{ effectiveUpdatedAt|date('d/m/Y H:i') }}"
-                        data-controller="tooltip"
-                    >
+                    <span title="{{ effectiveUpdatedAt|date('d/m/Y H:i') }}" data-controller="tooltip">
                         {{ effectiveUpdatedAt|time_ago }}
                     </span>
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
 
             <twig:Xutim:Admin:SidebarItem>
-                <twig:block name="header">
-                    {{ 'revisions'|trans({}, 'admin')|capitalize }}:
-                </twig:block>
+                <twig:block name="header">{{ 'revisions'|trans({}, 'admin')|capitalize }}:</twig:block>
                 <twig:block name="content">
-                    <a
-                        href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
-                    >
+                    <a href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}">
                         {{ revisionsCount }}
                     </a>
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
-        </twig:Xutim:Admin:SidebarSection>
 
-        {% if xutim_analytics_enabled() %}
-            {%
-                set analyticsPath = path('content_translation_show', {
-                slug: translation.slug,
-                _locale: translation.locale,
-            })
-            %}
-            <turbo-frame
-                id="analytics-sidebar"
-                src="{{ path('admin_analytics_sidebar_widget', {path: analyticsPath}) }}"
-                loading="lazy"
-            >
-                <twig:Xutim:Admin:SidebarSection>
-                    <twig:Xutim:Admin:SidebarItem>
-                        <twig:block name="content">
-                            <span class="text-muted small">{{
-                                'Loading analytics...'|trans({}, 'admin')
-                            }}</span>
-                        </twig:block>
-                    </twig:Xutim:Admin:SidebarItem>
-                </twig:Xutim:Admin:SidebarSection>
-            </turbo-frame>
-        {% endif %}
-
-        {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
-            <twig:Xutim:Admin:SidebarSection>
-                <twig:Xutim:Admin:SidebarItem>
-                    <twig:block name="content">
-                        <a href="{{ admin_path('admin_page_notify_translators', {id: page.id}) }}" class="btn btn-sm btn-outline-primary w-100" data-turbo-frame="modal">
-                            <twig:Xutim:Admin:Icon name="bell" class="me-1" />
-                            {{ 'Notify translators'|trans({}, 'admin') }}
-                        </a>
-                    </twig:block>
-                </twig:Xutim:Admin:SidebarItem>
-            </twig:Xutim:Admin:SidebarSection>
-        {% endif %}
-
-        {% if is_granted('ROLE_EDITOR') %}
-            <twig:Xutim:Admin:SidebarSection>
+            {% if is_granted('ROLE_EDITOR') %}
                 <twig:Xutim:Admin:SidebarItem>
                     <twig:block name="content">
                         <div class="btn-group">
                             {% if translation.status.canBeArchived %}
-                                {%
-                                    set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived')
-                                %}
+                                {% set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived') %}
                                 <twig:Xutim:Admin:ModalDialog
                                     class="btn btn-outline-{{ archiveStatus.colorClass }}"
                                     modalDialogColor="{{ archiveStatus.colorClass }}"
@@ -157,7 +99,6 @@
                                     {{ 'archive'|trans({}, 'admin')|capitalize }}
                                 </twig:Xutim:Admin:ModalDialog>
                             {% endif %}
-
                             <twig:Xutim:Admin:ModalDialog
                                 class="btn btn-outline-danger"
                                 modalDialogColor="danger"
@@ -170,7 +111,20 @@
                         </div>
                     </twig:block>
                 </twig:Xutim:Admin:SidebarItem>
-            </twig:Xutim:Admin:SidebarSection>
+            {% endif %}
+        </twig:Xutim:Admin:SidebarSection>
+
+        {% if xutim_analytics_enabled() %}
+            {% set analyticsPath = path('content_translation_show', {slug: translation.slug, _locale: translation.locale}) %}
+            <turbo-frame id="analytics-sidebar" src="{{ path('admin_analytics_sidebar_widget', {path: analyticsPath}) }}" loading="lazy">
+                <twig:Xutim:Admin:SidebarSection>
+                    <twig:Xutim:Admin:SidebarItem>
+                        <twig:block name="content">
+                            <span class="text-muted small">{{ 'Loading analytics...'|trans({}, 'admin') }}</span>
+                        </twig:block>
+                    </twig:Xutim:Admin:SidebarItem>
+                </twig:Xutim:Admin:SidebarSection>
+            </turbo-frame>
         {% endif %}
     {% endif %}
 </div>

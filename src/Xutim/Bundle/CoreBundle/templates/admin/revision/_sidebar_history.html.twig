@@ -1,13 +1,24 @@
 <turbo-frame id="sidebar-history">
     <div class="list-group list-group-flush">
-        {% set latestEvent = events|first %}
+        {% set latestComparable = null %}
+        {% for event in events %}
+            {% if latestComparable is null and is_comparable_event(event) %}
+                {% set latestComparable = event %}
+            {% endif %}
+        {% endfor %}
+
         {% for event in events|slice(0, 10) %}
             {% set userData = usersData[event.userIdentifier]|default({}) %}
-            <a
-                href="{{ admin_path('admin_content_translation_revisions', {id: translationId, oldId: event.id, newId: latestEvent.id}) }}"
-                class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2"
-                data-turbo-frame="_top"
-            >
+            {% set canLink = is_comparable_event(event) and latestComparable is not null %}
+            {% if canLink %}
+                <a
+                    href="{{ admin_path('admin_content_translation_revisions', {id: translationId, oldId: event.id, newId: latestComparable.id}) }}"
+                    class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2"
+                    data-turbo-frame="_top"
+                >
+            {% else %}
+                <div class="list-group-item d-flex align-items-center gap-2 py-2">
+            {% endif %}
                 <span
                     class="avatar avatar-xs"
                     {% if userData.avatar|default('') %}
@@ -25,7 +36,11 @@
                         {{ userData.name|default(event.userIdentifier) }}
                     </div>
                 </div>
-            </a>
+            {% if canLink %}
+                </a>
+            {% else %}
+                </div>
+            {% endif %}
         {% else %}
             <div class="p-3 text-muted small">
                 {{ 'No revision history'|trans({}, 'admin') }}

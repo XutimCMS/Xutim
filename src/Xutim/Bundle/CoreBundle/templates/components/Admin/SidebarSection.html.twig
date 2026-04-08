@@ -5,5 +5,8 @@
         })
     }}
 >
+    {% if title is defined and title %}
+        <div class="text-uppercase text-muted small fw-bold mb-2" style="letter-spacing: 0.05em;">{{ title }}</div>
+    {% endif %}
     {% block content %}{% endblock %}
 </div>
