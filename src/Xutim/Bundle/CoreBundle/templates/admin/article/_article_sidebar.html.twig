@@ -1,5 +1,31 @@
+<twig:Xutim:Admin:SidebarSection :title="'Article'|trans({}, 'admin')">
+    <twig:Xutim:Admin:SidebarItem>
+        <twig:block name="header">{{ 'layout'|trans({}, 'admin')|capitalize }}</twig:block>
+        <twig:block name="content">
+            {% if is_granted('ROLE_EDITOR') %}
+                <a href="{{ admin_path('admin_article_layout_edit', {id: article.id}) }}" data-turbo-frame="modal" class="text-accent hover:underline" id="article-layout-item">{{ article.layout ?? '-' }}</a>
+            {% else %}
+                <span id="article-layout-item">{{ article.layout ?? '-' }}</span>
+            {% endif %}
+        </twig:block>
+    </twig:Xutim:Admin:SidebarItem>
+
+    {{ include('@XutimCore/admin/article/_translation_locales_sidebar_item.html.twig') }}
+    {{ include('@XutimCore/admin/article/_tags_sidebar_item.html.twig') }}
+    {{ include('@XutimCore/admin/article/_featured_image_sidebar_item.html.twig') }}
+</twig:Xutim:Admin:SidebarSection>
+
+{% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
+    <div class="border-t border-border px-4 py-3">
+        <a href="{{ admin_path('admin_article_notify_translators', {id: article.id}) }}" class="flex w-full items-center justify-center gap-2 rounded-md border border-border px-3 py-2 text-[13px] font-medium text-content-secondary hover:bg-surface-raised transition-colors" data-turbo-frame="modal">
+            <twig:ux:icon name="ph:bell-ringing" class="h-4 w-4" />
+            {{ 'Notify translators'|trans({}, 'admin') }}
+        </a>
+    </div>
+{% endif %}
+
 {% if not translation %}
-    <twig:Xutim:Admin:SidebarSection>
+    <twig:Xutim:Admin:SidebarSection :title="'Translation'|trans({}, 'admin') ~ ' (' ~ content_context_language()|upper ~ ')'">
         <twig:Xutim:Admin:SidebarItem>
             <twig:block name="content">
                 {{ '%locale% translation doesn\'t exist yet.'|trans({'%locale%': content_context_language()|language_name}, 'admin') }}
@@ -62,6 +88,34 @@
                 </a>
             </twig:block>
         </twig:Xutim:Admin:SidebarItem>
+
+        {% if is_granted('ROLE_EDITOR') %}
+            <twig:Xutim:Admin:SidebarItem>
+                <twig:block name="content">
+                    <div class="flex gap-2">
+                        {% if translation.status.canBeArchived %}
+                            {% set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived') %}
+                            <twig:Xutim:Admin:ModalDialog
+                                class="flex-1 inline-flex items-center justify-center rounded-md border border-border px-3 py-2 text-[13px] text-content-secondary hover:bg-surface-raised transition-colors"
+                                modalDialogColor="{{ archiveStatus.colorClass }}"
+                                action="{{ admin_path('admin_publication_status_edit', {id: translation.id, status: archiveStatus.value}) }}"
+                                confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
+                            >
+                                {{ 'archive'|trans({}, 'admin')|capitalize }}
+                            </twig:Xutim:Admin:ModalDialog>
+                        {% endif %}
+                        <twig:Xutim:Admin:ModalDialog
+                            class="flex-1 inline-flex items-center justify-center rounded-md border border-red-200 px-3 py-2 text-[13px] text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors"
+                            modalDialogColor="danger"
+                            action="{{ admin_path('admin_content_translation_delete', {id: translation.id}) }}"
+                            confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
+                        >
+                            {{ 'delete'|trans({}, 'admin')|capitalize }}
+                        </twig:Xutim:Admin:ModalDialog>
+                    </div>
+                </twig:block>
+            </twig:Xutim:Admin:SidebarItem>
+        {% endif %}
     </twig:Xutim:Admin:SidebarSection>
 
     {% if xutim_analytics_enabled() %}
@@ -75,52 +129,5 @@
                 </twig:Xutim:Admin:SidebarItem>
             </twig:Xutim:Admin:SidebarSection>
         </turbo-frame>
-    {% endif %}
-
-    <twig:Xutim:Admin:SidebarSection :title="'Article'|trans({}, 'admin')">
-        <twig:Xutim:Admin:SidebarItem>
-            <twig:block name="header">{{ 'layout'|trans({}, 'admin')|capitalize }}</twig:block>
-            <twig:block name="content">
-                {% if is_granted('ROLE_EDITOR') %}
-                    <a href="{{ admin_path('admin_article_layout_edit', {id: article.id}) }}" data-turbo-frame="modal" class="text-accent hover:underline" id="article-layout-item">{{ article.layout ?? '-' }}</a>
-                {% else %}
-                    <span id="article-layout-item">{{ article.layout ?? '-' }}</span>
-                {% endif %}
-            </twig:block>
-        </twig:Xutim:Admin:SidebarItem>
-
-        {{ include('@XutimCore/admin/article/_translation_locales_sidebar_item.html.twig') }}
-        {{ include('@XutimCore/admin/article/_tags_sidebar_item.html.twig') }}
-        {{ include('@XutimCore/admin/article/_featured_image_sidebar_item.html.twig') }}
-    </twig:Xutim:Admin:SidebarSection>
-
-    {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
-        <div class="border-t border-border px-4 py-3 space-y-2">
-            <a href="{{ admin_path('admin_article_notify_translators', {id: article.id}) }}" class="flex w-full items-center justify-center gap-2 rounded-md border border-border px-3 py-2 text-[13px] font-medium text-content-secondary hover:bg-surface-raised transition-colors" data-turbo-frame="modal">
-                <twig:ux:icon name="ph:bell-ringing" class="h-4 w-4" />
-                {{ 'Notify translators'|trans({}, 'admin') }}
-            </a>
-            <div class="flex gap-2">
-                {% if translation.status.canBeArchived %}
-                    {% set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived') %}
-                    <twig:Xutim:Admin:ModalDialog
-                        class="flex-1 inline-flex items-center justify-center rounded-md border border-border px-3 py-2 text-[13px] text-content-secondary hover:bg-surface-raised transition-colors"
-                        modalDialogColor="{{ archiveStatus.colorClass }}"
-                        action="{{ admin_path('admin_publication_status_edit', {id: translation.id, status: archiveStatus.value}) }}"
-                        confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
-                    >
-                        {{ 'archive'|trans({}, 'admin')|capitalize }}
-                    </twig:Xutim:Admin:ModalDialog>
-                {% endif %}
-                <twig:Xutim:Admin:ModalDialog
-                    class="flex-1 inline-flex items-center justify-center rounded-md border border-red-200 px-3 py-2 text-[13px] text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors"
-                    modalDialogColor="danger"
-                    action="{{ admin_path('admin_content_translation_delete', {id: translation.id}) }}"
-                    confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
-                >
-                    {{ 'delete'|trans({}, 'admin')|capitalize }}
-                </twig:Xutim:Admin:ModalDialog>
-            </div>
-        </div>
     {% endif %}
 {% endif %}
