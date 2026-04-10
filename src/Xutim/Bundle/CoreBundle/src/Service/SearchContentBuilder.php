@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Service;
 
+use Xutim\CoreBundle\Content\Canonical\ListItem;
 use Xutim\CoreBundle\Content\CanonicalContentExtractor;
 use Xutim\CoreBundle\Content\Transform\EditorJsToCanonicalDocumentTransformer;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
@@ -42,9 +43,7 @@ readonly class SearchContentBuilder
                     $parts[] = $this->extractor->runsToPlainText($block->parts['caption'] ?? []);
                     break;
                 case 'list':
-                    foreach ($block->items as $item) {
-                        $parts[] = $this->extractor->runsToPlainText($item['body'] ?? []);
-                    }
+                    $this->collectListItemText($block->listItems, $parts);
                     break;
                 case 'snippet':
                     $parts = array_merge($parts, $this->extractBlockContent((string) ($block->attrs['code'] ?? ''), $locale));
@@ -91,5 +90,19 @@ readonly class SearchContentBuilder
         }
 
         return $parts;
+    }
+
+    /**
+     * @param list<ListItem> $items
+     * @param list<string>   $parts
+     */
+    private function collectListItemText(array $items, array &$parts): void
+    {
+        foreach ($items as $item) {
+            $parts[] = $this->extractor->runsToPlainText($item->body);
+            if ($item->children !== []) {
+                $this->collectListItemText($item->children, $parts);
+            }
+        }
     }
 }
