@@ -133,10 +133,13 @@ readonly class ContentFragmentsConverter
             }
 
             if ($block->kind === 'image_gallery') {
-                foreach ($block->items as $imageFragment) {
-                    $media = $this->mediaRepo->findById(new UuidV4((string) ($imageFragment['id'] ?? '')));
+                foreach ($block->galleryImages as $galleryImage) {
+                    if ($galleryImage->id === null || $galleryImage->id === '') {
+                        continue;
+                    }
+                    $media = $this->mediaRepo->findById(new UuidV4($galleryImage->id));
                     if ($media === null) {
-                        throw new NotFoundHttpException('Media with an id ' . ($imageFragment['id'] ?? '') . ' was not found');
+                        throw new NotFoundHttpException('Media with an id ' . $galleryImage->id . ' was not found');
                     }
 
                     if ($media->copyright() !== null && $media->copyright() !== '') {

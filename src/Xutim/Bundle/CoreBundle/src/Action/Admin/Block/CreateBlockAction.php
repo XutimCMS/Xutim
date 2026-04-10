@@ -49,7 +49,7 @@ class CreateBlockAction extends AbstractController
                 $this->userStorage->getUserWithException()->getUserIdentifier()
             ));
 
-            return new RedirectResponse($this->router->generate('admin_block_list', ['searchTerm' => '']));
+            return new RedirectResponse($this->router->generate('admin_block_show', ['id' => $block->getId()]));
         }
 
         return $this->render('@XutimCore/admin/block/block_form.html.twig', [
