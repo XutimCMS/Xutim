@@ -27,9 +27,9 @@
                         data-featured-image-target="dropzone"
                     >
                         <div data-featured-image-target="imageWrapper">
-                            {% if form.featuredImage.vars.value %}
+                            {% if article.featuredImage %}
                                 <img
-                                    src="{{ path('file_show', {id: form.featuredImage.vars.value, extension: 'image'}) }}"
+                                    src="{{ media_url(article.featuredImage, 'thumb_small') }}"
                                     alt="Featured Image"
                                     style="max-width: auto; max-height: 300px"
                                     class="p-1"
@@ -42,7 +42,7 @@
                         </div>
                         <button
                             type="button"
-                            class="btn btn-sm btn-danger position-absolute top-0 end-0 mt-4 me-5 {{ form.featuredImage.vars.value ? '' : 'd-none' }}"
+                            class="btn btn-sm btn-danger position-absolute top-0 end-0 mt-4 me-5 {{ article.featuredImage ? '' : 'd-none' }}"
                             data-featured-image-target="removeButton"
                             data-action="featured-image#removeImage"
                             aria-label="Remove featured image"

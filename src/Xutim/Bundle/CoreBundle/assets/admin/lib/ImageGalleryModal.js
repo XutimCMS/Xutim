@@ -14,6 +14,8 @@ export default class ImageGalleryModal {
          * @type {Map<number, { items: Array, totalPages: number }>}
          */
         this.cache = new Map();
+        this.requestId = 0;
+        this.activeAbortController = null;
         this.dialog = this.#createModal();
         document.body.appendChild(this.dialog);
     }
@@ -73,17 +75,17 @@ export default class ImageGalleryModal {
         searchInput.className = 'form-control';
         searchInput.setAttribute('aria-label', 'Search images');
 
+        this.searchInput = searchInput;
         searchInput.addEventListener(
             'input',
             this.#debounce((e) => {
-                /**
-                 * @type {Map<number, { items: Array, totalPages: number }>}
-                 */
-                this.cache = new Map();
-                this.pagination.query = e.target.value;
+                const value = e.target.value;
+                if (value === this.pagination.query) return;
+                this.pagination.query = value;
                 this.pagination.currentPage = 1;
+                this.cache = new Map();
                 this.#loadGalleryImages();
-            }, 500),
+            }, 350),
         );
         searchWrapper.appendChild(searchInput);
 
@@ -146,34 +148,43 @@ export default class ImageGalleryModal {
         return dialog;
     }
 
+    #navigateToFolder(folderId) {
+        this.pagination.folder = folderId;
+        this.pagination.currentPage = 1;
+        this.pagination.query = '';
+        if (this.searchInput) this.searchInput.value = '';
+        this.cache = new Map();
+        this.#loadGalleryImages();
+    }
+
+    #appendImage(image) {
+        const img = document.createElement('img');
+        img.src = image.filteredUrl;
+        img.dataset.id = image.id;
+        img.dataset.url = image.fullSourceUrl;
+        img.dataset.thumbnailUrl = image.filteredUrl;
+        img.style.width = '100%';
+        img.style.height = '100px';
+        img.style.objectFit = 'cover';
+        img.style.cursor = 'pointer';
+        img.className = 'rounded';
+        img.addEventListener('click', () => {
+            this.onSelect(image);
+            this.close();
+        });
+        this.gallery.appendChild(img);
+    }
+
     #loadGalleryImages() {
         const page = this.pagination.currentPage;
+        const requestId = ++this.requestId;
 
-        const renderImages = (data) => {
-            this.gallery.innerHTML = '';
-            data.items.forEach((image) => {
-                const img = document.createElement('img');
-                img.src = image.filteredUrl;
-                img.dataset.id = image.id;
-                img.dataset.url = image.fullSourceUrl;
-                img.dataset.thumbnailUrl = image.filteredUrl;
-                img.style.width = '100%';
-                img.style.height = '100px';
-                img.style.objectFit = 'cover';
-                img.style.cursor = 'pointer';
-                img.className = 'rounded';
-                img.addEventListener('click', () => {
-                    this.onSelect(image);
-                    this.close();
-                });
-                this.gallery.appendChild(img);
-            });
+        if (this.activeAbortController) this.activeAbortController.abort();
+        const abortController = new AbortController();
+        this.activeAbortController = abortController;
 
-            this.pagination.totalPages = data.totalPages || 1;
-            this.prevButton.disabled = page <= 1;
-            this.nextButton.disabled = page >= this.pagination.totalPages;
-        };
         const renderContents = (data) => {
+            this.gallery.style.gridTemplateColumns = 'repeat(4, 1fr)';
             this.gallery.innerHTML = '';
             this.folderBar.innerHTML = '';
 
@@ -186,12 +197,7 @@ export default class ImageGalleryModal {
                     'btn btn-outline d-inline-flex align-items-center p-0 ps-2';
                 back.style.flex = '0 0 auto';
                 back.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M9 14l-4 -4l4 -4"/><path d="M5 10h11a4 4 0 1 1 0 8h-1"/></svg>`;
-                back.addEventListener('click', () => {
-                    this.pagination.folder = parentId;
-                    this.pagination.currentPage = 1;
-                    this.cache.clear();
-                    this.#loadGalleryImages();
-                });
+                back.addEventListener('click', () => this.#navigateToFolder(parentId));
                 this.folderBar.appendChild(back);
             }
 
@@ -205,32 +211,21 @@ export default class ImageGalleryModal {
                     <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-folder"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2" /></svg>
                     <span class="text-truncate" style="max-width:12rem">${folder.name}</span>
                 `;
-                chip.addEventListener('click', () => {
-                    this.pagination.folder = folder.id;
-                    this.pagination.currentPage = 1;
-                    this.cache.clear();
-                    this.#loadGalleryImages();
-                });
+                chip.addEventListener('click', () => this.#navigateToFolder(folder.id));
                 this.folderBar.appendChild(chip);
             });
 
-            data.items.forEach((image) => {
-                const img = document.createElement('img');
-                img.src = image.filteredUrl;
-                img.dataset.id = image.id;
-                img.dataset.url = image.fullSourceUrl;
-                img.dataset.thumbnailUrl = image.filteredUrl;
-                img.style.width = '100%';
-                img.style.height = '100px';
-                img.style.objectFit = 'cover';
-                img.style.cursor = 'pointer';
-                img.className = 'rounded';
-                img.addEventListener('click', () => {
-                    this.onSelect(image);
-                    this.close();
-                });
-                this.gallery.appendChild(img);
-            });
+            if (data.items.length === 0) {
+                this.gallery.style.gridTemplateColumns = '1fr';
+                const empty = document.createElement('div');
+                empty.className = 'text-muted text-center py-4';
+                empty.textContent = this.pagination.query
+                    ? 'No images match your search.'
+                    : 'No images in this folder.';
+                this.gallery.appendChild(empty);
+            } else {
+                data.items.forEach((image) => this.#appendImage(image));
+            }
 
             this.pagination.totalPages = data.totalPages || 1;
             this.prevButton.disabled = page <= 1;
@@ -239,22 +234,25 @@ export default class ImageGalleryModal {
             this.#renderBreadcrumb(data.folderPath || []);
         };
 
-        const loadPage = (pageToLoad) => {
-            if (this.cache.has(pageToLoad)) {
-                return Promise.resolve(this.cache.get(pageToLoad));
-            }
-
+        const buildUrl = (pageToLoad) => {
             const url = new URL(this.galleryUrl, window.location.origin);
             if (this.pagination.query) {
-                url.searchParams.append('searchTerm', this.pagination.query);
+                url.searchParams.set('searchTerm', this.pagination.query);
             }
             if (this.pagination.folder) {
                 url.searchParams.set('folderId', this.pagination.folder);
             }
             url.searchParams.set('page', pageToLoad);
             url.searchParams.set('pageLength', this.pagination.limit);
+            return url.toString();
+        };
 
-            return fetch(url.toString())
+        const loadPage = (pageToLoad, signal) => {
+            if (this.cache.has(pageToLoad)) {
+                return Promise.resolve(this.cache.get(pageToLoad));
+            }
+
+            return fetch(buildUrl(pageToLoad), { signal })
                 .then((response) => response.json())
                 .then((data) => {
                     if (!Array.isArray(data.items))
@@ -264,18 +262,31 @@ export default class ImageGalleryModal {
                 });
         };
 
-        this.gallery.innerHTML = 'Loading...';
+        const loadingTimer = setTimeout(() => {
+            if (this.requestId === requestId) {
+                this.gallery.innerHTML = '';
+                this.gallery.style.gridTemplateColumns = '1fr';
+                const loading = document.createElement('div');
+                loading.className = 'text-muted text-center py-4';
+                loading.textContent = 'Loading...';
+                this.gallery.appendChild(loading);
+            }
+        }, 200);
 
-        loadPage(page)
+        loadPage(page, abortController.signal)
             .then((data) => {
+                clearTimeout(loadingTimer);
+                if (this.requestId !== requestId) return;
                 renderContents(data);
 
-                // Preload previous and next pages (non-blocking)
-                if (page > 1) loadPage(page - 1).catch(() => {});
+                if (page > 1) loadPage(page - 1, abortController.signal).catch(() => {});
                 if (page < this.pagination.totalPages)
-                    loadPage(page + 1).catch(() => {});
+                    loadPage(page + 1, abortController.signal).catch(() => {});
             })
-            .catch(() => {
+            .catch((err) => {
+                clearTimeout(loadingTimer);
+                if (err && err.name === 'AbortError') return;
+                if (this.requestId !== requestId) return;
                 this.gallery.textContent = 'Error loading gallery images.';
             });
     }
@@ -295,10 +306,7 @@ export default class ImageGalleryModal {
         rootLink.textContent = 'Media';
         rootLink.addEventListener('click', (e) => {
             e.preventDefault();
-            this.pagination.folder = null;
-            this.pagination.currentPage = 1;
-            this.cache = new Map();
-            this.#loadGalleryImages();
+            this.#navigateToFolder(null);
         });
         this.breadcrumb.appendChild(rootLink);
 
@@ -312,10 +320,7 @@ export default class ImageGalleryModal {
                 link.textContent = folder.name;
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    this.pagination.folder = folder.id;
-                    this.pagination.currentPage = 1;
-                    this.cache = new Map();
-                    this.#loadGalleryImages();
+                    this.#navigateToFolder(folder.id);
                 });
                 this.breadcrumb.appendChild(link);
             }
