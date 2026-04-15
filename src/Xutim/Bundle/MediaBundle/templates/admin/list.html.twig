@@ -13,9 +13,20 @@
         </li>
 
         {% if currentFolder %}
-            <li class="breadcrumb-item active" aria-current="page">
-                {{ currentFolder.name() }}
-            </li>
+            {% set ancestors = currentFolder.folderPath() %}
+            {% for ancestor in ancestors %}
+                {% if loop.last %}
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{ ancestor.name() }}
+                    </li>
+                {% else %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ admin_path('admin_media_list', {id: ancestor.id()}) }}">
+                            {{ ancestor.name() }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
         {% endif %}
     </twig:Xutim:Admin:Breadcrumbs>
 {% endblock %}

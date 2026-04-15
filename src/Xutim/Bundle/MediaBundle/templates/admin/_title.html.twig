@@ -1,8 +1,9 @@
 <div class="d-flex align-items-center gap-3" id="page-title-wrapper">
     <h1 class="page-title mb-0">
-        {{ 'Media'|trans({}, 'admin') }}
         {% if currentFolder %}
-            - {{ currentFolder.name() }}
+            {{ currentFolder.name() }}
+        {% else %}
+            {{ 'Media'|trans({}, 'admin') }}
         {% endif %}
     </h1>
     {% if currentFolder %}
