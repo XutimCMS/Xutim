@@ -16,6 +16,11 @@ export default class extends Controller {
         fetchAllFilesUrl: String,
         fetchFileUrl: String,
         fetchAnchorSnippetsUrl: String,
+        xutimLayouts: Array,
+        xutimLayoutFormUrl: String,
+        xutimLayoutSaveUrl: String,
+        xutimLayoutRefreshUrl: String,
+        xutimLayoutPreviewUrl: String,
         disableEditing: Boolean,
         publishLabel: String,
         draftLabel: String,
@@ -39,6 +44,11 @@ export default class extends Controller {
             fetchAnchorSnippetsUrl: this.fetchAnchorSnippetsUrlValue,
             blockCodes: this.blockCodesValue,
             tags: this.tagsValue,
+            xutimLayouts: this.xutimLayoutsValue,
+            xutimLayoutFormUrl: this.xutimLayoutFormUrlValue,
+            xutimLayoutSaveUrl: this.xutimLayoutSaveUrlValue,
+            xutimLayoutRefreshUrl: this.xutimLayoutRefreshUrlValue,
+            xutimLayoutPreviewUrl: this.xutimLayoutPreviewUrlValue,
         });
 
         this.#editor = new EditorJS({

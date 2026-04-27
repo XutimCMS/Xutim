@@ -1,0 +1,40 @@
+<div class="xutim-layout-diff">
+    <div class="small text-muted mb-2">
+        <span class="badge bg-purple-lt">xutimLayout</span>
+        {% if row.layout_code_changed %}
+            <del class="text-danger">{{ row.old_layout_code }}</del>
+            →
+            <ins class="text-success">{{ row.layout_code }}</ins>
+        {% else %}
+            <code>{{ row.layout_code }}</code>
+        {% endif %}
+    </div>
+
+    <dl class="row mb-0">
+        {% for fieldName in row.fields %}
+            {% set fieldMeta = row.meta[fieldName] ?? null %}
+            {% set fieldPart = row.parts[fieldName] ?? null %}
+            {% set fieldStatus = fieldMeta.status ?? 'same' %}
+
+            <dt class="col-sm-3 text-truncate small fw-semibold">
+                {{ fieldName }}
+                {% if fieldStatus == 'changed' %}
+                    <span class="badge bg-warning-lt ms-1">{{ 'changed'|trans({}, 'admin') }}</span>
+                {% endif %}
+            </dt>
+            <dd class="col-sm-9">
+                {% if fieldPart is not null and fieldPart.kind == 'text' %}
+                    <div class="diff-inline">{{ fieldPart.html|raw }}</div>
+                {% elseif fieldPart is not null and fieldPart.kind == 'ref' %}
+                    {% if fieldStatus == 'changed' %}
+                        <del class="text-danger">{{ fieldMeta.old|default('') }}</del>
+                        →
+                        <ins class="text-success">{{ fieldMeta.new|default('') }}</ins>
+                    {% else %}
+                        <code>{{ fieldPart.html|raw }}</code>
+                    {% endif %}
+                {% endif %}
+            </dd>
+        {% endfor %}
+    </dl>
+</div>

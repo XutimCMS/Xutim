@@ -15,6 +15,16 @@ readonly class SnippetBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'snippet item';
+        return 'Snippet';
+    }
+
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Reference to a named snippet';
     }
 }

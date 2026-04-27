@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Symfony\Component\Asset\Context\RequestStackContext;
+use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinition;
+use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
+use Xutim\CoreBundle\Service\AdminEditUrl\AdminEditUrlResolver;
+use Xutim\CoreBundle\Service\AdminEditUrl\AdminEditUrlResolverInterface;
 use Xutim\CoreBundle\Dashboard\TranslationStatProvider;
 use Xutim\CoreBundle\Form\Admin\BlockItemProvider\BlockItemProviderInterface;
 use Xutim\CoreBundle\Infra\Doctrine\Type\AbstractEnumType;
@@ -26,6 +30,12 @@ return static function (ContainerConfigurator $container): void {
 
     $services->instanceof(BlockItemProviderInterface::class)
         ->tag('xutim.block_item_provider');
+
+    $services->instanceof(LayoutDefinition::class)
+        ->tag('xutim.layout_definition');
+
+    $services->instanceof(AdminEditUrlResolverInterface::class)
+        ->tag('xutim.admin_edit_url_resolver');
 
     $services->instanceof(TranslationStatProvider::class)
         ->tag('xutim.translation_stat_provider');
@@ -50,6 +60,12 @@ return static function (ContainerConfigurator $container): void {
 
     $services->load('Xutim\\CoreBundle\\', '../src/')
         ->exclude('../src/{DependencyInjection,Entity,Kernel.php}');
+
+    $services->set(LayoutDefinitionRegistry::class)
+        ->arg('$definitions', tagged_iterator('xutim.layout_definition'));
+
+    $services->set(AdminEditUrlResolver::class)
+        ->arg('$resolvers', tagged_iterator('xutim.admin_edit_url_resolver'));
 
     $services->set(AnalyticsExtension::class)
         ->arg('$bundles', '%kernel.bundles%')

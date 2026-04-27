@@ -22,6 +22,21 @@ readonly class BlockItemOptionCollection implements BlockItemOption
         return sprintf('collection (0 or more items) of %ss', $this->option->getName());
     }
 
+    public function isTranslatable(): bool
+    {
+        return $this->option->isTranslatable();
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->option->getDescription();
+    }
+
+    public function getOption(): BlockItemOption
+    {
+        return $this->option;
+    }
+
     /**
      * @return array<BlockItemOption>
     */

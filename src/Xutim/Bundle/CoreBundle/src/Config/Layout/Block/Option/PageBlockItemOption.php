@@ -15,6 +15,16 @@ readonly class PageBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'page item';
+        return 'Page';
+    }
+
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Reference to an existing page';
     }
 }

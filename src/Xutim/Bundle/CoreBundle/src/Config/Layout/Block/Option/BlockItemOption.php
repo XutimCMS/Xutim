@@ -20,4 +20,17 @@ interface BlockItemOption extends LayoutConfigItem
      * requirements.
      */
     public function getName(): string;
+
+    /**
+     * Whether the value held by this option type should be translated
+     * when content is auto-translated across locales. Text-like fields
+     * return true; references (image, page, link, …) return false.
+     */
+    public function isTranslatable(): bool;
+
+    /**
+     * Optional short description shown alongside `getName()` in admin
+     * pickers. Null means no description.
+     */
+    public function getDescription(): ?string;
 }

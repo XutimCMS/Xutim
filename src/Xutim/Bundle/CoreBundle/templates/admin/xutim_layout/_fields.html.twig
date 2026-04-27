@@ -1,0 +1,149 @@
+{% macro field(field, descriptions, options = {}) %}
+    {% import _self as xl %}
+    {% set description = descriptions[field.vars.name]|default('') %}
+
+    {% if 'xutim_layout_collection' in field.vars.block_prefixes %}
+        {{ xl.collection(field, descriptions, options) }}
+    {% elseif 'xutim_layout_image' in field.vars.block_prefixes %}
+        {{ xl.image(field, description) }}
+    {% elseif 'xutim_layout_union' in field.vars.block_prefixes %}
+        {{ xl.union(field, description) }}
+    {% else %}
+        {{ xl.scalar(field, description) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro hidden_field(field) %}
+    <input
+        type="hidden"
+        name="{{ field.vars.full_name }}"
+        value="{{ field.vars.data|default('')|e('html_attr') }}"
+    >
+    {% do field.setRendered %}
+{% endmacro %}
+
+{% macro union(field, description = '') %}
+    <div class="mb-3">
+        {{ form_label(field) }}
+        {% if description %}
+            <div class="small text-muted mb-2">{{ description }}</div>
+        {% endif %}
+        {{ form_widget(field) }}
+        {{ form_errors(field) }}
+    </div>
+    {% do field.setRendered %}
+{% endmacro %}
+
+{% macro scalar(field, description = '') %}
+    <div class="mb-3">
+        {{ form_label(field) }}
+        {% if description %}
+            <div class="small text-muted mb-2">{{ description }}</div>
+        {% endif %}
+        {{ form_widget(field) }}
+        {{ form_errors(field) }}
+    </div>
+    {% do field.setRendered %}
+{% endmacro %}
+
+{% macro image(field, description = '') %}
+    {{ form_row(field) }}
+
+    {% set imageData = field.vars.data %}
+    {% set previewUrl = imageData ? media_url(imageData, 'thumb_small') : '' %}
+    <label class="form-label">{{ field.vars.label }}</label>
+    {% if description %}
+        <div class="small text-muted mb-2">{{ description }}</div>
+    {% endif %}
+    <div
+        data-controller="media-field"
+        data-media-field-url-value="{{ admin_path('admin_json_image_list') }}"
+        data-media-field-initial-url-value="{{ imageData ? previewUrl : '' }}"
+        data-media-field-initial-id-value="{{ imageData ? imageData.id : '' }}"
+        class="position-relative rounded p-2 mb-3 text-center cursor-pointer"
+        data-action="click->media-field#openModal"
+        style="border: 0.125rem dashed #bbb"
+    >
+        <input
+            type="hidden"
+            name="{{ field.vars.full_name }}"
+            value="{{ imageData ? imageData.id : '' }}"
+            data-media-field-target="hiddenInput"
+        />
+        <img
+            src="{{ previewUrl }}"
+            alt=""
+            class="img-fluid"
+            style="max-height: 200px"
+            data-media-field-target="preview"
+            {% if not imageData %}
+                hidden
+            {% endif %}
+        />
+        <div
+            data-media-field-target="placeholder"
+            {% if imageData %}
+                hidden
+            {% endif %}
+        >
+            <span class="text-muted">
+                {{ 'Click to select an image'|trans({}, 'admin') }}
+            </span>
+        </div>
+    </div>
+    {% do field.setRendered %}
+{% endmacro %}
+
+{#
+    options:
+      container_class  classes on the outer wrapper — default is a vertical stack; pass "row g-3" for a bootstrap grid
+      item_class       classes on each item wrapper — defaults to "border rounded p-2 mb-2"
+#}
+{% macro collection(field, descriptions, options = {}) %}
+    {% import _self as xl %}
+
+    {% set description = descriptions[field.vars.name]|default('') %}
+    {%
+        set container_class = options.container_class|default('xutim-layout-collection--stack')
+    %}
+    {%
+        set item_class = options.item_class|default('xutim-layout-collection__item border rounded p-2 mb-2')
+    %}
+
+    <div class="mb-3">
+        <label class="form-label fw-semibold">{{ field.vars.label }}</label>
+        {% if description %}
+            <div class="small text-muted mb-2">{{ description }}</div>
+        {% endif %}
+        <div
+            class="xutim-layout-collection {{ container_class }}"
+            data-xutim-layout-collection
+            data-xutim-layout-collection-prefix="{{ field.vars.full_name }}"
+            data-xutim-layout-collection-index="{{ field|length }}"
+            data-prototype="{{ form_widget(field.vars.prototype)|e('html_attr') }}"
+            data-xutim-layout-collection-item-class="{{ item_class }}"
+        >
+            {% for entry in field %}
+                <div class="{{ item_class }}" data-xutim-layout-collection-item>
+                    {{ form_widget(entry) }}
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger mt-1"
+                        data-xutim-layout-collection-remove
+                    >
+                        {{ 'remove'|trans({}, 'admin') }}
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+        <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary mt-2"
+            data-xutim-layout-collection-add
+            data-xutim-layout-collection-target="{{ field.vars.full_name }}"
+        >
+            + {{ 'add item'|trans({}, 'admin') }}
+        </button>
+    </div>
+    {% do field.setRendered %}
+{% endmacro %}

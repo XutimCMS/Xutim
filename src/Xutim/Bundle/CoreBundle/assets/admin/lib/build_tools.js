@@ -17,6 +17,7 @@ import XutimAnchorTune from './editorjs-plugins/anchor-tune/XutimAnchorTune.js';
 import XutimFootnoteInline from './editorjs-plugins/footnotes-tune/XutimFootnoteInline.js';
 import FoldableStart from './editorjs-plugins/foldable/FoldableStart.js';
 import FoldableEnd from './editorjs-plugins/foldable/FoldableEnd.js';
+import XutimLayoutTool from './editorjs-plugins/xutim-layout/xutim-layout.js';
 
 import createContentLink from './editorjs-plugins/content-link/content-link.js';
 import createInternalLink from './editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
@@ -41,6 +42,14 @@ export function buildEditorTools({
     fetchAnchorSnippetsUrl,
     blockCodes,
     tags,
+    xutimLayouts,
+    xutimLayoutFormUrl,
+    xutimLayoutSaveUrl,
+    xutimLayoutRefreshUrl,
+    xutimLayoutPreviewUrl,
+    extraTools = {},
+    headerExtraTunes = [],
+    mainHeaderExtraTunes = [],
 }) {
     return {
         alignment: { class: AlignmentBlockTune },
@@ -110,7 +119,7 @@ export function buildEditorTools({
                 levels: [2, 3, 4],
                 defaultLevel: 2,
             },
-            tunes: ['xutimAnchor', 'alignment'],
+            tunes: ['xutimAnchor', 'alignment', ...headerExtraTunes],
         },
 
         mainHeader: {
@@ -121,7 +130,7 @@ export function buildEditorTools({
                 levels: [1, 2, 3],
                 defaultLevel: 2,
             },
-            tunes: ['xutimAnchor'],
+            tunes: ['xutimAnchor', ...mainHeaderExtraTunes],
         },
 
         quote: {
@@ -215,5 +224,21 @@ export function buildEditorTools({
             class: FoldableEnd,
             tunes: ['xutimAnchor'],
         },
+
+        xutimLayout: {
+            class: XutimLayoutTool,
+            config: {
+                layouts: xutimLayouts || [],
+                formUrl: xutimLayoutFormUrl || '',
+                saveUrl: xutimLayoutSaveUrl || '',
+                refreshUrl: xutimLayoutRefreshUrl || '',
+                previewUrl: xutimLayoutPreviewUrl || '',
+            },
+            tunes: ['xutimAnchor'],
+        },
+
+        // Downstream-injected tools / tunes. Merged last so they
+        // can override or extend the core tool set.
+        ...extraTools,
     };
 }

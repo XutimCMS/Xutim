@@ -1,0 +1,60 @@
+{#
+    IMPORTANT: This template renders the form fields in a <div> container,
+    NOT a <form> element, because it is injected inside the editor.js main
+    <form> and nested forms are invalid HTML (the browser closes the outer
+    form, causing submit to reload the page). The editor.js xutim-layout
+    tool collects values via JS and POSTs them manually.
+#}
+{% form_theme form '@XutimCore/admin/xutim_layout/_form_theme.html.twig' %}
+{% import '@XutimCore/admin/xutim_layout/_fields.html.twig' as xl %}
+
+{% set descriptions = definition.getFieldDescriptions() %}
+{% set bodyTemplate = definition.getFormBodyTemplate() %}
+
+<div
+    class="xutim-layout-form"
+    data-xutim-layout-code="{{ definition.code }}"
+    data-xutim-layout-form
+>
+    {{ form_errors(form) }}
+
+    {% if bodyTemplate %}
+        {{ include(bodyTemplate, {form: form, definition: definition, descriptions: descriptions}) }}
+    {% else %}
+        {#
+           Inline-editable fields (translatable text) render as hidden inputs 
+           so the modal shows only non-inline fields while values still 
+           round-trip on save.
+        #}
+        {% set layoutFields = definition.getFields() %}
+        {% for fieldName, field in form.children %}
+            {% if fieldName != '_token' %}
+                {% set option = layoutFields[fieldName]|default(null) %}
+                {% if option and xutim_is_inline_editable(option) %}
+                    {{ xl.hidden_field(field) }}
+                {% else %}
+                    {{ xl.field(field, descriptions) }}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {{ form_rest(form) }}
+
+    <div class="xutim-layout-form__actions mt-2 d-flex gap-2">
+        <button
+            type="button"
+            class="btn btn-primary"
+            data-xutim-layout-save-btn
+        >
+            {{ 'save'|trans({}, 'admin') }}
+        </button>
+        <button
+            type="button"
+            class="btn btn-link"
+            data-xutim-layout-cancel-btn
+        >
+            {{ 'cancel'|trans({}, 'admin') }}
+        </button>
+    </div>
+</div>

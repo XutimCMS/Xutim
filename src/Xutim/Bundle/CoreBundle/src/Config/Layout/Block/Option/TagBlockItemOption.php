@@ -15,6 +15,16 @@ readonly class TagBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'tag item';
+        return 'Tag';
+    }
+
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Reference to a tag';
     }
 }

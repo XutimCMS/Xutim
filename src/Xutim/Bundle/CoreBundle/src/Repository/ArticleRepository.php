@@ -53,6 +53,31 @@ class ArticleRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<string, string>
+     */
+    public function findAllForPicker(): array
+    {
+        /** @var list<array{id: \Symfony\Component\Uid\Uuid, title: string}> $rows */
+        $rows = $this->createQueryBuilder('article')
+            ->select('article.id AS id', 'translation.title AS title')
+            ->innerJoin('article.defaultTranslation', 'translation')
+            ->orderBy('translation.title', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $title = $row['title'];
+            if ($title === '') {
+                continue;
+            }
+            $result[$row['id']->toRfc4122()] = $title;
+        }
+
+        return $result;
+    }
+
+    /**
      * @param list<string> $locales
      */
     public function countUnpublishedForLocales(array $locales): int

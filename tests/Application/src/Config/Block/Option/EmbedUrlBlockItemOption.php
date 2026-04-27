@@ -20,4 +20,14 @@ readonly class EmbedUrlBlockItemOption implements BlockItemOption
     {
         return 'embed url item';
     }
+
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return null;
+    }
 }

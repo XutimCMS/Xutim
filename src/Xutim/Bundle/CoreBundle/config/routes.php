@@ -69,6 +69,11 @@ return function (RoutingConfigurator $routes) {
         ->defaults($defaults)
     ;
 
+    $routes->import('routes/xutim_layout_routes.php')
+        ->requirements($requirements)
+        ->defaults($defaults)
+    ;
+
     $routes->import('routes/public_routes.php');
 
     $routes->import('.', 'content_translation_fallback');

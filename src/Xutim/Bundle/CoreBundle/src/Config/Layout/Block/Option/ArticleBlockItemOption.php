@@ -15,6 +15,16 @@ readonly class ArticleBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'article item';
+        return 'Article';
+    }
+
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Reference to an existing article';
     }
 }
