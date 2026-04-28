@@ -17,6 +17,9 @@
     data-dialog-modal-dialog-value="{{ 'Are you sure?'|trans({}, 'admin') }}"
     data-dialog-modal-dialog-color-value="{{ modalDialogColor|default('success') }}"
     data-dialog-modal-open-on-init-value="{{ openOnInit|default('0') }}"
+    data-dialog-modal-bulk-count-value="{{ bulkCount|default(0) }}"
+    data-dialog-modal-bulk-label-value="{{ bulkLabel|default('') }}"
+    data-dialog-modal-confirm-button-bulk-label-value="{{ confirmActionBulkLabel|default('') }}"
 >
     {% block content %}{% endblock %}
 </{{ buttonTag }}>

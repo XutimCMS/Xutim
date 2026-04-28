@@ -14,6 +14,9 @@
         <div class="card-body">
             {{ form_start(form) }}
             {{ form_row(form.publishedAt) }}
+            {% if form.applyToAll is defined %}
+                {{ form_row(form.applyToAll) }}
+            {% endif %}
             {{ form_row(form.submit) }}
             {{ form_end(form) }}
         </div>

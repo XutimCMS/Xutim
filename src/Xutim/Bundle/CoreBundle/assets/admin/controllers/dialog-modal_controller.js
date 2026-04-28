@@ -11,6 +11,9 @@ export default class extends Controller {
         confirmButtonLabel: String,
         dialogColor: String,
         openOnInit: Boolean,
+        bulkCount: Number,
+        bulkLabel: String,
+        confirmButtonBulkLabel: String,
     };
     connect() {
         if (this.openOnInitValue === true) {
@@ -19,6 +22,18 @@ export default class extends Controller {
     }
 
     activate() {
+        const hasBulk = this.bulkCountValue > 1 && this.bulkLabelValue !== '';
+        const bulkRow = hasBulk
+            ? `
+            <div class="text-start px-2 pb-2">
+                <label class="form-check">
+                    <input id="dialog-bulk-toggle" class="form-check-input" type="checkbox">
+                    <span class="form-check-label">${this.bulkLabelValue}</span>
+                </label>
+            </div>
+        `
+            : '';
+
         let modalHTML = `
             <div class="modal-dialog modal-sm modal-dialog-centered">
                 <div class="modal-content">
@@ -28,6 +43,7 @@ export default class extends Controller {
                         <h3>${this.dialogValue}</h3>
                         <div class="text-muted">${this.helpTextValue}</div>
                     </div>
+                    ${bulkRow}
                     <div class="modal-footer">
                         <div class="w-100">
                             <div class="row">
@@ -40,6 +56,7 @@ export default class extends Controller {
                                     <form id="dialog-form" name="form" method="post" action="${this.actionValue}">
                                         <div id="form">
                                             <input id="form__token" name="form[_token]" value="${this.csrfTokenValue}" type="hidden">
+                                            <input id="dialog-apply-to-all" name="apply_to_all" value="0" type="hidden">
                                         </div>
                                             <button id="dialog-form-submit" type="submit" form="dialog-form" class="btn btn-${this.dialogColorValue} w-100" data-bs-dismiss="modal">
                                                 ${this.confirmButtonLabelValue}
@@ -67,10 +84,20 @@ export default class extends Controller {
             openDialog.close();
         }
 
-        // Append modal window to the body.
         document.body.appendChild(modalElem);
 
-        // Activate and show modal window.
+        if (hasBulk) {
+            const toggle = modalElem.querySelector('#dialog-bulk-toggle');
+            const hidden = modalElem.querySelector('#dialog-apply-to-all');
+            const submit = modalElem.querySelector('#dialog-form-submit');
+            const singleLabel = this.confirmButtonLabelValue;
+            const bulkLabel = this.confirmButtonBulkLabelValue || singleLabel;
+            toggle.addEventListener('change', () => {
+                hidden.value = toggle.checked ? '1' : '0';
+                submit.textContent = toggle.checked ? bulkLabel : singleLabel;
+            });
+        }
+
         const modal = new Modal(modalElem);
         modal.show();
 

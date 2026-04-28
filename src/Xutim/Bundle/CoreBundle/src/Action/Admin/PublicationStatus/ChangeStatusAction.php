@@ -40,12 +40,23 @@ class ChangeStatusAction extends AbstractController
         $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
 
         $user = $this->userStorage->getUserWithException();
-        $command = new ChangePublicationStatusCommand(
-            $translation->getId(),
-            $status,
-            $user->getUserIdentifier()
-        );
-        $this->commandBus->dispatch($command);
+        $applyToAll = $request->request->getBoolean('apply_to_all');
+
+        $targets = [$translation];
+        if ($applyToAll === true) {
+            $targets = $translation->getObject()->getTranslations()->toArray();
+            foreach ($targets as $target) {
+                $this->transAuthChecker->denyUnlessCanTranslate($target->getLocale());
+            }
+        }
+
+        foreach ($targets as $target) {
+            $this->commandBus->dispatch(new ChangePublicationStatusCommand(
+                $target->getId(),
+                $status,
+                $user->getUserIdentifier()
+            ));
+        }
         $this->addFlash('success', 'flash.changes_made_successfully');
 
         if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {

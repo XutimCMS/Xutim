@@ -1,9 +1,13 @@
-{% macro modalDialogPage(id, status, confirmActionLabel, iconName, url) %}
+{% macro modalDialogPage(id, status, confirmActionLabel, iconName, url, bulkCount) %}
+    {% set bulkCount = bulkCount|default(1) %}
     <twig:Xutim:Admin:ModalDialog
         class="btn-link text-{{ status.colorClass }} p-0"
         modalDialogColor="{{ status.colorClass }}"
         action="{{ admin_path(url, {id: id, status: status.value}) }}"
         confirmActionLabel="{{ confirmActionLabel }}"
+        confirmActionBulkLabel="{{ confirmActionLabel }} ({{ bulkCount }})"
+        bulkCount="{{ bulkCount }}"
+        bulkLabel="{{ 'Apply to all %count% translations'|trans({'%count%': bulkCount}, 'admin') }}"
         title="{{ confirmActionLabel }}"
         extraControllers="tooltip"
     >
@@ -24,7 +28,7 @@
     <div>
         {% if translation.status.canBeDrafted() %}
             {{
-                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard', url)
+                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard', url, translation.object.translations|length)
             }}
         {% endif %}
 
@@ -46,13 +50,13 @@
 
         {% if translation.status.canPublish %}
             {{
-                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload', url)
+                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload', url, translation.object.translations|length)
             }}
         {% endif %}
 
         {% if translation.status.canSubmitForEvaluation %}
             {{
-                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert', url)
+                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert', url, translation.object.translations|length)
             }}
         {% endif %}
     </div>
