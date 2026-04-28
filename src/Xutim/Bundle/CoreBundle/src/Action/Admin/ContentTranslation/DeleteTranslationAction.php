@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Xutim\CoreBundle\Exception\CannotDeleteHomepageException;
 use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
@@ -55,7 +56,14 @@ class DeleteTranslationAction extends AbstractController
 
         if ($trans->hasPage()) {
             $pageParent = $trans->getPage()->getParent();
-            if ($this->contentTranslationService->deleteTranslation($trans) === false) {
+            try {
+                $deleted = $this->contentTranslationService->deleteTranslation($trans);
+            } catch (CannotDeleteHomepageException) {
+                $this->addFlash('danger', 'The page can\'t be removed because it is configured as the site homepage.');
+
+                return new RedirectResponse($this->router->generate('admin_page_edit', ['id' => $trans->getPage()->getId()]));
+            }
+            if ($deleted === false) {
                 $this->addFlash('danger', 'The page can\'t be removed. It has either sub-pages, connection to a block item or it is part of the menu.');
 
                 return new RedirectResponse($this->router->generate('admin_page_edit', ['id' => $trans->getPage()->getId()]));

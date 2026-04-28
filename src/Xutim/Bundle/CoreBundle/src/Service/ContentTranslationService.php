@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Service;
 
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleDeletedEvent;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationDeletedEvent;
 use Xutim\CoreBundle\Domain\Event\Page\PageDeletedEvent;
@@ -14,6 +15,7 @@ use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\ContentTranslation;
 use Xutim\CoreBundle\Entity\Page;
+use Xutim\CoreBundle\Exception\CannotDeleteHomepageException;
 use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
@@ -32,6 +34,7 @@ class ContentTranslationService
         private readonly PageRepository $pageRepo,
         private readonly LogEventRepository $eventRepo,
         private readonly MenuItemRepository $menuItemRepo,
+        private readonly SiteContext $siteContext,
     ) {
     }
 
@@ -102,6 +105,9 @@ class ContentTranslationService
 
     public function deletePage(PageInterface $page): bool
     {
+        if ($this->siteContext->getHomepageId() === $page->getId()->toRfc4122()) {
+            throw new CannotDeleteHomepageException('The page is configured as the site homepage.');
+        }
         $menuItem = $this->menuItemRepo->findOneBy(['page' => $page]);
         if ($menuItem !== null || $page->canBeDeleted() === false) {
             return false;
