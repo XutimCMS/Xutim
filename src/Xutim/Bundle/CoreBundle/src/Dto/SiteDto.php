@@ -9,6 +9,7 @@ final readonly class SiteDto
     /**
      * @param array<string> $locales
      * @param array<string> $extendedContentLocales
+     * @param array<string> $adminAlertEmails
      */
     public function __construct(
         public array $locales,
@@ -18,6 +19,7 @@ final readonly class SiteDto
         public string $referenceLocale,
         public int $untranslatedArticleAgeLimitDays,
         public ?string $homepageId = null,
+        public array $adminAlertEmails = [],
     ) {
     }
 }

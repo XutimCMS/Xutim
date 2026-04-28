@@ -38,7 +38,7 @@ class EditSiteSettingsAction extends AbstractController
             /** @var SiteDto $dto */
             $dto = $form->getData();
             $homepage = $dto->homepageId !== null ? $this->pageRepository->find($dto->homepageId) : null;
-            $site->change($dto->locales, $dto->extendedContentLocales, $dto->theme, $dto->sender, $dto->referenceLocale, $dto->untranslatedArticleAgeLimitDays, $homepage);
+            $site->change($dto->locales, $dto->extendedContentLocales, $dto->theme, $dto->sender, $dto->referenceLocale, $dto->untranslatedArticleAgeLimitDays, $homepage, $dto->adminAlertEmails);
             $this->siteRepository->save($site, true);
             $this->siteContext->resetDefaultSite();
             $this->layoutLoader->loadAllLayouts();

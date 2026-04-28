@@ -31,6 +31,10 @@ class Site implements SiteInterface
     #[Column(type: 'json', nullable: false, options: ['comment' => 'Site\'s extended content languages.'])]
     private array $extendedContentLocales;
 
+    /** @var array<string> */
+    #[Column(type: 'json', nullable: false, options: ['default' => '[]', 'comment' => 'Email addresses receiving admin alert notifications.'])]
+    private array $adminAlertEmails;
+
     #[Column(type: 'string', length: 255, nullable: false, options: ['comment' => 'Site\'s public theme.'])]
     private string $theme;
 
@@ -52,6 +56,7 @@ class Site implements SiteInterface
         $this->id = Uuid::v4();
         $this->locales = ['en', 'fr'];
         $this->extendedContentLocales = ['en', 'fr'];
+        $this->adminAlertEmails = [];
         $this->theme = 'default';
         $this->sender = 'website@example.com';
         $this->referenceLocale = 'en';
@@ -61,6 +66,7 @@ class Site implements SiteInterface
     /**
      * @param array<string> $locales
      * @param array<string> $extendedContentLocales
+     * @param array<string> $adminAlertEmails
      */
     public function change(
         array $locales,
@@ -70,6 +76,7 @@ class Site implements SiteInterface
         string $referenceLocale,
         int $untranslatedArticleAgeLimitDays,
         ?PageInterface $homepage,
+        array $adminAlertEmails = [],
     ): void {
         usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
         usort($extendedContentLocales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
@@ -80,6 +87,26 @@ class Site implements SiteInterface
         $this->referenceLocale = $referenceLocale;
         $this->untranslatedArticleAgeLimitDays = $untranslatedArticleAgeLimitDays;
         $this->homepage = $homepage;
+        $this->adminAlertEmails = self::normalizeEmails($adminAlertEmails);
+    }
+
+    /**
+     * @param array<string> $emails
+     *
+     * @return array<string>
+     */
+    private static function normalizeEmails(array $emails): array
+    {
+        $normalized = [];
+        foreach ($emails as $email) {
+            $email = strtolower(trim($email));
+            if ($email === '') {
+                continue;
+            }
+            $normalized[$email] = $email;
+        }
+
+        return array_values($normalized);
     }
 
     public function getHomepage(): ?PageInterface
@@ -123,6 +150,14 @@ class Site implements SiteInterface
         return $this->sender;
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getAdminAlertEmails(): array
+    {
+        return $this->adminAlertEmails;
+    }
+
     public function toDto(): SiteDto
     {
         return new SiteDto(
@@ -133,6 +168,7 @@ class Site implements SiteInterface
             $this->referenceLocale,
             $this->untranslatedArticleAgeLimitDays,
             $this->homepage?->getId()->toRfc4122(),
+            $this->adminAlertEmails,
         );
     }
 }

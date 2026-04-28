@@ -123,6 +123,14 @@ class SiteContext
         return $this->getDefaultSite()->sender;
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getAdminAlertEmails(): array
+    {
+        return $this->getDefaultSite()->adminAlertEmails;
+    }
+
     public function getReferenceLocale(): string
     {
         return $this->getDefaultSite()->referenceLocale;

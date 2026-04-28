@@ -11,6 +11,7 @@ interface SiteInterface
     /**
      * @param array<string> $locales
      * @param array<string> $extendedContentLocales
+     * @param array<string> $adminAlertEmails
      */
     public function change(
         array $locales,
@@ -20,6 +21,7 @@ interface SiteInterface
         string $referenceLocale,
         int $untranslatedArticleAgeLimitDays,
         ?PageInterface $homepage,
+        array $adminAlertEmails = [],
     ): void;
 
     public function getHomepage(): ?PageInterface;
@@ -39,6 +41,11 @@ interface SiteInterface
     public function getContentLocales(): array;
 
     public function getSender(): string;
+
+    /**
+     * @return array<string>
+     */
+    public function getAdminAlertEmails(): array;
 
     public function toDto(): SiteDto;
 }
