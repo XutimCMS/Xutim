@@ -17,7 +17,7 @@ enum PublicationStatus: string
         return match ($this) {
             PublicationStatus::Draft => 'primary',
             PublicationStatus::Published => 'success',
-            PublicationStatus::Archived => 'dark',
+            PublicationStatus::Archived => 'secondary',
             PublicationStatus::Evaluation => 'warning',
             PublicationStatus::Scheduled => 'purple'
         };

@@ -86,7 +86,7 @@
 {% macro missingBadge(extraClass) %}
     {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 
-    {{ badges.badge('text-bg-secondary ' ~ extraClass, 'Translation is missing'|trans({}, 'admin')) }}
+    {{ badges.badge('text-bg-white border-secondary ' ~ extraClass, 'Translation is missing'|trans({}, 'admin')) }}
 {% endmacro %}
 
 {% macro draftBadge(extraClass) %}
