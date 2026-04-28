@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Twig\Components\Admin\Alert;
 use Xutim\CoreBundle\Twig\Components\Admin\Badge;
 use Xutim\CoreBundle\Twig\Components\Admin\Breadcrumbs;
@@ -223,6 +224,7 @@ return static function (ContainerConfigurator $container): void {
 
     $services
         ->set(PublicPageLink::class)
+        ->args([service(SiteContext::class)])
         ->tag('twig.component', [
             'key' => 'Xutim:Admin:PublicPageLink',
             'template' => '@XutimCore/components/Admin/PublicPageLink.html.twig'

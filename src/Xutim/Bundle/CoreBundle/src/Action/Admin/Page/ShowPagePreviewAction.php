@@ -7,6 +7,7 @@ namespace Xutim\CoreBundle\Action\Admin\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
@@ -18,6 +19,7 @@ class ShowPagePreviewAction extends AbstractController
         private readonly ThemeFinder $themeFinder,
         private readonly LayoutLoader $layoutLoader,
         private readonly ContentContext $contentContext,
+        private readonly SiteContext $siteContext,
         private readonly PageRepository $pageRepo,
         private readonly ContentDraftRepository $draftRepo,
     ) {
@@ -49,6 +51,7 @@ class ShowPagePreviewAction extends AbstractController
             'featuredImage' => $page->getFeaturedImage(),
             'contentFragments' => $draft?->getContent() ?? $translation->getContent(),
             'isPublished' => $translation->isPublished(),
+            'isHomepage' => $this->siteContext->getHomepageId() === $page->getId()->toRfc4122(),
         ]);
     }
 }
