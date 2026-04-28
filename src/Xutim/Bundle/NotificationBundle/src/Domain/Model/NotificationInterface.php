@@ -14,9 +14,13 @@ interface NotificationInterface
 {
     public function getId(): Uuid;
 
-    public function getRecipient(): UserInterface;
+    public function getRecipient(): ?UserInterface;
 
-    public function getRecipientId(): Uuid;
+    public function getRecipientId(): ?Uuid;
+
+    public function getRecipientEmail(): ?string;
+
+    public function getRecipientAddress(): string;
 
     public function getType(): string;
 

@@ -1,0 +1,17 @@
+<h1 style="font-size: 18px; margin: 0 0 16px;">{{ notification.title }}</h1>
+
+<p style="margin: 0 0 12px;">{{ notification.body|nl2br }}</p>
+
+{% if notification.payload.messageClass is defined %}
+    <p style="margin: 0 0 12px; color: #555; font-family: monospace; font-size: 13px;">
+        {{ notification.payload.messageClass }}
+    </p>
+{% endif %}
+
+{% if notification.payload.exceptionClass is defined and notification.payload.exceptionMessage is defined %}
+    <pre style="background: #f4f4f4; padding: 12px; border-radius: 4px; font-size: 12px; white-space: pre-wrap; overflow-x: auto;">{{ notification.payload.exceptionClass }}: {{ notification.payload.exceptionMessage }}</pre>
+{% endif %}
+
+<p style="margin: 24px 0 0; color: #888; font-size: 12px;">
+    Sent {{ notification.createdAt|date('Y-m-d H:i:s') }} — severity {{ notification.severity.value }}.
+</p>
