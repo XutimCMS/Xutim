@@ -19,7 +19,12 @@ interface SiteInterface
         string $sender,
         string $referenceLocale,
         int $untranslatedArticleAgeLimitDays,
+        ?PageInterface $homepage,
     ): void;
+
+    public function getHomepage(): ?PageInterface;
+
+    public function changeHomepage(?PageInterface $homepage): void;
 
     public function getReferenceLocale(): string;
 

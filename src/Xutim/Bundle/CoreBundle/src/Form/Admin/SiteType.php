@@ -17,6 +17,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Traversable;
 use Xutim\CoreBundle\Dto\SiteDto;
 use Xutim\CoreBundle\Entity\Site;
+use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
 /**
@@ -25,13 +26,16 @@ use Xutim\CoreBundle\Twig\ThemeFinder;
  */
 class SiteType extends AbstractType implements DataMapperInterface
 {
-    public function __construct(private readonly ThemeFinder $themeFinder)
-    {
+    public function __construct(
+        private readonly ThemeFinder $themeFinder,
+        private readonly PageRepository $pageRepository,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $themes = $this->themeFinder->findAvailableThemes();
+        $pageChoices = array_flip($this->pageRepository->findAllPaths());
 
         $builder
             ->add('languages', LocaleType::class, [
@@ -67,6 +71,14 @@ class SiteType extends AbstractType implements DataMapperInterface
                 'attr' => ['min' => 0, 'placeholder' => (string) Site::DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS],
                 'help' => new TranslatableMessage('Articles older than this will not appear in the translator dashboard. Set to 0 for no limit.', [], 'admin'),
             ])
+            ->add('homepageId', ChoiceType::class, [
+                'label' => new TranslatableMessage('homepage', [], 'admin'),
+                'choices' => $pageChoices,
+                'required' => false,
+                'placeholder' => new TranslatableMessage('use default template', [], 'admin'),
+                'help' => new TranslatableMessage('Page rendered at the public root. When unset, the theme\'s homepage template is used.', [], 'admin'),
+                'attr' => ['data-controller' => 'tom-select'],
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => new TranslatableMessage('submit', [], 'admin')
             ])
@@ -93,6 +105,7 @@ class SiteType extends AbstractType implements DataMapperInterface
         $forms['sender']->setData($viewData->sender);
         $forms['referenceLocale']->setData($viewData->referenceLocale);
         $forms['untranslatedArticleAgeLimitDays']->setData($viewData->untranslatedArticleAgeLimitDays);
+        $forms['homepageId']->setData($viewData->homepageId);
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
@@ -112,7 +125,17 @@ class SiteType extends AbstractType implements DataMapperInterface
 
         /** @var int $untranslatedArticleAgeLimitDays */
         $untranslatedArticleAgeLimitDays = $forms['untranslatedArticleAgeLimitDays']->getData() ?? Site::DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS;
+        /** @var ?string $homepageId */
+        $homepageId = $forms['homepageId']->getData();
 
-        $viewData = new SiteDto($languages, $extendedLanguages, $theme, $sender, $referenceLocale, $untranslatedArticleAgeLimitDays);
+        $viewData = new SiteDto(
+            $languages,
+            $extendedLanguages,
+            $theme,
+            $sender,
+            $referenceLocale,
+            $untranslatedArticleAgeLimitDays,
+            $homepageId,
+        );
     }
 }

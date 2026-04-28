@@ -17,6 +17,7 @@ final readonly class SiteDto
         public string $sender,
         public string $referenceLocale,
         public int $untranslatedArticleAgeLimitDays,
+        public ?string $homepageId = null,
     ) {
     }
 }

@@ -132,4 +132,9 @@ class SiteContext
     {
         return $this->getDefaultSite()->untranslatedArticleAgeLimitDays;
     }
+
+    public function getHomepageId(): ?string
+    {
+        return $this->getDefaultSite()->homepageId;
+    }
 }

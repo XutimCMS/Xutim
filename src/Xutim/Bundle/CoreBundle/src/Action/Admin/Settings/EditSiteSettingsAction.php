@@ -12,6 +12,7 @@ use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Dto\SiteDto;
 use Xutim\CoreBundle\Form\Admin\SiteType;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
+use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\SiteRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\SecurityBundle\Security\UserRoles;
@@ -21,6 +22,7 @@ class EditSiteSettingsAction extends AbstractController
     public function __construct(
         private readonly SiteContext $siteContext,
         private readonly SiteRepository $siteRepository,
+        private readonly PageRepository $pageRepository,
         private readonly LayoutLoader $layoutLoader,
         private readonly AdminUrlGenerator $router,
     ) {
@@ -35,7 +37,8 @@ class EditSiteSettingsAction extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var SiteDto $dto */
             $dto = $form->getData();
-            $site->change($dto->locales, $dto->extendedContentLocales, $dto->theme, $dto->sender, $dto->referenceLocale, $dto->untranslatedArticleAgeLimitDays);
+            $homepage = $dto->homepageId !== null ? $this->pageRepository->find($dto->homepageId) : null;
+            $site->change($dto->locales, $dto->extendedContentLocales, $dto->theme, $dto->sender, $dto->referenceLocale, $dto->untranslatedArticleAgeLimitDays, $homepage);
             $this->siteRepository->save($site, true);
             $this->siteContext->resetDefaultSite();
             $this->layoutLoader->loadAllLayouts();

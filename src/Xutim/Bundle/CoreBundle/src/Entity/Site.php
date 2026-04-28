@@ -6,9 +6,12 @@ namespace Xutim\CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\SiteInterface;
 use Xutim\CoreBundle\Dto\SiteDto;
 
@@ -40,6 +43,10 @@ class Site implements SiteInterface
     #[Column(type: 'integer', nullable: false, options: ['default' => self::DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS, 'comment' => 'Max age in days for untranslated articles on dashboard. 0 = no limit.'])]
     private int $untranslatedArticleAgeLimitDays = self::DEFAULT_UNTRANSLATED_ARTICLE_AGE_LIMIT_DAYS;
 
+    #[ManyToOne(targetEntity: PageInterface::class)]
+    #[JoinColumn(name: 'homepage_id', nullable: true)]
+    private ?PageInterface $homepage = null;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
@@ -62,6 +69,7 @@ class Site implements SiteInterface
         string $sender,
         string $referenceLocale,
         int $untranslatedArticleAgeLimitDays,
+        ?PageInterface $homepage,
     ): void {
         usort($locales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
         usort($extendedContentLocales, fn ($l1, $l2) => Languages::getName($l1) <=> Languages::getName($l2));
@@ -71,6 +79,17 @@ class Site implements SiteInterface
         $this->sender = $sender;
         $this->referenceLocale = $referenceLocale;
         $this->untranslatedArticleAgeLimitDays = $untranslatedArticleAgeLimitDays;
+        $this->homepage = $homepage;
+    }
+
+    public function getHomepage(): ?PageInterface
+    {
+        return $this->homepage;
+    }
+
+    public function changeHomepage(?PageInterface $homepage): void
+    {
+        $this->homepage = $homepage;
     }
 
     public function getUntranslatedArticleAgeLimitDays(): int
@@ -106,6 +125,14 @@ class Site implements SiteInterface
 
     public function toDto(): SiteDto
     {
-        return new SiteDto($this->locales, $this->extendedContentLocales, $this->theme, $this->sender, $this->referenceLocale, $this->untranslatedArticleAgeLimitDays);
+        return new SiteDto(
+            $this->locales,
+            $this->extendedContentLocales,
+            $this->theme,
+            $this->sender,
+            $this->referenceLocale,
+            $this->untranslatedArticleAgeLimitDays,
+            $this->homepage?->getId()->toRfc4122(),
+        );
     }
 }
