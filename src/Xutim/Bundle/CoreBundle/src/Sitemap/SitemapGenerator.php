@@ -138,9 +138,14 @@ readonly class SitemapGenerator
     private function getPages(): array
     {
         $items = [];
+        $homepageId = $this->siteContext->getHomepageId();
 
         /** @var Page $page */
         foreach ($this->pageRepo->findAll() as $page) {
+            if ($homepageId !== null && $page->getId()->toRfc4122() === $homepageId) {
+                continue;
+            }
+
             $translations = $page->getPublishedTranslations();
 
             foreach ($translations as $trans) {
