@@ -177,7 +177,7 @@
                 </div>
             </div>
 
-            <div class="ms-auto text-muted" data-turbo-permanent id="snippet-list-search-container">
+            <div class="ms-auto text-muted">
                 {{ 'search'|trans({}, 'admin')|capitalize }}:
                 <div class="ms-2 d-inline-block">
                     <form method="GET" action="" data-controller="auto-submit">
@@ -193,6 +193,7 @@
                         <input
                             type="text"
                             id="snippet-list-searchTerm"
+                            data-turbo-permanent
                             name="searchTerm"
                             autofocus
                             class="form-control form-control-sm"
