@@ -14,6 +14,9 @@ class RouteGuesserExtension extends AbstractExtension
     {
         return [
             new TwigFunction('switch_locale_route', [RouteGuesserExtensionRuntime::class, 'switchLocaleRoute']),
+            new TwigFunction('snippet_path', [RouteGuesserExtensionRuntime::class, 'snippetPath']),
+            new TwigFunction('is_snippet_route', [RouteGuesserExtensionRuntime::class, 'isSnippetRoute']),
+            new TwigFunction('current_path_with', [RouteGuesserExtensionRuntime::class, 'currentPathWith']),
         ];
     }
 }

@@ -4,26 +4,17 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Symfony\Component\Routing\RouterInterface;
+use Psr\Log\LoggerInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
-use Xutim\RedirectBundle\Infra\Routing\RedirectRouteLoader;
-use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
+use Xutim\RedirectBundle\Infra\Routing\RedirectRouteResolver;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
 
     $services
-        ->set(RedirectRouteLoader::class)
-        ->arg('$repo', service(RedirectRepositoryInterface::class))
-        ->arg('$redirectVersionPath', '%redirect_routes_version_file%')
-        ->arg('$env', '%kernel.environment%')
-        ->tag('routing.loader', ['priority' => 1000])
-    ;
-
-    $services
-        ->set(RedirectRouteService::class)
-        ->arg('$redirectVersionPath', '%redirect_routes_version_file%')
-        ->arg('$cacheDir', '%kernel.cache_dir%')
-        ->arg('$router', service(RouterInterface::class))
+        ->set(RedirectRouteResolver::class)
+        ->arg('$redirectRepo', service(RedirectRepositoryInterface::class))
+        ->arg('$logger', service(LoggerInterface::class))
+        ->tag('xutim.dynamic_route_resolver', ['priority' => 200])
     ;
 };

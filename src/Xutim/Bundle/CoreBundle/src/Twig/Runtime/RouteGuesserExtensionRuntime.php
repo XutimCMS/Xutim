@@ -10,6 +10,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\TagTranslationRepository;
 use Xutim\SnippetBundle\Routing\RouteSnippetRegistry;
+use Xutim\SnippetBundle\Routing\SnippetUrlGenerator;
 
 class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
 {
@@ -17,8 +18,60 @@ class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
         private readonly RequestStack $reqStack,
         private readonly ContentTranslationRepository $repo,
         private readonly TagTranslationRepository $tagRepo,
-        private readonly RouterInterface $router
+        private readonly RouterInterface $router,
+        private readonly SnippetUrlGenerator $snippetUrlGenerator,
     ) {
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     */
+    public function snippetPath(string $routeName, string $locale, array $params = []): string
+    {
+        return $this->snippetUrlGenerator->generate($routeName, $locale, $params);
+    }
+
+    public function isSnippetRoute(string $routeName): bool
+    {
+        $request = $this->reqStack->getMainRequest();
+        if ($request === null) {
+            return false;
+        }
+
+        return $this->snippetUrlGenerator->matches(
+            $request->attributes->getString('_route'),
+            $routeName,
+        );
+    }
+
+    /**
+     * Generates a URL for the current route with extra params merged in.
+     * Dispatches between snippet routes (handled by SnippetUrlGenerator) and
+     * regular Symfony routes (handled by the router).
+     *
+     * @param array<string, mixed> $params
+     */
+    public function currentPathWith(array $params = []): string
+    {
+        $request = $this->reqStack->getMainRequest();
+        if ($request === null) {
+            return '';
+        }
+
+        $route = $request->attributes->getString('_route');
+
+        if (preg_match('#^xutim_(?<name>[^.]+)\.(?<locale>.+)$#', $route, $matches) === 1) {
+            // Snippet routes don't have a _content_locale URL segment — drop it
+            // so it doesn't end up as a stray query param.
+            unset($params['_content_locale']);
+
+            return $this->snippetUrlGenerator->generate($matches['name'], $matches['locale'], $params);
+        }
+
+        /** @var array<string, mixed> $existingRouteParams */
+        $existingRouteParams = $request->attributes->get('_route_params', []);
+
+        return $this->router->generate($route, array_merge($existingRouteParams, $params));
     }
 
     public function switchLocaleRoute(string $locale): string
@@ -57,9 +110,7 @@ class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
         }
         foreach (RouteSnippetRegistry::all() as $route) {
             if ($currentRouteName === sprintf('xutim_%s.%s', $route->routeName, $currentLocale)) {
-                $redirectRouteName = sprintf('xutim_%s.%s', $route->routeName, $locale);
-
-                return $this->router->generate($redirectRouteName);
+                return $this->snippetUrlGenerator->generate($route->routeName, $locale);
             }
         }
 

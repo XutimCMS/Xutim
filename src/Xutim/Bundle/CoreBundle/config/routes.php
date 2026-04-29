@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Xutim\CoreBundle\Action\Public\ShowContentTranslation;
 
 return function (RoutingConfigurator $routes) {
-    $routes->import('.', 'snippet_routes');
-    $requirements = ['_content_locale' => '[a-z]{2}(?:_[A-Za-z]{2,8})*'];
+    $localePattern = '[a-z]{2}(?:_[A-Za-z]{2,8})*';
+    $requirements = ['_content_locale' => $localePattern];
     $defaults = ['_content_locale' => '%kernel.default_locale%'];
 
     $routes->import('routes/article_routes.php')
@@ -76,5 +77,12 @@ return function (RoutingConfigurator $routes) {
 
     $routes->import('routes/public_routes.php');
 
-    $routes->import('.', 'content_translation_fallback');
+    $routes->add('content_translation_show', '/{_locale}/{slug}/{_content_locale}')
+        ->controller(ShowContentTranslation::class)
+        ->defaults(['_content_locale' => null])
+        ->requirements([
+            'slug' => '[a-zA-Z0-9\-]+',
+            '_locale' => $localePattern,
+            '_content_locale' => $localePattern,
+        ]);
 };

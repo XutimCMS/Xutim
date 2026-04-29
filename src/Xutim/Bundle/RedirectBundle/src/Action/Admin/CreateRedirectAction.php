@@ -17,7 +17,6 @@ use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 use Xutim\RedirectBundle\Form\RedirectFormData;
 use Xutim\RedirectBundle\Form\RedirectType;
-use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
 use Xutim\SecurityBundle\Security\UserRoles;
 
 class CreateRedirectAction
@@ -29,8 +28,7 @@ class CreateRedirectAction
         private readonly FormFactoryInterface $formFactory,
         private readonly AdminUrlGenerator $router,
         private readonly AuthorizationCheckerInterface $authChecker,
-        private readonly FlashNotifier $flashNotifier,
-        private readonly RedirectRouteService $redirectRouteService
+        private readonly FlashNotifier $flashNotifier
     ) {
     }
 
@@ -54,7 +52,6 @@ class CreateRedirectAction
             );
 
             $this->repo->save($redirect, true);
-            $this->redirectRouteService->resetRedirectRoutesCache();
             if ($request->headers->has('turbo-frame')) {
                 $stream = $this->twig
                     ->load('@XutimRedirect/admin/redirect/redirect_new.html.twig')

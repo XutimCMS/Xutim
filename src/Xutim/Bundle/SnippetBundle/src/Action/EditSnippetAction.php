@@ -37,7 +37,6 @@ class EditSnippetAction
         private readonly AdminUrlGenerator $router,
         private readonly FlashNotifier $flashNotifier,
         private readonly EntityManagerInterface $entityManager,
-        private readonly string $snippetVersionPath,
         private readonly string $defaultLocale,
     ) {
     }
@@ -81,11 +80,6 @@ class EditSnippetAction
             }
 
             $this->entityManager->flush();
-            if ($snippet->isRouteType() === true) {
-                // Restart the snippet_routes router cache. See
-                // CustomRouteLoader for more information
-                file_put_contents($this->snippetVersionPath, microtime());
-            }
             $this->flashNotifier->changesSaved();
 
             if ($request->headers->has('turbo-frame')) {

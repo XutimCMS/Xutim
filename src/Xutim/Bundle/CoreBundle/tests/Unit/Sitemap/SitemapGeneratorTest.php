@@ -18,6 +18,7 @@ use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Routing\ContentTranslationRouteGenerator;
 use Xutim\CoreBundle\Sitemap\SitemapGenerator;
 use Xutim\SnippetBundle\Repository\SnippetRepository;
+use Xutim\SnippetBundle\Routing\SnippetUrlGenerator;
 
 final class SitemapGeneratorTest extends TestCase
 {
@@ -108,6 +109,8 @@ final class SitemapGeneratorTest extends TestCase
             }
         );
 
+        $snippetUrlGenerator = new SnippetUrlGenerator($snippetRepo);
+
         $generator = new SitemapGenerator(
             $router,
             $pageRepo,
@@ -117,6 +120,7 @@ final class SitemapGeneratorTest extends TestCase
             $siteContext,
             $transRouteGenerator,
             $twig,
+            $snippetUrlGenerator,
             $this->sitemapFile,
             'example.test',
         );

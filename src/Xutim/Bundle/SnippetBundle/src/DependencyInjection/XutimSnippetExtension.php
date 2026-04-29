@@ -23,13 +23,6 @@ final class XutimSnippetExtension extends Extension implements PrependExtensionI
     {
         /** @var array{models: array<string, array{class: class-string}>} $configs */
         $configs = $this->processConfiguration($this->getConfiguration([], $container), $config);
-        $container->setParameter('snippet_routes_version_file', '%kernel.cache_dir%/snippet_routes.version');
-        /** @var string $versionFile*/
-        $versionFile = $container->getParameterBag()->resolveValue('%kernel.cache_dir%/snippet_routes.version');
-
-        if (!file_exists($versionFile)) {
-            file_put_contents($versionFile, microtime());
-        }
 
         foreach ($configs['models'] as $alias => $modelConfig) {
             $container->setParameter(sprintf('xutim_snippet.model.%s.class', $alias), $modelConfig['class']);

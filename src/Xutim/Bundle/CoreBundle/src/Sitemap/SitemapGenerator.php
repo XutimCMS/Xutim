@@ -21,6 +21,7 @@ use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Routing\ContentTranslationRouteGenerator;
 use Xutim\SnippetBundle\Repository\SnippetRepository;
 use Xutim\SnippetBundle\Routing\RouteSnippetRegistry;
+use Xutim\SnippetBundle\Routing\SnippetUrlGenerator;
 
 readonly class SitemapGenerator
 {
@@ -33,8 +34,9 @@ readonly class SitemapGenerator
         private SiteContext $siteContext,
         private ContentTranslationRouteGenerator $transRouteGenerator,
         private Environment $twig,
+        private SnippetUrlGenerator $snippetUrlGenerator,
         private string $sitemapFile,
-        private string $appHost
+        private string $appHost,
     ) {
     }
 
@@ -93,13 +95,12 @@ readonly class SitemapGenerator
             $snippetsByLocale = [];
 
             foreach ($locales as $locale) {
-                $snippet = $this->snippetRepo->findByCode($route->snippetKey)?->getTranslationByLocale($locale);
-                if ($snippet === null) {
+                $url = $this->snippetUrlGenerator->generate($route->routeName, $locale);
+                if ($url === '') {
                     continue;
                 }
 
-                $routeName = sprintf('xutim_%s.%s', $route->routeName, $locale);
-                $snippetsByLocale[$locale] = $this->getAbsoluteUrl($this->router->generate($routeName));
+                $snippetsByLocale[$locale] = $this->getAbsoluteUrl($url);
             }
 
             foreach ($snippetsByLocale as $locale => $loc) {

@@ -18,7 +18,6 @@ use Xutim\RedirectBundle\Domain\Model\RedirectInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
 use Xutim\RedirectBundle\Form\RedirectFormData;
 use Xutim\RedirectBundle\Form\RedirectType;
-use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
 use Xutim\SecurityBundle\Security\UserRoles;
 
 class EditRedirectAction
@@ -29,8 +28,7 @@ class EditRedirectAction
         private readonly FormFactoryInterface $formFactory,
         private readonly AdminUrlGenerator $router,
         private readonly AuthorizationCheckerInterface $authChecker,
-        private readonly FlashNotifier $flashNotifier,
-        private readonly RedirectRouteService $redirectRouteService
+        private readonly FlashNotifier $flashNotifier
     ) {
     }
 
@@ -58,7 +56,6 @@ class EditRedirectAction
                 $data->isPermanent()
             );
             $this->repo->save($redirect, true);
-            $this->redirectRouteService->resetRedirectRoutesCache();
 
             if ($request->headers->has('turbo-frame')) {
                 $stream = $this->twig

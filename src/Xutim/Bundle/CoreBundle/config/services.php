@@ -7,13 +7,13 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 use Symfony\Component\Asset\Context\RequestStackContext;
 use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinition;
 use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
-use Xutim\CoreBundle\Service\AdminEditUrl\AdminEditUrlResolver;
-use Xutim\CoreBundle\Service\AdminEditUrl\AdminEditUrlResolverInterface;
 use Xutim\CoreBundle\Dashboard\TranslationStatProvider;
 use Xutim\CoreBundle\Form\Admin\BlockItemProvider\BlockItemProviderInterface;
 use Xutim\CoreBundle\Infra\Doctrine\Type\AbstractEnumType;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\MessageHandler\EventHandlerInterface;
+use Xutim\CoreBundle\Service\AdminEditUrl\AdminEditUrlResolver;
+use Xutim\CoreBundle\Service\AdminEditUrl\AdminEditUrlResolverInterface;
 use Xutim\CoreBundle\Twig\Extension\AnalyticsExtension;
 
 return static function (ContainerConfigurator $container): void {
