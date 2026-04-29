@@ -53,7 +53,7 @@ final readonly class PageTranslationStatProvider implements TranslationStatProvi
             unpublishedCount: $unpublishedCount,
             localeBreakdown: $localeBreakdown,
             untranslatedUrl: $this->router->generate('admin_page_translation_list', ['col' => ['translationStatus' => 'missing']]),
-            unpublishedUrl: $unpublishedCount > 0 ? $this->router->generate('admin_page_translation_list', ['col' => ['publicationStatus' => 'draft']]) : null,
+            unpublishedUrl: $unpublishedCount > 0 ? $this->router->generate('admin_page_translation_list', ['col' => ['publicationStatus' => 'draft', 'translationStatus' => 'translated']]) : null,
         );
     }
 }

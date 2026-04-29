@@ -307,6 +307,17 @@ class ArticleRepository extends ServiceEntityRepository
                             'defaultTranslation.id IS NOT NULL'
                         )
                     );
+            } elseif ($translationStatus === 'outdated') {
+                $builder
+                    ->andWhere('translation.id IS NOT NULL')
+                    ->andWhere(':localeParam != :fallbackLocale')
+                    ->andWhere(
+                        'translation.referenceSyncedAt IS NULL
+                            OR translation.referenceSyncedAt < CASE
+                                WHEN fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
+                                ELSE defaultTranslation.updatedAt
+                            END'
+                    );
             }
         }
 
