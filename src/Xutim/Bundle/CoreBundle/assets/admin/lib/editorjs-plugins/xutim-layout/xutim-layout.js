@@ -62,6 +62,7 @@ export default class XutimLayoutTool {
         this.previewWrapResizeObserver = null;
         this.previewContentResizeObserver = null;
         this.layoutPickerWrapper = null;
+        this.autoPickerShown = false;
 
         this.messageHandler = this.handlePreviewMessage.bind(this);
         window.addEventListener('message', this.messageHandler);
@@ -94,6 +95,22 @@ export default class XutimLayoutTool {
         this.wrapper.innerHTML = '';
 
         if (!this.data.layoutCode) {
+            if (this.layouts.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'p-3 text-muted small';
+                empty.textContent = 'No layouts registered';
+                this.wrapper.appendChild(empty);
+                return;
+            }
+
+            if (!this.readOnly && !this.autoPickerShown) {
+                this.autoPickerShown = true;
+                // Defer to next tick so editor.js has inserted the wrapper
+                // into the DOM before showModal() runs.
+                setTimeout(() => this.openLayoutPicker(), 0);
+                return;
+            }
+
             this.renderPicker();
             return;
         }
@@ -104,12 +121,6 @@ export default class XutimLayoutTool {
     renderPicker() {
         const picker = document.createElement('div');
         picker.className = 'p-3 d-flex align-items-center gap-2';
-
-        if (this.layouts.length === 0) {
-            picker.textContent = 'No layouts registered';
-            this.wrapper.appendChild(picker);
-            return;
-        }
 
         const hint = document.createElement('span');
         hint.className = 'text-muted small';
