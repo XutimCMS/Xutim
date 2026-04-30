@@ -5,14 +5,16 @@
 %}
 
 {% block pageMenu %}
-    <twig:Xutim:Admin:Button
-        tag="a"
-        variant="nav"
-        href="{{ admin_path('admin_article_new') }}"
-    >
-        <twig:Xutim:Admin:Icon name="article" />
-        {{ 'New article'|trans({}, 'admin') }}
-    </twig:Xutim:Admin:Button>
+    {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
+        <twig:Xutim:Admin:Button
+            tag="a"
+            variant="nav"
+            href="{{ admin_path('admin_article_new') }}"
+        >
+            <twig:Xutim:Admin:Icon name="article" />
+            {{ 'New article'|trans({}, 'admin') }}
+        </twig:Xutim:Admin:Button>
+    {% endif %}
 {% endblock %}
 
 {% block languageBar %}
