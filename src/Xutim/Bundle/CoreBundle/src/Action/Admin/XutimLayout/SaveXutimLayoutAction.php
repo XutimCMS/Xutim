@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
 use Xutim\CoreBundle\Form\Admin\Dto\LayoutValuesDto;
 use Xutim\CoreBundle\Form\Admin\LayoutFormType;
-use Xutim\SecurityBundle\Security\UserRoles;
 
 /**
  * Accepts a POST submission from the xutimLayout editor.js tool and
@@ -29,8 +28,6 @@ class SaveXutimLayoutAction extends AbstractController
 
     public function __invoke(Request $request, string $code): Response
     {
-        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-
         $definition = $this->registry->getByCode($code);
         if ($definition === null) {
             throw $this->createNotFoundException(sprintf('Unknown xutim layout "%s"', $code));

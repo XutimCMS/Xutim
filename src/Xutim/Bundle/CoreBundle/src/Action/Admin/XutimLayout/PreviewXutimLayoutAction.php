@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
-use Xutim\SecurityBundle\Security\UserRoles;
 
 /**
  * Renders a minimal standalone HTML page containing only the live
@@ -30,8 +29,6 @@ class PreviewXutimLayoutAction extends AbstractController
 
     public function __invoke(Request $request, string $code): Response
     {
-        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-
         if (!$request->isXmlHttpRequest()) {
             throw $this->createAccessDeniedException();
         }

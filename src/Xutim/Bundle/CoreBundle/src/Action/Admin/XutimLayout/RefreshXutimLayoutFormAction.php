@@ -11,7 +11,6 @@ use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
 use Xutim\CoreBundle\Form\Admin\Dto\LayoutValuesDto;
 use Xutim\CoreBundle\Form\Admin\LayoutFormType;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
-use Xutim\SecurityBundle\Security\UserRoles;
 
 /**
  * Re-renders the xutimLayout edit form with submitted values applied.
@@ -32,8 +31,6 @@ class RefreshXutimLayoutFormAction extends AbstractController
 
     public function __invoke(Request $request, string $code): Response
     {
-        $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
-
         $definition = $this->registry->getByCode($code);
         if ($definition === null) {
             throw $this->createNotFoundException(sprintf('Unknown xutim layout "%s"', $code));
