@@ -1,5 +1,5 @@
 {% macro modalDialogPage(id, status, confirmActionLabel, iconName, url, bulkCount) %}
-    {% set bulkCount = bulkCount|default(1) %}
+    {% set bulkCount = is_granted('ROLE_EDITOR') ? bulkCount|default(1) : 1 %}
     <twig:Xutim:Admin:ModalDialog
         class="btn-link text-{{ status.colorClass }} p-0"
         modalDialogColor="{{ status.colorClass }}"

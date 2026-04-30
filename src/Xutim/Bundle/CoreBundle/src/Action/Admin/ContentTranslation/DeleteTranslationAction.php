@@ -14,6 +14,7 @@ use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\ContentTranslationService;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 
 class DeleteTranslationAction extends AbstractController
@@ -38,6 +39,7 @@ class DeleteTranslationAction extends AbstractController
         $applyToAll = $request->request->getBoolean('apply_to_all');
 
         if ($applyToAll === true) {
+            $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
             foreach ($object->getTranslations() as $sibling) {
                 $this->transAuthChecker->denyUnlessCanTranslate($sibling->getLocale());
             }

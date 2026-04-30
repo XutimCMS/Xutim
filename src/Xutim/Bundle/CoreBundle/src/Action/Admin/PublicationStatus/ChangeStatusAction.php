@@ -13,6 +13,7 @@ use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 
@@ -44,6 +45,7 @@ class ChangeStatusAction extends AbstractController
 
         $targets = [$translation];
         if ($applyToAll === true) {
+            $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
             $targets = $translation->getObject()->getTranslations()->toArray();
             foreach ($targets as $target) {
                 $this->transAuthChecker->denyUnlessCanTranslate($target->getLocale());
