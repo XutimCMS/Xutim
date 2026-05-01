@@ -178,4 +178,51 @@ final class EditorJsToCanonicalDocumentTransformerTest extends TestCase
         self::assertSame('image_gallery', $canonical->blocks[0]->kind);
         self::assertSame('https://example.com/file/c96faa.jpg', $canonical->blocks[0]->galleryImages[0]->url);
     }
+
+    public function test_transform_xutim_layout_parses_text_values_into_parts(): void
+    {
+        $document = [
+            'blocks' => [[
+                'id' => 'xl1',
+                'type' => 'xutimLayout',
+                'data' => [
+                    'layoutCode' => 'page-preview',
+                    'values' => [
+                        'title' => '<strong>Hello</strong>',
+                        'description' => 'Welcome',
+                        'image' => '11111111-2222-3333-4444-555555555555',
+                    ],
+                ],
+                'tunes' => [],
+            ]],
+        ];
+
+        $canonical = $this->transformer->transform($document);
+
+        self::assertCount(1, $canonical->blocks);
+        $block = $canonical->blocks[0];
+        self::assertSame('xutim_layout', $block->kind);
+        self::assertSame('xl1', $block->sourceKey);
+        self::assertSame('page-preview', $block->attrs['layoutCode']);
+        self::assertIsArray($block->attrs['values']);
+        self::assertSame('11111111-2222-3333-4444-555555555555', $block->attrs['values']['image']);
+        self::assertArrayHasKey('title', $block->parts);
+        self::assertArrayHasKey('description', $block->parts);
+    }
+
+    public function test_transform_xutim_layout_missing_code_falls_back_to_unknown(): void
+    {
+        $document = [
+            'blocks' => [[
+                'id' => 'xl2',
+                'type' => 'xutimLayout',
+                'data' => ['values' => ['title' => 'x']],
+                'tunes' => [],
+            ]],
+        ];
+
+        $canonical = $this->transformer->transform($document);
+
+        self::assertSame('unknown', $canonical->blocks[0]->kind);
+    }
 }

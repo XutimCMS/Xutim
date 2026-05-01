@@ -74,6 +74,16 @@ class BlockLayoutCheckerTest extends TestCase
             {
                 return 'text item';
             }
+
+            public function isTranslatable(): bool
+            {
+                return true;
+            }
+
+            public function getDescription(): ?string
+            {
+                return null;
+            }
         };
 
         $block2 = new Block('code', 'name', 'desc', null, 'layout');

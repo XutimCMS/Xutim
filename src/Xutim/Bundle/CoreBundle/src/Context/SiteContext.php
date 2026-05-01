@@ -123,6 +123,14 @@ class SiteContext
         return $this->getDefaultSite()->sender;
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getAdminAlertEmails(): array
+    {
+        return $this->getDefaultSite()->adminAlertEmails;
+    }
+
     public function getReferenceLocale(): string
     {
         return $this->getDefaultSite()->referenceLocale;
@@ -131,5 +139,10 @@ class SiteContext
     public function getUntranslatedArticleAgeLimitDays(): int
     {
         return $this->getDefaultSite()->untranslatedArticleAgeLimitDays;
+    }
+
+    public function getHomepageId(): ?string
+    {
+        return $this->getDefaultSite()->homepageId;
     }
 }

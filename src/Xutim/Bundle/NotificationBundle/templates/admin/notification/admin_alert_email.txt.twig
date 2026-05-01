@@ -1,0 +1,14 @@
+{{ notification.title }}
+
+{{ notification.body }}
+
+{% if notification.payload.messageClass is defined %}
+{{ notification.payload.messageClass }}
+{% endif %}
+{% if notification.payload.exceptionClass is defined and notification.payload.exceptionMessage is defined %}
+
+{{ notification.payload.exceptionClass }}: {{ notification.payload.exceptionMessage }}
+{% endif %}
+
+--
+Sent {{ notification.createdAt|date('Y-m-d H:i:s') }} — severity {{ notification.severity.value }}.

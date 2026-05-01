@@ -1,0 +1,5 @@
+{{ notification.body }}
+{% if notification.actionUrl %}
+
+{{ notification.actionLabel ?? 'Open notification' }}: {{ notification.actionUrl }}
+{% endif %}

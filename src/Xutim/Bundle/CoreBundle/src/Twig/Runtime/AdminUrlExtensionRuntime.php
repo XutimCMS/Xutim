@@ -9,12 +9,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
+use Xutim\SnippetBundle\Routing\SnippetUrlGenerator;
 
 class AdminUrlExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly AdminUrlGenerator $router,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
+        private readonly SnippetUrlGenerator $snippetUrlGenerator,
     ) {
     }
 
@@ -51,6 +53,12 @@ class AdminUrlExtensionRuntime implements RuntimeExtensionInterface
             $queryParams,
             $overrides
         );
+
+        if (preg_match('#^xutim_(?<name>[^.]+)\.(?<locale>.+)$#', $route, $matches) === 1) {
+            unset($params['_content_locale']);
+
+            return $this->snippetUrlGenerator->generate($matches['name'], $matches['locale'], $params);
+        }
 
         return $this->router->generate($route, $params);
     }

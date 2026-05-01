@@ -14,9 +14,10 @@ class CacheTagInvalidator
     public function __construct(
         TagAwareCacheInterface $blockContextCache,
         TagAwareCacheInterface $siteContextCache,
-        TagAwareCacheInterface $snippetsContextCache
+        TagAwareCacheInterface $snippetsContextCache,
+        TagAwareCacheInterface $pageTreeCache,
     ) {
-        $this->pools = [$blockContextCache, $siteContextCache, $snippetsContextCache];
+        $this->pools = [$blockContextCache, $siteContextCache, $snippetsContextCache, $pageTreeCache];
     }
 
     /**

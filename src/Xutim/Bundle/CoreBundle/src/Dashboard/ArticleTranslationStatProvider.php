@@ -32,7 +32,7 @@ final readonly class ArticleTranslationStatProvider implements TranslationStatPr
         $localeBreakdown = [];
 
         foreach ($localesWithoutReference as $locale) {
-            $count = count($this->articleRepository->findByMissingTranslations([$locale, $referenceLocale], ageLimitDays: $ageLimitDays));
+            $count = count($this->articleRepository->findByMissingTranslations([$locale], ageLimitDays: $ageLimitDays));
             if ($count > 0) {
                 $localeBreakdown[] = new LocaleStat(
                     locale: $locale,
@@ -57,7 +57,7 @@ final readonly class ArticleTranslationStatProvider implements TranslationStatPr
             unpublishedCount: $this->articleRepository->countUnpublishedForLocales($localesWithoutReference),
             localeBreakdown: $localeBreakdown,
             untranslatedUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'missing', ...$ageLimitCol]]),
-            outdatedUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'fallback', ...$ageLimitCol]]),
+            outdatedUrl: $this->router->generate('admin_article_list', ['col' => ['translationStatus' => 'outdated']]),
             unpublishedUrl: $this->router->generate('admin_article_list', ['col' => ['publicationStatus' => 'draft', 'translationStatus' => 'translated']]),
         );
     }

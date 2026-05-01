@@ -29,7 +29,7 @@ class Media implements MediaInterface
     #[OneToMany(targetEntity: MediaTranslationInterface::class, mappedBy: 'media')]
     private Collection $translations;
 
-    #[ManyToOne(targetEntity: MediaFolderInterface::class)]
+    #[ManyToOne(targetEntity: MediaFolderInterface::class, inversedBy: 'media')]
     #[JoinColumn(name: 'folder_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     private ?MediaFolderInterface $folder;
 

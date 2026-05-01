@@ -35,7 +35,6 @@ class CreateSnippetAction
         private readonly FormFactoryInterface $formFactory,
         private readonly AdminUrlGenerator $router,
         private readonly FlashNotifier $flashNotifier,
-        private readonly string $snippetVersionPath,
         private readonly string $defaultLocale,
     ) {
     }
@@ -64,11 +63,6 @@ class CreateSnippetAction
             }
 
             $this->repo->save($snippet, true);
-            if ($snippet->isRouteType() === true) {
-                // Restart the snippet_routes router cache. See
-                // CustomRouteLoader for more information
-                file_put_contents($this->snippetVersionPath, microtime());
-            }
 
             $this->flashNotifier->changesSaved();
 

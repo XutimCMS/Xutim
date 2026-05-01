@@ -158,8 +158,44 @@ final class EditorJsToCanonicalDocumentTransformer
             ]), galleryImages: $this->transformGalleryItems($block)),
             'embed' => $this->embedBlock($sourceKey, $commonAttrs, $block),
             'delimiter' => new CanonicalBlock('delimiter', $sourceKey, $commonAttrs),
+            'xutimLayout' => $this->xutimLayoutBlock($sourceKey, $commonAttrs, $block),
             default => $this->unknownBlock($block, 'unsupported_block_type'),
         };
+    }
+
+    /**
+     * @param array<string, mixed> $commonAttrs
+     * @param array<string, mixed> $block
+     */
+    private function xutimLayoutBlock(?string $sourceKey, array $commonAttrs, array $block): CanonicalBlock
+    {
+        $data = is_array($block['data'] ?? null) ? $block['data'] : [];
+        $layoutCode = is_string($data['layoutCode'] ?? null) ? $data['layoutCode'] : '';
+        $rawValues = is_array($data['values'] ?? null) ? $data['values'] : [];
+
+        if ($layoutCode === '') {
+            return $this->unknownBlock($block, 'xutim_layout_missing_code');
+        }
+
+        /** @var array<string, mixed> $rawValues */
+        $parts = [];
+        foreach ($rawValues as $fieldName => $value) {
+            if (!is_string($value) || $value === '') {
+                continue;
+            }
+            $parsed = $this->parseInline($value);
+            $parts[$fieldName] = $parsed->runs;
+        }
+
+        return new CanonicalBlock(
+            kind: 'xutim_layout',
+            sourceKey: $sourceKey,
+            attrs: array_merge($commonAttrs, [
+                'layoutCode' => $layoutCode,
+                'values' => $rawValues,
+            ]),
+            parts: $parts,
+        );
     }
 
     /**

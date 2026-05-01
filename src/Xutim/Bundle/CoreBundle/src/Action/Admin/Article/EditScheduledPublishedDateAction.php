@@ -18,6 +18,7 @@ use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCo
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
+use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 
@@ -46,16 +47,20 @@ class EditScheduledPublishedDateAction extends AbstractController
             throw $this->createNotFoundException('The translation of an article does not exist');
         }
         $this->transAuthChecker->denyUnlessCanTranslate($translation->getLocale());
+        $isEditor = $this->isGranted('ROLE_EDITOR');
+        $bulkCount = $isEditor ? $article->getTranslations()->count() : 1;
         $form = $this->createForm(PublishedDateType::class, ['publishedAt' => $article->getScheduledAt()], [
             'action' => $this->router->generate('admin_article_edit_scheduled_publication_date', ['id' => $article->getId()]),
             'future_date_only' => true,
-            'disable_date' => $this->isGranted('ROLE_EDITOR') === false
+            'disable_date' => $isEditor === false,
+            'bulk_count' => $bulkCount,
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var array{publishedAt: \DateTimeImmutable} $data */
+            /** @var array{publishedAt: \DateTimeImmutable, applyToAll?: bool} $data */
             $data = $form->getData();
+            $applyToAll = ($data['applyToAll'] ?? false) === true;
 
             $article->setScheduledAt($data['publishedAt']);
             $this->repo->save($article, true);
@@ -69,12 +74,20 @@ class EditScheduledPublishedDateAction extends AbstractController
             );
 
             $user = $this->userStorage->getUserWithException();
-            $command = new ChangePublicationStatusCommand(
-                $translation->getId(),
-                PublicationStatus::Scheduled,
-                $user->getUserIdentifier()
-            );
-            $this->commandBus->dispatch($command);
+            $targets = $applyToAll ? $article->getTranslations()->toArray() : [$translation];
+            if ($applyToAll === true) {
+                $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
+                foreach ($targets as $target) {
+                    $this->transAuthChecker->denyUnlessCanTranslate($target->getLocale());
+                }
+            }
+            foreach ($targets as $target) {
+                $this->commandBus->dispatch(new ChangePublicationStatusCommand(
+                    $target->getId(),
+                    PublicationStatus::Scheduled,
+                    $user->getUserIdentifier()
+                ));
+            }
             $this->eventRepository->save($logEntry, true);
 
             $this->addFlash('success', 'flash.changes_made_successfully');

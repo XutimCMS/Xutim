@@ -41,7 +41,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$formFactory', service(FormFactoryInterface::class))
         ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
-        ->arg('$snippetVersionPath', '%snippet_routes_version_file%')
         ->arg('$defaultLocale', '%kernel.default_locale%')
         ->tag('controller.service_arguments')
     ;
@@ -58,7 +57,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
         ->arg('$entityManager', service(EntityManagerInterface::class))
-        ->arg('$snippetVersionPath', '%snippet_routes_version_file%')
         ->arg('$defaultLocale', '%kernel.default_locale%')
         ->tag('controller.service_arguments')
     ;
@@ -89,7 +87,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$snippetTransFactory', service(SnippetTranslationFactoryInterface::class))
         ->arg('$transAuthChecker', service(TranslatorAuthChecker::class))
         ->arg('$csrfTokenChecker', service(CsrfTokenChecker::class))
-        ->arg('$snippetVersionPath', '%snippet_routes_version_file%')
         ->tag('controller.service_arguments')
     ;
 

@@ -272,6 +272,7 @@ final class CanonicalContentDiffRenderer
                 ]),
                 'props' => $props,
             ],
+            'xutim_layout' => $this->xutimLayoutDiffRow($oldBlock, $newBlock, $props),
             'snippet', 'page_link', 'article_link', 'tag_link', 'image', 'file', 'image_gallery', 'embed', 'delimiter', 'unknown' => [
                 'op' => $props === [] && $this->attrsSignature($oldBlock) === $this->attrsSignature($newBlock) ? 'unchanged' : 'modified',
                 'kind' => $newBlock->kind,
@@ -329,6 +330,141 @@ final class CanonicalContentDiffRenderer
         ];
 
         return $rows;
+    }
+
+    /**
+     * @param array<string, mixed> $props
+     * @return array<string, mixed>
+     */
+    private function xutimLayoutDiffRow(CanonicalBlock $oldBlock, CanonicalBlock $newBlock, array $props): array
+    {
+        $oldCode = is_string($oldBlock->attrs['layoutCode'] ?? null) ? $oldBlock->attrs['layoutCode'] : '';
+        $newCode = is_string($newBlock->attrs['layoutCode'] ?? null) ? $newBlock->attrs['layoutCode'] : '';
+        $oldValues = is_array($oldBlock->attrs['values'] ?? null) ? $oldBlock->attrs['values'] : [];
+        $newValues = is_array($newBlock->attrs['values'] ?? null) ? $newBlock->attrs['values'] : [];
+
+        /** @var array<string, mixed> $oldValues */
+        /** @var array<string, mixed> $newValues */
+
+        $layoutCodeChanged = $oldCode !== $newCode;
+
+        $fieldNames = array_values(array_unique(array_merge(
+            array_keys($oldBlock->parts),
+            array_keys($newBlock->parts),
+            array_keys($oldValues),
+            array_keys($newValues),
+        )));
+
+        $parts = [];
+        $meta = [];
+        $anyFieldChanged = false;
+        $anyTextChanged = false;
+
+        foreach ($fieldNames as $fieldName) {
+            if (isset($oldBlock->parts[$fieldName]) || isset($newBlock->parts[$fieldName])) {
+                $oldRuns = $oldBlock->parts[$fieldName] ?? [];
+                $newRuns = $newBlock->parts[$fieldName] ?? [];
+
+                $parts[$fieldName] = [
+                    'kind' => 'text',
+                    'html' => $this->inlineHtmlDiff($oldRuns, $newRuns),
+                ];
+
+                $changed = $this->partsChanged($oldRuns, $newRuns);
+                if ($changed) {
+                    $anyFieldChanged = true;
+                    $anyTextChanged = true;
+                }
+
+                $meta[$fieldName] = [
+                    'kind' => 'text',
+                    'status' => $changed ? 'changed' : 'same',
+                    'translatable' => true,
+                ];
+
+                continue;
+            }
+
+            $oldRaw = $oldValues[$fieldName] ?? null;
+            $newRaw = $newValues[$fieldName] ?? null;
+            $changed = $this->stringifyRefValue($oldRaw) !== $this->stringifyRefValue($newRaw);
+            $oldDisplay = $this->displayRefValue($oldRaw);
+            $newDisplay = $this->displayRefValue($newRaw);
+
+            $parts[$fieldName] = [
+                'kind' => 'ref',
+                'html' => htmlspecialchars($newDisplay, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+            ];
+
+            $meta[$fieldName] = [
+                'kind' => 'ref',
+                'status' => $changed ? 'changed' : 'same',
+                'translatable' => false,
+                'old' => $oldDisplay,
+                'new' => $newDisplay,
+            ];
+
+            if ($changed) {
+                $anyFieldChanged = true;
+            }
+        }
+
+        if ($layoutCodeChanged) {
+            $op = 'modified';
+        } elseif ($anyTextChanged && !$anyFieldChanged) {
+            $op = 'modified_text';
+        } elseif ($anyFieldChanged) {
+            $op = 'modified';
+        } else {
+            $op = $props === [] ? 'unchanged' : 'modified';
+        }
+
+        return [
+            'op' => $op,
+            'kind' => 'xutim_layout',
+            'source_key' => $newBlock->sourceKey ?? $oldBlock->sourceKey,
+            'render_key' => $newBlock->sourceKey ?? $oldBlock->sourceKey,
+            'attrs' => $newBlock->attrs,
+            'fields' => $fieldNames,
+            'parts' => $parts,
+            'meta' => $meta,
+            'layout_code' => $newCode,
+            'old_layout_code' => $oldCode,
+            'layout_code_changed' => $layoutCodeChanged,
+            'props' => $props,
+        ];
+    }
+
+    private function stringifyRefValue(mixed $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+        if (is_string($value)) {
+            return $value;
+        }
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        $json = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        return is_string($json) ? $json : '';
+    }
+
+    private function displayRefValue(mixed $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+        if (is_string($value)) {
+            return $value;
+        }
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        return '(complex value)';
     }
 
     /**

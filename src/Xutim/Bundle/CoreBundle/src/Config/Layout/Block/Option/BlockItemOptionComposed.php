@@ -39,6 +39,22 @@ readonly class BlockItemOptionComposed implements BlockItemOption
         );
     }
 
+    public function isTranslatable(): bool
+    {
+        foreach ($this->options as $option) {
+            if ($option->isTranslatable() === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return null;
+    }
+
     /**
      * @return array<BlockItemOption>
      */

@@ -14,10 +14,8 @@ use Xutim\RedirectBundle\Action\Admin\CreateRedirectAction;
 use Xutim\RedirectBundle\Action\Admin\DeleteRedirectAction;
 use Xutim\RedirectBundle\Action\Admin\EditRedirectAction;
 use Xutim\RedirectBundle\Action\Admin\ListRedirectsAction;
-use Xutim\RedirectBundle\Action\Admin\RedirectToTargetAction;
 use Xutim\RedirectBundle\Domain\Factory\RedirectFactoryInterface;
 use Xutim\RedirectBundle\Domain\Repository\RedirectRepositoryInterface;
-use Xutim\RedirectBundle\Infra\Routing\RedirectRouteService;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
 
 return static function (ContainerConfigurator $container): void {
@@ -31,7 +29,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
-        ->arg('$redirectRouteService', service(RedirectRouteService::class))
         ->tag('controller.service_arguments')
     ;
 
@@ -42,7 +39,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
-        ->arg('$redirectRouteService', service(RedirectRouteService::class))
         ->tag('controller.service_arguments')
     ;
 
@@ -59,11 +55,6 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
-        ->tag('controller.service_arguments')
-    ;
-
-    $services->set(RedirectToTargetAction::class)
-        ->arg('$repo', service(RedirectRepositoryInterface::class))
         ->tag('controller.service_arguments')
     ;
 };

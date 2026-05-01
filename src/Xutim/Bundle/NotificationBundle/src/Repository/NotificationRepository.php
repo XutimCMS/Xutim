@@ -83,6 +83,22 @@ class NotificationRepository extends ServiceEntityRepository
         return $this->findOneBy(['id' => $id, 'recipient' => $recipient]);
     }
 
+    public function findRecentByDeduplicationKey(string $deduplicationKey, \DateTimeImmutable $since): ?NotificationInterface
+    {
+        /** @var ?NotificationInterface $notification */
+        $notification = $this->createQueryBuilder('notification')
+            ->where('notification.deduplicationKey = :deduplicationKey')
+            ->andWhere('notification.createdAt >= :since')
+            ->setParameter('deduplicationKey', $deduplicationKey)
+            ->setParameter('since', $since)
+            ->orderBy('notification.createdAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $notification;
+    }
+
     public function hasDeduplicatedNotification(UserInterface $recipient, string $deduplicationKey): bool
     {
         /** @var int $count */

@@ -1,0 +1,460 @@
+<!doctype html>
+{#
+    Standalone HTML document used as the `srcdoc` of the live-preview
+    iframe in the xutim-layout editor.js tool. The iframe isolates
+    public Tailwind from the admin's own Tailwind so utility classes
+    don't clash.
+
+    The `app-tailwind` importmap entrypoint is Pulse-specific today;
+    if another downstream project needs a different entrypoint, this
+    template can be overridden via Symfony's twig theme paths.
+#}
+<html lang="{{ app.locale }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>xutimLayout preview</title>
+    {{ importmap('app-tailwind') }}
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+        }
+        body {
+            overflow-x: hidden;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body class="font-sans font-light antialiased">
+    {{ render_xutim_layout(fragmentData, editable|default(false)) }}
+
+    {% if editable|default(false) %}
+        <style>
+            [data-xutim-editable],
+            [data-xutim-collection-field] {
+                outline: 1px dashed rgba(99, 102, 241, 0.45);
+                outline-offset: 2px;
+                cursor: text;
+                transition: outline-color 0.15s;
+            }
+            [data-xutim-editable]:hover,
+            [data-xutim-collection-field]:hover {
+                outline-color: rgba(99, 102, 241, 0.9);
+            }
+            [data-xutim-editable]:focus,
+            [data-xutim-collection-field]:focus {
+                outline: 2px solid rgba(99, 102, 241, 0.8);
+                outline-offset: 2px;
+            }
+            [data-xutim-editable]:empty,
+            [data-xutim-collection-field]:empty {
+                display: inline-block;
+                min-width: 6em;
+            }
+            [data-xutim-editable]:empty::before,
+            [data-xutim-collection-field]:empty::before {
+                content: attr(data-xutim-placeholder);
+                color: #9ca3af;
+                font-style: italic;
+            }
+            .xutim-ref-block {
+                position: relative;
+                border: 2px dashed rgba(245, 158, 11, 0.55);
+                border-radius: 8px;
+                padding: 16px;
+                margin: 16px 0;
+            }
+            .xutim-ref-badge {
+                position: absolute;
+                top: -12px;
+                left: 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                background: #fef3c7;
+                color: #78350f;
+                border: 1px solid #f59e0b;
+                border-radius: 999px;
+                padding: 2px 10px;
+                font-size: 12px;
+                line-height: 1.4;
+                text-decoration: none;
+                font-family: ui-sans-serif, system-ui, sans-serif;
+                font-weight: 500;
+            }
+            .xutim-ref-badge:hover {
+                background: #fde68a;
+                color: #78350f;
+                text-decoration: none;
+            }
+            .xutim-static-block {
+                position: relative;
+                border: 2px dashed rgba(107, 114, 128, 0.6);
+                border-radius: 8px;
+                padding: 16px;
+            }
+            .xutim-static-badge {
+                position: absolute;
+                top: -12px;
+                left: 16px;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                background: #f3f4f6;
+                color: #4b5563;
+                border: 1px solid #9ca3af;
+                border-radius: 999px;
+                padding: 2px 10px;
+                font-size: 12px;
+                line-height: 1.4;
+                font-family: ui-sans-serif, system-ui, sans-serif;
+                font-weight: 500;
+            }
+            .xutim-rich-toolbar {
+                position: absolute;
+                z-index: 10000;
+                display: inline-flex;
+                gap: 2px;
+                padding: 4px;
+                background: #111827;
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                font-family: ui-sans-serif, system-ui, sans-serif;
+            }
+            .xutim-rich-toolbar button {
+                border: 0;
+                background: transparent;
+                color: #fff;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 14px;
+                line-height: 1;
+                cursor: pointer;
+                min-width: 28px;
+            }
+            .xutim-rich-toolbar button:hover {
+                background: rgba(255, 255, 255, 0.12);
+            }
+            .xutim-rich-toolbar button[aria-pressed="true"] {
+                background: rgba(99, 102, 241, 0.35);
+            }
+            .xutim-rich-toolbar button b { font-weight: 700; }
+            .xutim-rich-toolbar button i { font-style: italic; }
+            [data-xutim-collection-item] {
+                outline: 1px dashed rgba(99, 102, 241, 0.2);
+                outline-offset: 2px;
+            }
+            .xutim-collection-remove {
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                border: 0;
+                background: #dc2626;
+                color: #fff;
+                font-size: 18px;
+                line-height: 1;
+                cursor: pointer;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                z-index: 5;
+            }
+            .xutim-collection-remove:hover {
+                background: #991b1b;
+            }
+            .xutim-collection-add {
+                border: 2px dashed rgba(99, 102, 241, 0.55);
+                background: rgba(99, 102, 241, 0.08);
+                color: #4f46e5;
+                padding: 8px 16px;
+                border-radius: 8px;
+                font-size: 14px;
+                cursor: pointer;
+                font-family: ui-sans-serif, system-ui, sans-serif;
+                font-weight: 500;
+            }
+            .xutim-collection-add:hover {
+                background: rgba(99, 102, 241, 0.18);
+            }
+        </style>
+        <script>
+            (function () {
+                const DEBOUNCE_MS = 150;
+
+                // Prevent links in the preview from navigating the iframe
+                // away — users click them expecting them to open the target,
+                // but in the preview they must stay put. Anchors carrying
+                // the `xutim-ref-badge-link` class are an explicit opt-in
+                // (xutim_referenced_open badges); let those through so the
+                // linked translation opens in a new tab.
+                document.addEventListener('click', (event) => {
+                    const link = event.target.closest && event.target.closest('a[href]');
+                    if (!link) return;
+                    if (link.classList && link.classList.contains('xutim-ref-badge-link')) return;
+                    event.preventDefault();
+                });
+
+                const nodes = document.querySelectorAll('[data-xutim-editable]');
+
+                const send = (field, value) => {
+                    window.parent.postMessage(
+                        { source: 'xutim-layout', type: 'field-update', field: field, value: value },
+                        '*'
+                    );
+                };
+
+                // Serialize a rich-text root element (<span data-xutim-editable>)
+                // to TipTap-shaped inline JSON. Walks the DOM, tracks <b>/<i>
+                // ancestors as active marks, emits one `{type: 'text', text, marks}`
+                // span per text node. Unknown tags are traversed but contribute
+                // no marks, so accidental paste of `<div>` etc. loses formatting
+                // but keeps the text.
+                const serializeRich = (root) => {
+                    const spans = [];
+                    const walk = (node, marks) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                            if (node.nodeValue === '') return;
+                            const span = { type: 'text', text: node.nodeValue };
+                            if (marks.length) {
+                                span.marks = marks.map((m) => ({ type: m }));
+                            }
+                            spans.push(span);
+                            return;
+                        }
+                        if (node.nodeType !== Node.ELEMENT_NODE) return;
+                        const tag = node.nodeName.toLowerCase();
+                        const next = marks.slice();
+                        if (tag === 'b' || tag === 'strong') {
+                            if (!next.includes('bold')) next.push('bold');
+                        } else if (tag === 'i' || tag === 'em') {
+                            if (!next.includes('italic')) next.push('italic');
+                        }
+                        node.childNodes.forEach((child) => walk(child, next));
+                    };
+                    root.childNodes.forEach((child) => walk(child, []));
+                    return spans;
+                };
+
+                // One shared floating toolbar; we reposition on focus.
+                let toolbar = null;
+                const ensureToolbar = () => {
+                    if (toolbar) return toolbar;
+                    toolbar = document.createElement('div');
+                    toolbar.className = 'xutim-rich-toolbar';
+                    toolbar.style.display = 'none';
+                    toolbar.innerHTML =
+                        '<button type="button" data-action="bold" title="Bold (Ctrl+B)"><b>B</b></button>' +
+                        '<button type="button" data-action="italic" title="Italic (Ctrl+I)"><i>I</i></button>';
+                    toolbar.addEventListener('mousedown', (e) => {
+                        // Keep focus in the contenteditable while clicking the toolbar.
+                        e.preventDefault();
+                    });
+                    toolbar.addEventListener('click', (e) => {
+                        const btn = e.target.closest('button[data-action]');
+                        if (!btn) return;
+                        document.execCommand(btn.getAttribute('data-action'));
+                        refreshToolbarState();
+                    });
+                    document.body.appendChild(toolbar);
+                    return toolbar;
+                };
+                const refreshToolbarState = () => {
+                    if (!toolbar) return;
+                    toolbar.querySelectorAll('button').forEach((btn) => {
+                        const action = btn.getAttribute('data-action');
+                        btn.setAttribute(
+                            'aria-pressed',
+                            document.queryCommandState(action) ? 'true' : 'false'
+                        );
+                    });
+                };
+                const showToolbar = (el) => {
+                    const tb = ensureToolbar();
+                    const rect = el.getBoundingClientRect();
+                    tb.style.top = `${window.scrollY + rect.top - tb.offsetHeight - 8}px`;
+                    tb.style.left = `${window.scrollX + rect.left}px`;
+                    tb.style.display = 'inline-flex';
+                    // Re-read position after making it visible so offsetHeight is real.
+                    tb.style.top = `${window.scrollY + rect.top - tb.offsetHeight - 8}px`;
+                    refreshToolbarState();
+                };
+                const hideToolbar = () => {
+                    if (toolbar) toolbar.style.display = 'none';
+                };
+
+                // ───────────────────────────────────────────────────────
+                // Collection fields: [data-xutim-collection="<fieldName>"]
+                // containers with one [data-xutim-collection-item] per
+                // entry, each containing [data-xutim-collection-field="..."]
+                // spans. + Add and × Remove buttons mutate the DOM; every
+                // change re-serializes the whole collection to an array
+                // and postMessages to the parent as a regular field-update.
+                // ───────────────────────────────────────────────────────
+                const serializeCollection = (container) => {
+                    const items = container.querySelectorAll(':scope > [data-xutim-collection-item]');
+                    const out = [];
+                    items.forEach((item) => {
+                        const entry = {};
+                        item.querySelectorAll('[data-xutim-collection-field]').forEach((fieldEl) => {
+                            const name = fieldEl.getAttribute('data-xutim-collection-field');
+                            if (fieldEl.hasAttribute('data-xutim-rich')) {
+                                entry[name] = serializeRich(fieldEl);
+                            } else {
+                                entry[name] = fieldEl.textContent.trim();
+                            }
+                        });
+                        out.push(entry);
+                    });
+                    return out;
+                };
+
+                const attachCollectionItemHandlers = (item, container, field) => {
+                    item.querySelectorAll('[data-xutim-collection-field]').forEach((fieldEl) => {
+                        const rich = fieldEl.hasAttribute('data-xutim-rich');
+                        fieldEl.setAttribute('contenteditable', rich ? 'true' : 'plaintext-only');
+                        fieldEl.setAttribute('spellcheck', 'true');
+
+                        if (rich) {
+                            fieldEl.addEventListener('focus', () => showToolbar(fieldEl));
+                            fieldEl.addEventListener('blur', () => {
+                                setTimeout(() => {
+                                    if (document.activeElement !== fieldEl) hideToolbar();
+                                }, 50);
+                            });
+                            fieldEl.addEventListener('keyup', refreshToolbarState);
+                            fieldEl.addEventListener('mouseup', refreshToolbarState);
+                        }
+
+                        fieldEl.addEventListener('keydown', (event) => {
+                            if (event.key === 'Enter') {
+                                event.preventDefault();
+                                fieldEl.blur();
+                            }
+                        });
+
+                        let timer = null;
+                        fieldEl.addEventListener('input', () => {
+                            if (timer) clearTimeout(timer);
+                            timer = setTimeout(() => {
+                                send(field, serializeCollection(container));
+                            }, DEBOUNCE_MS);
+                        });
+                        fieldEl.addEventListener('blur', () => {
+                            if (timer) {
+                                clearTimeout(timer);
+                                timer = null;
+                            }
+                            send(field, serializeCollection(container));
+                        });
+                    });
+
+                    const removeBtn = item.querySelector('[data-xutim-collection-remove]');
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', () => {
+                            item.remove();
+                            send(field, serializeCollection(container));
+                        });
+                    }
+                };
+
+                document.querySelectorAll('[data-xutim-collection]').forEach((container) => {
+                    const field = container.getAttribute('data-xutim-collection');
+                    const template = document.querySelector(
+                        `template[data-xutim-collection-template="${field}"]`
+                    );
+
+                    // Existing items
+                    container.querySelectorAll(':scope > [data-xutim-collection-item]').forEach((item) => {
+                        attachCollectionItemHandlers(item, container, field);
+                    });
+
+                    // + Add button
+                    const addBtn = document.querySelector(
+                        `[data-xutim-collection-add][data-xutim-collection-target="${field}"]`
+                    );
+                    if (addBtn && template) {
+                        addBtn.addEventListener('click', () => {
+                            const newItem = template.content.firstElementChild.cloneNode(true);
+                            // Insert before the add-button wrapper if it lives inside the container,
+                            // otherwise at the end. We append at the end of the container.
+                            const addWrapper = container.querySelector(':scope > div:has(> [data-xutim-collection-add])');
+                            if (addWrapper) {
+                                container.insertBefore(newItem, addWrapper);
+                            } else {
+                                container.appendChild(newItem);
+                            }
+                            attachCollectionItemHandlers(newItem, container, field);
+                            send(field, serializeCollection(container));
+                            // Focus the new date field for immediate typing.
+                            const firstField = newItem.querySelector('[data-xutim-collection-field]');
+                            if (firstField) firstField.focus();
+                        });
+                    }
+                });
+
+                nodes.forEach((el) => {
+                    const field = el.getAttribute('data-xutim-editable');
+                    const multiline = el.hasAttribute('data-xutim-multiline');
+                    const rich = el.hasAttribute('data-xutim-rich');
+
+                    el.setAttribute('contenteditable', rich || multiline ? 'true' : 'plaintext-only');
+                    el.setAttribute('spellcheck', 'true');
+
+                    if (!multiline && !rich) {
+                        el.addEventListener('keydown', (event) => {
+                            if (event.key === 'Enter') {
+                                event.preventDefault();
+                                el.blur();
+                            }
+                        });
+                    }
+
+                    if (rich) {
+                        // Swallow Enter — the timeline paragraph is single-block;
+                        // avoid newline semantics drifting the JSON shape.
+                        el.addEventListener('keydown', (event) => {
+                            if (event.key === 'Enter') {
+                                event.preventDefault();
+                                el.blur();
+                            }
+                        });
+                        el.addEventListener('focus', () => showToolbar(el));
+                        el.addEventListener('blur', () => {
+                            // Delay so a click on the toolbar doesn't hide it mid-action.
+                            setTimeout(() => {
+                                if (document.activeElement !== el) hideToolbar();
+                            }, 50);
+                        });
+                        el.addEventListener('keyup', refreshToolbarState);
+                        el.addEventListener('mouseup', refreshToolbarState);
+                    }
+
+                    const readValue = () => {
+                        if (rich) return serializeRich(el);
+                        return multiline ? el.innerText : el.textContent;
+                    };
+
+                    let timer = null;
+                    el.addEventListener('input', () => {
+                        if (timer) clearTimeout(timer);
+                        timer = setTimeout(() => {
+                            send(field, readValue());
+                        }, DEBOUNCE_MS);
+                    });
+
+                    el.addEventListener('blur', () => {
+                        if (timer) {
+                            clearTimeout(timer);
+                            timer = null;
+                        }
+                        send(field, readValue());
+                    });
+                });
+            })();
+        </script>
+    {% endif %}
+</body>
+</html>

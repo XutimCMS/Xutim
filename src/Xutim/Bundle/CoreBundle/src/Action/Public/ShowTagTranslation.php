@@ -41,7 +41,7 @@ class ShowTagTranslation extends AbstractController
         }
         $tag = $translation->getTag();
 
-        $filter = new FilterDto('', $page, 12, 'translation.publishedAt', 'desc');
+        $filter = new FilterDto('', $page, 12, 'publishedAt', 'desc');
         /** @var QueryAdapter<Article> $adapter */
         $adapter = new QueryAdapter($this->articleRepo->queryPublishedByTagAndFilter($filter, $tag, $locale));
         $pager = Pagerfanta::createForCurrentPageWithMaxPerPage(

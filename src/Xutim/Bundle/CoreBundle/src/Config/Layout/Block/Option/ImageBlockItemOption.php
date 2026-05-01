@@ -16,6 +16,16 @@ readonly class ImageBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'image item';
+        return 'Image';
+    }
+
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Image from the media library';
     }
 }

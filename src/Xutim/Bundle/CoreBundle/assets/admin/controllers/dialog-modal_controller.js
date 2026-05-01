@@ -10,6 +10,9 @@ export default class extends Controller {
         confirmButtonLabel: String,
         dialogColor: String,
         openOnInit: Boolean,
+        bulkCount: Number,
+        bulkLabel: String,
+        confirmButtonBulkLabel: String,
     };
 
     connect() {
@@ -26,6 +29,16 @@ export default class extends Controller {
         };
         const btnColor = colorClasses[this.dialogColorValue] || 'bg-accent hover:bg-accent-hover';
 
+        const hasBulk = this.bulkCountValue > 1 && this.bulkLabelValue !== '';
+        const bulkRow = hasBulk
+            ? `
+                <label class="mt-4 flex items-center gap-2 text-[13px] text-content-secondary">
+                    <input id="dialog-bulk-toggle" type="checkbox" class="rounded border-border text-accent focus:ring-accent">
+                    <span>${this.bulkLabelValue}</span>
+                </label>
+            `
+            : '';
+
         const dialog = document.createElement('dialog');
         dialog.className = 'fixed inset-0 z-[60] m-auto max-w-sm rounded-xl border border-border bg-surface shadow-xl backdrop:bg-black/50 p-0';
         dialog.innerHTML = `
@@ -37,6 +50,7 @@ export default class extends Controller {
                 </div>
                 <h3 class="text-[15px] font-semibold">${this.dialogValue}</h3>
                 ${this.helpTextValue ? `<p class="mt-2 text-[13px] text-content-secondary leading-relaxed">${this.helpTextValue}</p>` : ''}
+                ${bulkRow}
             </div>
             <div class="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
                 <button type="button" data-action="cancel" class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium hover:bg-surface-raised transition-colors">
@@ -44,7 +58,8 @@ export default class extends Controller {
                 </button>
                 <form method="post" action="${this.actionValue}">
                     <input type="hidden" name="form[_token]" value="${this.csrfTokenValue}">
-                    <button type="submit" class="rounded-md px-3 py-1.5 text-[13px] font-medium text-white ${btnColor} transition-colors">
+                    <input id="dialog-apply-to-all" type="hidden" name="apply_to_all" value="0">
+                    <button id="dialog-form-submit" type="submit" class="rounded-md px-3 py-1.5 text-[13px] font-medium text-white ${btnColor} transition-colors">
                         ${this.confirmButtonLabelValue}
                     </button>
                 </form>
@@ -63,6 +78,18 @@ export default class extends Controller {
         dialog.querySelector('[data-action="cancel"]').addEventListener('click', () => {
             dialog.close();
         });
+
+        if (hasBulk) {
+            const toggle = dialog.querySelector('#dialog-bulk-toggle');
+            const hidden = dialog.querySelector('#dialog-apply-to-all');
+            const submit = dialog.querySelector('#dialog-form-submit');
+            const singleLabel = this.confirmButtonLabelValue;
+            const bulkLabel = this.confirmButtonBulkLabelValue || singleLabel;
+            toggle.addEventListener('change', () => {
+                hidden.value = toggle.checked ? '1' : '0';
+                submit.textContent = toggle.checked ? bulkLabel : singleLabel;
+            });
+        }
 
         dialog.addEventListener('close', () => {
             dialog.remove();

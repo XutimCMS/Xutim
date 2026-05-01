@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Config\Layout\Block\Option;
 
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 
-readonly class TextBlockItemOption implements BlockItemOption
+readonly class TextBlockItemOption implements BlockItemOption, InlineEditableOption
 {
     public function canFullFill(BlockItemInterface $item): bool
     {
@@ -15,6 +15,16 @@ readonly class TextBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'text item';
+        return 'Text';
+    }
+
+    public function isTranslatable(): bool
+    {
+        return true;
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Short single-line text';
     }
 }

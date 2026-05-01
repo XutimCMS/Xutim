@@ -15,6 +15,16 @@ readonly class LinkBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'link item';
+        return 'URL';
+    }
+
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'External URL';
     }
 }

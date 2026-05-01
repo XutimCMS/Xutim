@@ -95,6 +95,8 @@
             {{ include('@XutimCore/admin/content_fragment/diff/embed_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
         {% elseif row.kind == 'snippet' or row.kind == 'block' %}
             {{ include('@XutimCore/admin/content_fragment/diff/code_block_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
+        {% elseif row.kind == 'xutim_layout' %}
+            {{ include('@XutimCore/admin/content_fragment/diff/xutim_layout_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
         {% elseif row.kind == 'delimiter' %}
             {{ include('@XutimCore/admin/content_fragment/delimiter.html.twig') }}
         {% elseif row.kind == 'foldable_start' %}

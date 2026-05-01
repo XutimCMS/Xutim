@@ -77,7 +77,9 @@ class ShowReferenceDiffAction extends AbstractController
         $titleDiff = $this->diffRenderer->diffTitle($oldEvent->title, $newTitle);
         $subTitleDiff = $this->diffRenderer->diffTitle($oldEvent->subTitle, $newSubTitle);
         $descriptionDiff = $this->diffRenderer->diffDescription($oldEvent->description, $newDescription);
-        $contentRows = $this->diffRenderer->diffContent($oldEvent->content, $newContent);
+        $contentRows = $this->diffRenderer->filterTranslatableNoise(
+            $this->diffRenderer->diffContent($oldEvent->content, $newContent)
+        );
 
         return $this->render('@XutimCore/admin/content_translation/_reference_diff.html.twig', [
             'preTitleDiff' => $preTitleDiff,

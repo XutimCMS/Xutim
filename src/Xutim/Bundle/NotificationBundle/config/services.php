@@ -20,4 +20,8 @@ return static function (ContainerConfigurator $container): void {
 
     $services->load('Xutim\\NotificationBundle\\', '../src/')
         ->exclude('../src/{DependencyInjection,Entity}');
+
+    $services->set(\Xutim\NotificationBundle\Service\AdminAlertService::class)
+        ->autowire()
+        ->public();
 };

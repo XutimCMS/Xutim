@@ -15,6 +15,16 @@ readonly class FileBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'file item';
+        return 'File';
+    }
+
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'File from the media library';
     }
 }

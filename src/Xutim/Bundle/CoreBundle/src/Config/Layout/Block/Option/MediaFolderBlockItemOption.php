@@ -15,6 +15,16 @@ readonly class MediaFolderBlockItemOption implements BlockItemOption
 
     public function getName(): string
     {
-        return 'media folder item';
+        return 'Media folder';
+    }
+
+    public function isTranslatable(): bool
+    {
+        return false;
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Reference to a folder in the media library';
     }
 }

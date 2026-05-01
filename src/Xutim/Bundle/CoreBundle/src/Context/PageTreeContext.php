@@ -16,7 +16,7 @@ final class PageTreeContext
 
     public function __construct(
         private readonly PageRepository $pageRepository,
-        private readonly TagAwareCacheInterface $cache
+        private readonly TagAwareCacheInterface $pageTreeCache,
     ) {
     }
 
@@ -36,7 +36,7 @@ final class PageTreeContext
          *      pages: array<string, array{page: PageInterface, translation: ContentTranslationInterface, children: list<string>}>
          * } $result
          */
-        $result = $this->cache->get(
+        $result = $this->pageTreeCache->get(
             $key,
             /**
              * @return array{
@@ -57,16 +57,16 @@ final class PageTreeContext
 
     public function resetForLocale(string $locale): void
     {
-        $this->cache->delete($this->key($locale, false, true));
-        $this->cache->delete($this->key($locale, false, false));
-        $this->cache->delete($this->key($locale, true, true));
-        $this->cache->delete($this->key($locale, true, false));
-        $this->cache->invalidateTags($this->tags($locale));
+        $this->pageTreeCache->delete($this->key($locale, false, true));
+        $this->pageTreeCache->delete($this->key($locale, false, false));
+        $this->pageTreeCache->delete($this->key($locale, true, true));
+        $this->pageTreeCache->delete($this->key($locale, true, false));
+        $this->pageTreeCache->invalidateTags($this->tags($locale));
     }
 
     public function resetAll(): void
     {
-        $this->cache->invalidateTags([self::TAG_ALL]);
+        $this->pageTreeCache->invalidateTags([self::TAG_ALL]);
     }
 
     public function warmupForLocale(string $locale): void

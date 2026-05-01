@@ -32,10 +32,15 @@ final readonly class SendNotificationHandler implements CommandHandlerInterface
         }
 
         try {
+            $templateBase = $notification->getRecipient() === null
+                ? '@XutimNotification/admin/notification/admin_alert_email'
+                : '@XutimNotification/admin/notification/email';
+
             $email = (new TemplatedEmail())
-                ->to($notification->getRecipient()->getEmail())
+                ->to($notification->getRecipientAddress())
                 ->subject($notification->getTitle())
-                ->htmlTemplate('@XutimNotification/admin/notification/email.html.twig')
+                ->htmlTemplate($templateBase . '.html.twig')
+                ->textTemplate($templateBase . '.txt.twig')
                 ->context([
                     'notification' => $notification,
                 ]);

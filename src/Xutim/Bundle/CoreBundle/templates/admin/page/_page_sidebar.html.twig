@@ -84,6 +84,8 @@
             {% if is_granted('ROLE_EDITOR') %}
                 <twig:Xutim:Admin:SidebarItem>
                     <twig:block name="content">
+                        {% set bulkCount = page.translations|length %}
+                        {% set bulkLabel = 'Apply to all %count% translations'|trans({'%count%': bulkCount}, 'admin') %}
                         <div class="flex gap-2">
                             {% if translation.status.canBeArchived %}
                                 {% set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived') %}
@@ -92,6 +94,9 @@
                                     modalDialogColor="{{ archiveStatus.colorClass }}"
                                     action="{{ admin_path('admin_publication_status_edit', {id: translation.id, status: archiveStatus.value}) }}"
                                     confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
+                                    confirmActionBulkLabel="{{ 'archive'|trans({}, 'admin')|capitalize }} ({{ bulkCount }})"
+                                    bulkCount="{{ bulkCount }}"
+                                    bulkLabel="{{ bulkLabel }}"
                                 >
                                     {{ 'archive'|trans({}, 'admin')|capitalize }}
                                 </twig:Xutim:Admin:ModalDialog>
@@ -101,6 +106,9 @@
                                 modalDialogColor="danger"
                                 action="{{ admin_path('admin_content_translation_delete', {id: translation.id}) }}"
                                 confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
+                                confirmActionBulkLabel="{{ 'delete'|trans({}, 'admin')|capitalize }} ({{ bulkCount }})"
+                                bulkCount="{{ bulkCount }}"
+                                bulkLabel="{{ bulkLabel }}"
                             >
                                 {{ 'delete'|trans({}, 'admin')|capitalize }}
                             </twig:Xutim:Admin:ModalDialog>

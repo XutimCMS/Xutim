@@ -18,7 +18,7 @@ class MediaTranslation implements MediaTranslationInterface
     #[Column(type: 'uuid')]
     private Uuid $id;
 
-    #[ManyToOne(targetEntity: MediaInterface::class)]
+    #[ManyToOne(targetEntity: MediaInterface::class, inversedBy: 'translations')]
     #[JoinColumn(name: 'media_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private MediaInterface $media;
 

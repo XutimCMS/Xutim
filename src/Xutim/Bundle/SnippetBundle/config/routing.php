@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
-use Xutim\CoreBundle\Context\SiteContext;
+use Psr\Log\LoggerInterface;
 use Xutim\SnippetBundle\Domain\Repository\SnippetRepositoryInterface;
-use Xutim\SnippetBundle\Routing\LocalizedRouteLoader;
+use Xutim\SnippetBundle\Routing\SnippetRouteResolver;
+use Xutim\SnippetBundle\Routing\SnippetUrlGenerator;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
 
     $services
-        ->set(LocalizedRouteLoader::class)
+        ->set(SnippetRouteResolver::class)
         ->arg('$snippetRepo', service(SnippetRepositoryInterface::class))
-        ->arg('$siteContext', service(SiteContext::class))
-        ->arg('$snippetVersionPath', '%snippet_routes_version_file%')
-        ->arg('$env', '%kernel.environment%')
-        ->tag('routing.loader')
+        ->arg('$logger', service(LoggerInterface::class))
+        ->tag('xutim.dynamic_route_resolver', ['priority' => 100])
+    ;
+
+    $services
+        ->set(SnippetUrlGenerator::class)
+        ->arg('$snippetRepo', service(SnippetRepositoryInterface::class))
     ;
 };

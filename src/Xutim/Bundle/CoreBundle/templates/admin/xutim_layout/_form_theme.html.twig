@@ -1,0 +1,18 @@
+{% block xutim_layout_union_type_widget %}
+    <div class="form-selectgroup form-selectgroup-pills mb-2">
+        {% for choice in choices %}
+            <label class="form-selectgroup-item">
+                <input
+                    type="radio"
+                    name="{{ full_name }}"
+                    value="{{ choice.value }}"
+                    class="form-selectgroup-input"
+                    {% if value == choice.value %}
+                        checked="checked"
+                    {% endif %}
+                >
+                <span class="form-selectgroup-label">{{ choice.label }}</span>
+            </label>
+        {% endfor %}
+    </div>
+{% endblock %}

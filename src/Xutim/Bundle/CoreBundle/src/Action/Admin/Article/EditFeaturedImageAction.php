@@ -78,7 +78,8 @@ class EditFeaturedImageAction extends AbstractController
         }
 
         return $this->render('@XutimCore/admin/article/article_edit_featured_image.html.twig', [
-            'form' => $form
+            'form' => $form,
+            'article' => $article,
         ]);
     }
 }

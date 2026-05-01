@@ -40,8 +40,9 @@ parameters:
         EditorJsXutimTagBlock: 'array{ id: string, type: "xutimTag", data: array{id: string, layout: string}, tunes: XutimAnchorTune }'
         EditorJsFoldableStartBlock: 'array{ id: string, type: "foldableStart", data: array{title: string, open: bool}, tunes: XutimAnchorTune }'
         EditorJsFoldableEndBlock: 'array{ id: string, type: "foldableEnd", data: array{}, tunes: XutimAnchorTune }'
+        EditorJsXutimLayoutBlock: 'array{ id: string, type: "xutimLayout", data: array{layoutCode: string, values: array<string, mixed>}, tunes: XutimAnchorTune }'
 
-        EditorBlocksUnion: EditorJsListBlock|EditorJsParagraphBlock|EditorJsDelimiterBlock|EditorJsHeaderBlock|EditorJsMainHeaderBlock|EditorJsQuoteBlock|EditorJsCodeBlock|EditorJsXutimFileBlock|EditorJsXutimImageBlock|EditorJsImageRowBlock|EditorJsEmbedBlock|EditorJsPageLinkBlock|EditorJsArticleLinkBlock|EditorJsXutimTagBlock|EditorJsFoldableStartBlock|EditorJsFoldableEndBlock
+        EditorBlocksUnion: EditorJsListBlock|EditorJsParagraphBlock|EditorJsDelimiterBlock|EditorJsHeaderBlock|EditorJsMainHeaderBlock|EditorJsQuoteBlock|EditorJsCodeBlock|EditorJsXutimFileBlock|EditorJsXutimImageBlock|EditorJsImageRowBlock|EditorJsEmbedBlock|EditorJsPageLinkBlock|EditorJsArticleLinkBlock|EditorJsXutimTagBlock|EditorJsFoldableStartBlock|EditorJsFoldableEndBlock|EditorJsXutimLayoutBlock
         EditorBlock: 'array{}|array{ time: int, version: string, blocks: array<int, EditorBlocksUnion> }'
         NonEmptyEditorBlock: 'array{ time: int, version: string, blocks: non-empty-array<int, EditorBlocksUnion> }'
 

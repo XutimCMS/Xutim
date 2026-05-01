@@ -13,6 +13,7 @@ use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\CoreBundle\Message\Command\PublicationStatus\ChangePublicationStatusCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
+use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SecurityBundle\Service\UserStorage;
 
@@ -40,12 +41,24 @@ class ChangeStatusAction extends AbstractController
         $this->csrfTokenChecker->checkTokenFromFormRequest('xutim-dialog', $request);
 
         $user = $this->userStorage->getUserWithException();
-        $command = new ChangePublicationStatusCommand(
-            $translation->getId(),
-            $status,
-            $user->getUserIdentifier()
-        );
-        $this->commandBus->dispatch($command);
+        $applyToAll = $request->request->getBoolean('apply_to_all');
+
+        $targets = [$translation];
+        if ($applyToAll === true) {
+            $this->denyAccessUnlessGranted(UserRoles::ROLE_EDITOR);
+            $targets = $translation->getObject()->getTranslations()->toArray();
+            foreach ($targets as $target) {
+                $this->transAuthChecker->denyUnlessCanTranslate($target->getLocale());
+            }
+        }
+
+        foreach ($targets as $target) {
+            $this->commandBus->dispatch(new ChangePublicationStatusCommand(
+                $target->getId(),
+                $status,
+                $user->getUserIdentifier()
+            ));
+        }
         $this->addFlash('success', 'flash.changes_made_successfully');
 
         if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {

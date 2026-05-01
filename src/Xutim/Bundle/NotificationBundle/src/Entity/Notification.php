@@ -26,8 +26,11 @@ class Notification implements NotificationInterface
     private Uuid $id;
 
     #[ManyToOne(targetEntity: UserInterface::class)]
-    #[JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private UserInterface $recipient;
+    #[JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    private ?UserInterface $recipient = null;
+
+    #[Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $recipientEmail = null;
 
     #[Column(type: Types::STRING, length: 120)]
     private string $type;
@@ -78,7 +81,7 @@ class Notification implements NotificationInterface
      * @param array<string, mixed> $payload
      */
     public function __construct(
-        UserInterface $recipient,
+        UserInterface|string $recipient,
         string $type,
         NotificationSeverity $severity,
         string $title,
@@ -90,7 +93,15 @@ class Notification implements NotificationInterface
         ?string $deduplicationKey = null,
     ) {
         $this->id = Uuid::v4();
-        $this->recipient = $recipient;
+        if ($recipient instanceof UserInterface) {
+            $this->recipient = $recipient;
+        } else {
+            $email = trim($recipient);
+            if ($email === '') {
+                throw new \InvalidArgumentException('Notification recipient email cannot be empty.');
+            }
+            $this->recipientEmail = $email;
+        }
         $this->type = $type;
         $this->severity = $severity;
         $this->title = $title;
@@ -112,14 +123,25 @@ class Notification implements NotificationInterface
         return $this->id;
     }
 
-    public function getRecipient(): UserInterface
+    public function getRecipient(): ?UserInterface
     {
         return $this->recipient;
     }
 
-    public function getRecipientId(): Uuid
+    public function getRecipientId(): ?Uuid
     {
-        return $this->recipient->getId();
+        return $this->recipient?->getId();
+    }
+
+    public function getRecipientEmail(): ?string
+    {
+        return $this->recipientEmail;
+    }
+
+    public function getRecipientAddress(): string
+    {
+        return $this->recipientEmail ?? $this->recipient?->getEmail()
+            ?? throw new \LogicException('Notification has no recipient.');
     }
 
     public function getType(): string

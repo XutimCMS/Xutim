@@ -22,7 +22,7 @@ final class NotificationFactory
      * @param array<string, mixed> $payload
      */
     public function create(
-        UserInterface $recipient,
+        UserInterface|string $recipient,
         string $type,
         NotificationSeverity $severity,
         string $title,

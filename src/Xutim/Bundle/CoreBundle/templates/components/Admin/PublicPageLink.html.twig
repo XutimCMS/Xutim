@@ -2,6 +2,8 @@
     {%
         set publicUrl = path('tag_translation_show', {slug: tagTranslation.slug, _locale: tagTranslation.locale})
     %}
+{% elseif this.isHomepage() %}
+    {% set publicUrl = path('homepage', {_locale: this.contentTranslation.locale}) %}
 {% elseif this.hasContentTranslation() %}
     {% if is_extended_locale(this.contentTranslation.locale) %}
         {%

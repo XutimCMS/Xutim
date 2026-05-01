@@ -23,7 +23,6 @@ class TranslateSnippetAction
         private readonly SnippetTranslationFactoryInterface $snippetTransFactory,
         private readonly TranslatorAuthChecker $transAuthChecker,
         private readonly CsrfTokenChecker $csrfTokenChecker,
-        private readonly string $snippetVersionPath,
     ) {
     }
 
@@ -56,11 +55,6 @@ class TranslateSnippetAction
         $tokenId = sprintf('translate_snippet_%s_%s', $id, $locale);
         $this->csrfTokenChecker->checkTokenFromRequest($tokenId, $request);
         $this->transRepo->save($trans, true);
-        if ($snippet->isRouteType() === true) {
-            // Restart the snippet_routes router cache. See
-            // CustomRouteLoader for more information
-            file_put_contents($this->snippetVersionPath, microtime());
-        }
 
         return new JsonResponse(['status' => 'ok']);
     }
