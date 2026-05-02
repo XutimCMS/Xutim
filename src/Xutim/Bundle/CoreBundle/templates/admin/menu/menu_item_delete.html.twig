@@ -36,7 +36,7 @@
                 type="submit"
                 data-turbo-frame="{{ app.request.headers.get('turbo-frame') ? '_top' : '' }}"
             >
-                <twig:ux:icon name="ph:trash" class="icon" />
+                <twig:ux:icon name="ph:trash" class="h-4 w-4 shrink-0" />
                 {{ 'delete'|trans({}, 'admin')|capitalize }}
             </twig:Xutim:Admin:Button>
             {{ form_row(form._token) }}

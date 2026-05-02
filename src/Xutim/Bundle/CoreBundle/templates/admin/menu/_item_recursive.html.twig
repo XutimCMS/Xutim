@@ -5,7 +5,7 @@
     id="menu-item-tree-{{ item.id }}"
 >
     {% if node.children is empty %}
-        <twig:ux:icon name="ph:caret-down" class="icon text-content" />
+        <twig:ux:icon name="ph:caret-down" class="h-4 w-4 shrink-0 text-content" />
         {{
             _self.itemLine(items, node, item, child, loop.first, loop.last, selectedItem)
         }}
@@ -55,11 +55,11 @@
     {{ translatable.languageBadge(translation) }}
 
     {% if item.hasArticle() %}
-        <twig:ux:icon name="ph:newspaper" class="icon mr-2" />
+        <twig:ux:icon name="ph:newspaper" class="h-4 w-4 shrink-0 mr-2" />
     {% elseif item.hasPage() %}
-        <twig:ux:icon name="ph:folder-simple" class="icon mr-2" />
+        <twig:ux:icon name="ph:folder-simple" class="h-4 w-4 shrink-0 mr-2" />
     {% else %}
-        <twig:ux:icon name="ph:tag" class="icon mr-2" />
+        <twig:ux:icon name="ph:tag" class="h-4 w-4 shrink-0 mr-2" />
     {% endif %}
     <a href="{{ admin_path('admin_menu_list', {id: item.id}) }}">
         <span class="text-content{{ isSelectedItem ? ' font-bold' : '' }}">
@@ -74,7 +74,7 @@
     %}
         <div class="dropdown float-right relative">
             <a href="#" class="text-content-secondary" data-bs-toggle="dropdown">
-                <twig:ux:icon name="ph:dots-three" class="icon" />
+                <twig:ux:icon name="ph:dots-three" class="h-4 w-4 shrink-0" />
             </a>
             <div class="dropdown-menu dropdown-menu-end">
                 {% set showUrl = null %}
@@ -90,7 +90,7 @@
                         variant="dropdown"
                         href="{{ admin_path(showUrl, {id: item.object.id}) }}"
                     >
-                        <twig:ux:icon name="ph:magnifying-glass" class="icon mr-2" />
+                        <twig:ux:icon name="ph:magnifying-glass" class="h-4 w-4 shrink-0 mr-2" />
                         {{ 'show'|trans|capitalize }}
                     </twig:Xutim:Admin:Button>
                 {% endif %}
@@ -100,7 +100,7 @@
                     data-turbo-frame="modal"
                     href="{{ admin_path('admin_menu_item_edit', {id: item.id}) }}"
                 >
-                    <twig:ux:icon name="ph:pencil-simple" class="icon mr-2" />
+                    <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0 mr-2" />
                     {{ 'edit'|trans|capitalize }}
                 </twig:Xutim:Admin:Button>
                 <twig:Xutim:Admin:Button
@@ -109,7 +109,7 @@
                     data-turbo-frame="modal"
                     href="{{ admin_path('admin_menu_item_delete', {id: item.id}) }}"
                 >
-                    <twig:ux:icon name="ph:trash" class="icon mr-2" />
+                    <twig:ux:icon name="ph:trash" class="h-4 w-4 shrink-0 mr-2" />
                     {{ 'delete'|trans|capitalize }}
                 </twig:Xutim:Admin:Button>
 
@@ -121,7 +121,7 @@
                     data-turbo-frame="modal"
                     href="{{ admin_path('admin_menu_item_new', {id: item.id}) }}"
                 >
-                    <twig:ux:icon name="ph:plus" class="icon" />
+                    <twig:ux:icon name="ph:plus" class="h-4 w-4 shrink-0" />
                     {{ 'New menu item'|trans({}, 'admin') }}
                 </twig:Xutim:Admin:Button>
 
@@ -134,7 +134,7 @@
                             variant="dropdown"
                             href="{{ admin_path('admin_menu_item_move', {id: item.id, dir: 'up'}) }}"
                         >
-                            <twig:ux:icon name="ph:arrow-up" class="icon mr-2" />
+                            <twig:ux:icon name="ph:arrow-up" class="h-4 w-4 shrink-0 mr-2" />
                             {{ 'move up'|trans({}, 'admin')|capitalize }}
                         </twig:Xutim:Admin:Button>
                     {% endif %}
@@ -145,7 +145,7 @@
                             variant="dropdown"
                             href="{{ admin_path('admin_menu_item_move', {id: item.id, dir: 'down'}) }}"
                         >
-                            <twig:ux:icon name="ph:arrow-down" class="icon mr-2" />
+                            <twig:ux:icon name="ph:arrow-down" class="h-4 w-4 shrink-0 mr-2" />
                             {{ 'move down'|trans({}, 'admin')|capitalize }}
                         </twig:Xutim:Admin:Button>
                     {% endif %}

@@ -30,12 +30,12 @@
 {% macro order_arrow(currentField, order, orderDirection) %}
     {% if currentField == order %}
         {% if orderDirection == 'asc' %}
-            <twig:ux:icon name="ph:arrow-up" class="icon" />
+            <twig:ux:icon name="ph:arrow-up" class="h-4 w-4 shrink-0" />
         {% else %}
-            <twig:ux:icon name="ph:arrow-down" class="icon" />
+            <twig:ux:icon name="ph:arrow-down" class="h-4 w-4 shrink-0" />
         {% endif %}
     {% else %}
-        <twig:ux:icon name="ph:arrows-down-up" class="icon" />
+        <twig:ux:icon name="ph:arrows-down-up" class="h-4 w-4 shrink-0" />
     {% endif %}
 {% endmacro %}
 
@@ -58,8 +58,8 @@
         'zip': 'file-zip',
     } %}
     {% if extension in extensionIconMap|keys %}
-        <twig:ux:icon :name="'ph:' ~ extensionIconMap[extension]" class="icon" />
+        <twig:ux:icon :name="'ph:' ~ extensionIconMap[extension]" class="h-4 w-4 shrink-0" />
     {% else %}
-        <twig:ux:icon name="ph:file" class="icon" />
+        <twig:ux:icon name="ph:file" class="h-4 w-4 shrink-0" />
     {% endif %}
 {% endmacro %}

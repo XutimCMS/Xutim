@@ -35,7 +35,7 @@
                 variant="nav"
                 href="{{ admin_path('admin_content_translation_revisions', {id: trans.id}) }}"
             >
-                <twig:ux:icon name="ph:clock-counter-clockwise" class="icon mr-1" />
+                <twig:ux:icon name="ph:clock-counter-clockwise" class="h-4 w-4 shrink-0 mr-1" />
                 History
             </twig:Xutim:Admin:Button>
         {% endif %}
@@ -47,7 +47,7 @@
                 variant="nav"
                 href="{{ admin_path('admin_page_edit', {id: selectedPage.id}) }}"
             >
-                <twig:ux:icon name="ph:pencil-simple" class="icon mr-1" />
+                <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0 mr-1" />
                 {{ 'Edit'|trans({}, 'admin') }}
             </twig:Xutim:Admin:Button>
         {% endif %}
@@ -59,7 +59,7 @@
                 variant="nav"
                 href="{{ admin_path('admin_page_new', {id: selectedPage.id}) }}"
             >
-                <twig:ux:icon name="ph:folder-simple" class="icon mr-1" />
+                <twig:ux:icon name="ph:folder-simple" class="h-4 w-4 shrink-0 mr-1" />
                 {{ 'New page'|trans({}, 'admin') }}
             </twig:Xutim:Admin:Button>
         {% endif %}
@@ -71,7 +71,7 @@
                 variant="nav"
                 href="{{ admin_path('admin_article_new', {id: selectedPage.id}) }}"
             >
-                <twig:ux:icon name="ph:newspaper" class="icon mr-1" />
+                <twig:ux:icon name="ph:newspaper" class="h-4 w-4 shrink-0 mr-1" />
                 {{ 'New article'|trans({}, 'admin') }}
             </twig:Xutim:Admin:Button>
         {% endif %}
@@ -82,7 +82,7 @@
                 variant="nav"
                 href="#"
             >
-                <twig:ux:icon name="ph:sidebar-simple" class="icon mr-1" />
+                <twig:ux:icon name="ph:sidebar-simple" class="h-4 w-4 shrink-0 mr-1" />
                 Sidebar
             </twig:Xutim:Admin:Button>
         {% endif %}
@@ -95,7 +95,7 @@
                 variant="nav"
                 href="{{ admin_path('admin_page_new') }}"
             >
-                <twig:ux:icon name="ph:folder-simple" class="icon mr-1" />
+                <twig:ux:icon name="ph:folder-simple" class="h-4 w-4 shrink-0 mr-1" />
                 {{ 'New page'|trans({}, 'admin') }}
             </twig:Xutim:Admin:Button>
         {% endif %}
@@ -107,7 +107,7 @@
                 variant="nav"
                 href="{{ admin_path('admin_article_new') }}"
             >
-                <twig:ux:icon name="ph:newspaper" class="icon mr-1" />
+                <twig:ux:icon name="ph:newspaper" class="h-4 w-4 shrink-0 mr-1" />
                 {{ 'New article'|trans({}, 'admin') }}
             </twig:Xutim:Admin:Button>
         {% endif %}
@@ -117,7 +117,7 @@
         variant="nav"
         href="{{ admin_path('admin_page_translation_list', {col: {translationStatus: 'missing'} }) }}"
     >
-        <twig:ux:icon name="ph:list-magnifying-glass" class="icon mr-1" />
+        <twig:ux:icon name="ph:list-magnifying-glass" class="h-4 w-4 shrink-0 mr-1" />
         {{ 'Translation list'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 {% endblock %}
@@ -199,6 +199,8 @@
         %}
         {{ translatable.languageBadge(trans) }}
         {{ trans.title }}
+    {% else %}
+        {{ 'pages'|trans({}, 'admin')|capitalize }}
     {% endif %}
 {% endblock %}
 
@@ -221,7 +223,7 @@
             <div class="rounded-xl border border-border">
                 {% if hierarchy.pages is not empty %}
                     {{
-                        icons.sprite(['dots-three', 'arrow-up', 'arrow-down', 'pencil-simple', 'folder-simple', 'newspaper', 'caret-down'])
+                        icons.sprite(['dots-three', 'arrow-up', 'arrow-down', 'pencil-simple', 'folder-simple', 'newspaper'])
                     }}
                     {%
                         set selectedId = selectedPage ? selectedPage.id.toRfc4122 : null
@@ -280,63 +282,52 @@
                         {% endif %}
                     </div>
                 {% endif %}
-                <div class="border-t border-border p-3">
+                <div class="border-t border-border px-4 py-3 flex flex-wrap items-center gap-x-4 gap-y-2">
                     {%
                         set archivedParam = app.request.query.boolean('archived', false)
                     %}
                     {%
                         set translatedParam = app.request.query.boolean('translated', false)
                     %}
-                    <p>
-                        {% if archivedParam is same as(false) %}
-                            <twig:Xutim:Admin:Button
-                                tag="a"
-                                variant="link"
-                                href="{{ admin_path('admin_page_list', {archived: true, translated: translatedParam, id: selectedPage.id.toRfc4122 ?? null}) }}"
-                            >
-                                <twig:ux:icon name="ph:archive" class="icon" />
-                                {{ 'Show archived pages'|trans({}, 'admin') }}
-                            </twig:Xutim:Admin:Button>
-                        {% else %}
-                            <twig:Xutim:Admin:Button
-                                tag="a"
-                                variant="link"
-                                href="{{ admin_path('admin_page_list', {archived: false, translated: translatedParam, id: selectedPage.id.toRfc4122 ?? null}) }}"
-                            >
-                                <twig:ux:icon name="ph:newspaper" class="icon" />
-                                {{
-                                    'Show without archived pages'|trans({}, 'admin')
-                                }}
-                            </twig:Xutim:Admin:Button>
-                        {% endif %}
-                    </p>
-                    <p class="mb-2">
-                        {%
-                            if app.request.query.boolean('translated', false) is same as(false)
-                        %}
-                            <twig:Xutim:Admin:Button
-                                tag="a"
-                                variant="link"
-                                href="{{ admin_path('admin_page_list', {archived: archivedParam, translated: true, id: selectedPage.id.toRfc4122 ?? null}) }}"
-                            >
-                                <twig:ux:icon name="ph:translate" class="icon" />
-                                {{
-                                    'Show only translated pages'|trans({}, 'admin')
-                                }}
-                            </twig:Xutim:Admin:Button>
-                        {% else %}
-                            <twig:Xutim:Admin:Button
-                                tag="a"
-                                variant="link"
-                                href="{{ admin_path('admin_page_list', {archived: archivedParam, translated: false, id: selectedPage.id.toRfc4122 ?? null}) }}"
-                            >
-                                <twig:ux:icon name="ph:newspaper" class="icon" />
-                                {{
-                                    'Show untranslated and translated pages'|trans({}, 'admin')
-                                }}
-                            </twig:Xutim:Admin:Button>
-                        {% endif %}
-                    </p>
+                    {% if archivedParam is same as(false) %}
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="link"
+                            href="{{ admin_path('admin_page_list', {archived: true, translated: translatedParam, id: selectedPage.id.toRfc4122 ?? null}) }}"
+                        >
+                            <twig:ux:icon name="ph:archive" class="h-4 w-4 shrink-0" />
+                            {{ 'Show archived pages'|trans({}, 'admin') }}
+                        </twig:Xutim:Admin:Button>
+                    {% else %}
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="link"
+                            href="{{ admin_path('admin_page_list', {archived: false, translated: translatedParam, id: selectedPage.id.toRfc4122 ?? null}) }}"
+                        >
+                            <twig:ux:icon name="ph:newspaper" class="h-4 w-4 shrink-0" />
+                            {{ 'Show without archived pages'|trans({}, 'admin') }}
+                        </twig:Xutim:Admin:Button>
+                    {% endif %}
+
+                    {% if translatedParam is same as(false) %}
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="link"
+                            href="{{ admin_path('admin_page_list', {archived: archivedParam, translated: true, id: selectedPage.id.toRfc4122 ?? null}) }}"
+                        >
+                            <twig:ux:icon name="ph:translate" class="h-4 w-4 shrink-0" />
+                            {{ 'Show only translated pages'|trans({}, 'admin') }}
+                        </twig:Xutim:Admin:Button>
+                    {% else %}
+                        <twig:Xutim:Admin:Button
+                            tag="a"
+                            variant="link"
+                            href="{{ admin_path('admin_page_list', {archived: archivedParam, translated: false, id: selectedPage.id.toRfc4122 ?? null}) }}"
+                        >
+                            <twig:ux:icon name="ph:newspaper" class="h-4 w-4 shrink-0" />
+                            {{ 'Show untranslated and translated pages'|trans({}, 'admin') }}
+                        </twig:Xutim:Admin:Button>
+                    {% endif %}
                 </div>
             </div>
         </div>

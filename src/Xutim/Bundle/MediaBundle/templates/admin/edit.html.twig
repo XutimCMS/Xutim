@@ -2,15 +2,13 @@
 {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
 
 {% block pageTitle %}
-    <h1 class="page-title">
-        {% if translation %}
-            {{ translation.name }}
-        {% elseif media.innerName %}
-            {{ media.innerName }}
-        {% else %}
-            {{ media.originalPath|split('/')|last }}
-        {% endif %}
-    </h1>
+    {% if translation %}
+        {{ translation.name }}
+    {% elseif media.innerName %}
+        {{ media.innerName }}
+    {% else %}
+        {{ media.originalPath|split('/')|last }}
+    {% endif %}
 {% endblock %}
 
 {% block languageBar %}
@@ -61,7 +59,7 @@
                                             data-turbo-frame="modal"
                                             href="{{ admin_path('admin_media_inner_name_edit', {id: media.id}) }}"
                                         >
-                                            <twig:ux:icon name="ph:pencil-simple" class="icon" />
+                                            <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0" />
                                         </twig:Xutim:Admin:Button>
                                     </div>
                                 </twig:block>
@@ -81,7 +79,7 @@
                                             data-turbo-frame="modal"
                                             href="{{ admin_path('admin_media_copyright_edit', {id: media.id}) }}"
                                         >
-                                            <twig:ux:icon name="ph:pencil-simple" class="icon" />
+                                            <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0" />
                                         </twig:Xutim:Admin:Button>
                                     </div>
                                 </twig:block>
@@ -135,7 +133,7 @@
                                                 data-turbo-frame="modal"
                                                 href="{{ admin_path('admin_media_focal_point_edit', {id: media.id}) }}"
                                             >
-                                                <twig:ux:icon name="ph:pencil-simple" class="icon" />
+                                                <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0" />
                                             </twig:Xutim:Admin:Button>
                                         </div>
                                     {% endif %}
@@ -211,7 +209,7 @@
         onclick="window.dispatchEvent(new Event('sidebar:toggle'))"
         variant="nav"
     >
-        <twig:ux:icon name="ph:sidebar-simple" class="icon mr-1" />
+        <twig:ux:icon name="ph:sidebar-simple" class="h-4 w-4 shrink-0 mr-1" />
         Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}

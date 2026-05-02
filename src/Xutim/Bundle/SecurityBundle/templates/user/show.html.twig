@@ -16,7 +16,7 @@
         variant="nav"
         href="{{ path('homepage') }}"
     >
-        <twig:ux:icon name="ph:arrow-square-out" class="icon mr-1" />
+        <twig:ux:icon name="ph:arrow-square-out" class="h-4 w-4 shrink-0 mr-1" />
         Public page
     </twig:Xutim:Admin:Button>
     <twig:Xutim:Admin:Button
@@ -26,7 +26,7 @@
         data-turbo-frame="modal"
         href="{{ admin_path('admin_user_edit', {id: user.id}) }}"
     >
-        <twig:ux:icon name="ph:pencil-simple" class="icon mr-1" />
+        <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0 mr-1" />
         {{ 'Edit'|trans({}, 'admin')|capitalize }}
     </twig:Xutim:Admin:Button>
     <twig:Xutim:Admin:ModalDialog
@@ -36,7 +36,7 @@
         action="{{ admin_path('admin_user_delete', {id: user.id}) }}"
         confirmActionLabel="{{ 'action.delete'|trans({}, 'admin')|capitalize }}"
     >
-        <twig:ux:icon name="ph:trash" class="icon" />
+        <twig:ux:icon name="ph:trash" class="h-4 w-4 shrink-0" />
         {{ 'Delete'|trans({}, 'admin') }}
     </twig:Xutim:Admin:ModalDialog>
 {% endblock %}
@@ -135,7 +135,7 @@
                         action="{{ admin_path('admin_reset_password_send_token', {id: user.id}) }}"
                         confirmActionLabel="{{ 'action.approve'|trans({}, 'admin')|capitalize }}"
                     >
-                        <twig:ux:icon name="ph:checks" class="icon" />
+                        <twig:ux:icon name="ph:checks" class="h-4 w-4 shrink-0" />
 
                         {{ 'send reset password link'|trans({}, 'admin') }}
                     </twig:Xutim:Admin:ModalDialog>

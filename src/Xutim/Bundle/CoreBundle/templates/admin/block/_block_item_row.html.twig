@@ -148,7 +148,7 @@
             data-turbo-frame="modal"
             href="{{ admin_path('admin_block_edit_item', {id: item.id}) }}"
         >
-            <twig:ux:icon name="ph:pencil-simple" class="icon" />
+            <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0" />
         </twig:Xutim:Admin:Button>
 
         <twig:Xutim:Admin:ModalDialog
@@ -157,7 +157,7 @@
             confirmActionLabel="{{ 'action.remove'|trans({}, 'admin')|capitalize }}"
             modalDialogColor="danger"
         >
-            <twig:ux:icon name="ph:x" class="icon" />
+            <twig:ux:icon name="ph:x" class="h-4 w-4 shrink-0" />
         </twig:Xutim:Admin:ModalDialog>
     </td>
 </tr>

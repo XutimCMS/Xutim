@@ -1,29 +1,29 @@
-<div class="flex items-center gap-3" id="page-title-wrapper">
-    <h1 class="page-title mb-0">
+<span class="inline-flex items-center gap-2" id="page-title-wrapper">
+    <span>
         {% if currentFolder %}
             {{ currentFolder.name() }}
         {% else %}
             {{ 'Media'|trans({}, 'admin') }}
         {% endif %}
-    </h1>
+    </span>
     {% if currentFolder %}
         <a
             href="{{ admin_path('admin_media_folder_edit', {id: currentFolder.id()}) }}"
             data-turbo-frame="modal"
             aria-label="{{ 'Edit folder'|trans({}, 'admin') }}"
-            class="text-primary"
+            class="text-content-tertiary hover:text-content"
         >
-            <twig:ux:icon name="ph:pencil-simple" class="icon" />
+            <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0" />
         </a>
         {% if currentFolder.children() is empty and currentFolder.media() is empty %}
             <a
                 href="{{ admin_path('admin_media_folder_delete', {id: currentFolder.id()}) }}"
                 data-turbo-frame="modal"
                 aria-label="{{ 'Delete folder'|trans({}, 'admin') }}"
-                class="text-danger"
+                class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
             >
-                <twig:ux:icon name="ph:trash" class="icon" />
+                <twig:ux:icon name="ph:trash" class="h-4 w-4 shrink-0" />
             </a>
         {% endif %}
     {% endif %}
-</div>
+</span>

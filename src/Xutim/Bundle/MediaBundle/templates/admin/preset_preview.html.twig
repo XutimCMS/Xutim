@@ -1,10 +1,6 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 
-{% block pageTitle %}
-    <h1 class="page-title">
-        {{ media.originalPath|split('/')|last }}
-    </h1>
-{% endblock %}
+{% block pageTitle %}{{ media.originalPath|split('/')|last }}{% endblock %}
 
 {% block sidebar %}
     <twig:Xutim:Admin:Sidebar :title="">
@@ -129,7 +125,7 @@
         onclick="window.dispatchEvent(new Event('sidebar:toggle'))"
         variant="nav"
     >
-        <twig:ux:icon name="ph:sidebar-simple" class="icon mr-1" />
+        <twig:ux:icon name="ph:sidebar-simple" class="h-4 w-4 shrink-0 mr-1" />
         Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}

@@ -22,7 +22,7 @@
             data-turbo-frame="modal"
             href="{{ admin_path('admin_block_delete', {id: block.id}) }}"
         >
-            <twig:ux:icon name="ph:trash" class="icon mr-1" />
+            <twig:ux:icon name="ph:trash" class="h-4 w-4 shrink-0 mr-1" />
             Delete
         </twig:Xutim:Admin:Button>
         <twig:Xutim:Admin:Button
@@ -30,7 +30,7 @@
             variant="nav"
             href="{{ admin_path('admin_block_edit', {id: block.id}) }}"
         >
-            <twig:ux:icon name="ph:pencil-simple" class="icon mr-1" />
+            <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0 mr-1" />
             {{ 'Edit'|trans({}, 'admin') }}
         </twig:Xutim:Admin:Button>
     {% endif %}
@@ -95,7 +95,7 @@
                             data-turbo-frame="modal"
                             href="{{ admin_path('admin_block_add_item', {id: block.id}) }}"
                         >
-                            <twig:ux:icon name="ph:plus" class="icon" />
+                            <twig:ux:icon name="ph:plus" class="h-4 w-4 shrink-0" />
                             {{ 'item'|trans({}, 'admin')|capitalize }}
                         </twig:Xutim:Admin:Button>
                     </div>

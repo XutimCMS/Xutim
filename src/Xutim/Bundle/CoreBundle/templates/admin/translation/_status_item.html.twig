@@ -9,7 +9,7 @@
         bulkCount="{{ bulkCount }}"
         bulkLabel="{{ 'Apply to all %count% translations'|trans({'%count%': bulkCount}, 'admin') }}"
     >
-        <twig:ux:icon :name="'ph:' ~ iconName" class="icon" />
+        <twig:ux:icon :name="'ph:' ~ iconName" class="h-4 w-4 shrink-0" />
     </twig:Xutim:Admin:ModalDialog>
 {% endmacro %}
 {% block stream_success %}

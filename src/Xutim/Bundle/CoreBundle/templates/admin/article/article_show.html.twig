@@ -86,7 +86,7 @@
             variant="nav"
             href="{{ admin_path('admin_content_translation_revisions', {id: contextTranslation.id}) }}"
         >
-            <twig:ux:icon name="ph:clock-counter-clockwise" class="icon mr-1" />
+            <twig:ux:icon name="ph:clock-counter-clockwise" class="h-4 w-4 shrink-0 mr-1" />
             History
         </twig:Xutim:Admin:Button>
     {% endif %}
@@ -96,7 +96,7 @@
         variant="nav"
         href="{{ admin_path('admin_article_edit', {id: article.id}) }}"
     >
-        <twig:ux:icon name="ph:pencil-simple" class="icon mr-1" />
+        <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0 mr-1" />
         Edit
     </twig:Xutim:Admin:Button>
 
@@ -106,7 +106,7 @@
         variant="nav"
         href="{{ admin_path('admin_article_edit', {id: article.id}) }}"
     >
-        <twig:ux:icon name="ph:sidebar-simple" class="icon mr-1" />
+        <twig:ux:icon name="ph:sidebar-simple" class="h-4 w-4 shrink-0 mr-1" />
         Sidebar
     </twig:Xutim:Admin:Button>
 {% endblock %}

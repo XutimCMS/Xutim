@@ -48,7 +48,7 @@
                         onfocus="var temp_value=this.value; this.value=''; this.value=temp_value"
                     />
                     <span class="absolute right-3 top-1/2 -translate-y-1/2 text-content-secondary">
-                        <twig:ux:icon name="ph:magnifying-glass" class="icon" />
+                        <twig:ux:icon name="ph:magnifying-glass" class="h-4 w-4 shrink-0" />
                     </span>
                 </form>
             </div>
@@ -60,7 +60,7 @@
         data-turbo-frame="modal"
         href="{{ admin_path('admin_media_folder_new', {id: currentFolder.id()|default(null)}) }}"
     >
-        <twig:ux:icon name="ph:folder-simple" class="icon mr-1" />
+        <twig:ux:icon name="ph:folder-simple" class="h-4 w-4 shrink-0 mr-1" />
         {{ 'New folder'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 
@@ -70,7 +70,7 @@
         data-turbo-frame="modal"
         href="{{ admin_path('admin_media_upload', {id: currentFolder.id()|default(null)}) }}"
     >
-        <twig:ux:icon name="ph:image" class="icon mr-1" />
+        <twig:ux:icon name="ph:image" class="h-4 w-4 shrink-0 mr-1" />
         {{ 'New file'|trans({}, 'admin') }}
     </twig:Xutim:Admin:Button>
 {% endblock %}
@@ -108,7 +108,7 @@
                             data-drop-target-target="folderCard"
                         >
                             <div class="flex items-center gap-2 mb-2">
-                                <twig:ux:icon name="ph:folder-simple" class="icon" />
+                                <twig:ux:icon name="ph:folder-simple" class="h-4 w-4 shrink-0" />
                                 <div class="grow truncate font-medium" title="{{ folder.name() }}">
                                     {{ folder.name() }}
                                 </div>
@@ -135,7 +135,7 @@
                         class="p-4 flex items-center gap-2 text-black text-opacity-25"
                         data-drop-target-target="folderCard"
                     >
-                        <twig:ux:icon name="ph:plus" class="icon" />
+                        <twig:ux:icon name="ph:plus" class="h-4 w-4 shrink-0" />
                         <div class="grow">
                             <div class="font-medium truncate">
                                 {{ 'New folder'|trans({}, 'admin') }}
@@ -215,7 +215,7 @@
                                         class="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-raised rounded"
                                         href="{{ admin_path('admin_media_edit', {id: item.id()}) }}"
                                     >
-                                        <twig:ux:icon name="ph:pencil-simple" class="icon mr-2" />
+                                        <twig:ux:icon name="ph:pencil-simple" class="h-4 w-4 shrink-0 mr-2" />
                                         {{ 'Edit'|trans({}, 'admin') }}
                                     </a>
                                     <a
@@ -223,7 +223,7 @@
                                         href="{{ admin_path('admin_media_move', {id: item.id()}) }}"
                                         data-turbo-frame="modal"
                                     >
-                                        <twig:ux:icon name="ph:folder-simple" class="icon mr-2" />
+                                        <twig:ux:icon name="ph:folder-simple" class="h-4 w-4 shrink-0 mr-2" />
                                         {{ 'Move to folder'|trans({}, 'admin') }}
                                     </a>
                                 </div>

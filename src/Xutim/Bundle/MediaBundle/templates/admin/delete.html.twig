@@ -11,7 +11,7 @@
         <div class="p-4">
             <div class="text-center">
                 <p>
-                    <twig:ux:icon name="ph:warning" class="icon mb-2 text-danger icon-lg" />
+                    <twig:ux:icon name="ph:warning" class="h-6 w-6 shrink-0 mb-2 text-red-600" />
                 </p>
                 <h3>{{ title }}</h3>
             </div>
@@ -42,7 +42,7 @@
                 type="submit"
                 data-turbo-frame="{{ app.request.headers.get('turbo-frame') ? '_top' : '' }}"
             >
-                <twig:ux:icon name="ph:trash" class="icon" />
+                <twig:ux:icon name="ph:trash" class="h-4 w-4 shrink-0" />
                 {{ 'delete'|trans({}, 'admin')|capitalize }}
             </twig:Xutim:Admin:Button>
             {{ form_row(form._token) }}
