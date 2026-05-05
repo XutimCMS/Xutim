@@ -29,7 +29,7 @@
                     <div class="text-sm font-semibold">
                         {{ event.recordedAt|date('d M H:i') }}
                     </div>
-                    <div class="text-sm text-content-secondary">
+                    <div class="text-content-secondary">
                         {% if not is_content_event(event) %}
                             <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-surface-raised text-content-secondary">{{ revision_event_label(event) }}</span>
                         {% endif %}
@@ -42,7 +42,7 @@
                 </div>
             {% endif %}
         {% else %}
-            <div class="p-3 text-content-secondary text-sm">
+            <div class="p-3 text-content-secondary">
                 {{ 'No revision history'|trans({}, 'admin') }}
             </div>
         {% endfor %}
@@ -50,7 +50,7 @@
     {% if events|length > 10 %}
         <a
             href="{{ admin_path('admin_content_translation_revisions', {id: translationId}) }}"
-            class="text-sm block text-center py-2 border-t border-border"
+            class="block text-center py-2 border-t border-border"
             data-turbo-frame="_top"
         >
             {{ 'View all {count} revisions'|trans({'{count}': events|length}, 'admin') }}

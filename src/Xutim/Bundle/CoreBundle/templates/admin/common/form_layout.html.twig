@@ -34,7 +34,7 @@
 {%- endblock form_label_content -%}
 
 {%- block widget_attributes -%}
-    {%- set widget_class = 'w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent' -%}
+    {%- set widget_class = 'w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent' -%}
     {%- set widget_disabled_class = 'opacity-50 cursor-not-allowed' -%}
     {%- set widget_errors_class = 'border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-500/50' -%}
     {{- parent() -}}
@@ -70,7 +70,7 @@
         {{- form_errors(form) -}}
         <label class="inline-flex items-center gap-2 cursor-pointer">
             {{- form_widget(form, widget_attr) -}}
-            <span class="text-[13px]">{{ form.vars.label is defined and form.vars.label is not null ? (translation_domain is same as(false) ? form.vars.label : form.vars.label|trans({}, translation_domain)) : '' }}</span>
+            <span >{{ form.vars.label is defined and form.vars.label is not null ? (translation_domain is same as(false) ? form.vars.label : form.vars.label|trans({}, translation_domain)) : '' }}</span>
         </label>
         {{- form_help(form) -}}
     </div>
@@ -82,7 +82,7 @@
 {%- endblock radio_widget -%}
 
 {%- block choice_widget_collapsed -%}
-    {%- set attr = attr|merge({class: attr.class|default('w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent') ~ (disabled ? ' opacity-50 cursor-not-allowed' : '') ~ (errors|length ? ' border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-500/50' : '')}) -%}
+    {%- set attr = attr|merge({class: attr.class|default('w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent') ~ (disabled ? ' opacity-50 cursor-not-allowed' : '') ~ (errors|length ? ' border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-500/50' : '')}) -%}
     {{- parent() -}}
 {%- endblock choice_widget_collapsed -%}
 
@@ -91,18 +91,18 @@
         {%- for child in form %}
             <label class="flex items-center gap-2 cursor-pointer">
                 {{- form_widget(child) -}}
-                <span class="text-[13px]">{{ child.vars.label is defined ? (choice_translation_domain is same as(false) ? child.vars.label : child.vars.label|trans({}, choice_translation_domain)) : '' }}</span>
+                <span >{{ child.vars.label is defined ? (choice_translation_domain is same as(false) ? child.vars.label : child.vars.label|trans({}, choice_translation_domain)) : '' }}</span>
             </label>
         {% endfor -%}
     </div>
 {%- endblock choice_widget_expanded -%}
 
 {%- block textarea_widget -%}
-    {%- set attr = attr|merge({class: attr.class|default('w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent') ~ (disabled ? ' opacity-50 cursor-not-allowed' : '') ~ (errors|length ? ' border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-500/50' : '')}) -%}
+    {%- set attr = attr|merge({class: attr.class|default('w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent') ~ (disabled ? ' opacity-50 cursor-not-allowed' : '') ~ (errors|length ? ' border-red-300 focus:border-red-500 focus:ring-red-500 dark:border-red-500/50' : '')}) -%}
     {{- parent() -}}
 {%- endblock textarea_widget -%}
 
 {%- block button_widget -%}
-    {%- set attr = attr|merge({class: attr.class|default('inline-flex items-center justify-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black transition-colors')}) -%}
+    {%- set attr = attr|merge({class: attr.class|default('inline-flex items-center justify-center gap-1.5 rounded-md bg-accent px-4 py-2 font-medium text-white hover:bg-accent-hover dark:text-black transition-colors')}) -%}
     {{- parent() -}}
 {%- endblock button_widget -%}

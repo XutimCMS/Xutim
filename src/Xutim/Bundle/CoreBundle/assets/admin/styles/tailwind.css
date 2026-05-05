@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 
+/* Scan all Xutim bundles' admin templates and JS. */
 @source "../../../templates/**/*.html.twig";
+@source "../../../../*/templates/**/*.html.twig";
 @source "../../**/*.js";
 
 /* Ensure dynamic status color classes are generated */
@@ -29,6 +31,11 @@
 }
 
 @layer base {
+    body {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
     /* Content sidebar: push main content left when open on xl+ */
     @media (min-width: 1280px) {
         body.article-sidebar-open .lg\:pl-60 { padding-right: 18rem; }

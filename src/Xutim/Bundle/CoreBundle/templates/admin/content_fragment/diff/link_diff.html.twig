@@ -51,7 +51,7 @@
 {% endmacro %}
 {% import _self as H %}
 
-<div class="text-sm text-content-secondary mb-1">
+<div class="text-content-secondary mb-1">
     <twig:ux:icon name="ph:link" class="w-4 h-4" />
     <span class="font-bold">{{ label }}:</span>
     {% if idChanged %}
@@ -74,7 +74,7 @@
     %}
 
     {% if layoutChanged %}
-        <div class="text-sm">
+        <div>
             <span class="text-content-secondary font-bold">{{
                     'Layout'|trans({}, 'admin')
                 }}:</span>
@@ -82,7 +82,7 @@
             <ins>{{ layoutMeta.new ?? '' }}</ins>
         </div>
     {% elseif curLayout %}
-        <div class="text-sm">
+        <div>
             <span class="text-content-secondary font-bold">{{
                     'Layout'|trans({}, 'admin')
                 }}:</span>

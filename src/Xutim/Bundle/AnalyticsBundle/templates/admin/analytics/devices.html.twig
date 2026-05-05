@@ -22,7 +22,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxDeviceCount = devices|map(d => d.visits)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Device'|trans({}, 'admin') }}</th>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxBrowserCount = browsers|map(b => b.visits)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Browser'|trans({}, 'admin') }}</th>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxOsCount = operatingSystems|map(o => o.visits)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'OS'|trans({}, 'admin') }}</th>

@@ -1,11 +1,10 @@
 {% set bgColor = this.color.HTMLHex %}
-{% set textColor = this.color.accessibleTextColor.HTMLHex %}
 
 <span
     {{
         attributes.defaults({
-            class: 'inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium',
-            style: 'background-color: '~bgColor~'; color: '~textColor~';'
+            class: 'inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium',
+            style: 'background-color: color-mix(in srgb, '~bgColor~' 18%, transparent); color: '~bgColor~';'
         })
     }}
 >

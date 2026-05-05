@@ -4,7 +4,7 @@
 {%
     set captionChanged = captionMeta and captionMeta.status is defined and captionMeta.status != 'same'
 %}
-<div class="text-sm text-content-secondary mb-2">
+<div class="text-content-secondary mb-2">
     <twig:ux:icon name="ph:link" class="w-4 h-4" />
     <span class="font-bold">{{ 'Embed:'|trans({}, 'admin') }}</span>
     {% if url %}

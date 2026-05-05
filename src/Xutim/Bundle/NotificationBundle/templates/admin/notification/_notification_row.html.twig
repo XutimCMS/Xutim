@@ -14,7 +14,7 @@
         <twig:ux:icon :name="notification.severity.iconName()" width="14" height="14" class="{{ iconColor }}" />
     </div>
     <a href="{{ notification.actionUrl ?? '#' }}" class="flex-1 min-w-0">
-        <span class="text-[13px] font-medium {{ notification.read ? 'text-content-secondary' : '' }}">{{ notification.title }}</span>
+        <span class="font-medium {{ notification.read ? 'text-content-secondary' : '' }}">{{ notification.title }}</span>
         <p class="text-[12px] text-content-tertiary mt-0.5">{{ notification.body }}</p>
     </a>
     <span class="text-[11px] text-content-tertiary whitespace-nowrap shrink-0">{{ notification.createdAt|format_datetime('short', 'short') }}</span>

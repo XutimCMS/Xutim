@@ -1,8 +1,6 @@
 {% extends '@XutimCore/admin/base.html.twig' %}
 
-{% block pageTitle %}{{ 'articles'|trans({}, 'admin')|capitalize }}{%
-    endblock
-%}
+{% block pageTitle %}{{ 'articles'|trans({}, 'admin')|capitalize }}{% endblock %}
 
 {% block pageMenu %}
     {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
@@ -32,9 +30,7 @@
 {% block body %}
     {% set tagsOptions = [] %}
     {% for tag in fetch_tags() %}
-        {%
-            set tagsOptions = tagsOptions|merge([{label: tag.label, value: tag.id}])
-        %}
+        {% set tagsOptions = tagsOptions|merge([{label: tag.label, value: tag.id}]) %}
     {% endfor %}
     {%
         component 'Xutim:Admin:DataTable' with {
@@ -44,165 +40,115 @@
             filter: filter,
             showChips: true,
             columns: [
-              {
-                key: 'publicationStatus',
-                label: 'S'|trans({}, 'admin'),
-                sortable: true,
-                order: 'publicationStatus',
-                filter: {
-                  type: 'select',
-                  options: [
-                    {label: 'Draft'|trans({}, 'admin'), value: 'draft'},
-                    {label: 'Published'|trans({}, 'admin'), value: 'published'},
-                    {label: 'Scheduled'|trans({}, 'admin'), value: 'scheduled'},
-                  ],
-                  placeholder: 'Any'|trans({}, 'admin'),
-                  minWidth: '180px',
+                {
+                    key: 'publicationStatus',
+                    label: 'S'|trans({}, 'admin'),
+                    sortable: true,
+                    order: 'publicationStatus',
+                    filter: {
+                        type: 'select',
+                        options: [
+                            {label: 'Draft'|trans({}, 'admin'), value: 'draft'},
+                            {label: 'Published'|trans({}, 'admin'), value: 'published'},
+                            {label: 'Scheduled'|trans({}, 'admin'), value: 'scheduled'},
+                        ],
+                        placeholder: 'Any'|trans({}, 'admin'),
+                        chipLabel: 'Status'|trans({}, 'admin'),
+                        minWidth: '180px',
+                    },
+                    headerClass: 'w-6',
                 },
-                chip: true,
-              },
-              {
-                key: 'translationStatus',
-                label: 'Translation'|trans({}, 'admin'),
-                sortable: false,
-                filter: {
-                  type: 'select',
-                  options: [
-                    {label: 'Translated'|trans({}, 'admin'), value: 'translated'},
-                    {label: 'Missing'|trans({}, 'admin'), value: 'missing'},
-                    {label: 'Using fallback'|trans({}, 'admin'), value: 'fallback'},
-                  ],
-                  placeholder: 'Any'|trans({}, 'admin'),
-                  minWidth: '200px',
+                {
+                    key: 'translationStatus',
+                    label: 'Translation'|trans({}, 'admin'),
+                    sortable: false,
+                    filter: {
+                        type: 'select',
+                        options: [
+                            {label: 'Translated'|trans({}, 'admin'), value: 'translated'},
+                            {label: 'Missing'|trans({}, 'admin'), value: 'missing'},
+                            {label: 'Using fallback'|trans({}, 'admin'), value: 'fallback'},
+                        ],
+                        placeholder: 'Any'|trans({}, 'admin'),
+                        minWidth: '200px',
+                    },
+                    headerClass: 'w-20',
                 },
-                chip: {
-                  label: 'Translation'|trans({}, 'admin'),
+                {
+                    key: 'title',
+                    label: 'Title'|trans({}, 'admin'),
+                    sortable: true,
+                    order: 'title',
                 },
-              },
-              {
-                key: 'title',
-                label: 'title'|trans({}, 'admin'),
-                sortable: true,
-                order: 'title',
-                filter: {type: 'text'},
-                chip: true,
-              },
-              {
-                key: 'tags',
-                label: 'tags'|trans({}, 'admin'),
-                sortable: true,
-                order: 'tags',
-                filter: {
-                  type: 'select',
-                  options: tagsOptions,
-                  placeholder: 'Any'|trans({}, 'admin'),
-                  minWidth: '240px',
+                {
+                    key: 'tags',
+                    label: 'Tags'|trans({}, 'admin'),
+                    sortable: true,
+                    order: 'tags',
+                    filter: {
+                        type: 'select',
+                        options: tagsOptions,
+                        placeholder: 'Any'|trans({}, 'admin'),
+                        minWidth: '240px',
+                    },
                 },
-                chip: true,
-              },
-              {
-                key: 'inNews',
-                label: 'In news'|trans({}, 'admin'),
-                sortable: true,
-                order: 'inNews',
-                filter: {
-                  type: 'select',
-                  options: [
-                      {
-                          label: 'yes'|trans({}, 'admin'),
-                          value: 'true',
-                      }, {
-                          label: 'no'|trans({}, 'admin'),
-                          value: 'false',
-                      },
-                  ],
-                  placeholder: 'Any'|trans({}, 'admin'),
-                  minWidth: '240px',
+                {
+                    key: 'inNews',
+                    label: 'In news'|trans({}, 'admin'),
+                    sortable: true,
+                    order: 'inNews',
+                    filter: {
+                        type: 'select',
+                        options: [
+                            {label: 'yes'|trans({}, 'admin'), value: 'true'},
+                            {label: 'no'|trans({}, 'admin'), value: 'false'},
+                        ],
+                        placeholder: 'Any'|trans({}, 'admin'),
+                        minWidth: '180px',
+                    },
+                    headerClass: 'w-20',
                 },
-                chip: true,
-              },
-              {
-                key: 'updatedAt',
-                label: 'Updated at'|trans({}, 'admin'),
-                sortable: true,
-                order: 'updatedAt',
-                filter: {
-                  type: 'select',
-                  options: [
-                    {label: 'Last 7 days'|trans({}, 'admin'), value: '7'},
-                    {label: 'Last 30 days'|trans({}, 'admin'), value: '30'},
-                    {label: 'Last 90 days'|trans({}, 'admin'), value: '90'},
-                    {label: 'Older than 90 days'|trans({}, 'admin'), value: '90+'},
-                  ],
-                  placeholder: 'Any'|trans({}, 'admin'),
-                  minWidth: '200px',
+                {
+                    key: 'updatedAt',
+                    label: 'Updated at'|trans({}, 'admin'),
+                    sortable: true,
+                    order: 'updatedAt',
                 },
-                chip: {fallbackLabel: 'Last %value% days'|trans({}, 'admin')},
-              },
-              {
-                key: 'publishedAt',
-                label: 'published at'|trans({}, 'admin'),
-                sortable: true,
-                order: 'publishedAt',
-                filter: {
-                  type: 'select',
-                  options: [
-                    {label: 'Recently published'|trans({}, 'admin'), value: 'recent'},
-                    {label: 'Scheduled for future'|trans({}, 'admin'), value: 'scheduled'},
-                    {label: 'Never published'|trans({}, 'admin'), value: 'never'},
-                  ],
-                  placeholder: 'Any'|trans({}, 'admin'),
-                  minWidth: '220px',
+                {
+                    key: 'publishedAt',
+                    label: 'Published at'|trans({}, 'admin'),
+                    sortable: true,
+                    order: 'publishedAt',
                 },
-                chip: true,
-              },
             ],
         }
     %}
     {% block body %}
-        {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
         {% for article in articles %}
-            {%
-                set translation = article.translationByLocaleOrFallback(content_context_language(), default_locale)
-            %}
-            <tr>
-                <td>
-                    {% if translation.locale == content_context_language() %}
-                        {{ badges.publicationStatusBadge(translation) }}
-                    {% else %}
-                        {{ badges.missingBadge() }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% if translation.locale == content_context_language() %}
-                        <span class="inline-flex items-center text-[12px] font-medium text-green-600 dark:text-green-400">
-                            {{ 'Translated'|trans({}, 'admin') }}
-                        </span>
-                    {% else %}
-                        <span class="inline-flex items-center text-[12px] font-medium text-amber-600 dark:text-amber-400">
-                            {{ translation.locale|upper }}
-                        </span>
-                    {% endif %}
-                </td>
-                <td class="text-wrap">
-                    <twig:Xutim:Admin:Button
-                        tag="a"
-                        variant="link"
-                        href="{{ admin_path('admin_article_show', {id: article.id, _content_locale: content_context.language}) }}"
-                        data-turbo-frame="_top"
-                        class="mt-1"
-                        aria-label="{{ 'show'|trans({}, 'admin') }}"
-                    >
-                        {%
-                            import '@XutimCore/admin/common/translatable.html.twig' as translatable
-                        %}
-
-                        {{
-                            translatable.titleWithBadge(article, default_locale)
-                        }}
-                    </twig:Xutim:Admin:Button>
-                </td>
-                <td class="text-wrap" style="max-width: 240px;">
+            {% set translation = article.translationByLocaleOrFallback(content_context_language(), default_locale) %}
+            {% set inCurrentLocale = translation.locale == content_context_language() %}
+            {% set excludeFromNews = false %}
+            {% for tag in article.tags %}
+                {% if tag.excludeFromNews %}{% set excludeFromNews = true %}{% endif %}
+            {% endfor %}
+            <twig:Xutim:Admin:Tr>
+                <twig:Xutim:Admin:Td>
+                    <twig:Xutim:Admin:StatusDot :status="inCurrentLocale ? translation.status : null" />
+                </twig:Xutim:Admin:Td>
+                <twig:Xutim:Admin:Td>
+                    <span class="font-medium {{ inCurrentLocale ? 'text-accent' : 'text-amber-600 dark:text-amber-400' }}">{{ translation.locale|upper }}</span>
+                </twig:Xutim:Admin:Td>
+                <twig:Xutim:Admin:Td>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex rounded border border-border px-1 py-0.5 text-[10px] font-medium text-content-tertiary">{{ translation.locale }}</span>
+                        <a href="{{ admin_path('admin_article_show', {id: article.id, _content_locale: content_context.language}) }}"
+                            data-turbo-frame="_top"
+                            class="text-accent hover:underline"
+                            aria-label="{{ 'show'|trans({}, 'admin') }}"
+                        >{{ translation }}</a>
+                    </div>
+                </twig:Xutim:Admin:Td>
+                <twig:Xutim:Admin:Td class="max-w-60">
                     <div class="flex flex-wrap gap-1">
                         {% for tag in article.tags %}
                             {% set tagName = tag.translationByLocaleOrAny(content_context_language(), default_locale).name %}
@@ -211,62 +157,32 @@
                             </twig:Xutim:Admin:Tag>
                         {% endfor %}
                     </div>
-                </td>
-                <td>
-                    {% set excludeFromNews = false %}
-                    {% for tag in article.tags %}
-                        {% if tag.excludeFromNews %}
-                            {% set excludeFromNews = true %}
-                        {% endif %}
-                    {% endfor %}
-                    {% if excludeFromNews %}
-                        <span class="inline-flex items-center text-[12px] font-medium text-red-600 dark:text-red-400">
-                            {{ 'no'|trans({}, 'admin') }}
-                        </span>
-                    {% else %}
-                        <span class="inline-flex items-center text-[12px] font-medium text-green-600 dark:text-green-400">
-                            {{ 'yes'|trans({}, 'admin') }}
-                        </span>
-                    {% endif %}
-                </td>
-                <td>
-                    <time
-                        datetime="{{ translation.updatedAt|date('c') }}"
+                </twig:Xutim:Admin:Td>
+                <twig:Xutim:Admin:Td>
+                    <twig:Xutim:Admin:BoolText :value="not excludeFromNews" />
+                </twig:Xutim:Admin:Td>
+                <twig:Xutim:Admin:Td class="text-content-secondary whitespace-nowrap">
+                    <time datetime="{{ translation.updatedAt|date('c') }}"
                         title="{{ translation.updatedAt|format_datetime('long') }}"
-                        class="inline-flex flex-col leading-tight text-xs"
                         data-controller="tooltip"
-                    >
-                        <span>{{ translation.updatedAt|time_ago() }}</span>
-                    </time>
-                </td>
-                <td>
+                    >{{ translation.updatedAt|time_ago() }}</time>
+                </twig:Xutim:Admin:Td>
+                <twig:Xutim:Admin:Td class="text-content-secondary whitespace-nowrap">
                     {% if translation.isScheduled() and article.scheduledAt %}
-                        <time
-                            datetime="{{ article.scheduledAt|date('c') }}"
+                        <time datetime="{{ article.scheduledAt|date('c') }}"
                             title="{{ article.scheduledAt|format_datetime('long') }}"
-                            class="inline-flex flex-col leading-tight text-xs"
                             data-controller="tooltip"
-                        >
-                            <span>{{
-                                article.scheduledAt|time_ago()
-                            }}</span>
-                        </time>
+                        >{{ article.scheduledAt|time_ago() }}</time>
                     {% elseif translation.publishedAt %}
-                        <time
-                            datetime="{{ translation.publishedAt|date('c') }}"
+                        <time datetime="{{ translation.publishedAt|date('c') }}"
                             title="{{ translation.publishedAt|format_datetime('long') }}"
-                            class="inline-flex flex-col leading-tight text-xs"
                             data-controller="tooltip"
-                        >
-                            <span>{{
-                                translation.publishedAt|time_ago()
-                            }}</span>
-                        </time>
+                        >{{ translation.publishedAt|time_ago() }}</time>
                     {% else %}
                         -
                     {% endif %}
-                </td>
-            </tr>
+                </twig:Xutim:Admin:Td>
+            </twig:Xutim:Admin:Tr>
         {% endfor %}
     {% endblock %}
     {% endcomponent %}

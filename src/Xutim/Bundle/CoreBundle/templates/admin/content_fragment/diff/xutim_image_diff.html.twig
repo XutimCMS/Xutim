@@ -4,7 +4,7 @@
 
 {% macro image_row(label, url) %}
     <div class="flex items-center gap-2 flex-wrap mb-2">
-        <div class="text-sm text-content-secondary mr-2" style="width: 3rem">{{ label }}</div>
+        <div class="text-content-secondary mr-2" style="width: 3rem">{{ label }}</div>
         {% if url %}
             <img
                 src="{{ url }}"
@@ -13,7 +13,7 @@
                 style="max-width: 120px; height: auto"
             >
         {% else %}
-            <div class="text-sm text-content-secondary">&mdash;</div>
+            <div class="text-content-secondary">&mdash;</div>
         {% endif %}
     </div>
 {% endmacro %}

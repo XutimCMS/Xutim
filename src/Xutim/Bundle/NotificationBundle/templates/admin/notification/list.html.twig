@@ -27,7 +27,7 @@
                 <div class="flex h-12 w-12 items-center justify-center rounded-full bg-surface-raised mb-3">
                     <twig:ux:icon name="ph:bell-slash" width="24" height="24" class="text-content-tertiary" />
                 </div>
-                <p class="text-[13px] font-medium">No notifications</p>
+                <p class="font-medium">No notifications</p>
                 <p class="text-[12px] text-content-tertiary mt-1">You're all caught up.</p>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 <div class="px-4 py-2.5">
                     <form method="post" action="{{ admin_path('admin_notification_bulk') }}" class="flex items-center gap-3">
                         <input type="hidden" name="action" value="" />
-                        <span class="text-[13px] text-content-secondary">
+                        <span class="text-content-secondary">
                             <span data-notification-select-target="count">0</span> selected
                         </span>
                         <twig:Xutim:Admin:Button variant="primary" type="button" data-action="notification-select#markRead">
@@ -94,7 +94,7 @@
         </div>
 
         {% if notifications.nbPages > 1 %}
-            <div class="flex items-center justify-between mt-4 text-[13px]">
+            <div class="flex items-center justify-between mt-4">
                 <span class="text-content-secondary">
                     Page {{ notifications.currentPage }} of {{ notifications.nbPages }}
                 </span>

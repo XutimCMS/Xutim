@@ -23,10 +23,10 @@
 {% endmacro %}
 
 {% macro union(field, description = '') %}
-    <div class="mb-3">
+    <div class="mb-4">
         {{ form_label(field) }}
         {% if description %}
-            <div class="small text-muted mb-2">{{ description }}</div>
+            <div class="text-[12px] text-content-tertiary mb-2">{{ description }}</div>
         {% endif %}
         {{ form_widget(field) }}
         {{ form_errors(field) }}
@@ -35,10 +35,10 @@
 {% endmacro %}
 
 {% macro scalar(field, description = '') %}
-    <div class="mb-3">
+    <div class="mb-4">
         {{ form_label(field) }}
         {% if description %}
-            <div class="small text-muted mb-2">{{ description }}</div>
+            <div class="text-[12px] text-content-tertiary mb-2">{{ description }}</div>
         {% endif %}
         {{ form_widget(field) }}
         {{ form_errors(field) }}
@@ -51,18 +51,17 @@
 
     {% set imageData = field.vars.data %}
     {% set previewUrl = imageData ? media_url(imageData, 'thumb_small') : '' %}
-    <label class="form-label">{{ field.vars.label }}</label>
+    <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ field.vars.label }}</label>
     {% if description %}
-        <div class="small text-muted mb-2">{{ description }}</div>
+        <div class="text-[12px] text-content-tertiary mb-2">{{ description }}</div>
     {% endif %}
     <div
         data-controller="media-field"
         data-media-field-url-value="{{ admin_path('admin_json_image_list') }}"
         data-media-field-initial-url-value="{{ imageData ? previewUrl : '' }}"
         data-media-field-initial-id-value="{{ imageData ? imageData.id : '' }}"
-        class="position-relative rounded p-2 mb-3 text-center cursor-pointer"
+        class="relative rounded-md border-2 border-dashed border-border-strong p-2 mb-3 text-center cursor-pointer hover:border-accent transition-colors"
         data-action="click->media-field#openModal"
-        style="border: 0.125rem dashed #bbb"
     >
         <input
             type="hidden"
@@ -73,7 +72,7 @@
         <img
             src="{{ previewUrl }}"
             alt=""
-            class="img-fluid"
+            class="max-w-full h-auto mx-auto"
             style="max-height: 200px"
             data-media-field-target="preview"
             {% if not imageData %}
@@ -86,7 +85,7 @@
                 hidden
             {% endif %}
         >
-            <span class="text-muted">
+            <span class="text-content-tertiary">
                 {{ 'Click to select an image'|trans({}, 'admin') }}
             </span>
         </div>
@@ -96,8 +95,8 @@
 
 {#
     options:
-      container_class  classes on the outer wrapper — default is a vertical stack; pass "row g-3" for a bootstrap grid
-      item_class       classes on each item wrapper — defaults to "border rounded p-2 mb-2"
+      container_class  classes on the outer wrapper — default is a vertical stack
+      item_class       classes on each item wrapper
 #}
 {% macro collection(field, descriptions, options = {}) %}
     {% import _self as xl %}
@@ -107,13 +106,13 @@
         set container_class = options.container_class|default('xutim-layout-collection--stack')
     %}
     {%
-        set item_class = options.item_class|default('xutim-layout-collection__item border rounded p-2 mb-2')
+        set item_class = options.item_class|default('xutim-layout-collection__item rounded-md border border-border p-3 mb-2 relative')
     %}
 
-    <div class="mb-3">
-        <label class="form-label fw-semibold">{{ field.vars.label }}</label>
+    <div class="mb-4">
+        <label class="block text-[12px] font-semibold text-content-secondary mb-1">{{ field.vars.label }}</label>
         {% if description %}
-            <div class="small text-muted mb-2">{{ description }}</div>
+            <div class="text-[12px] text-content-tertiary mb-2">{{ description }}</div>
         {% endif %}
         <div
             class="xutim-layout-collection {{ container_class }}"
@@ -126,24 +125,27 @@
             {% for entry in field %}
                 <div class="{{ item_class }}" data-xutim-layout-collection-item>
                     {{ form_widget(entry) }}
-                    <button
+                    <twig:Xutim:Admin:Button
+                        variant="danger"
                         type="button"
-                        class="btn btn-sm btn-outline-danger mt-1"
+                        class="mt-2"
                         data-xutim-layout-collection-remove
                     >
                         {{ 'remove'|trans({}, 'admin') }}
-                    </button>
+                    </twig:Xutim:Admin:Button>
                 </div>
             {% endfor %}
         </div>
-        <button
+        <twig:Xutim:Admin:Button
+            variant="secondary"
             type="button"
-            class="btn btn-sm btn-outline-secondary mt-2"
+            class="mt-2"
             data-xutim-layout-collection-add
             data-xutim-layout-collection-target="{{ field.vars.full_name }}"
         >
-            + {{ 'add item'|trans({}, 'admin') }}
-        </button>
+            <twig:ux:icon name="ph:plus" class="h-4 w-4 shrink-0" />
+            {{ 'add item'|trans({}, 'admin') }}
+        </twig:Xutim:Admin:Button>
     </div>
     {% do field.setRendered %}
 {% endmacro %}

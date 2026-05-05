@@ -1,0 +1,24 @@
+{% set colors = {
+    success: 'bg-green-500',
+    primary: 'bg-blue-500',
+    warning: 'bg-amber-400',
+    secondary: 'bg-gray-400',
+    purple: 'bg-purple-500',
+} %}
+
+{% if this.status is null %}
+    <span class="inline-block h-2.5 w-2.5 rounded-full bg-surface border border-border-strong"
+        title="{{ 'Translation is missing'|trans({}, 'admin') }}"
+        data-controller="tooltip"></span>
+{% elseif this.referenceHasChanged and this.status.isPublished() %}
+    <span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500"
+        title="{{ this.status.value|trans({}, 'admin') }}"
+        data-controller="tooltip"></span>
+    <span class="inline-block h-2.5 w-2.5 rounded-full bg-amber-400 -ml-1"
+        title="{{ 'Reference has changed'|trans({}, 'admin') }}"
+        data-controller="tooltip"></span>
+{% else %}
+    <span class="inline-block h-2.5 w-2.5 rounded-full {{ colors[this.status.colorClass] ?? 'bg-gray-400' }}"
+        title="{{ this.status.value|trans({}, 'admin') }}"
+        data-controller="tooltip"></span>
+{% endif %}

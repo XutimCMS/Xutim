@@ -1,14 +1,14 @@
 <div class="flex lg:flex-col gap-0.5">
     <a href="{{ admin_path('admin_settings_site') }}"
-       class="rounded-md px-3 py-2 text-[13px] font-medium {{ app.current_route == 'admin_settings_site' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised' }} transition-colors">
+       class="rounded-md px-3 py-2 font-medium {{ app.current_route == 'admin_settings_site' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised' }} transition-colors">
         {{ 'Site'|trans({}, 'admin')|capitalize }}
     </a>
     <a href="{{ admin_path('admin_user_list', {searchTerm: ''}) }}"
-       class="rounded-md px-3 py-2 text-[13px] font-medium {{ app.current_route starts with 'admin_user' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised' }} transition-colors">
+       class="rounded-md px-3 py-2 font-medium {{ app.current_route starts with 'admin_user' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised' }} transition-colors">
         {{ 'users'|trans({}, 'admin')|capitalize }}
     </a>
     <a href="{{ admin_path('admin_menu_list') }}"
-       class="rounded-md px-3 py-2 text-[13px] font-medium {{ app.current_route starts with 'admin_menu' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised' }} transition-colors">
+       class="rounded-md px-3 py-2 font-medium {{ app.current_route starts with 'admin_menu' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised' }} transition-colors">
         {{ 'Menu'|trans({}, 'admin')|capitalize }}
     </a>
 </div>

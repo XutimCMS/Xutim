@@ -21,11 +21,6 @@
     {% if bodyTemplate %}
         {{ include(bodyTemplate, {form: form, definition: definition, descriptions: descriptions}) }}
     {% else %}
-        {#
-           Inline-editable fields (translatable text) render as hidden inputs 
-           so the modal shows only non-inline fields while values still 
-           round-trip on save.
-        #}
         {% set layoutFields = definition.getFields() %}
         {% for fieldName, field in form.children %}
             {% if fieldName != '_token' %}
@@ -41,20 +36,20 @@
 
     {{ form_rest(form) }}
 
-    <div class="xutim-layout-form__actions mt-2 d-flex gap-2">
-        <button
+    <div class="xutim-layout-form__actions mt-3 flex items-center gap-2">
+        <twig:Xutim:Admin:Button
+            variant="primary"
             type="button"
-            class="btn btn-primary"
             data-xutim-layout-save-btn
         >
             {{ 'save'|trans({}, 'admin') }}
-        </button>
-        <button
+        </twig:Xutim:Admin:Button>
+        <twig:Xutim:Admin:Button
+            variant="ghost"
             type="button"
-            class="btn btn-link"
             data-xutim-layout-cancel-btn
         >
             {{ 'cancel'|trans({}, 'admin') }}
-        </button>
+        </twig:Xutim:Admin:Button>
     </div>
 </div>

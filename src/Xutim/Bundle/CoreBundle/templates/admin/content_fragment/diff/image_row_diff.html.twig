@@ -29,11 +29,11 @@
 
 {% macro render_row(label, items) %}
     <div class="flex items-center gap-2 flex-wrap mb-2">
-        <div class="text-sm text-content-secondary mr-2" style="width: 3rem">
+        <div class="text-content-secondary mr-2" style="width: 3rem">
             {{ label|trans({}, 'admin') }}
         </div>
         {% if items|length == 0 %}
-            <div class="text-sm text-content-secondary">&mdash;</div>
+            <div class="text-content-secondary">&mdash;</div>
         {% else %}
             {% for img in items %}
                 {% if img and img.url is defined %}

@@ -45,32 +45,32 @@
                 {% block sidebarNav %}
                     <div class="space-y-0.5">
                         {% set _r = app.current_route %}
-                        <a href="{{ admin_path('admin_homepage') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r == 'admin_homepage' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                        <a href="{{ admin_path('admin_homepage') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 font-medium {{ _r == 'admin_homepage' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
                             <twig:ux:icon name="ph:house" class="h-4 w-4 shrink-0" />
                             {{ 'dashboard'|trans({}, 'admin')|capitalize }}
                         </a>
-                        <a href="{{ admin_path('admin_page_list') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_page' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                        <a href="{{ admin_path('admin_page_list') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 font-medium {{ _r starts with 'admin_page' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
                             <twig:ux:icon name="ph:folder-simple" class="h-4 w-4 shrink-0" />
                             {{ 'pages'|trans({}, 'admin')|capitalize }}
                         </a>
-                        <a href="{{ admin_path('admin_article_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_article' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                        <a href="{{ admin_path('admin_article_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 font-medium {{ _r starts with 'admin_article' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
                             <twig:ux:icon name="ph:newspaper" class="h-4 w-4 shrink-0" />
                             {{ 'articles'|trans({}, 'admin')|capitalize }}
                         </a>
-                        <a href="{{ admin_path('admin_tag_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_tag' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                        <a href="{{ admin_path('admin_tag_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 font-medium {{ _r starts with 'admin_tag' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
                             <twig:ux:icon name="ph:tag" class="h-4 w-4 shrink-0" />
                             {{ 'tags'|trans({}, 'admin')|capitalize }}
                         </a>
-                        <a href="{{ admin_path('admin_snippet_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_snippet' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                        <a href="{{ admin_path('admin_snippet_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 font-medium {{ _r starts with 'admin_snippet' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
                             <twig:ux:icon name="ph:text-aa" class="h-4 w-4 shrink-0" />
                             {{ 'snippets'|trans({}, 'admin')|capitalize }}
                         </a>
-                        <a href="{{ admin_path('admin_media_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_media' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                        <a href="{{ admin_path('admin_media_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 font-medium {{ _r starts with 'admin_media' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
                             <twig:ux:icon name="ph:image" class="h-4 w-4 shrink-0" />
                             {{ 'media'|trans({}, 'admin')|capitalize }}
                         </a>
                         {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR')) %}
-                            <a href="{{ admin_path('admin_block_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_block' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                            <a href="{{ admin_path('admin_block_list', {searchTerm: ''}) }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 font-medium {{ _r starts with 'admin_block' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
                                 <twig:ux:icon name="ph:squares-four" class="h-4 w-4 shrink-0" />
                                 {{ 'blocks'|trans({}, 'admin')|capitalize }}
                             </a>
@@ -82,7 +82,7 @@
                     <div class="mt-5">
                         <p class="mb-1 px-2.5 text-[11px] font-medium uppercase tracking-wider text-content-tertiary">{{ 'system'|trans({}, 'admin')|capitalize }}</p>
                         <div class="space-y-0.5">
-                            <a href="{{ admin_path('admin_notification_list') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_notification' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                            <a href="{{ admin_path('admin_notification_list') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 font-medium {{ _r starts with 'admin_notification' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
                                 <twig:ux:icon name="ph:bell" class="h-4 w-4 shrink-0" />
                                 {{ 'notifications'|trans({}, 'admin')|capitalize }}
                                 {% if notification_center.unreadCount > 0 %}
@@ -92,7 +92,7 @@
                                 {% endif %}
                             </a>
                             {% if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_DEVELOPER')) %}
-                                <a href="{{ admin_path('admin_settings_site') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium {{ _r starts with 'admin_settings' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
+                                <a href="{{ admin_path('admin_settings_site') }}" class="group flex items-center gap-2.5 rounded-md px-2.5 py-1.5 font-medium {{ _r starts with 'admin_settings' ? 'bg-accent-subtle text-accent' : 'text-content-secondary hover:bg-surface-raised hover:text-content' }} transition-colors">
                                     <twig:ux:icon name="ph:gear" class="h-4 w-4 shrink-0" />
                                     {{ 'settings'|trans({}, 'admin')|capitalize }}
                                 </a>
@@ -110,7 +110,7 @@
                         {% if not app.user.avatar %}{{ app.user.name|first|upper }}{% endif %}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="text-[13px] font-medium truncate">{{ app.user.name }}</div>
+                        <div class="font-medium truncate">{{ app.user.name }}</div>
                         <div class="text-[11px] text-content-tertiary truncate">{{ app.user.userIdentifier }}</div>
                     </div>
                     <a href="{{ admin_path('admin_logout') }}" class="rounded-md p-1 text-content-tertiary hover:text-content hover:bg-surface-raised transition-colors" title="{{ 'Logout'|trans({}, 'admin') }}">
@@ -128,7 +128,7 @@
                         <twig:ux:icon name="ph:list" class="h-5 w-5" />
                     </button>
 
-                    <nav class="flex items-center gap-1.5 text-[13px] text-content-tertiary min-w-0">
+                    <nav class="flex items-center gap-1.5 text-content-tertiary min-w-0">
                         {% if block('breadcrumbHeader') is defined %}
                             {{ block('breadcrumbHeader') }}
                         {% elseif block('pageTitle') is defined %}
@@ -168,7 +168,7 @@
                 <div class="border-b border-border print:hidden">
                     <div class="mx-auto max-w-7xl flex items-center justify-between px-4 py-2.5 lg:px-6">
                         <div class="min-w-0">
-                            <h1 class="text-[13px] font-semibold truncate">{{ block('pageTitle')|raw }}</h1>
+                            <h1 class="font-semibold truncate">{{ block('pageTitle')|raw }}</h1>
                             {% if block('pagePreTitle') is defined %}
                                 <p class="text-[11px] text-content-tertiary truncate">{{ block('pagePreTitle') }}</p>
                             {% endif %}

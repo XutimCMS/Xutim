@@ -22,7 +22,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxPageViews = pages|map(p => p.totalPageviews)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Page'|trans({}, 'admin') }}</th>

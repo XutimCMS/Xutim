@@ -84,7 +84,7 @@ export default class XutimLayoutTool {
 
     render() {
         this.wrapper = document.createElement('div');
-        this.wrapper.className = 'xutim-layout-block border rounded my-4';
+        this.wrapper.className = 'xutim-layout-block rounded-md border border-border my-4';
 
         this.renderBody();
 
@@ -97,7 +97,7 @@ export default class XutimLayoutTool {
         if (!this.data.layoutCode) {
             if (this.layouts.length === 0) {
                 const empty = document.createElement('div');
-                empty.className = 'p-3 text-muted small';
+                empty.className = 'p-3 text-[12px] text-content-tertiary';
                 empty.textContent = 'No layouts registered';
                 this.wrapper.appendChild(empty);
                 return;
@@ -120,16 +120,17 @@ export default class XutimLayoutTool {
 
     renderPicker() {
         const picker = document.createElement('div');
-        picker.className = 'p-3 d-flex align-items-center gap-2';
+        picker.className = 'p-3 flex items-center gap-3';
 
         const hint = document.createElement('span');
-        hint.className = 'text-muted small';
+        hint.className = 'text-[12px] text-content-tertiary';
         hint.textContent = 'No layout picked yet.';
         picker.appendChild(hint);
 
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'btn btn-primary';
+        btn.className =
+            'inline-flex items-center justify-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black transition-colors cursor-pointer';
         btn.textContent = 'Choose a layout';
         btn.addEventListener('click', (event) => {
             event.preventDefault();
@@ -143,6 +144,9 @@ export default class XutimLayoutTool {
     openLayoutPicker() {
         if (this.layoutPickerWrapper) return;
 
+        // Mirror the Admin:Modal twig component so the shared `modal`
+        // Stimulus controller binds automatically — outside-click close,
+        // turbo:before-cache teardown, etc. come for free.
         const wrapper = document.createElement('div');
         wrapper.setAttribute('data-controller', 'modal');
         wrapper.setAttribute(
@@ -151,7 +155,8 @@ export default class XutimLayoutTool {
         );
 
         const dialog = document.createElement('dialog');
-        dialog.className = 'shadow-lg dialog-lg overflow-y-auto';
+        dialog.className =
+            'fixed inset-0 z-[60] m-auto w-full max-w-4xl rounded-xl border border-border bg-surface shadow-xl backdrop:bg-black/50 p-0 overflow-y-auto max-h-[80vh]';
         dialog.setAttribute('data-modal-target', 'dialog');
         dialog.setAttribute(
             'data-action',
@@ -175,47 +180,82 @@ export default class XutimLayoutTool {
 
     buildLayoutPickerContent() {
         const container = document.createElement('div');
-        container.className = 'p-4';
+
+        const header = document.createElement('div');
+        header.className =
+            'flex items-center justify-between border-b border-border px-4 py-3';
 
         const heading = document.createElement('h3');
-        heading.className = 'mb-3';
+        heading.className = 'text-sm font-semibold';
         heading.textContent = 'Choose a layout';
-        container.appendChild(heading);
+        header.appendChild(heading);
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className =
+            'rounded-md p-1.5 text-content-tertiary hover:text-content hover:bg-surface-raised transition-colors cursor-pointer';
+        closeBtn.setAttribute('aria-label', 'Close');
+        closeBtn.innerHTML =
+            '<svg class="h-4 w-4" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128 50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"/></svg>';
+        closeBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            this.closeLayoutPicker();
+        });
+        header.appendChild(closeBtn);
+        container.appendChild(header);
+
+        const body = document.createElement('div');
+        body.className = 'p-4';
 
         const search = document.createElement('input');
         search.type = 'search';
-        search.className = 'form-control mb-3';
+        search.className =
+            'w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent mb-3';
         search.placeholder = 'Search layouts…';
-        container.appendChild(search);
+        body.appendChild(search);
 
         const categories = this.collectCategories();
         const chipsBar = document.createElement('div');
-        chipsBar.className = 'd-flex flex-wrap gap-2 mb-3';
+        chipsBar.className = 'flex flex-wrap gap-1.5 mb-3';
         const chipButtons = [];
+
+        const chipBaseClass =
+            'inline-flex items-center rounded-full px-3 py-1 text-[12px] font-medium cursor-pointer transition-colors';
+        const chipInactiveClass =
+            'border border-border text-content-secondary hover:bg-surface-raised';
+        const chipActiveClass = 'bg-accent text-white';
+
+        const setChipActive = (chip, active) => {
+            chip.className =
+                chipBaseClass + ' ' + (active ? chipActiveClass : chipInactiveClass);
+        };
 
         const makeChip = (label, value) => {
             const chip = document.createElement('button');
             chip.type = 'button';
-            chip.className = 'btn btn-sm btn-outline-secondary';
             chip.textContent = label;
             chip.dataset.category = value;
+            setChipActive(chip, false);
             chipsBar.appendChild(chip);
             chipButtons.push(chip);
             return chip;
         };
 
         const allChip = makeChip('All', '');
-        allChip.classList.add('active');
+        setChipActive(allChip, true);
         categories.forEach((cat) => makeChip(cat, cat));
-        container.appendChild(chipsBar);
+        body.appendChild(chipsBar);
 
         const grid = document.createElement('div');
-        grid.className = 'row g-3';
+        grid.className =
+            'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3';
         const cardWrappers = this.layouts.map((layout) =>
             this.buildLayoutCard(layout),
         );
         cardWrappers.forEach((card) => grid.appendChild(card));
-        container.appendChild(grid);
+        body.appendChild(grid);
+
+        container.appendChild(body);
 
         let activeCategory = '';
         const applyFilter = () => {
@@ -237,7 +277,7 @@ export default class XutimLayoutTool {
                 event.preventDefault();
                 activeCategory = chip.dataset.category || '';
                 chipButtons.forEach((other) =>
-                    other.classList.toggle('active', other === chip),
+                    setChipActive(other, other === chip),
                 );
                 applyFilter();
             });
@@ -248,7 +288,6 @@ export default class XutimLayoutTool {
 
     buildLayoutCard(layout) {
         const col = document.createElement('div');
-        col.className = 'col-12 col-sm-6 col-md-4';
         col.dataset.category = layout.category || 'Other';
         col.dataset.haystack = [
             layout.name || '',
@@ -261,14 +300,13 @@ export default class XutimLayoutTool {
         const card = document.createElement('button');
         card.type = 'button';
         card.className =
-            'card h-100 w-100 text-start border-2 p-0 overflow-hidden';
-        card.style.cursor = 'pointer';
+            'group flex h-full w-full flex-col overflow-hidden rounded-lg border border-border bg-surface text-left p-0 hover:border-accent hover:shadow-md transition-all cursor-pointer';
 
         const hasImage = !!layout.previewImage;
         const thumb = document.createElement('div');
         thumb.className =
-            (hasImage ? 'bg-white' : 'bg-light') +
-            ' d-flex align-items-center justify-content-center overflow-hidden border-bottom';
+            'flex items-center justify-center overflow-hidden border-b border-border ' +
+            (hasImage ? 'bg-white' : 'bg-surface-raised');
         thumb.style.aspectRatio = '16 / 9';
 
         if (hasImage) {
@@ -284,23 +322,23 @@ export default class XutimLayoutTool {
             thumb.appendChild(img);
         } else {
             const empty = document.createElement('span');
-            empty.className = 'text-muted small';
+            empty.className = 'text-[12px] text-content-tertiary';
             empty.textContent = 'No preview';
             thumb.appendChild(empty);
         }
         card.appendChild(thumb);
 
         const body = document.createElement('div');
-        body.className = 'card-body';
+        body.className = 'p-3';
 
         const title = document.createElement('div');
-        title.className = 'fw-semibold';
+        title.className = 'text-[13px] font-semibold text-content';
         title.textContent = layout.name || layout.code;
         body.appendChild(title);
 
         if (layout.description) {
             const desc = document.createElement('div');
-            desc.className = 'small text-muted mt-1';
+            desc.className = 'mt-1 text-[12px] text-content-tertiary';
             desc.textContent = layout.description;
             body.appendChild(desc);
         }
@@ -353,20 +391,22 @@ export default class XutimLayoutTool {
 
     renderPlaceholder() {
         const card = document.createElement('div');
-        card.className = 'xutim-layout-block__card position-relative';
+        card.className = 'xutim-layout-block__card relative';
 
         const header = document.createElement('div');
         header.className =
-            'd-flex justify-content-between align-items-center p-2 border-bottom bg-light';
+            'flex items-center justify-between p-2 border-b border-border bg-surface-raised';
 
         const label = document.createElement('div');
-        label.innerHTML = `<span class="badge bg-purple-lt me-2">Layout</span><strong>${this.escape(this.layoutDisplayName())}</strong>`;
+        label.className = 'flex items-center gap-2';
+        label.innerHTML = `<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400">Layout</span><strong class="text-[13px] font-semibold">${this.escape(this.layoutDisplayName())}</strong>`;
         header.appendChild(label);
 
         if (!this.readOnly && this.hasFormFields()) {
             const editBtn = document.createElement('button');
             editBtn.type = 'button';
-            editBtn.className = 'btn btn-sm btn-primary';
+            editBtn.className =
+                'inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-[12px] font-medium text-content-secondary hover:bg-surface-raised hover:text-content transition-colors cursor-pointer';
             editBtn.textContent = 'Edit';
             editBtn.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -380,7 +420,7 @@ export default class XutimLayoutTool {
         if (this.previewUrl) {
             const previewWrap = document.createElement('div');
             previewWrap.className =
-                'xutim-layout-block__preview position-relative';
+                'xutim-layout-block__preview relative';
             previewWrap.style.overflow = 'hidden';
 
             const iframe = document.createElement('iframe');
@@ -406,7 +446,7 @@ export default class XutimLayoutTool {
             this.refreshPreview();
         } else {
             const preview = document.createElement('div');
-            preview.className = 'small text-muted text-truncate p-2';
+            preview.className = 'text-[12px] text-content-tertiary truncate p-2';
             preview.textContent = this.previewText();
             card.appendChild(preview);
         }
@@ -606,7 +646,8 @@ export default class XutimLayoutTool {
         // clipped at the dialog edge. If a layout form ever gets tall
         // enough to need scrolling, give its form body its own
         // scroll container.
-        dialog.className = 'shadow-lg dialog-lg';
+        dialog.className =
+            'fixed inset-0 z-[60] m-auto w-full max-w-2xl rounded-xl border border-border bg-surface shadow-xl backdrop:bg-black/50 p-0';
         dialog.style.overflow = 'visible';
         dialog.setAttribute('data-modal-target', 'dialog');
         dialog.setAttribute(
@@ -616,7 +657,8 @@ export default class XutimLayoutTool {
 
         const body = document.createElement('div');
         body.className = 'p-4';
-        body.innerHTML = '<div class="text-muted small">Loading…</div>';
+        body.innerHTML =
+            '<div class="text-[12px] text-content-tertiary">Loading…</div>';
         dialog.appendChild(body);
 
         dialog.addEventListener('close', () => {
@@ -659,7 +701,7 @@ export default class XutimLayoutTool {
             .catch((err) => {
                 if (this.expandContainer !== wrapper) return;
                 body.innerHTML =
-                    '<div class="text-danger small">' +
+                    '<div class="text-[12px] text-red-600 dark:text-red-400 p-4">' +
                     this.escape(err.message || 'Failed to load form') +
                     '</div>';
             });
@@ -818,7 +860,8 @@ export default class XutimLayoutTool {
 
                     const removeBtn = document.createElement('button');
                     removeBtn.type = 'button';
-                    removeBtn.className = 'btn btn-sm btn-outline-danger mt-1';
+                    removeBtn.className =
+                        'inline-flex items-center justify-center gap-1.5 rounded-md border border-red-200 px-2.5 py-1 text-[12px] text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors cursor-pointer mt-2';
                     removeBtn.setAttribute(
                         'data-xutim-layout-collection-remove',
                         '',
@@ -911,7 +954,8 @@ export default class XutimLayoutTool {
         let box = container.querySelector('.xutim-layout-form__errors');
         if (!box) {
             box = document.createElement('div');
-            box.className = 'xutim-layout-form__errors alert alert-danger mt-2';
+            box.className =
+                'xutim-layout-form__errors mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-[12px] text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300';
             container.prepend(box);
         }
 

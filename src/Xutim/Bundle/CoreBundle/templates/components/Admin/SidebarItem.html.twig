@@ -2,7 +2,7 @@
 <div {{ attributes.defaults({class: 'flex items-center justify-between gap-2 px-4 py-2.5 min-w-0'}) }}>
     {% if block('header') is not empty %}
         <span class="text-[12px] text-content-secondary shrink-0">{% block header %}{% endblock %}</span>
-        <span class="text-[13px] text-right truncate">{{ content|raw }}</span>
+        <span class="text-right truncate">{{ content|raw }}</span>
     {% else %}
         {{ content|raw }}
     {% endif %}

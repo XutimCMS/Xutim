@@ -1,0 +1,29 @@
+{% set placementClass = {
+    'bottom-start': 'top-full left-0 mt-1',
+    'bottom-end': 'top-full right-0 mt-1',
+    'top-start': 'bottom-full left-0 mb-1',
+    'top-end': 'bottom-full right-0 mb-1',
+}[this.placement]|default('top-full left-0 mt-1') %}
+<div {{
+        attributes.defaults({
+            class: 'relative',
+            'data-controller': this.controller,
+            'data-dropdown-placement-value': this.placement,
+        })
+    }}>
+    {% block trigger %}{% endblock %}
+    <div
+        class="hidden absolute z-50 {{ placementClass }} {{ this.menuClass }}"
+        data-{{ this.controller }}-target="menu"
+    >
+        {% block content %}{% endblock %}
+    </div>
+    {#
+        Safelist anchor: Tailwind's scanner picks up class names from real
+        attribute strings. The menuClass prop interpolates these classes at
+        runtime, so the scanner can't see them in their usage; list them once
+        here so each variant is always generated. Add new sizes here when
+        introducing new menuClass values.
+    #}
+    <template hidden class="min-w-[160px] min-w-[180px] min-w-[280px] min-w-[300px] max-h-[350px]"></template>
+</div>

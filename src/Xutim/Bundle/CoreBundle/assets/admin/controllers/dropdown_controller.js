@@ -11,11 +11,14 @@ export default class extends Controller {
         const isHidden = this.menuTarget.classList.toggle('hidden');
         if (!isHidden) {
             this.#updatePosition();
+        } else {
+            this.#resetPosition();
         }
     }
 
     hide() {
         this.menuTarget.classList.add('hidden');
+        this.#resetPosition();
     }
 
     async #updatePosition() {
@@ -23,7 +26,24 @@ export default class extends Controller {
             placement: this.placementValue,
             middleware: [offset(6), flip(), shift({ padding: 8 })],
         });
-        Object.assign(this.menuTarget.style, { left: `${x}px`, top: `${y}px` });
+        // Reset right/bottom so the Tailwind placement classes
+        // (right-0, bottom-full, …) on the menu don't fight with
+        // floating-ui's computed left/top.
+        Object.assign(this.menuTarget.style, {
+            left: `${x}px`,
+            top: `${y}px`,
+            right: 'auto',
+            bottom: 'auto',
+        });
+    }
+
+    #resetPosition() {
+        Object.assign(this.menuTarget.style, {
+            left: '',
+            top: '',
+            right: '',
+            bottom: '',
+        });
     }
 
     connect() {

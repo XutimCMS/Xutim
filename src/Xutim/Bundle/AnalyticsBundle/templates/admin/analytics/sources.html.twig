@@ -29,7 +29,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxSourceCount = sources|map(s => s.visits)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Source'|trans({}, 'admin') }}</th>
@@ -73,7 +73,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxRefCount = rawReferrers|map(r => r.visits)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'URL'|trans({}, 'admin') }}</th>

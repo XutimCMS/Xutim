@@ -14,7 +14,7 @@
     </div>
 
     <h1 class="text-xl font-semibold text-center mb-1">{{ 'Sign in to'|trans({}, 'admin') }} {% block loginTitle %}Xutim{% endblock %}</h1>
-    <p class="text-[13px] text-content-secondary text-center mb-6">{{ 'Enter your credentials to access the admin'|trans({}, 'admin') }}</p>
+    <p class="text-content-secondary text-center mb-6">{{ 'Enter your credentials to access the admin'|trans({}, 'admin') }}</p>
 
     {% if error %}
         <twig:Xutim:Admin:Alert type="error" :message="error.messageKey|trans(error.messageData, 'security')" class="mb-4" />
@@ -30,7 +30,7 @@
             <label for="email" class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'email address'|trans({}, 'admin')|capitalize }}</label>
             <div class="relative">
                 <twig:ux:icon name="ph:envelope" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary pointer-events-none" />
-                <input id="email" name="email" type="email" required tabindex="1" autofocus autocomplete="off" placeholder="{{ 'your@email.com'|trans({}, 'admin') }}" class="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                <input id="email" name="email" type="email" required tabindex="1" autofocus autocomplete="off" placeholder="{{ 'your@email.com'|trans({}, 'admin') }}" class="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
             </div>
         </div>
 
@@ -41,7 +41,7 @@
             </div>
             <div class="relative">
                 <twig:ux:icon name="ph:lock" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary pointer-events-none" />
-                <input id="password" name="password" type="password" required tabindex="2" placeholder="{{ 'your password'|trans({}, 'admin')|capitalize }}" class="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
+                <input id="password" name="password" type="password" required tabindex="2" placeholder="{{ 'your password'|trans({}, 'admin')|capitalize }}" class="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" />
             </div>
         </div>
 
@@ -52,7 +52,7 @@
             </label>
         </div>
 
-        <button type="submit" tabindex="4" id="login-submit" class="w-full rounded-lg bg-accent py-2.5 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black transition-colors cursor-pointer">
+        <button type="submit" tabindex="4" id="login-submit" class="w-full rounded-lg bg-accent py-2.5 font-medium text-white hover:bg-accent-hover dark:text-black transition-colors cursor-pointer">
             {{ 'sign in'|trans({}, 'admin')|capitalize }}
         </button>
     </form>

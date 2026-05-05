@@ -1,17 +1,16 @@
 {% block xutim_layout_union_type_widget %}
-    <div class="form-selectgroup form-selectgroup-pills mb-2">
+    <div class="flex flex-wrap gap-1.5 mb-2">
         {% for choice in choices %}
-            <label class="form-selectgroup-item">
+            {% set checked = value == choice.value %}
+            <label class="inline-flex items-center rounded-full px-3 py-1 text-[12px] font-medium cursor-pointer transition-colors {{ checked ? 'bg-accent text-white dark:text-black' : 'border border-border text-content-secondary hover:bg-surface-raised' }}">
                 <input
                     type="radio"
                     name="{{ full_name }}"
                     value="{{ choice.value }}"
-                    class="form-selectgroup-input"
-                    {% if value == choice.value %}
-                        checked="checked"
-                    {% endif %}
+                    class="sr-only"
+                    {% if checked %}checked="checked"{% endif %}
                 >
-                <span class="form-selectgroup-label">{{ choice.label }}</span>
+                {{ choice.label }}
             </label>
         {% endfor %}
     </div>

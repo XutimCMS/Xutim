@@ -108,7 +108,7 @@
                                         {% if not loop.first %}<span class="border-l border-border self-stretch mx-1"></span>{% endif %}
                                         {% for choice in children %}
                                             {% set child = form.translationLocales.children[childIndex] %}
-                                            <label class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer{{ child.vars.checked ? ' bg-accent text-white' : ' border border-accent text-accent' }}">
+                                            <label class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium cursor-pointer{{ child.vars.checked ? ' bg-accent text-white dark:text-black' : ' border border-accent text-accent' }}">
                                                 <input type="checkbox" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}" class="hidden" data-action="change->translation-locales#toggleBadge"{{ child.vars.checked ? ' checked' : '' }}>
                                                 {{ child.vars.label }}
                                             </label>
@@ -202,7 +202,7 @@
                                         <div class="modal-footer">
                                             <button
                                                 type="button"
-                                                class="rounded-md border border-border px-3 py-1.5 text-[13px] font-medium text-content-secondary hover:bg-surface-raised"
+                                                class="rounded-md border border-border px-3 py-1.5 font-medium text-content-secondary hover:bg-surface-raised"
                                                 data-bs-dismiss="modal"
                                             >
                                                 {{ 'Close'|trans({}, 'admin') }}

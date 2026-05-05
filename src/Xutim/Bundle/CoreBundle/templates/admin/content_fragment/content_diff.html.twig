@@ -9,7 +9,7 @@
     {% if meta %}
         {% for key, field in meta %}
             {% if field.status is defined and field.status == 'changed' %}
-                <div class="text-sm text-content-secondary mt-1">
+                <div class="text-content-secondary mt-1">
                     <span class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-surface-raised text-content-secondary">{{ key }}</span>
                     <del class="text-red-600">{{ field.old }}</del>
                     &rarr;
@@ -57,7 +57,7 @@
             {% endif %}
 
             {% if blockAuthors is defined and renderKey and blockAuthors[renderKey] is defined and blockAuthors[renderKey]|length > 0 %}
-                <div class="inline-flex items-center gap-1 ml-2 text-sm text-content-secondary">
+                <div class="inline-flex items-center gap-1 ml-2 text-content-secondary">
                     {% for email in blockAuthors[renderKey] %}
                         {% set user = usersData[email]|default({}) %}
                         <span
@@ -104,17 +104,17 @@
         {% elseif row.kind == 'foldable_end' %}
             {{ include('@XutimCore/admin/content_fragment/foldable_end.html.twig') }}
         {% else %}
-            <div class="text-sm text-content-secondary mb-1">
+            <div class="text-content-secondary mb-1">
                 {{ 'Unknown block'|trans({}, 'admin') }}
             </div>
-            <div class="text-sm text-content-secondary">
+            <div class="text-content-secondary">
                 <strong>{{ row.attrs.sourceType ?? 'unknown' }}</strong>
                 {% if row.attrs.reason is defined and row.attrs.reason %}
                     <span class="ml-2">{{ row.attrs.reason }}</span>
                 {% endif %}
             </div>
             {% if row.raw_summary is defined and row.raw_summary %}
-                <pre class="text-sm text-content-secondary mb-0">{{ row.raw_summary }}</pre>
+                <pre class="text-content-secondary mb-0">{{ row.raw_summary }}</pre>
             {% endif %}
         {% endif %}
 

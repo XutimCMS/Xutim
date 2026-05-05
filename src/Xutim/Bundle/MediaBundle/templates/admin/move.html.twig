@@ -28,7 +28,7 @@
                                 <div class="font-medium">
                                     {{ 'Root'|trans({}, 'admin') }}
                                 </div>
-                                <div class="text-content-secondary text-sm">
+                                <div class="text-content-secondary">
                                     {{ 'No folder'|trans({}, 'admin') }}
                                 </div>
                             </div>
@@ -46,7 +46,7 @@
                                     <div class="font-medium">
                                         {{ folder.name }}
                                     </div>
-                                    <div class="text-content-secondary text-sm">
+                                    <div class="text-content-secondary">
                                         {% set path = folder.folderPath %}
                                         {% if path|length > 1 %}
                                             {% for pathFolder in path %}

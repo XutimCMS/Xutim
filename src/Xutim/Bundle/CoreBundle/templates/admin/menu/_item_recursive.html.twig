@@ -72,11 +72,19 @@
     {%
         if is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_EDITOR'))
     %}
-        <div class="dropdown float-right relative">
-            <a href="#" class="text-content-secondary" data-bs-toggle="dropdown">
-                <twig:ux:icon name="ph:dots-three" class="h-4 w-4 shrink-0" />
-            </a>
-            <div class="dropdown-menu dropdown-menu-end">
+        <twig:Xutim:Admin:Dropdown placement="bottom-end" class="float-right">
+            <twig:block name="trigger">
+                <twig:Xutim:Admin:Button
+                    tag="button"
+                    variant="ghost"
+                    class="!p-1"
+                    data-action="click->dropdown#toggle"
+                    aria-label="Menu"
+                >
+                    <twig:ux:icon name="ph:dots-three" class="h-4 w-4 shrink-0" />
+                </twig:Xutim:Admin:Button>
+            </twig:block>
+            <twig:block name="content">
                 {% set showUrl = null %}
                 {% if item.hasArticle() %}{%
                         set showUrl = 'admin_article_show'
@@ -113,7 +121,7 @@
                     {{ 'delete'|trans|capitalize }}
                 </twig:Xutim:Admin:Button>
 
-                <div class="dropdown-divider"></div>
+                <div class="my-1 border-t border-border"></div>
 
                 <twig:Xutim:Admin:Button
                     tag="a"
@@ -126,7 +134,7 @@
                 </twig:Xutim:Admin:Button>
 
                 {% if first is not same as(true) or last is not same as(true) %}
-                    <div class="dropdown-divider"></div>
+                    <div class="my-1 border-t border-border"></div>
 
                     {% if first is not same as(true) %}
                         <twig:Xutim:Admin:Button
@@ -150,7 +158,7 @@
                         </twig:Xutim:Admin:Button>
                     {% endif %}
                 {% endif %}
-            </div>
-        </div>
+            </twig:block>
+        </twig:Xutim:Admin:Dropdown>
     {% endif %}
 {% endmacro %}

@@ -1,0 +1,3 @@
+<span {{ attributes.defaults({class: 'font-medium ' ~ (this.value ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400')}) }}>
+    {{ (this.value ? this.trueLabel : this.falseLabel)|trans({}, this.domain) }}
+</span>

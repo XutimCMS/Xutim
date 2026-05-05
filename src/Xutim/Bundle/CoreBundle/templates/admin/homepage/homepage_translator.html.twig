@@ -84,7 +84,7 @@
         <div class="rounded-xl border border-border mb-6">
             <div class="flex items-center justify-between border-b border-border px-4 py-3">
                 <h3 class="text-sm font-semibold">{{ 'Unread notifications'|trans({}, 'admin') }}</h3>
-                <a href="{{ admin_path('admin_notification_list') }}" class="text-[13px] text-accent hover:underline">{{ 'View all'|trans({}, 'admin') }}</a>
+                <a href="{{ admin_path('admin_notification_list') }}" class="text-accent hover:underline">{{ 'View all'|trans({}, 'admin') }}</a>
             </div>
             <div class="divide-y divide-border">
                 {% for notification in latestNotifications %}
@@ -98,7 +98,7 @@
                                 <twig:ux:icon :name="notification.severity.iconName()" width="14" height="14" class="{{ iconColor }}" />
                             </div>
                             <div class="flex-1 min-w-0">
-                                <span class="text-[13px] font-medium">{{ notification.title }}</span>
+                                <span class="font-medium">{{ notification.title }}</span>
                                 <p class="text-[12px] text-content-tertiary mt-0.5">{{ notification.body|u.truncate(120, '...') }}</p>
                             </div>
                             <span class="text-[11px] text-content-tertiary whitespace-nowrap shrink-0">{{ notification.createdAt|format_datetime('short', 'short') }}</span>
@@ -117,7 +117,7 @@
                     <h3 class="text-sm font-semibold">{{ 'Articles to translate'|trans({}, 'admin') }}</h3>
                 </div>
                 <div>
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr class="border-b border-border bg-surface-raised text-left">
                                 <th class="pl-4 pr-2 py-2 font-medium text-content-tertiary w-8" title="{{ 'publication status'|trans({}, 'admin')|capitalize }}" data-controller="tooltip">S</th>
@@ -170,7 +170,7 @@
                     </table>
                 </div>
                 {% if untranslatedPager.nbPages > 1 %}
-                    <div class="flex items-center justify-between border-t border-border px-4 py-2.5 text-[13px]">
+                    <div class="flex items-center justify-between border-t border-border px-4 py-2.5">
                         <span class="text-content-secondary">{{ 'page'|trans({}, 'admin')|capitalize }} {{ untranslatedPager.currentPage }} {{ 'of'|trans({}, 'admin') }} {{ untranslatedPager.nbPages }}</span>
                         <div class="flex items-center gap-1">
                             <a href="{{ untranslatedPager.hasPreviousPage ? admin_current_path_with({untranslatedPage: untranslatedPager.previousPage}) : '#' }}" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 {{ untranslatedPager.hasPreviousPage ? 'text-content-secondary hover:bg-surface-raised' : 'text-content-tertiary pointer-events-none' }} transition-colors">
@@ -192,7 +192,7 @@
                     <h3 class="text-sm font-semibold">{{ 'Articles to update'|trans({}, 'admin') }}</h3>
                 </div>
                 <div>
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr class="border-b border-border bg-surface-raised text-left">
                                 <th class="pl-4 pr-2 py-2 font-medium text-content-tertiary w-8" title="{{ 'publication status'|trans({}, 'admin') }}">S</th>
@@ -244,7 +244,7 @@
                     </table>
                 </div>
                 {% if changedPager.nbPages > 1 %}
-                    <div class="flex items-center justify-between border-t border-border px-4 py-2.5 text-[13px]">
+                    <div class="flex items-center justify-between border-t border-border px-4 py-2.5">
                         <span class="text-content-secondary">{{ 'page'|trans({}, 'admin')|capitalize }} {{ changedPager.currentPage }} {{ 'of'|trans({}, 'admin') }} {{ changedPager.nbPages }}</span>
                         <div class="flex items-center gap-1">
                             <a href="{{ changedPager.hasPreviousPage ? admin_current_path_with({changedPage: changedPager.previousPage}) : '#' }}" class="inline-flex items-center gap-1 rounded-md px-2.5 py-1 {{ changedPager.hasPreviousPage ? 'text-content-secondary hover:bg-surface-raised' : 'text-content-tertiary pointer-events-none' }} transition-colors">

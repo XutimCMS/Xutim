@@ -139,7 +139,7 @@
                             {{ render_chart(pageviewsChart) }}
                         </div>
                     {% else %}
-                        <table class="w-full text-[13px]">
+                        <table class="w-full">
                             <thead>
                                 <tr>
                                     <th>{{ 'Date'|trans({}, 'admin') }}</th>
@@ -171,7 +171,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxRefCount = referrers|map(r => r.visits)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Referrer'|trans({}, 'admin') }}</th>

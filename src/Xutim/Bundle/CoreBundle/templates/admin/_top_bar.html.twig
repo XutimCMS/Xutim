@@ -28,42 +28,38 @@
                         {% endif %}
                     </a>
             </div>
-            <div class="nav-item dropdown">
-                <a
-                    href="#"
-                    class="nav-link flex lh-1 text-reset p-0"
-                    data-bs-toggle="dropdown"
-                    aria-label="Open user menu"
-                >
-                    <span
-                        class="avatar avatar-sm"
-                        style="background-image: url({{ app.user.avatar }})"
-                    ></span>
-                    <div class="hidden d-xl-block ps-2">
-                        <div>{{ app.user.name }}</div>
-                        <div class="mt-1 text-sm text-content-secondary">
-                            {{ app.user.userIdentifier }}
-                        </div>
-                    </div>
-                </a>
-                <div
-                    class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
-                >
-                    <a
-                        href="{{ admin_path('admin_user_profile') }}"
-                        class="dropdown-item"
+            <twig:Xutim:Admin:Dropdown placement="bottom-end">
+                <twig:block name="trigger">
+                    <twig:Xutim:Admin:Button
+                        tag="button"
+                        variant="ghost"
+                        class="!p-0"
+                        data-action="click->dropdown#toggle"
+                        aria-label="Open user menu"
                     >
+                        <span
+                            class="h-7 w-7 rounded-full bg-cover bg-center shrink-0"
+                            style="background-image: url({{ app.user.avatar }})"
+                        ></span>
+                        <div class="hidden xl:block pl-2 text-left">
+                            <div class="font-medium">{{ app.user.name }}</div>
+                            <div class="mt-0.5 text-[11px] text-content-tertiary">
+                                {{ app.user.userIdentifier }}
+                            </div>
+                        </div>
+                    </twig:Xutim:Admin:Button>
+                </twig:block>
+                <twig:block name="content">
+                    <twig:Xutim:Admin:Button tag="a" variant="dropdown" href="{{ admin_path('admin_user_profile') }}">
                         Profile
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="{{ admin_path('admin_logout') }}" class="dropdown-item">
-                        <span class="me-2">
-                            <twig:ux:icon name="ph:sign-out" class="h-4 w-4 shrink-0" />
-                        </span>
+                    </twig:Xutim:Admin:Button>
+                    <div class="my-1 border-t border-border"></div>
+                    <twig:Xutim:Admin:Button tag="a" variant="dropdown" href="{{ admin_path('admin_logout') }}">
+                        <twig:ux:icon name="ph:sign-out" class="h-4 w-4 shrink-0" />
                         Logout
-                    </a>
-                </div>
-            </div>
+                    </twig:Xutim:Admin:Button>
+                </twig:block>
+            </twig:Xutim:Admin:Dropdown>
         </div>
 
         <div class="navbar-collapse collapse" id="navbar-menu">

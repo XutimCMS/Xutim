@@ -22,33 +22,39 @@
 >
     {{ '30 days'|trans({}, 'admin') }}
 </twig:Xutim:Admin:Button>
-<li class="relative">
-    <button
-        type="button"
-        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium hover:bg-surface-raised {{ preset == 'custom' ? 'active' : '' }}"
-        data-bs-toggle="dropdown"
-    >
-        {% if preset == 'custom' %}
-            {{ range.from|date('Y-m-d') }} – {{ range.to|date('Y-m-d') }}
-        {% else %}
-            {{ 'Custom'|trans({}, 'admin') }}
-        {% endif %}
-    </button>
-    <div class="absolute right-0 top-full mt-1 rounded-xl border border-border bg-surface shadow-lg p-3 z-50" style="min-width: 280px;">
+<twig:Xutim:Admin:Dropdown
+    placement="bottom-end"
+    menuClass="min-w-[280px] rounded-xl border border-border bg-surface shadow-lg p-3"
+>
+    <twig:block name="trigger">
+        <twig:Xutim:Admin:Button
+            tag="button"
+            variant="nav"
+            class="{{ preset == 'custom' ? 'active' : '' }}"
+            data-action="click->dropdown#toggle"
+        >
+            {% if preset == 'custom' %}
+                {{ range.from|date('Y-m-d') }} – {{ range.to|date('Y-m-d') }}
+            {% else %}
+                {{ 'Custom'|trans({}, 'admin') }}
+            {% endif %}
+        </twig:Xutim:Admin:Button>
+    </twig:block>
+    <twig:block name="content">
         <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.query.all|filter((v, k) => k not in ['preset', 'from', 'to'])) }}">
             <input type="hidden" name="preset" value="custom">
             {% for key, value in app.request.query.all|filter((v, k) => k not in ['preset', 'from', 'to']) %}
                 <input type="hidden" name="{{ key }}" value="{{ value }}">
             {% endfor %}
             <div class="mb-3">
-                <label class="form-label">{{ 'From'|trans({}, 'admin') }}</label>
-                <input type="date" name="from" class="form-control" value="{{ range.from|date('Y-m-d') }}">
+                <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'From'|trans({}, 'admin') }}</label>
+                <input type="date" name="from" class="w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" value="{{ range.from|date('Y-m-d') }}">
             </div>
             <div class="mb-3">
-                <label class="form-label">{{ 'To'|trans({}, 'admin') }}</label>
-                <input type="date" name="to" class="form-control" value="{{ range.to|date('Y-m-d') }}">
+                <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'To'|trans({}, 'admin') }}</label>
+                <input type="date" name="to" class="w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" value="{{ range.to|date('Y-m-d') }}">
             </div>
-            <button type="submit" class="inline-flex items-center justify-center rounded-md bg-accent text-white px-3 py-1.5 text-[13px] font-medium hover:bg-accent/90 w-full">{{ 'Apply'|trans({}, 'admin') }}</button>
+            <twig:Xutim:Admin:Button type="submit" variant="primary" class="w-full">{{ 'Apply'|trans({}, 'admin') }}</twig:Xutim:Admin:Button>
         </form>
-    </div>
-</li>
+    </twig:block>
+</twig:Xutim:Admin:Dropdown>

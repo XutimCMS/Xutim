@@ -21,6 +21,7 @@ use Xutim\CoreBundle\Twig\Components\Admin\BreadcrumbsArticle;
 use Xutim\CoreBundle\Twig\Components\Admin\BreadcrumbsPage;
 use Xutim\CoreBundle\Twig\Components\Admin\Button;
 use Xutim\CoreBundle\Twig\Components\Admin\DataTable;
+use Xutim\CoreBundle\Twig\Components\Admin\Dropdown;
 use Xutim\CoreBundle\Twig\Components\Admin\LanguageContextBar;
 use Xutim\CoreBundle\Twig\Components\Admin\ListGroup;
 use Xutim\CoreBundle\Twig\Components\Admin\ListGroupItem;
@@ -37,7 +38,11 @@ use Xutim\CoreBundle\Twig\Components\Admin\SidebarItem;
 use Xutim\CoreBundle\Twig\Components\Admin\SidebarSection;
 use Xutim\CoreBundle\Twig\Components\Admin\SidebarTab;
 use Xutim\CoreBundle\Twig\Components\Admin\SidebarTabs;
+use Xutim\CoreBundle\Twig\Components\Admin\BoolText;
+use Xutim\CoreBundle\Twig\Components\Admin\StatusDot;
 use Xutim\CoreBundle\Twig\Components\Admin\Tag;
+use Xutim\CoreBundle\Twig\Components\Admin\Td;
+use Xutim\CoreBundle\Twig\Components\Admin\Tr;
 
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
@@ -95,6 +100,14 @@ return static function (ContainerConfigurator $container): void {
         ->tag('twig.component', [
             'key' => 'Xutim:Admin:DataTable',
             'template' => '@XutimCore/components/Admin/DataTable.html.twig'
+        ])
+    ;
+
+    $services
+        ->set(Dropdown::class)
+        ->tag('twig.component', [
+            'key' => 'Xutim:Admin:Dropdown',
+            'template' => '@XutimCore/components/Admin/Dropdown.html.twig'
         ])
     ;
 
@@ -203,6 +216,38 @@ return static function (ContainerConfigurator $container): void {
         ->tag('twig.component', [
             'key' => 'Xutim:Admin:Tag',
             'template' => '@XutimCore/components/Admin/Tag.html.twig'
+        ])
+    ;
+
+    $services
+        ->set(Td::class)
+        ->tag('twig.component', [
+            'key' => 'Xutim:Admin:Td',
+            'template' => '@XutimCore/components/Admin/Td.html.twig'
+        ])
+    ;
+
+    $services
+        ->set(Tr::class)
+        ->tag('twig.component', [
+            'key' => 'Xutim:Admin:Tr',
+            'template' => '@XutimCore/components/Admin/Tr.html.twig'
+        ])
+    ;
+
+    $services
+        ->set(BoolText::class)
+        ->tag('twig.component', [
+            'key' => 'Xutim:Admin:BoolText',
+            'template' => '@XutimCore/components/Admin/BoolText.html.twig'
+        ])
+    ;
+
+    $services
+        ->set(StatusDot::class)
+        ->tag('twig.component', [
+            'key' => 'Xutim:Admin:StatusDot',
+            'template' => '@XutimCore/components/Admin/StatusDot.html.twig'
         ])
     ;
 

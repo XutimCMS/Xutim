@@ -137,7 +137,7 @@
                                 set archiveStatus = constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Archived')
                             %}
                             <twig:Xutim:Admin:ModalDialog
-                                class="inline-flex items-center rounded-md border border-current px-3 py-1.5 text-[13px] font-medium text-{{ archiveStatus.colorClass }}-600 hover:bg-{{ archiveStatus.colorClass }}-50 dark:text-{{ archiveStatus.colorClass }}-400 dark:hover:bg-{{ archiveStatus.colorClass }}-500/10"
+                                class="inline-flex items-center rounded-md border border-current px-3 py-1.5 font-medium text-{{ archiveStatus.colorClass }}-600 hover:bg-{{ archiveStatus.colorClass }}-50 dark:text-{{ archiveStatus.colorClass }}-400 dark:hover:bg-{{ archiveStatus.colorClass }}-500/10"
                                 modalDialogColor="{{ archiveStatus.colorClass }}"
                                 action="{{ admin_path('admin_event_publication_status_edit', {id: event.id, status: archiveStatus.value}) }}"
                                 confirmActionLabel="{{ 'archive'|trans({}, 'admin')|capitalize }}"
@@ -147,7 +147,7 @@
                             </twig:Xutim:Admin:ModalDialog>
                         {% endif %}
                         <twig:Xutim:Admin:ModalDialog
-                            class="inline-flex items-center rounded-md border border-red-300 px-3 py-1.5 text-[13px] font-medium text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
+                            class="inline-flex items-center rounded-md border border-red-300 px-3 py-1.5 font-medium text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
                             modalDialogColor="danger"
                             action="{{ admin_path('admin_event_delete', {id: event.id}) }}"
                             confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"

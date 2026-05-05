@@ -11,7 +11,7 @@
     info: 'ph:info'
 } %}
 
-<div {{ attributes.defaults({class: 'flex items-start gap-3 rounded-lg border p-3 text-[13px] ' ~ (colors[this.type] ?? colors.info), role: 'alert'}) }}>
+<div {{ attributes.defaults({class: 'flex items-start gap-3 rounded-lg border p-3 ' ~ (colors[this.type] ?? colors.info), role: 'alert'}) }}>
     <twig:ux:icon :name="icons[this.type] ?? icons.info" class="shrink-0 mt-0.5" />
     <div class="flex-1 min-w-0">{{ this.message|raw }}</div>
     <button onclick="this.closest('[role=alert]').remove()" class="shrink-0 rounded-md p-0.5 opacity-60 hover:opacity-100 transition-opacity">

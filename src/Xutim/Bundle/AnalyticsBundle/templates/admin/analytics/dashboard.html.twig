@@ -155,7 +155,7 @@
                             {{ render_chart(pageviewsChart) }}
                         </div>
                     {% else %}
-                        <table class="w-full text-[13px]">
+                        <table class="w-full">
                             <thead>
                                 <tr>
                                     <th>{{ 'Date'|trans({}, 'admin') }}</th>
@@ -192,7 +192,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxPageViews = topPages|map(p => p.totalPageviews)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Page'|trans({}, 'admin') }}</th>
@@ -238,7 +238,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxSourceCount = referrers|map(r => r.visits)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Source'|trans({}, 'admin') }}</th>
@@ -280,7 +280,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxCountryCount = countries|map(c => c.visits)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Country'|trans({}, 'admin') }}</th>
@@ -322,7 +322,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     {% set maxDeviceCount = devices|map(d => d.visits)|sort|last|default(1) %}
-                    <table class="w-full text-[13px]">
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th class="uppercase text-content-secondary text-[11px] font-semibold">{{ 'Device'|trans({}, 'admin') }}</th>

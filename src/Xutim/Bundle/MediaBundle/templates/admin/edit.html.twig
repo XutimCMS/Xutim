@@ -275,7 +275,7 @@
             <div class="border-b border-border px-4 py-3 flex items-center">
                 <span class="text-lg font-semibold">{{ 'Generated image sizes'|trans({}, 'admin') }}</span>
                 <span data-xutim-media--regenerate-variants-target="progress"
-                      class="text-content-secondary text-sm ml-2 hidden"></span>
+                      class="text-content-secondary ml-2 hidden"></span>
                 <button data-action="xutim-media--regenerate-variants#regenerate"
                         data-xutim-media--regenerate-variants-target="button"
                         class="btn btn-sm btn-outline-primary ml-auto"
@@ -299,9 +299,9 @@
                                 >
                                     <div class="flex items-center w-full gap-3">
                                         <strong class="ml-auto">{{ data.preset.name }}</strong>
-                                        <span class="text-content-secondary text-sm">{{ data.preset.maxWidth }}×{{ data.preset.maxHeight }}</span>
+                                        <span class="text-content-secondary">{{ data.preset.maxWidth }}×{{ data.preset.maxHeight }}</span>
                                         <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400">{{ data.preset.fitMode.value }}</span>
-                                        <span class="text-content-secondary text-sm">{% for fmt, q in data.preset.quality %}{{ fmt }} {{ q }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                                        <span class="text-content-secondary">{% for fmt, q in data.preset.quality %}{{ fmt }} {{ q }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
                                         {% if data.variants is empty %}
                                             <span class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400" data-preset-badge="{{ data.preset.name }}">{{ 'Not generated'|trans({}, 'admin') }}</span>
                                         {% else %}

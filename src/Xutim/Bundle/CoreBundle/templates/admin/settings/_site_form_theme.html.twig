@@ -7,7 +7,7 @@
                 {% for label, days in {'1 month': 30, '3 months': 90, '6 months': 180} %}
                     <button
                         type="button"
-                        class="px-3 py-1 text-sm {{ fieldValue == days ? 'bg-accent text-white' : 'bg-surface text-content-secondary hover:bg-surface-raised' }} first:rounded-l-lg last:rounded-r-lg"
+                        class="px-3 py-1 text-sm {{ fieldValue == days ? 'bg-accent text-white dark:text-black' : 'bg-surface text-content-secondary hover:bg-surface-raised' }} first:rounded-l-lg last:rounded-r-lg"
                         data-preset-input-target="button"
                         data-action="preset-input#select"
                         data-value="{{ days }}"
@@ -20,7 +20,7 @@
                 'data-preset-input-target': 'input',
                 'data-action': 'preset-input#inputChanged',
             }}) }}
-            <span class="text-content-secondary text-sm">days</span>
+            <span class="text-content-secondary">days</span>
         </div>
         {{ form_help(form) }}
         {{ form_errors(form) }}

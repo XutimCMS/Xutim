@@ -184,7 +184,7 @@
             {{ 'Generated image sizes'|trans({}, 'admin') }}
         </div>
         <div class="card-body flex flex-col items-start p-0">
-            <table class="w-full text-[13px]">
+            <table class="w-full">
                 <thead>
                     <tr>
                         <th>{{ 'Preset'|trans({}, 'admin') }}</th>
@@ -243,7 +243,7 @@
                                         <img src="{{ item.url }}" alt="{{ data.preset.name }}" class="w-full rounded-t-xl object-cover">
                                     </a>
                                     <div class="p-4">
-                                        <p class="text-content-secondary mb-0 text-sm">
+                                        <p class="text-content-secondary mb-0">
                                             {{ item.variant.width }}×{{ item.variant.height }}
                                             <span class="badge bg-secondary">{{ item.variant.format }}</span>
                                         </p>

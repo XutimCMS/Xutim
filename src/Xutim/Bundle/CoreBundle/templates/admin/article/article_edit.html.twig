@@ -14,7 +14,7 @@
 {% block pageTitle %}
     {{ article.defaultTranslation.title }}
     {% if translation and translation.locale != article.defaultTranslation.locale %}
-        <span class="block text-[13px] font-normal text-content-tertiary">{{ translation.title }}</span>
+        <span class="block font-normal text-content-tertiary">{{ translation.title }}</span>
     {% endif %}
 {% endblock %}
 
@@ -45,7 +45,7 @@
             <twig:Xutim:Admin:SidebarTabs>
                 <twig:Xutim:Admin:SidebarTab>
                     <button
-                        class="w-full px-3 py-2.5 text-[13px] font-medium border-b-2 border-accent cursor-pointer"
+                        class="w-full px-3 py-2.5 font-medium border-b-2 border-accent cursor-pointer"
                         data-action="click->tab#switch"
                         data-tab-target="btn"
                         data-tab-target="#general-tab"
@@ -57,7 +57,7 @@
                 {% if translation is not same as(null) %}
                 <twig:Xutim:Admin:SidebarTab>
                     <button
-                        class="w-full px-3 py-2.5 text-[13px] text-content-secondary cursor-pointer"
+                        class="w-full px-3 py-2.5 text-content-secondary cursor-pointer"
                         data-action="click->tab#switch"
                         data-tab-target="btn"
                         data-tab-target="#history-tab"
@@ -81,7 +81,7 @@
                         src="{{ admin_path('admin_content_translation_sidebar_history', {id: translation.id}) }}"
                         loading="lazy"
                     >
-                        <div class="p-3 text-content-secondary text-sm">{{ 'Loading...'|trans({}, 'admin') }}</div>
+                        <div class="p-3 text-content-secondary">{{ 'Loading...'|trans({}, 'admin') }}</div>
                     </turbo-frame>
                 </div>
                 {% endif %}
@@ -92,7 +92,7 @@
 
 {% block body %}
     {% if localeBlocked|default(false) %}
-        <div class="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400 mb-3">
+        <div class="rounded-lg border border-blue-200 bg-blue-50 p-3 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-400 mb-3">
             {{ 'This article is not translatable into the selected locale.'|trans({}, 'admin') }}
         </div>
     {% else %}
@@ -109,7 +109,7 @@
         {{ include('@XutimCore/admin/content_draft/_draft_banner.html.twig') }}
 
         {% if not referenceExists %}
-            <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 mb-3">
+            <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 mb-3">
                 {{ 'Reference translation ({locale}) is missing for this content.'|trans({'{locale}': referenceLocale|upper}, 'admin') }}
             </div>
         {% endif %}
@@ -138,9 +138,9 @@
                 <div class="flex items-center gap-2">
                     {% if translation is not null %}
                         {{ badges.publicationStatusBadge(translation, '', referenceHasChanged) }}
-                        <span class="text-[13px] font-medium">{{ translation.title }}</span>
+                        <span class="font-medium">{{ translation.title }}</span>
                     {% else %}
-                        <span class="text-[13px] font-medium">{{ 'Translate into'|trans({}, 'admin') }} {{ content_context_language()|upper }}</span>
+                        <span class="font-medium">{{ 'Translate into'|trans({}, 'admin') }} {{ content_context_language()|upper }}</span>
                     {% endif %}
                 </div>
                 <div class="hidden sm:flex items-center gap-1 rounded-md border border-border p-0.5">
@@ -160,7 +160,7 @@
             <div class="grid gap-4" data-split-view-target="container">
                 <div class="space-y-4" data-split-view-target="left">
                     <div class="rounded-lg border border-border bg-surface-raised/50 p-0.5 hidden" data-split-view-target="referenceHeader">
-                        <div class="px-3 py-1.5 text-[13px] font-medium">{{ content_context_language()|locale_name }} ({{ content_context_language() }}) — {{ 'translation'|trans({}, 'admin') }}</div>
+                        <div class="px-3 py-1.5 font-medium">{{ content_context_language()|locale_name }} ({{ content_context_language() }}) — {{ 'translation'|trans({}, 'admin') }}</div>
                     </div>
                     {{ include('@XutimCore/admin/content_translation/_form.html.twig') }}
                     {% if not translation and article.translations|length > 0 and form.slug.vars.value is empty and form.vars.disabled == false %}
@@ -171,7 +171,7 @@
                 <div class="space-y-4 hidden" data-split-view-target="right">
                     <div class="rounded-lg border border-border bg-surface-raised/50 p-0.5 flex items-center gap-1">
                         <select
-                            class="w-full rounded-md bg-transparent px-3 py-1.5 text-[13px] text-content-secondary focus:outline-none cursor-pointer"
+                            class="w-full rounded-md bg-transparent px-3 py-1.5 text-content-secondary focus:outline-none cursor-pointer"
                             data-split-view-target="localeSelect"
                             data-action="change->split-view#loadReference"
                         >
@@ -194,7 +194,7 @@
                     </div>
 
                     {% if referenceHasChanged %}
-                        <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 flex items-center justify-between"
+                        <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 flex items-center justify-between"
                              data-split-view-target="changedBanner">
                             <div class="flex items-center">
                                 <twig:ux:icon name="ph:warning" width="16" height="16" class="mr-2" />
@@ -217,23 +217,23 @@
                     <div data-split-view-target="referenceContainer" class="space-y-4">
                         <div>
                             <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Intro title'|trans({}, 'admin') }}</label>
-                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaPretitle" value="{{ referenceTranslation ? referenceTranslation.pretitle : '' }}">
+                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaPretitle" value="{{ referenceTranslation ? referenceTranslation.pretitle : '' }}">
                         </div>
                         <div>
                             <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Title'|trans({}, 'admin') }}</label>
-                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaTitle" value="{{ referenceTranslation ? referenceTranslation.title : '' }}">
+                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaTitle" value="{{ referenceTranslation ? referenceTranslation.title : '' }}">
                         </div>
                         <div>
                             <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Subtitle'|trans({}, 'admin') }}</label>
-                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaSubtitle" value="{{ referenceTranslation ? referenceTranslation.subtitle : '' }}">
+                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaSubtitle" value="{{ referenceTranslation ? referenceTranslation.subtitle : '' }}">
                         </div>
                         <div>
                             <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Slug'|trans({}, 'admin') }}</label>
-                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaSlug" value="{{ referenceTranslation ? referenceTranslation.slug : '' }}">
+                            <input type="text" class="w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaSlug" value="{{ referenceTranslation ? referenceTranslation.slug : '' }}">
                         </div>
                         <div>
                             <label class="block text-[12px] font-medium text-content-secondary mb-1">{{ 'Description'|trans({}, 'admin') }}</label>
-                            <textarea rows="3" class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-[13px] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaDescription">{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</textarea>
+                            <textarea rows="3" class="w-full rounded-lg border border-border bg-surface px-3 py-2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent" disabled data-split-view-target="metaDescription">{{ referenceTranslation ? referenceTranslation.description|striptags : '' }}</textarea>
                         </div>
                         <div id="reference-editor" data-split-view-target="reference"></div>
                     </div>
@@ -241,29 +241,50 @@
             </div>
 
             {% if form.vars.disabled == false %}
-            <div class="sticky bottom-0 mt-6 flex items-center gap-2 rounded-lg border border-border bg-surface p-3 shadow-lg z-10" data-controller="dropdown" data-dropdown-placement-value="top-start">
-                <button type="submit" form="{{ form.vars.id }}" class="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-[13px] font-medium text-white hover:bg-accent-hover dark:text-black cursor-pointer" data-editorjs-form-target="primaryBtn">
-                    {{ 'Save and publish'|trans({}, 'admin') }}
-                </button>
-                <button type="button" class="inline-flex items-center justify-center rounded-md bg-accent px-2 py-2 text-white hover:bg-accent-hover dark:text-black cursor-pointer" data-action="click->dropdown#toggle">
-                    <twig:ux:icon name="ph:caret-down" class="h-3 w-3" />
-                </button>
-                <div class="hidden z-50 min-w-[180px] rounded-lg border border-border bg-surface shadow-lg py-1" data-dropdown-target="menu">
-                    <button type="button" class="flex w-full items-center px-3 py-1.5 text-[13px] hover:bg-surface-raised transition-colors cursor-pointer"
-                        data-action="click->editorjs-form#chooseSaveAction click->dropdown#hide"
-                        data-editorjs-form-action-param="publish"
-                    >
-                        {{ 'Save and publish'|trans({}, 'admin') }}
-                    </button>
-                    <button type="button" class="flex w-full items-center px-3 py-1.5 text-[13px] hover:bg-surface-raised transition-colors cursor-pointer"
-                        data-action="click->editorjs-form#chooseSaveAction click->dropdown#hide"
-                        data-editorjs-form-action-param="draft"
-                    >
-                        {{ 'Save as draft'|trans({}, 'admin') }}
-                    </button>
-                </div>
-                <div class="ml-auto text-[11px] text-content-tertiary" data-editorjs-form-target="lastSaved"></div>
-            </div>
+                <twig:Xutim:Admin:Dropdown
+                    placement="top-start"
+                    class="sticky bottom-0 mt-6 flex items-center gap-2 rounded-lg border border-border bg-surface p-3 shadow-lg z-10"
+                    menuClass="min-w-[180px] rounded-lg border border-border bg-surface shadow-lg py-1"
+                >
+                    <twig:block name="trigger">
+                        <twig:Xutim:Admin:Button
+                            type="submit"
+                            variant="primary"
+                            form="{{ form.vars.id }}"
+                            data-editorjs-form-target="primaryBtn"
+                        >
+                            {{ 'Save and publish'|trans({}, 'admin') }}
+                        </twig:Xutim:Admin:Button>
+                        <twig:Xutim:Admin:Button
+                            tag="button"
+                            variant="primary"
+                            class="!px-2"
+                            data-action="click->dropdown#toggle"
+                            aria-label="{{ 'Save options'|trans({}, 'admin') }}"
+                        >
+                            <twig:ux:icon name="ph:caret-down" class="h-3 w-3" />
+                        </twig:Xutim:Admin:Button>
+                        <div class="ml-auto text-[11px] text-content-tertiary" data-editorjs-form-target="lastSaved"></div>
+                    </twig:block>
+                    <twig:block name="content">
+                        <twig:Xutim:Admin:Button
+                            tag="button"
+                            variant="dropdown"
+                            data-action="click->editorjs-form#chooseSaveAction click->dropdown#hide"
+                            data-editorjs-form-action-param="publish"
+                        >
+                            {{ 'Save and publish'|trans({}, 'admin') }}
+                        </twig:Xutim:Admin:Button>
+                        <twig:Xutim:Admin:Button
+                            tag="button"
+                            variant="dropdown"
+                            data-action="click->editorjs-form#chooseSaveAction click->dropdown#hide"
+                            data-editorjs-form-action-param="draft"
+                        >
+                            {{ 'Save as draft'|trans({}, 'admin') }}
+                        </twig:Xutim:Admin:Button>
+                    </twig:block>
+                </twig:Xutim:Admin:Dropdown>
             {% endif %}
         </div>
     {% endif %}
