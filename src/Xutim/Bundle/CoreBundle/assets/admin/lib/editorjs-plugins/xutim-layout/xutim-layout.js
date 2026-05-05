@@ -84,7 +84,7 @@ export default class XutimLayoutTool {
 
     render() {
         this.wrapper = document.createElement('div');
-        this.wrapper.className = 'xutim-layout-block border rounded my-4';
+        this.wrapper.className = 'xutim-layout-block my-4';
 
         this.renderBody();
 
@@ -93,8 +93,10 @@ export default class XutimLayoutTool {
 
     renderBody() {
         this.wrapper.innerHTML = '';
+        this.wrapper.classList.remove('border', 'rounded');
 
         if (!this.data.layoutCode) {
+            this.wrapper.classList.add('border', 'rounded');
             if (this.layouts.length === 0) {
                 const empty = document.createElement('div');
                 empty.className = 'p-3 text-muted small';
@@ -352,31 +354,6 @@ export default class XutimLayoutTool {
     }
 
     renderPlaceholder() {
-        const card = document.createElement('div');
-        card.className = 'xutim-layout-block__card position-relative';
-
-        const header = document.createElement('div');
-        header.className =
-            'd-flex justify-content-between align-items-center p-2 border-bottom bg-light';
-
-        const label = document.createElement('div');
-        label.innerHTML = `<span class="badge bg-purple-lt me-2">Layout</span><strong>${this.escape(this.layoutDisplayName())}</strong>`;
-        header.appendChild(label);
-
-        if (!this.readOnly && this.hasFormFields()) {
-            const editBtn = document.createElement('button');
-            editBtn.type = 'button';
-            editBtn.className = 'btn btn-sm btn-primary';
-            editBtn.textContent = 'Edit';
-            editBtn.addEventListener('click', (event) => {
-                event.preventDefault();
-                this.openEditor();
-            });
-            header.appendChild(editBtn);
-        }
-
-        card.appendChild(header);
-
         if (this.previewUrl) {
             const previewWrap = document.createElement('div');
             previewWrap.className =
@@ -386,6 +363,7 @@ export default class XutimLayoutTool {
             const iframe = document.createElement('iframe');
             iframe.className = 'border-0';
             iframe.setAttribute('title', 'Layout preview');
+            iframe.setAttribute('scrolling', 'no');
             iframe.style.display = 'block';
             iframe.style.border = '0';
             iframe.style.width = this.PREVIEW_DESKTOP_WIDTH + 'px';
@@ -400,18 +378,16 @@ export default class XutimLayoutTool {
             this.previewScale = 1;
 
             previewWrap.appendChild(iframe);
-            card.appendChild(previewWrap);
+            this.wrapper.appendChild(previewWrap);
 
             this.setupPreviewScaleObserver();
             this.refreshPreview();
         } else {
             const preview = document.createElement('div');
             preview.className = 'small text-muted text-truncate p-2';
-            preview.textContent = this.previewText();
-            card.appendChild(preview);
+            preview.textContent = this.previewText() || this.layoutDisplayName();
+            this.wrapper.appendChild(preview);
         }
-
-        this.wrapper.appendChild(card);
     }
 
     refreshPreview() {
@@ -941,6 +917,54 @@ export default class XutimLayoutTool {
             wrapper.parentNode.removeChild(wrapper);
         }
         document.body.classList.remove('overflow-hidden');
+    }
+
+    renderSettings() {
+        if (this.readOnly || !this.data.layoutCode) return null;
+
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('cdx-settings-popover');
+
+        const items = [];
+        if (this.hasFormFields()) {
+            items.push({
+                title: 'Edit content',
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>',
+                onClick: () => this.openEditor(),
+            });
+        }
+        items.push({
+            title: 'Change layout',
+            icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 9v12"/></svg>',
+            onClick: () => this.openLayoutPicker(),
+        });
+
+        items.forEach((item) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.classList.add('ce-popover-item');
+
+            const iconSpan = document.createElement('span');
+            iconSpan.classList.add(
+                'ce-popover-item__icon',
+                'ce-popover-item__icon--tool',
+            );
+            iconSpan.innerHTML = item.icon;
+
+            const textSpan = document.createElement('span');
+            textSpan.classList.add('ce-popover-item__title');
+            textSpan.textContent = item.title;
+
+            button.appendChild(iconSpan);
+            button.appendChild(textSpan);
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                item.onClick();
+            });
+            wrapper.appendChild(button);
+        });
+
+        return wrapper;
     }
 
     save() {
