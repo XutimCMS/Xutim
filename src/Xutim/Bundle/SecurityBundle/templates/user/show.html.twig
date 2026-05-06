@@ -142,5 +142,21 @@
                 {% endif %}
             </div>
         </div>
+
+        <div class="datagrid-item">
+            <div class="datagrid-title">
+                {{ 'impersonate'|trans({}, 'admin') }}
+            </div>
+            <div class="datagrid-content">
+                <a
+                    href="{{ path('admin_homepage_redirect', {_switch_user: user.email}) }}"
+                    data-turbo-frame="_top"
+                    data-turbo-prefetch="false"
+                >
+                    <twig:ux:icon name="tabler:spy" class="icon" />
+                    {{ 'impersonate user'|trans({}, 'admin') }}
+                </a>
+            </div>
+        </div>
     </div>
 {% endmacro %}
