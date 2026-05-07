@@ -25,10 +25,6 @@
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="content">
                     <div class="btn-group w-100">
-                        <a href="{{ admin_path('admin_article_notify_translators', {id: article.id}) }}" class="btn btn-sm btn-outline-primary" data-turbo-frame="modal" title="{{ 'Notify translators'|trans({}, 'admin') }}" data-controller="tooltip">
-                            <twig:Xutim:Admin:Icon name="bell" class="me-1" />
-                            {{ 'Notify'|trans({}, 'admin') }}
-                        </a>
                         {% if article.translations|length > 1 %}
                             <twig:Xutim:Admin:ModalDialog
                                 class="btn btn-sm btn-outline-primary"
@@ -42,6 +38,10 @@
                                 {{ 'Sync'|trans({}, 'admin') }}
                             </twig:Xutim:Admin:ModalDialog>
                         {% endif %}
+                        <a href="{{ admin_path('admin_article_notify_translators', {id: article.id}) }}" class="btn btn-sm btn-outline-primary" data-turbo-frame="modal" title="{{ 'Notify translators'|trans({}, 'admin') }}" data-controller="tooltip">
+                            <twig:Xutim:Admin:Icon name="bell" class="me-1" />
+                            {{ 'Notify'|trans({}, 'admin') }}
+                        </a>
                     </div>
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
