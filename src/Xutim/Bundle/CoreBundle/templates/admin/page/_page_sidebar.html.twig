@@ -21,7 +21,7 @@
                                 action="{{ admin_path('admin_page_mark_translations_synced', {id: page.id}) }}"
                                 confirmActionLabel="{{ 'Mark as synced'|trans({}, 'admin')|capitalize }}"
                                 title="{{ 'Mark translations as synced with the latest reference change. Translations that were already outdated before this change are kept as-is.'|trans({}, 'admin') }}"
-                                extraControllers="tooltip"
+                                data-controller="tooltip"
                             >
                                 <twig:Xutim:Admin:Icon name="check" class="me-1" />
                                 {{ 'Sync'|trans({}, 'admin') }}

@@ -1,13 +1,9 @@
-{% set extraControllers = extraControllers|default('') ~ ' ' ~ 'dialog-modal' %}
-{% if buttonType is defined and buttonType == 'a' %}
-    {% set buttonTag = 'a' %}
-{% else %}
-    {% set buttonTag = 'button' %}
-{% endif %}
+{% set buttonTag = (buttonType|default('') == 'a') ? 'a' : 'button' %}
+{% set mergedControllers = ((attributes.all['data-controller'] ?? '') ~ ' dialog-modal')|trim %}
 <{{ buttonTag }}
-    {{ attributes }}
+    {{ attributes.without('data-controller') }}
     {{ buttonTag == 'a' ? 'href="#" role="button"' : '' }}
-    data-controller="{{ extraControllers }}"
+    data-controller="{{ mergedControllers }}"
     data-action="click->dialog-modal#activate"
     data-dialog-modal-help-text-value="{{ dialogHelp|default('') }}"
     data-dialog-modal-action-value="{{ action }}"

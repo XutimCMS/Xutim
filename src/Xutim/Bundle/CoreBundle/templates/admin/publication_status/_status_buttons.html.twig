@@ -9,7 +9,7 @@
         bulkCount="{{ bulkCount }}"
         bulkLabel="{{ 'Apply to all %count% translations'|trans({'%count%': bulkCount}, 'admin') }}"
         title="{{ confirmActionLabel }}"
-        extraControllers="tooltip"
+        data-controller="tooltip"
     >
         <twig:Xutim:Admin:Icon name="{{ iconName }}" plain="true" />
     </twig:Xutim:Admin:ModalDialog>
