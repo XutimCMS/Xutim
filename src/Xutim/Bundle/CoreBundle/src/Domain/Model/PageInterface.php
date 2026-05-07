@@ -86,7 +86,7 @@ interface PageInterface extends TranslationLocaleAwareInterface
 
     public function movePosUp(int $step): void;
 
-    public function movePosDown(int $step): void;
+    public function movePosDown(int $step, int $maxPosition): void;
 
     public function getLayout(): ?string;
 

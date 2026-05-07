@@ -284,6 +284,9 @@ class Page implements PageInterface
 
     public function movePosUp(int $step): void
     {
+        if ($this->position <= 0) {
+            return;
+        }
         if ($this->position - $step < 0) {
             $this->position = 0;
 
@@ -292,8 +295,16 @@ class Page implements PageInterface
         $this->position -= $step;
     }
 
-    public function movePosDown(int $step): void
+    public function movePosDown(int $step, int $maxPosition): void
     {
+        if ($this->position >= $maxPosition) {
+            return;
+        }
+        if ($this->position + $step > $maxPosition) {
+            $this->position = $maxPosition;
+
+            return;
+        }
         $this->position += $step;
     }
 

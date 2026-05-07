@@ -53,7 +53,9 @@ class PageRepository extends ServiceEntityRepository
             ->leftJoin('node.defaultTranslation', 'transDef')
             ->addSelect('transDef')
             ->addOrderBy('parent.id', 'ASC')
-            ->addOrderBy('node.position', 'ASC');
+            ->addOrderBy('node.position', 'ASC')
+            ->addOrderBy('node.createdAt', 'ASC')
+            ->addOrderBy('node.id', 'ASC');
 
         if ($onlyTranslated === true) {
             $builder
@@ -312,6 +314,8 @@ class PageRepository extends ServiceEntityRepository
         $pages = $builder
             ->orderBy('page.parent', 'desc')
             ->addOrderBy('page.position', 'asc')
+            ->addOrderBy('page.createdAt', 'asc')
+            ->addOrderBy('page.id', 'asc')
             ->getQuery()
             ->getResult();
 
@@ -418,7 +422,22 @@ class PageRepository extends ServiceEntityRepository
 
     public function moveDown(PageInterface $page, int $step = 1): void
     {
-        $page->movePosDown($step);
+        $page->movePosDown($step, $this->maxPositionInGroup($page));
+    }
+
+    private function maxPositionInGroup(PageInterface $page): int
+    {
+        $qb = $this->createQueryBuilder('p')->select('MAX(p.position)');
+        $parent = $page->getParent();
+        if ($parent === null) {
+            $qb->where('p.parent IS NULL');
+        } else {
+            $qb->where('p.parent = :parent')->setParameter('parent', $parent);
+        }
+
+        $max = $qb->getQuery()->getSingleScalarResult();
+
+        return $max === null ? 0 : (int) $max;
     }
 
     public function save(PageInterface $entity, bool $flush = false): void
