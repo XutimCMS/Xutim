@@ -190,6 +190,98 @@ class ReferenceSyncServiceTest extends AdminApplicationTestCase
         $this->assertEquals($deSnapshotTime, $de->getReferenceSyncedAt(), 'de should NOT be synced (real change)');
     }
 
+    /**
+     * Sibling synced relative to the immediately-previous reference revision
+     * gets bumped to the current reference updatedAt.
+     */
+    public function testMarkRecentlyOutdatedSiblingsBumpsRecentSync(): void
+    {
+        $article = ArticleFactory::createOne();
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $fr = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'fr']);
+
+        $previousRevAt = new DateTimeImmutable('-1 hour');
+        $this->createLogEvent($en, new DateTimeImmutable('-2 hours'), 'V1', ['blocks' => []]);
+        $this->createLogEvent($en, $previousRevAt, 'V2', ['blocks' => []]);
+        $this->createLogEvent($en, new DateTimeImmutable('-5 minutes'), 'V3', ['blocks' => []]);
+
+        $fr->changeReferenceSyncedAt($previousRevAt);
+        $this->em->flush();
+
+        $count = $this->syncService->markRecentlyOutdatedSiblingsAsSynced($article);
+        $this->em->flush();
+
+        $this->assertSame(1, $count);
+        $this->assertEquals($en->getUpdatedAt(), $fr->getReferenceSyncedAt());
+    }
+
+    /**
+     * Sibling that was already stale before the latest reference edit
+     * is left untouched — translator-pending work is preserved.
+     */
+    public function testMarkRecentlyOutdatedSiblingsLeavesPreviouslyStaleAlone(): void
+    {
+        $article = ArticleFactory::createOne();
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $fr = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'fr']);
+
+        $this->createLogEvent($en, new DateTimeImmutable('-3 hours'), 'V1', ['blocks' => []]);
+        $this->createLogEvent($en, new DateTimeImmutable('-1 hour'), 'V2', ['blocks' => []]);
+        $this->createLogEvent($en, new DateTimeImmutable('-5 minutes'), 'V3', ['blocks' => []]);
+
+        $stale = new DateTimeImmutable('-3 hours');
+        $fr->changeReferenceSyncedAt($stale);
+        $this->em->flush();
+
+        $count = $this->syncService->markRecentlyOutdatedSiblingsAsSynced($article);
+        $this->em->flush();
+
+        $this->assertSame(0, $count);
+        $this->assertEquals($stale, $fr->getReferenceSyncedAt());
+    }
+
+    /**
+     * Sibling with null referenceSyncedAt is left alone — never been synced.
+     */
+    public function testMarkRecentlyOutdatedSiblingsSkipsNullSync(): void
+    {
+        $article = ArticleFactory::createOne();
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $fr = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'fr']);
+
+        $this->createLogEvent($en, new DateTimeImmutable('-1 hour'), 'V1', ['blocks' => []]);
+        $this->createLogEvent($en, new DateTimeImmutable('-5 minutes'), 'V2', ['blocks' => []]);
+        $this->em->flush();
+
+        $count = $this->syncService->markRecentlyOutdatedSiblingsAsSynced($article);
+        $this->em->flush();
+
+        $this->assertSame(0, $count);
+        $this->assertNull($fr->getReferenceSyncedAt());
+    }
+
+    /**
+     * With only one revision (just-created reference), there's no previous
+     * revision to anchor against — service returns 0 and changes nothing.
+     */
+    public function testMarkRecentlyOutdatedSiblingsReturnsZeroWithNoPreviousRevision(): void
+    {
+        $article = ArticleFactory::createOne();
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $fr = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'fr']);
+
+        $this->createLogEvent($en, new DateTimeImmutable('-5 minutes'), 'V1', ['blocks' => []]);
+        $existing = new DateTimeImmutable('-10 minutes');
+        $fr->changeReferenceSyncedAt($existing);
+        $this->em->flush();
+
+        $count = $this->syncService->markRecentlyOutdatedSiblingsAsSynced($article);
+        $this->em->flush();
+
+        $this->assertSame(0, $count);
+        $this->assertEquals($existing, $fr->getReferenceSyncedAt());
+    }
+
     private function createLogEvent(
         object $translation,
         DateTimeImmutable $recordedAt,

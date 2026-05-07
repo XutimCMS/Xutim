@@ -13,10 +13,25 @@
         <twig:Xutim:Admin:SidebarSection>
             <twig:Xutim:Admin:SidebarItem>
                 <twig:block name="content">
-                    <a href="{{ admin_path('admin_page_notify_translators', {id: page.id}) }}" class="btn btn-sm btn-outline-primary w-100" data-turbo-frame="modal">
-                        <twig:Xutim:Admin:Icon name="bell" class="me-1" />
-                        {{ 'Notify translators'|trans({}, 'admin') }}
-                    </a>
+                    <div class="btn-group w-100">
+                        <a href="{{ admin_path('admin_page_notify_translators', {id: page.id}) }}" class="btn btn-sm btn-outline-primary" data-turbo-frame="modal" title="{{ 'Notify translators'|trans({}, 'admin') }}" data-controller="tooltip">
+                            <twig:Xutim:Admin:Icon name="bell" class="me-1" />
+                            {{ 'Notify'|trans({}, 'admin') }}
+                        </a>
+                        {% if page.translations|length > 1 %}
+                            <twig:Xutim:Admin:ModalDialog
+                                class="btn btn-sm btn-outline-primary"
+                                modalDialogColor="primary"
+                                action="{{ admin_path('admin_page_mark_translations_synced', {id: page.id}) }}"
+                                confirmActionLabel="{{ 'Mark as synced'|trans({}, 'admin')|capitalize }}"
+                                title="{{ 'Mark translations as synced'|trans({}, 'admin') }}"
+                                data-controller="tooltip"
+                            >
+                                <twig:Xutim:Admin:Icon name="check" class="me-1" />
+                                {{ 'Sync'|trans({}, 'admin') }}
+                            </twig:Xutim:Admin:ModalDialog>
+                        {% endif %}
+                    </div>
                 </twig:block>
             </twig:Xutim:Admin:SidebarItem>
         </twig:Xutim:Admin:SidebarSection>

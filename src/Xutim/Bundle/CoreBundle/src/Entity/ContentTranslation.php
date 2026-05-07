@@ -53,6 +53,7 @@ class ContentTranslation implements ContentTranslationInterface
     ) {
         $this->id = Uuid::v4();
         $this->status = PublicationStatus::Draft;
+        $this->publishedAt = null;
         $this->createdAt = $this->updatedAt = new DateTimeImmutable();
         $this->preTitle = $preTitle;
         $this->title = $title;

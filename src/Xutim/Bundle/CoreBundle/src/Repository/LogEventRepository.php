@@ -91,6 +91,26 @@ class LogEventRepository extends ServiceEntityRepository
         return $this->findContentRevisionBefore($translation, $before);
     }
 
+    public function findPreviousContentRevision(ContentTranslationInterface $translation): ?LogEventInterface
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->where('e.objectId = :id')
+            ->setParameter('id', $translation->getId())
+            ->orderBy('e.recordedAt', 'DESC')
+            ->setMaxResults(20);
+
+        /** @var array<LogEventInterface> $events */
+        $events = $qb->getQuery()->getResult();
+
+        $contentRevisions = array_values(array_filter($events, static function (LogEventInterface $event): bool {
+            $domainEvent = $event->getEvent();
+            return $domainEvent instanceof ContentTranslationCreatedEvent
+                || $domainEvent instanceof ContentTranslationUpdatedEvent;
+        }));
+
+        return $contentRevisions[1] ?? null;
+    }
+
     private function findContentRevisionBefore(
         ContentTranslationInterface $translation,
         ?\DateTimeImmutable $before = null,

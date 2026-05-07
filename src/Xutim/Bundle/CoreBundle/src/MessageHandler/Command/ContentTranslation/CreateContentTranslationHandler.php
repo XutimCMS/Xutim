@@ -16,6 +16,7 @@ use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Service\ReferenceSyncService;
 use Xutim\CoreBundle\Service\SearchContentBuilder;
 
 readonly class CreateContentTranslationHandler implements CommandHandlerInterface
@@ -29,6 +30,7 @@ readonly class CreateContentTranslationHandler implements CommandHandlerInterfac
         private SearchContentBuilder $searchContentBuilder,
         private ContentTranslationFactory $contentTranslationFactory,
         private SiteContext $siteContext,
+        private ReferenceSyncService $referenceSyncService,
     ) {
     }
 
@@ -74,14 +76,7 @@ readonly class CreateContentTranslationHandler implements CommandHandlerInterfac
         $this->contentTransRepo->save($translation, true);
 
         if ($cmd->locale === $this->siteContext->getReferenceLocale()) {
-            $object = $page ?? $article;
-            foreach ($object->getTranslations() as $sibling) {
-                if ($sibling->getId() === $translation->getId()) {
-                    continue;
-                }
-                $sibling->changeReferenceSyncedAt($translation->getUpdatedAt());
-                $this->contentTransRepo->save($sibling);
-            }
+            $this->referenceSyncService->markSiblingsAsSynced($page ?? $article);
         }
 
         $event = new ContentTranslationCreatedEvent(
