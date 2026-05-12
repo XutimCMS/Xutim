@@ -101,12 +101,12 @@
         {% endif %}
         {% if item.hasArticle %}
             <a href="{{ admin_path('admin_article_show', {id: item.article.id}) }}">
-                {{ item.article.defaultTranslation.title }}
+                {{ item.article.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title }}
             </a>
         {% endif %}
         {% if item.hasPage %}
             <a href="{{ admin_path('admin_page_list', {id: item.page.id}) }}">
-                {{ item.page.defaultTranslation.title }}
+                {{ item.page.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title }}
             </a>
         {% endif %}
     </td>
@@ -123,7 +123,7 @@
     <td>
         {% if item.tag %}
             <a href="{{ admin_path('admin_tag_edit', {id: item.tag.id}) }}">
-                {{ item.tag.translationByLocaleOrAny(app.locale).name }}
+                {{ item.tag.translationByLocaleOrAny(app.locale, content_context_reference_language()).name }}
             </a>
         {% endif %}
     </td>

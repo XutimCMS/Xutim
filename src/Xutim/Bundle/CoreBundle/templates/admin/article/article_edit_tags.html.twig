@@ -5,7 +5,7 @@
                 {% for tag in article.tags %}
                     <div class="mt-1">
                         {%
-                            set name = tag.translationByLocaleOrAny(content_context_language()).name
+                            set name = tag.translationByLocaleOrAny(content_context_language(), content_context_reference_language()).name
                         %}
                         <a href="{{ path('admin_tag_edit', {id: tag.id}) }}">
                             <twig:Xutim:Admin:Tag

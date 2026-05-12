@@ -147,7 +147,7 @@
                 </td>
                 <td class="text-wrap text-secondary small">
                     {% if page.parent %}
-                        {{ page.parent.translationByLocaleOrDefault(content_context_language()).title }}
+                        {{ page.parent.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title }}
                     {% else %}
                         -
                     {% endif %}

@@ -163,7 +163,7 @@
         {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
         {% for article in articles %}
             {%
-                set translation = article.translationByLocaleOrFallback(content_context_language(), default_locale)
+                set translation = article.translationByLocaleOrFallback(content_context_language(), content_context_reference_language())
             %}
             <tr>
                 <td>
@@ -205,7 +205,7 @@
                 <td class="text-wrap" style="max-width: 240px;">
                     <div class="d-flex flex-wrap gap-1">
                         {% for tag in article.tags %}
-                            {% set tagName = tag.translationByLocaleOrAny(content_context_language(), default_locale).name %}
+                            {% set tagName = tag.translationByLocaleOrAny(content_context_language(), content_context_reference_language()).name %}
                             <twig:Xutim:Admin:Tag :color="tag.color" :title="tagName|length > 30 ? tagName : null">
                                 {{ tagName|u.truncate(30, '...') }}
                             </twig:Xutim:Admin:Tag>

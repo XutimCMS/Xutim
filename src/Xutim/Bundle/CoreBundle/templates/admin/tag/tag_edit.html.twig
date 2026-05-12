@@ -3,7 +3,7 @@
 
 {%
     set pageTitle = 'Edit "%tagName%" tag'|trans({
-        '%tagName%': tag.translationByLocaleOrAny(content_context_language(), default_locale).name,
+        '%tagName%': tag.translationByLocaleOrAny(content_context_language(), content_context_reference_language()).name,
     }, 'admin')|capitalize
 %}
 {% block pageTitle %}{{ pageTitle }}{% endblock %}

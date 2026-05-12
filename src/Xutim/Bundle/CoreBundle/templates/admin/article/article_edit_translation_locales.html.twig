@@ -1,6 +1,6 @@
 {% extends '@XutimCore/admin/modalBase.html.twig' %}
 {%
-    set title = 'translate into'|trans({}, 'admin')|capitalize ~ ' - ' ~ article.defaultTranslation.title
+    set title = 'translate into'|trans({}, 'admin')|capitalize ~ ' - ' ~ article.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title
 %}
 
 {% block pageTitle %}

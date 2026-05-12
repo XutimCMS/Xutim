@@ -26,15 +26,15 @@
 {% macro link_for(routeName, idValue, type) %}
     {% if type == 'page_link' %}
         {%
-            set title = get_page(idValue).translationByLocaleOrDefault(app.locale).title|default('page link doesn\'t exist')
+            set title = get_page(idValue).publishedTranslationByLocaleOrFallback(app.locale, content_context_reference_language()).title|default('page link doesn\'t exist'|trans({}, 'admin'))
         %}
     {% elseif type == 'article_link' %}
         {%
-            set title = get_article(idValue).translationByLocaleOrDefault(app.locale).title|default('article link doesn\'t exist')
+            set title = get_article(idValue).publishedTranslationByLocaleOrFallback(app.locale, content_context_reference_language()).title|default('article link doesn\'t exist'|trans({}, 'admin'))
         %}
     {% elseif type == 'tag_link' %}
         {%
-            set title = fetch_tag(idValue).translationByLocaleOrAny(app.locale).title|default('tag link doesn\'t exist')
+            set title = fetch_tag(idValue).translationByLocaleOrAny(app.locale, content_context_reference_language()).title|default('tag link doesn\'t exist'|trans({}, 'admin'))
         %}
     {% else %}
         {% set title = '' %}

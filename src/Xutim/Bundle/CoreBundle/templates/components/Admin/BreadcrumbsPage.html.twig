@@ -6,7 +6,7 @@
     {% if init == true %}
         <li class="breadcrumb-item active" aria-current="page">
             {{
-                page.translationByLocaleOrDefault(content_context_language()).title
+                page.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title
             }}
         </li>
     {% else %}
@@ -14,7 +14,7 @@
         <li class="breadcrumb-item">
             <a href="{{ admin_path('admin_page_list', params) }}">
                 {{
-                    page.translationByLocaleOrDefault(content_context_language()).title
+                    page.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title
                 }}
             </a>
         </li>

@@ -8,7 +8,7 @@
                 href="{{ admin_path('admin_page_list', {id: page.parent.id}) }}"
                 id="page-parent-link"
             >
-                {{ page.parent.defaultTranslation.title|truncate(27) }}
+                {{ page.parent.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title|truncate(27) }}
             </a>
         {% endif %}
         {% if is_granted('ROLE_EDITOR') %}

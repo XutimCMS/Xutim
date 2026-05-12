@@ -16,7 +16,7 @@
 
 {% if selectedPage %}
     {%
-        set trans = selectedPage.translationByLocaleOrAny(content_context_language(), default_locale)
+        set trans = selectedPage.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language())
     %}
 {% endif %}
 
@@ -198,7 +198,7 @@
 {% block pageTitle %}
     {% if selectedPage %}
         {%
-            set trans = selectedPage.translationByLocaleOrDefault(content_context_language())
+            set trans = selectedPage.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language())
         %}
         {{ translatable.languageBadge(trans) }}
         {{ trans.title }}

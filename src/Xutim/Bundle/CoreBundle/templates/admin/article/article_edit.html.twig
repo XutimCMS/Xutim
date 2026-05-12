@@ -2,12 +2,12 @@
 {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 
 {% block title %}
-    {{ article.defaultTranslation.title }}
+    {{ article.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title }}
 {% endblock %}
 
 {% block pageTitle %}
     <twig:Xutim:Admin:Icon name="article" />
-    {{ article.defaultTranslation.title }}
+    {{ article.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title }}
 {% endblock %}
 
 {% block breadcrumbHeader %}

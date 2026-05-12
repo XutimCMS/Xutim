@@ -1,7 +1,7 @@
 {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
 {% import '@XutimCore/admin/common/translatable.html.twig' as translatable %}
 {%
-    set translation = page.translationByLocaleOrDefault(content_context_language())
+    set translation = page.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language())
 %}
 
 <div>
