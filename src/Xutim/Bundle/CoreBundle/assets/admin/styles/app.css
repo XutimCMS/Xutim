@@ -1,10 +1,5 @@
 @import url('./tree-view.css');
 
-/* Removes ability to see toolbar */
-.editorjs-no-permission .ce-toolbar__actions {
-    display: none !important;
-}
-
 :root {
     --tblr-font-sans-serif: 'Inter';
 }

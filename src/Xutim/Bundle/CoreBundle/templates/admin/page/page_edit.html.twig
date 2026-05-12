@@ -260,9 +260,7 @@
             <div class="row g-0" data-split-view-target="container">
                 <div class="col-12 p-4" data-split-view-target="left">
                     {{
-                        include('@XutimCore/admin/content_translation/_form.html.twig', {
-                        disableEditing: not is_granted(constant('Xutim\\SecurityBundle\\Security\\UserRoles::ROLE_DEVELOPER')),
-                    })
+                        include('@XutimCore/admin/content_translation/_form.html.twig')
                     }}
                 </div>
 

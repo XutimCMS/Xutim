@@ -21,7 +21,6 @@ export default class extends Controller {
         xutimLayoutSaveUrl: String,
         xutimLayoutRefreshUrl: String,
         xutimLayoutPreviewUrl: String,
-        disableEditing: Boolean,
         publishLabel: String,
         draftLabel: String,
     };
@@ -29,10 +28,6 @@ export default class extends Controller {
     #editor;
 
     connect() {
-        if (this.disableEditingValue === true) {
-            this.element.classList.add('editorjs-no-permission');
-        }
-
         const tools = buildEditorTools({
             pageIdsUrl: this.pageIdsUrlValue,
             articleIdsUrl: this.articleIdsUrlValue,
