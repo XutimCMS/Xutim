@@ -27,15 +27,14 @@ export default class XutimImageTool {
         this.wrapper = document.createElement('div');
 
         this.wrapper.className = 'border rounded p-3 my-4';
-        this.wrapper.style.cursor = 'pointer';
-        if (!this.readOnly) {
-            this.wrapper.style.cursor = 'pointer';
-        }
+
+        const imageArea = document.createElement('div');
+        imageArea.style.cursor = this.readOnly ? 'default' : 'pointer';
 
         const placeholderText = document.createElement('span');
         placeholderText.textContent = '+ Add Image';
         placeholderText.style.color = '#aaa';
-        this.wrapper.appendChild(placeholderText);
+        imageArea.appendChild(placeholderText);
 
         const img = document.createElement('img');
         img.className = 'rounded';
@@ -58,16 +57,25 @@ export default class XutimImageTool {
             placeholderText.style.display = 'none';
         }
 
-        this.wrapper.appendChild(img);
+        imageArea.appendChild(img);
 
-        this.wrapper.addEventListener('click', (_) => {
-            this.openImageEditor();
-        });
         if (!this.readOnly) {
-            this.wrapper.addEventListener('click', (_) => {
+            imageArea.addEventListener('click', () => {
                 this.openImageEditor();
             });
         }
+
+        this.wrapper.appendChild(imageArea);
+
+        const caption = document.createElement('div');
+        caption.classList.add(this.api.styles.input);
+        caption.contentEditable = (!this.readOnly).toString();
+        caption.dataset.placeholder = this.api.i18n.t('Enter a caption');
+        caption.style.marginTop = '7px';
+        caption.style.textAlign = 'center';
+        caption.innerHTML = this.data.caption || '';
+        this.captionElement = caption;
+        this.wrapper.appendChild(caption);
 
         return this.wrapper;
     }
@@ -180,9 +188,12 @@ export default class XutimImageTool {
     }
 
     save() {
+        const caption = this.captionElement ? this.captionElement.innerHTML : (this.data.caption || '');
+
         if (this.readOnly) {
             return {
                 file: this.data && this.data.file ? this.data.file : {},
+                caption,
             };
         }
         const img = this.wrapper.querySelector('img');
@@ -197,6 +208,7 @@ export default class XutimImageTool {
 
         return {
             file: data,
+            caption,
         };
     }
 }

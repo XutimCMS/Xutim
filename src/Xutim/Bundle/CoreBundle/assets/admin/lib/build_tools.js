@@ -157,7 +157,7 @@ export function buildEditorTools({
 
         embed: {
             class: Embed,
-            inlineToolbar: true,
+            inlineToolbar: ['link', 'bold', 'italic'],
             config: {
                 services: {
                     youtube: true,
@@ -178,6 +178,7 @@ export function buildEditorTools({
         xutimImage: {
             class: XutimImageTool,
             config: { galleryUrl: fetchImagesUrl },
+            inlineToolbar: ['link', 'bold', 'italic'],
             tunes: ['xutimAnchor', 'alignment'],
         },
 
