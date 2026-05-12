@@ -8,8 +8,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
@@ -32,8 +32,7 @@ class PageRepository extends ServiceEntityRepository
         string $entityClass,
         private readonly string $contentTranslationEntityClass,
         private readonly ContentContext $contentContext,
-        #[Autowire('%kernel.default_locale%')]
-        private readonly string $defaultLocale,
+        private readonly SiteContext $siteContext,
     ) {
         parent::__construct($registry, $entityClass);
     }
@@ -137,7 +136,7 @@ class PageRepository extends ServiceEntityRepository
             ->leftJoin('parent.defaultTranslation', 'parentDefaultTranslation')
             ->andWhere('page.archived = false')
             ->setParameter('localeParam', $locale)
-            ->setParameter('fallbackLocale', $this->defaultLocale);
+            ->setParameter('fallbackLocale', $this->siteContext->getReferenceLocale());
 
         if ($filter->hasSearchTerm() === true) {
             $builder

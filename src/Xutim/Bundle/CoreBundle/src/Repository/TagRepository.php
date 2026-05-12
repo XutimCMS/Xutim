@@ -7,6 +7,7 @@ namespace Xutim\CoreBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Entity\PublicationStatus;
@@ -27,7 +28,7 @@ class TagRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         string $entityClass,
-        private readonly string $defaultLocale,
+        private readonly SiteContext $siteContext,
     ) {
         parent::__construct($registry, $entityClass);
     }
@@ -57,7 +58,7 @@ class TagRepository extends ServiceEntityRepository
             ->leftJoin('tag.translations', 'translation', 'WITH', 'translation.locale = :localeParam')
             ->leftJoin('tag.translations', 'fallbackTranslation', 'WITH', 'fallbackTranslation.locale = :fallbackLocale')
             ->setParameter('localeParam', $locale)
-            ->setParameter('fallbackLocale', $this->defaultLocale);
+            ->setParameter('fallbackLocale', $this->siteContext->getReferenceLocale());
 
         if ($filter->hasSearchTerm() === true) {
             $builder

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventRepository;
 use Xutim\EventBundle\Infra\Doctrine\ORM\EventTranslationRepository;
 
@@ -13,7 +14,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(EventRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_event.model.event.class%')
-        ->arg('$defaultLocale', '%kernel.default_locale%')
+        ->arg('$siteContext', service(SiteContext::class))
         ->tag('doctrine.repository_service');
 
     $services->set(EventTranslationRepository::class)

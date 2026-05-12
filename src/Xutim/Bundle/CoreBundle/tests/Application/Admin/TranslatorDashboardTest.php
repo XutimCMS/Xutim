@@ -11,6 +11,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -30,13 +31,30 @@ class TranslatorDashboardTest extends AdminApplicationTestCase
     public function testUntranslatedArticleAppearsOnDashboard(): void
     {
         $article = ArticleFactory::createOne();
-        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en', 'title' => 'Untranslated Article']);
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en', 'title' => 'Untranslated Article']);
+        $en->changeStatus(PublicationStatus::Published);
         $this->em()->flush();
 
         $crawler = $this->requestDashboard(['en', 'fr']);
 
         $frame = $crawler->filter('turbo-frame#untranslated-articles');
         $this->assertStringContainsString('Untranslated Article', $frame->html());
+    }
+
+    /**
+     * Unpublished (draft) reference article should NOT appear in the
+     * untranslated table — translators should not start on drafts.
+     */
+    public function testUnpublishedDraftDoesNotAppearOnDashboard(): void
+    {
+        $article = ArticleFactory::createOne();
+        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en', 'title' => 'Draft Article']);
+        $this->em()->flush();
+
+        $crawler = $this->requestDashboard(['en', 'fr']);
+
+        $frame = $crawler->filter('turbo-frame#untranslated-articles');
+        $this->assertStringNotContainsString('Draft Article', $frame->html());
     }
 
     /**
@@ -82,7 +100,8 @@ class TranslatorDashboardTest extends AdminApplicationTestCase
     public function testUntranslatedArticleLinkUsesCorrectLocale(): void
     {
         $article = ArticleFactory::createOne();
-        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en', 'title' => 'Link Test']);
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en', 'title' => 'Link Test']);
+        $en->changeStatus(PublicationStatus::Published);
         $this->em()->flush();
 
         $crawler = $this->requestDashboard(['en', 'fr']);
@@ -177,7 +196,8 @@ class TranslatorDashboardTest extends AdminApplicationTestCase
     {
         for ($i = 0; $i < 12; $i++) {
             $article = ArticleFactory::createOne();
-            ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+            $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+            $en->changeStatus(PublicationStatus::Published);
         }
         $this->em()->flush();
 
@@ -194,7 +214,8 @@ class TranslatorDashboardTest extends AdminApplicationTestCase
     public function testArticleLinksBreakOutOfTurboFrame(): void
     {
         $article = ArticleFactory::createOne();
-        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en', 'title' => 'Turbo Test']);
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en', 'title' => 'Turbo Test']);
+        $en->changeStatus(PublicationStatus::Published);
         $this->em()->flush();
 
         $crawler = $this->requestDashboard(['en', 'fr']);

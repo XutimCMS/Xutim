@@ -7,6 +7,7 @@ namespace Xutim\CoreBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
@@ -31,7 +32,7 @@ class ArticleRepository extends ServiceEntityRepository
         ManagerRegistry $registry,
         string $entityClass,
         public string $tagEntityClass,
-        private readonly string $defaultLocale
+        private readonly SiteContext $siteContext,
     ) {
         parent::__construct($registry, $entityClass);
     }
@@ -143,7 +144,7 @@ class ArticleRepository extends ServiceEntityRepository
             ->leftJoin('article.tags', 'tag')
             ->leftJoin('tag.translations', 'tagTranslation')
             ->setParameter('localeParam', $locale)
-            ->setParameter('fallbackLocale', $this->defaultLocale);
+            ->setParameter('fallbackLocale', $this->siteContext->getReferenceLocale());
 
         if ($filter->hasSearchTerm() === true) {
             $builder
@@ -496,7 +497,7 @@ class ArticleRepository extends ServiceEntityRepository
                 DQL
             )
             ->setParameter('locales', $locales)
-            ->setParameter('refLocale', $this->defaultLocale)
+            ->setParameter('refLocale', $this->siteContext->getReferenceLocale())
             ->orderBy('article.createdAt', 'desc')
             ->setMaxResults($limit);
 
@@ -521,6 +522,12 @@ class ArticleRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('article');
         $qb
             ->select('article')
+            ->innerJoin(
+                'article.translations',
+                'referenceTranslation',
+                'WITH',
+                'referenceTranslation.locale = :referenceLocale AND referenceTranslation.status = :publishedStatus'
+            )
             ->leftJoin(
                 'article.translations',
                 'translation',
@@ -539,6 +546,8 @@ class ArticleRepository extends ServiceEntityRepository
             )
             ->setParameter('locales', $locales)
             ->setParameter('localeCount', count($locales))
+            ->setParameter('referenceLocale', $this->siteContext->getReferenceLocale())
+            ->setParameter('publishedStatus', PublicationStatus::Published)
             ->orderBy('article.createdAt', 'desc')
             ->setMaxResults($limit);
 

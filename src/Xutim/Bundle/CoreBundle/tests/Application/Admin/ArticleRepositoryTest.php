@@ -7,6 +7,8 @@ namespace Xutim\CoreBundle\Tests\Application\Admin;
 use App\Factory\ArticleFactory;
 use App\Factory\ContentTranslationFactory;
 use DateTimeImmutable;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
+use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Zenstruck\Foundry\Test\Factories;
 
@@ -30,10 +32,24 @@ class ArticleRepositoryTest extends AdminApplicationTestCase
     public function testArticleWithMissingAllowedLocaleAppears(): void
     {
         $article = ArticleFactory::createOne();
-        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $this->publish($en);
 
         $results = $this->articleRepo->findByMissingTranslations(['en', 'fr']);
         $this->assertArticleIn($article, $results);
+    }
+
+    /**
+     * Article reference translation is still a draft.
+     * Should not appear — translators shouldn't work on unpublished drafts.
+     */
+    public function testArticleWithUnpublishedReferenceDoesNotAppear(): void
+    {
+        $article = ArticleFactory::createOne();
+        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+
+        $results = $this->articleRepo->findByMissingTranslations(['en', 'fr']);
+        $this->assertArticleNotIn($article, $results);
     }
 
     /**
@@ -43,8 +59,9 @@ class ArticleRepositoryTest extends AdminApplicationTestCase
     public function testFullyTranslatedArticleDoesNotAppear(): void
     {
         $article = ArticleFactory::createOne();
-        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
         ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'fr']);
+        $this->publish($en);
 
         $results = $this->articleRepo->findByMissingTranslations(['en', 'fr']);
         $this->assertArticleNotIn($article, $results);
@@ -57,7 +74,8 @@ class ArticleRepositoryTest extends AdminApplicationTestCase
     public function testArticleMissingOnlyDisallowedLocaleDoesNotAppear(): void
     {
         $article = ArticleFactory::new()->withRestrictedLocales(['en', 'de'])->create();
-        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $this->publish($en);
 
         $results = $this->articleRepo->findByMissingTranslations(['en', 'fr']);
         $this->assertArticleNotIn($article, $results);
@@ -70,7 +88,8 @@ class ArticleRepositoryTest extends AdminApplicationTestCase
     public function testArticleMissingAllowedLocaleWithRestrictedLocalesAppears(): void
     {
         $article = ArticleFactory::new()->withRestrictedLocales(['en', 'fr', 'de'])->create();
-        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $this->publish($en);
 
         $results = $this->articleRepo->findByMissingTranslations(['en', 'fr']);
         $this->assertArticleIn($article, $results);
@@ -83,7 +102,8 @@ class ArticleRepositoryTest extends AdminApplicationTestCase
     public function testArticleWithAllLocalesEnabledAndMissingLocaleAppears(): void
     {
         $article = ArticleFactory::createOne();
-        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $this->publish($en);
 
         $results = $this->articleRepo->findByMissingTranslations(['en', 'fr']);
         $this->assertArticleIn($article, $results);
@@ -97,8 +117,9 @@ class ArticleRepositoryTest extends AdminApplicationTestCase
     public function testArticleWhereOnlyMissingLocalesAreDisallowedDoesNotAppear(): void
     {
         $article = ArticleFactory::new()->withRestrictedLocales(['en', 'fr'])->create();
-        ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
         ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'fr']);
+        $this->publish($en);
 
         $results = $this->articleRepo->findByMissingTranslations(['en', 'fr', 'ro']);
         $this->assertArticleNotIn($article, $results);
@@ -194,6 +215,12 @@ class ArticleRepositoryTest extends AdminApplicationTestCase
 
         $results = $this->articleRepo->findByChangedDefaultTranslations(['en', 'fr', 'de']);
         $this->assertArticleIn($article, $results);
+    }
+
+    private function publish(ContentTranslationInterface $translation): void
+    {
+        $translation->changeStatus(PublicationStatus::Published);
+        $this->flush();
     }
 
     private function forceUpdatedAt(object $entity, DateTimeImmutable $at): void

@@ -36,7 +36,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(TagRepository::class)
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.tag.class%')
-        ->arg('$defaultLocale', '%kernel.default_locale%')
+        ->arg('$siteContext', service(SiteContext::class))
         ->tag('doctrine.repository_service');
 
     $services->set(ContentTranslationRepository::class)
@@ -55,7 +55,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$registry', service(ManagerRegistry::class))
         ->arg('$entityClass', '%xutim_core.model.article.class%')
         ->arg('$tagEntityClass', '%xutim_core.model.tag.class%')
-        ->arg('$defaultLocale', '%kernel.default_locale%')
+        ->arg('$siteContext', service(SiteContext::class))
         ->tag('doctrine.repository_service');
 
     $services->set(PageRepository::class)
@@ -63,7 +63,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$entityClass', '%xutim_core.model.page.class%')
         ->arg('$contentTranslationEntityClass', '%xutim_core.model.content_translation.class%')
         ->arg('$contentContext', service(ContentContext::class))
-        ->arg('$defaultLocale', '%kernel.default_locale%')
+        ->arg('$siteContext', service(SiteContext::class))
         ->tag('doctrine.repository_service');
 
     $services->set(MenuItemRepository::class)
