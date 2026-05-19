@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Domain\Factory;
 
 use Xutim\CoreBundle\Domain\Model\SiteInterface;
 
-class SiteFactory
+class SiteFactory implements SiteFactoryInterface
 {
     public function __construct(private readonly string $entityClass)
     {

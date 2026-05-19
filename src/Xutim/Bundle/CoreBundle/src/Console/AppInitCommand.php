@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Xutim\CoreBundle\Context\SiteContext;
-use Xutim\CoreBundle\Entity\Site;
+use Xutim\CoreBundle\Domain\Factory\SiteFactoryInterface;
 use Xutim\CoreBundle\Repository\SiteRepository;
 use Xutim\SnippetBundle\Domain\Factory\SnippetFactoryInterface;
 use Xutim\SnippetBundle\Domain\Model\SnippetCategory;
@@ -28,6 +28,7 @@ class AppInitCommand extends Command
 {
     public function __construct(
         private readonly SiteRepository $siteRepository,
+        private readonly SiteFactoryInterface $siteFactory,
         private readonly SiteContext $siteContext,
         private readonly SnippetRepositoryInterface $snippetRepo,
         private readonly SnippetFactoryInterface $snippetFactory
@@ -41,8 +42,8 @@ class AppInitCommand extends Command
 
         $site = $this->siteRepository->findAll();
         if (count($site) === 0) {
-            $site = new Site();
-            $this->siteRepository->save($site, true);
+            $newSite = $this->siteFactory->create();
+            $this->siteRepository->save($newSite, true);
             $this->siteContext->resetDefaultSite();
         }
 

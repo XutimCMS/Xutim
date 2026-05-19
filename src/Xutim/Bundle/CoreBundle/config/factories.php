@@ -13,6 +13,7 @@ use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Domain\Factory\MenuItemFactory;
 use Xutim\CoreBundle\Domain\Factory\PageFactory;
 use Xutim\CoreBundle\Domain\Factory\SiteFactory;
+use Xutim\CoreBundle\Domain\Factory\SiteFactoryInterface;
 use Xutim\CoreBundle\Domain\Factory\TagFactory;
 use Xutim\CoreBundle\Domain\Factory\TagTranslationFactory;
 
@@ -45,6 +46,7 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(SiteFactory::class)
         ->arg('$entityClass', '%xutim_core.model.site.class%');
+    $services->alias(SiteFactoryInterface::class, SiteFactory::class);
 
     $services->set(ContentTranslationFactory::class)
         ->arg('$entityClass', '%xutim_core.model.content_translation.class%');
