@@ -24,10 +24,12 @@ class CustomBlockItemProviderTest extends AdminApplicationTestCase
             'block[layout]' => 'embed',
         ]);
         $this->assertResponseRedirects();
-        $crawler = $client->followRedirect();
+        $client->followRedirect();
         $this->assertResponseIsSuccessful();
 
         // Find the block in the list and navigate to show page
+        $crawler = $client->request('GET', '/admin/en/block?searchTerm=');
+        $this->assertResponseIsSuccessful();
         $link = $crawler->filter('tbody tr')->reduce(function (Crawler $node) use ($uniqueId) {
             return str_contains($node->text(), 'Embed Test ' . $uniqueId);
         })->filter('a')->first()->link();

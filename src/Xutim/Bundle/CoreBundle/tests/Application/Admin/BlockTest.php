@@ -27,12 +27,14 @@ class BlockTest extends AdminApplicationTestCase
             'block[description]' => 'This is a carousel block.'
         ]);
 
-        $this->assertResponseRedirects('/admin/en/block?searchTerm=');
-        $crawler = $client->followRedirect();
+        $this->assertResponseRedirects();
+        $client->followRedirect();
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $client->request('GET', '/admin/en/block?searchTerm=');
         $this->assertResponseIsSuccessful();
         $this->assertAnySelectorTextContains('td', $blockName);
 
-        // Find the link for our specific block by searching for the block name in the row
         $link = $crawler->filter('tbody tr')->reduce(function ($node) use ($blockName) {
             return str_contains($node->text(), $blockName);
         })->filter('a')->first()->link();

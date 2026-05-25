@@ -13,10 +13,10 @@ return static function (ContainerConfigurator $container): void {
     $container->extension('twig', [
         'globals' => [
             'default_locale' => '%kernel.default_locale%',
-            'site_context' => service(SiteContext::class),
-            'content_context' => service(ContentContext::class),
-            'news_context' => service(NewsContext::class),
-            'tags_context' => service(TagsContext::class),
+            'site_context' => '@'.SiteContext::class,
+            'content_context' => '@'.ContentContext::class,
+            'news_context' => '@'.NewsContext::class,
+            'tags_context' => '@'.TagsContext::class,
         ],
     ]);
 };

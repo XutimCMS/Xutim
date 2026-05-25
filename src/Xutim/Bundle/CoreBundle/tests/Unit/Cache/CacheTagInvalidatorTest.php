@@ -17,6 +17,8 @@ final class CacheTagInvalidatorTest extends TestCase
     private TagAwareCacheInterface $sitePool;
     /** @var TagAwareCacheInterface&MockObject */
     private TagAwareCacheInterface $snippetPool;
+    /** @var TagAwareCacheInterface&MockObject */
+    private TagAwareCacheInterface $pageTreePool;
     private CacheTagInvalidator $invalidator;
 
     protected function setUp(): void
@@ -24,11 +26,13 @@ final class CacheTagInvalidatorTest extends TestCase
         $this->blockPool = $this->createMock(TagAwareCacheInterface::class);
         $this->sitePool = $this->createMock(TagAwareCacheInterface::class);
         $this->snippetPool = $this->createMock(TagAwareCacheInterface::class);
+        $this->pageTreePool = $this->createMock(TagAwareCacheInterface::class);
 
         $this->invalidator = new CacheTagInvalidator(
             $this->blockPool,
             $this->sitePool,
-            $this->snippetPool
+            $this->snippetPool,
+            $this->pageTreePool
         );
     }
 
@@ -39,6 +43,7 @@ final class CacheTagInvalidatorTest extends TestCase
         $this->blockPool->expects(self::once())->method('invalidateTags')->with($tags);
         $this->sitePool->expects(self::once())->method('invalidateTags')->with($tags);
         $this->snippetPool->expects(self::once())->method('invalidateTags')->with($tags);
+        $this->pageTreePool->expects(self::once())->method('invalidateTags')->with($tags);
 
         $this->invalidator->invalidateTags($tags);
     }
@@ -48,6 +53,7 @@ final class CacheTagInvalidatorTest extends TestCase
         $this->blockPool->expects(self::never())->method('invalidateTags');
         $this->sitePool->expects(self::never())->method('invalidateTags');
         $this->snippetPool->expects(self::never())->method('invalidateTags');
+        $this->pageTreePool->expects(self::never())->method('invalidateTags');
 
         $this->invalidator->invalidateTags([]);
     }

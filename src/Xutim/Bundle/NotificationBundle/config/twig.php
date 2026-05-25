@@ -9,7 +9,7 @@ use Xutim\NotificationBundle\Service\NotificationCenterView;
 return static function (ContainerConfigurator $container): void {
     $container->extension('twig', [
         'globals' => [
-            'notification_center' => service(NotificationCenterView::class),
+            'notification_center' => '@'.NotificationCenterView::class,
         ],
     ]);
 };

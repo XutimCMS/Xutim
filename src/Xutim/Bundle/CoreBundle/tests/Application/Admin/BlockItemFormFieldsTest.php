@@ -60,8 +60,9 @@ class BlockItemFormFieldsTest extends AdminApplicationTestCase
             'block[description]' => 'Test block',
             'block[layout]' => $layout,
         ]);
-        $crawler = $client->followRedirect();
+        $client->followRedirect();
 
+        $crawler = $client->request('GET', '/admin/en/block?searchTerm=');
         $link = $crawler->filter('tbody tr')->reduce(function (Crawler $node) use ($uniqueId) {
             return str_contains($node->text(), 'Test ' . $uniqueId);
         })->filter('a')->first()->link();
