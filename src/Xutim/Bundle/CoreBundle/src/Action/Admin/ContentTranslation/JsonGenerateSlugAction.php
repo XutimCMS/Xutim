@@ -18,7 +18,9 @@ class JsonGenerateSlugAction extends AbstractController
     {
         $title = $request->query->get('title', '');
         $locale = $request->query->get('locale', $request->getLocale());
-        $slug = $this->contentTransRepo->generateUniqueSlugForTitle($title, $locale);
+        $selfId = $request->query->getString('selfId');
+        $existing = $selfId !== '' ? $this->contentTransRepo->find($selfId) : null;
+        $slug = $this->contentTransRepo->generateUniqueSlugForTitle($title, $locale, $existing);
 
         return $this->json($slug);
     }

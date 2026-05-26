@@ -81,7 +81,8 @@
                             id: form.vars.id,
                             'data-controller': 'slug-generator',
                             'data-slug-generator-url-value': admin_path('admin_json_tag_generate_slug'),
-                            'data-slug-generator-enabled-value': 'true',
+                            'data-slug-generator-enabled-value': translation == null ? 'true' : 'false',
+                            'data-slug-generator-self-id-value': translation ? translation.id : '',
                         },
                     })
             }}

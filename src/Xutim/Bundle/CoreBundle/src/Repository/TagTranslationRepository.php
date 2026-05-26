@@ -47,13 +47,14 @@ class TagTranslationRepository extends ServiceEntityRepository
     public function generateUniqueSlugForName(
         string $name,
         string $locale,
+        ?TagTranslationInterface $existingTrans = null,
         int $iteration = 0
     ): AbstractUnicodeString {
         $nameIteration = sprintf('%s%s', $name, $iteration === 0 ? '' : $iteration);
         $slug = $this->slugger->slug($nameIteration)->lower();
 
-        if ($this->isSlugUnique($slug, $locale) === false) {
-            $slug = $this->generateUniqueSlugForName($name, $locale, $iteration + 1);
+        if ($this->isSlugUnique($slug, $locale, $existingTrans) === false) {
+            $slug = $this->generateUniqueSlugForName($name, $locale, $existingTrans, $iteration + 1);
         }
 
         return $slug;

@@ -151,13 +151,14 @@ class ContentTranslationRepository extends ServiceEntityRepository
     public function generateUniqueSlugForTitle(
         string $title,
         string $locale,
+        ?ContentTranslationInterface $existingTrans = null,
         int $iteration = 0
     ): AbstractUnicodeString {
         $titleIteration = sprintf('%s%s', $title, $iteration === 0 ? '' : $iteration);
         $slug = $this->slugger->slug($titleIteration)->lower();
 
-        if ($this->isSlugUnique($slug, $locale) === false) {
-            $slug = $this->generateUniqueSlugForTitle($title, $locale, $iteration + 1);
+        if ($this->isSlugUnique($slug, $locale, $existingTrans) === false) {
+            $slug = $this->generateUniqueSlugForTitle($title, $locale, $existingTrans, $iteration + 1);
         }
 
         return $slug;

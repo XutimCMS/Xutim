@@ -24,6 +24,7 @@
                 'data-editorjs-form-draft-label-value': 'Save as draft'|trans({}, 'admin'),
                 'data-slug-generator-url-value': admin_path('admin_json_content_translation_generate_slug'),
                 'data-slug-generator-enabled-value': translation == null ? 'true' : 'false',
+                'data-slug-generator-self-id-value': translation ? translation.id : '',
                 'data-slug-generator-locale-value': content_context_language(),
             },
         })

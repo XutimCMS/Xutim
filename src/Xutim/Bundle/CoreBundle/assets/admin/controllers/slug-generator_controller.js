@@ -6,6 +6,7 @@ export default class extends Controller {
         url: String,
         enabled: Boolean,
         locale: String,
+        selfId: String,
     };
 
     static targets = ['slugField', 'localeField', 'titleField'];
@@ -33,13 +34,12 @@ export default class extends Controller {
     }
 
     #updateSlug(title, locale) {
+        const params = { title: title, locale: locale };
+        if (this.selfIdValue) {
+            params.selfId = this.selfIdValue;
+        }
         axios
-            .get(this.urlValue, {
-                params: {
-                    title: title,
-                    locale: locale,
-                },
-            })
+            .get(this.urlValue, { params })
             .then((response) => {
                 this.slugFieldTarget.value = response.data;
                 this.slugFieldTarget.setAttribute('readonly', 'readonly');
