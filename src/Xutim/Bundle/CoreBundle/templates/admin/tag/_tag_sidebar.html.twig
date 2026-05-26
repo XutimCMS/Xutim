@@ -44,6 +44,7 @@
                         include('@XutimCore/admin/publication_status/_status_buttons.html.twig', {
                             translation: tag,
                             url: 'admin_tag_publication_status_edit',
+                            translationCount: tag.translations|length,
                         })
                     }}
                 </twig:block>

@@ -21,6 +21,7 @@
 
 {% if is_granted_translation(content_context_language()) %}
     {% set url = url is defined ? url : 'admin_publication_status_edit' %}
+    {% set translationCount = translationCount is defined ? translationCount : 1 %}
 
     {%
         from '@XutimCore/admin/publication_status/_status_buttons.html.twig' import modalDialogPage
@@ -28,7 +29,7 @@
     <div>
         {% if translation.status.canBeDrafted() %}
             {{
-                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard', url, translation.object.translations|length)
+                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Draft'), 'draft'|trans({}, 'admin')|capitalize, 'clipboard', url, translationCount)
             }}
         {% endif %}
 
@@ -50,13 +51,13 @@
 
         {% if translation.status.canPublish %}
             {{
-                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload', url, translation.object.translations|length)
+                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Published'), 'publish'|trans({}, 'admin')|capitalize, 'cloud-upload', url, translationCount)
             }}
         {% endif %}
 
         {% if translation.status.canSubmitForEvaluation %}
             {{
-                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert', url, translation.object.translations|length)
+                modalDialogPage(translation.id, constant('Xutim\\CoreBundle\\Entity\\PublicationStatus::Evaluation'), 'submit for evaluation'|trans({}, 'admin')|capitalize, 'refresh-alert', url, translationCount)
             }}
         {% endif %}
     </div>
