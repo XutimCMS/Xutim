@@ -63,4 +63,9 @@
             </twig:Xutim:Admin:SidebarItem>
         </template>
     </turbo-stream>
+    <turbo-stream action="update" target="language-context-bar">
+        <template>
+            <twig:Xutim:Admin:LanguageContextBar :entity="translation.object" />
+        </template>
+    </turbo-stream>
 {% endblock %}

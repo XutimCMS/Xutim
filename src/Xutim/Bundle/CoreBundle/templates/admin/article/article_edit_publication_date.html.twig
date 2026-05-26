@@ -36,10 +36,16 @@
         <template>
             {{
                 include('@XutimCore/admin/article/_publication_status_sidebar_item.html.twig', {
-                    article: article, 
+                    article: article,
                     translation: translation
                 })
             }}
+        </template>
+    </turbo-stream>
+
+    <turbo-stream action="update" target="language-context-bar">
+        <template>
+            <twig:Xutim:Admin:LanguageContextBar :entity="article" />
         </template>
     </turbo-stream>
 {% endblock %}
