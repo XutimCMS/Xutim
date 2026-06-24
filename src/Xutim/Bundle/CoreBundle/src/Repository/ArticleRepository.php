@@ -61,7 +61,8 @@ class ArticleRepository extends ServiceEntityRepository
         /** @var list<array{id: \Symfony\Component\Uid\Uuid, title: string}> $rows */
         $rows = $this->createQueryBuilder('article')
             ->select('article.id AS id', 'translation.title AS title')
-            ->innerJoin('article.defaultTranslation', 'translation')
+            ->innerJoin('article.translations', 'translation', 'WITH', 'translation.locale = :refLocale')
+            ->setParameter('refLocale', $this->siteContext->getReferenceLocale())
             ->orderBy('translation.title', 'ASC')
             ->getQuery()
             ->getArrayResult();
@@ -140,7 +141,6 @@ class ArticleRepository extends ServiceEntityRepository
             ->select('article')
             ->leftJoin('article.translations', 'translation', 'WITH', 'translation.locale = :localeParam')
             ->leftJoin('article.translations', 'fallbackTranslation', 'WITH', 'fallbackTranslation.locale = :fallbackLocale')
-            ->leftJoin('article.defaultTranslation', 'defaultTranslation')
             ->leftJoin('article.tags', 'tag')
             ->leftJoin('tag.translations', 'tagTranslation')
             ->setParameter('localeParam', $locale)
@@ -149,9 +149,9 @@ class ArticleRepository extends ServiceEntityRepository
         if ($filter->hasSearchTerm() === true) {
             $builder
                 ->andWhere($builder->expr()->orX(
-                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.title WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.title ELSE defaultTranslation.title END)', ':searchTerm'),
-                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.slug WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.slug ELSE defaultTranslation.slug END)', ':searchTerm'),
-                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.description WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.description ELSE defaultTranslation.description END)', ':searchTerm'),
+                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.title ELSE fallbackTranslation.title END)', ':searchTerm'),
+                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.slug ELSE fallbackTranslation.slug END)', ':searchTerm'),
+                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.description ELSE fallbackTranslation.description END)', ':searchTerm'),
                     $builder->expr()->like('LOWER(tagTranslation.name)', ':searchTerm')
                     // $builder->expr()->like('LOWER(CAST(translation.content AS TEXT))', ':searchTerm')
                 ))
@@ -170,8 +170,7 @@ class ArticleRepository extends ServiceEntityRepository
                     'CASE
                         WHEN translation.status = :scheduledParam AND article.scheduledAt IS NOT NULL THEN ' . ($isDesc ? '0' : '1') . '
                         WHEN translation.id IS NOT NULL AND translation.publishedAt IS NOT NULL THEN ' . ($isDesc ? '0' : '1') . '
-                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL AND fallbackTranslation.publishedAt IS NOT NULL THEN ' . ($isDesc ? '0' : '1') . '
-                        WHEN defaultTranslation.publishedAt IS NOT NULL THEN ' . ($isDesc ? '0' : '1') . '
+                        WHEN fallbackTranslation.id IS NOT NULL AND fallbackTranslation.publishedAt IS NOT NULL THEN ' . ($isDesc ? '0' : '1') . '
                         ELSE ' . ($isDesc ? '1' : '0') . '
                      END',
                     'ASC'
@@ -180,8 +179,7 @@ class ArticleRepository extends ServiceEntityRepository
                     'CASE
                         WHEN translation.status = :scheduledParam AND article.scheduledAt IS NOT NULL THEN article.scheduledAt
                         WHEN translation.id IS NOT NULL THEN translation.publishedAt
-                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.publishedAt
-                        ELSE defaultTranslation.publishedAt
+                        ELSE fallbackTranslation.publishedAt
                      END',
                     $orderDir
                 )
@@ -191,8 +189,7 @@ class ArticleRepository extends ServiceEntityRepository
                 ->addOrderBy(
                     'CASE
                         WHEN translation.id IS NOT NULL THEN translation.updatedAt
-                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
-                        ELSE defaultTranslation.updatedAt
+                        ELSE fallbackTranslation.updatedAt
                      END',
                     'desc'
                 );
@@ -201,8 +198,7 @@ class ArticleRepository extends ServiceEntityRepository
                 ->addOrderBy(
                     'CASE
                         WHEN translation.id IS NOT NULL THEN translation.updatedAt
-                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
-                        ELSE defaultTranslation.updatedAt
+                        ELSE fallbackTranslation.updatedAt
                      END',
                     $filter->getOrderDir()
                 );
@@ -218,7 +214,7 @@ class ArticleRepository extends ServiceEntityRepository
             $title = $filter->col('title');
             $builder
                 ->andWhere(
-                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.title WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.title ELSE defaultTranslation.title END)', ':colTitle')
+                    $builder->expr()->like('LOWER(CASE WHEN translation.id IS NOT NULL THEN translation.title ELSE fallbackTranslation.title END)', ':colTitle')
                 )
                 ->setParameter('colTitle', sprintf('%%%s%%', strtolower($title)));
         }
@@ -274,8 +270,7 @@ class ArticleRepository extends ServiceEntityRepository
                 ->andWhere(
                     'CASE
                         WHEN translation.id IS NOT NULL THEN translation.status
-                        WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.status
-                        ELSE defaultTranslation.status
+                        ELSE fallbackTranslation.status
                      END = :colStatus'
                 )
                 ->setParameter('colStatus', $status);
@@ -297,27 +292,19 @@ class ArticleRepository extends ServiceEntityRepository
                     )
                     ->setParameter('localeFilterMissing', '%' . $locale . '%');
             } elseif ($translationStatus === 'fallback') {
-                // Article is using fallback (not in requested locale, but fallback or default exists)
-                $builder->andWhere('translation.id IS NULL')
-                    ->andWhere(
-                        $builder->expr()->orX(
-                            $builder->expr()->andX(
-                                ':localeParam != :fallbackLocale',
-                                'fallbackTranslation.id IS NOT NULL'
-                            ),
-                            'defaultTranslation.id IS NOT NULL'
-                        )
-                    );
+                // Article is using fallback (not in requested locale, but reference exists)
+                $builder
+                    ->andWhere('translation.id IS NULL')
+                    ->andWhere(':localeParam != :fallbackLocale')
+                    ->andWhere('fallbackTranslation.id IS NOT NULL');
             } elseif ($translationStatus === 'outdated') {
                 $builder
                     ->andWhere('translation.id IS NOT NULL')
                     ->andWhere(':localeParam != :fallbackLocale')
+                    ->andWhere('fallbackTranslation.id IS NOT NULL')
                     ->andWhere(
                         'translation.referenceSyncedAt IS NULL
-                            OR translation.referenceSyncedAt < CASE
-                                WHEN fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
-                                ELSE defaultTranslation.updatedAt
-                            END'
+                            OR translation.referenceSyncedAt < fallbackTranslation.updatedAt'
                     );
             }
         }
@@ -331,8 +318,7 @@ class ArticleRepository extends ServiceEntityRepository
                 ? 'article.updatedAt'
                 : 'CASE
                     WHEN translation.id IS NOT NULL THEN translation.updatedAt
-                    WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.updatedAt
-                    ELSE defaultTranslation.updatedAt
+                    ELSE fallbackTranslation.updatedAt
                  END';
 
             if ($updatedAtRange === '90+') {
@@ -358,22 +344,19 @@ class ArticleRepository extends ServiceEntityRepository
                     ->andWhere(
                         'CASE
                             WHEN translation.id IS NOT NULL THEN translation.status
-                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.status
-                            ELSE defaultTranslation.status
+                            ELSE fallbackTranslation.status
                          END = :publishedStatus'
                     )
                     ->andWhere(
                         'CASE
                             WHEN translation.id IS NOT NULL THEN translation.publishedAt
-                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.publishedAt
-                            ELSE defaultTranslation.publishedAt
+                            ELSE fallbackTranslation.publishedAt
                          END >= :publishedSince'
                     )
                     ->andWhere(
                         'CASE
                             WHEN translation.id IS NOT NULL THEN translation.publishedAt
-                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.publishedAt
-                            ELSE defaultTranslation.publishedAt
+                            ELSE fallbackTranslation.publishedAt
                          END <= :now'
                     )
                     ->setParameter('publishedStatus', PublicationStatus::Published)
@@ -385,8 +368,7 @@ class ArticleRepository extends ServiceEntityRepository
                     ->andWhere(
                         'CASE
                             WHEN translation.id IS NOT NULL THEN translation.status
-                            WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.status
-                            ELSE defaultTranslation.status
+                            ELSE fallbackTranslation.status
                          END = :scheduledStatus'
                     )
                     ->setParameter('scheduledStatus', PublicationStatus::Scheduled);
@@ -397,14 +379,12 @@ class ArticleRepository extends ServiceEntityRepository
                         $builder->expr()->orX(
                             'CASE
                                 WHEN translation.id IS NOT NULL THEN translation.status
-                                WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.status
-                                ELSE defaultTranslation.status
+                                ELSE fallbackTranslation.status
                              END = :draftStatus',
                             $builder->expr()->isNull(
                                 'CASE
                                     WHEN translation.id IS NOT NULL THEN translation.publishedAt
-                                    WHEN :localeParam != :fallbackLocale AND fallbackTranslation.id IS NOT NULL THEN fallbackTranslation.publishedAt
-                                    ELSE defaultTranslation.publishedAt
+                                    ELSE fallbackTranslation.publishedAt
                                  END'
                             )
                         )
@@ -484,17 +464,12 @@ class ArticleRepository extends ServiceEntityRepository
                 'WITH',
                 $qb->expr()->in('translation.locale', ':locales')
             )
-            ->leftJoin('article.defaultTranslation', 'defaultTranslation')
-            ->leftJoin('article.translations', 'refTranslation', 'WITH', 'refTranslation.locale = :refLocale')
+            ->innerJoin('article.translations', 'refTranslation', 'WITH', 'refTranslation.locale = :refLocale')
             ->where($qb->expr()->in('translation.locale', ':locales'))
             ->andWhere('translation.locale != :refLocale')
-            ->andWhere(<<<DQL
-                translation.referenceSyncedAt IS NULL
-                OR translation.referenceSyncedAt < CASE
-                    WHEN refTranslation.id IS NOT NULL THEN refTranslation.updatedAt
-                    ELSE defaultTranslation.updatedAt
-                END
-                DQL
+            ->andWhere(
+                'translation.referenceSyncedAt IS NULL
+                    OR translation.referenceSyncedAt < refTranslation.updatedAt'
             )
             ->setParameter('locales', $locales)
             ->setParameter('refLocale', $this->siteContext->getReferenceLocale())
