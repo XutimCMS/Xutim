@@ -54,7 +54,8 @@ readonly class CreateArticleHandler implements CommandHandlerInterface
             )
         );
 
-        $translation = $article->getDefaultTranslation();
+        $translation = $article->getTranslationByLocale($cmd->defaultLanguage);
+        assert($translation !== null);
         $searchContent = $this->searchContentBuilder->build($translation);
         $translation->changeSearchContent($searchContent);
 

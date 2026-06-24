@@ -109,5 +109,5 @@ interface ArticleInterface extends TranslationLocaleAwareInterface, Translatable
     /**
      * @return ContentTranslationInterface
     */
-    public function getTranslationByLocaleOrAny(string $locale);
+    public function getTranslationByLocaleOrAny(string $locale, ?string $altLocale = null);
 }

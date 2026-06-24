@@ -219,8 +219,7 @@
                         <tbody>
                             {% for article in changedPager %}
                                 {% set translation = article.translationByLocaleOrAny(content_context_language(), referenceLocale) %}
-                                {% set refTrans = article.getTranslationByLocale(referenceLocale) %}
-                                {% set effectiveRef = refTrans ?? article.defaultTranslation %}
+                                {% set effectiveRef = article.getTranslationByLocaleOrAny(referenceLocale) %}
                                 {% set firstOutdatedLocale = null %}
                                 {% for t in article.translations %}
                                     {% if firstOutdatedLocale is null and t.locale in userLocales and t.locale != referenceLocale

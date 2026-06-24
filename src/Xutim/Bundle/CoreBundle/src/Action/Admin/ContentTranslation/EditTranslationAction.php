@@ -71,7 +71,6 @@ class EditTranslationAction extends AbstractController
             return $this->render('@XutimCore/admin/article/article_edit.html.twig', [
                 'form' => $form,
                 'article' => $article,
-                'defaultTranslation' => $article->getDefaultTranslation(),
                 'translation' => $translation
             ]);
         }
@@ -81,7 +80,6 @@ class EditTranslationAction extends AbstractController
             return $this->render('@XutimCore/admin/page/page_edit.html.twig', [
                 'form' => $form,
                 'page' => $page,
-                'defaultTranslation' => $page->getDefaultTranslation(),
                 'translation' => $translation
             ]);
         }

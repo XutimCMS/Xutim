@@ -22,6 +22,7 @@ final readonly class TranslatorNotificationService
         private MessageBusInterface $commandBus,
         private UrlGeneratorInterface $urlGenerator,
         private NotificationFactory $notificationFactory,
+        private ReferenceTranslationResolver $referenceTranslationResolver,
     ) {
     }
 
@@ -44,7 +45,7 @@ final readonly class TranslatorNotificationService
 
         $recipients = $this->recipientResolver->resolveForLocales($locales, $actorIdentifier);
         $contentType = $content instanceof ArticleInterface ? 'article' : 'page';
-        $contentTitle = $content->getDefaultTranslation()->getTitle();
+        $contentTitle = $this->referenceTranslationResolver->resolveOrAny($content)?->getTitle() ?? '';
         $actionRoute = $this->buildContentRouteData($content);
 
         foreach ($recipients as $recipient) {

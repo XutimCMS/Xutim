@@ -98,8 +98,7 @@ class PageRepository extends ServiceEntityRepository
                 $rootPagesIds[] = $pageId;
             }
 
-            $localeTranslation = $page->getTranslations()->get($locale);
-            $trans = $localeTranslation ?? $page->getDefaultTranslation();
+            $trans = $page->getTranslationByLocaleOrAny($locale, $this->siteContext->getReferenceLocale());
 
             $pagesMap[$pageId] = [
                 'page' => $page,

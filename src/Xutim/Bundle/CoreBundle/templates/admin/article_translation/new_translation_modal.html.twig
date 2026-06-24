@@ -50,7 +50,7 @@
                             data-plain-modal-target="localeSelect"
                         >
                             {%
-                                set defaultTrans = article.getDefaultTranslation()
+                                set defaultTrans = article.getTranslationByLocaleOrAny(content_context_reference_language())
                             %}
                             {%
                                 for trans in article.translations|sort((a, b) => a.locale|language_name <=> b.locale|language_name)

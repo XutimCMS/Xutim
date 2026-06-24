@@ -28,23 +28,4 @@ final readonly class PageDto
         public ?Uuid $featuredImageId
     ) {
     }
-
-    public static function fromPage(PageInterface $page): self
-    {
-        $translation = $page->getDefaultTranslation();
-        return new self(
-            $page->getLayout(),
-            $translation->getPreTitle(),
-            $translation->getTitle(),
-            $translation->getSubTitle(),
-            $translation->getSlug(),
-            $translation->getContent(),
-            $translation->getDescription(),
-            $page->hasAllTranslationLocales(),
-            $page->getLocales(),
-            $translation->getLocale(),
-            $page->getParent(),
-            $page->getFeaturedImage()?->id()
-        );
-    }
 }
