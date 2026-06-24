@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Xutim\SnippetBundle\Domain\Model;
 
 use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\Model\TranslatableInterface;
 use Xutim\SnippetBundle\Context\SnippetData;
 use Xutim\SnippetBundle\Form\SnippetFormData;
 
-interface SnippetInterface
+/**
+ * @extends TranslatableInterface<SnippetTranslationInterface>
+ */
+interface SnippetInterface extends TranslatableInterface
 {
     public function change(string $code, string $description, SnippetCategory $category): void;
 

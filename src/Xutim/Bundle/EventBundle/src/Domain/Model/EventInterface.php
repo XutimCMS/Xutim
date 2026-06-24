@@ -9,9 +9,13 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
+use Xutim\CoreBundle\Domain\Model\TranslatableInterface;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 
-interface EventInterface
+/**
+ * @extends TranslatableInterface<EventTranslationInterface>
+ */
+interface EventInterface extends TranslatableInterface
 {
     public function updates(): void;
 

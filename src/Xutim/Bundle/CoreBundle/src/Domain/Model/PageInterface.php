@@ -11,7 +11,10 @@ use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Entity\Color;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
-interface PageInterface extends TranslationLocaleAwareInterface
+/**
+ * @extends TranslatableInterface<ContentTranslationInterface>
+ */
+interface PageInterface extends TranslationLocaleAwareInterface, TranslatableInterface
 {
     /**
      * @param list<string> $locales

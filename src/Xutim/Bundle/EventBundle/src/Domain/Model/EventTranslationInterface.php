@@ -6,8 +6,9 @@ namespace Xutim\EventBundle\Domain\Model;
 
 use DateTimeImmutable;
 use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Domain\Model\LocaleAwareInterface;
 
-interface EventTranslationInterface
+interface EventTranslationInterface extends LocaleAwareInterface
 {
     public function updates(): void;
 

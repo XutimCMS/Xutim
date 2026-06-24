@@ -11,7 +11,10 @@ use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
-interface TagInterface
+/**
+ * @extends TranslatableInterface<TagTranslationInterface>
+ */
+interface TagInterface extends TranslatableInterface
 {
     public function __toString(): string;
 

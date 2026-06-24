@@ -10,7 +10,10 @@ use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
-interface ArticleInterface extends TranslationLocaleAwareInterface
+/**
+ * @extends TranslatableInterface<ContentTranslationInterface>
+ */
+interface ArticleInterface extends TranslationLocaleAwareInterface, TranslatableInterface
 {
     /** @param list<string> $translationLocales */
     public function change(array $translationLocales): void;
