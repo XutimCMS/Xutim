@@ -14,7 +14,6 @@ use Xutim\CoreBundle\Action\Admin\Article\JsonEditorJSDataAction;
 use Xutim\CoreBundle\Action\Admin\Article\JsonListArticlesAction;
 use Xutim\CoreBundle\Action\Admin\Article\ListArticlesAction;
 use Xutim\CoreBundle\Action\Admin\Article\MarkArticleTranslationsSyncedAction;
-use Xutim\CoreBundle\Action\Admin\Article\MarkDefaultTranslationAction;
 use Xutim\CoreBundle\Action\Admin\Article\ShowArticleAction;
 use Xutim\CoreBundle\Action\Admin\Article\ShowArticleBySlugAction;
 use Xutim\CoreBundle\Action\Admin\Article\ShowArticlePreviewAction;
@@ -79,12 +78,6 @@ return function (RoutingConfigurator $routes) {
         ->add('admin_article_list', '/admin/{_content_locale}/article')
         ->methods(['get'])
         ->controller(ListArticlesAction::class)
-    ;
-
-    $routes
-        ->add('admin_article_mark_default_translation', '/admin/{_content_locale}/article/{id}/mark-default-translation/{transId}')
-        ->methods(['post'])
-        ->controller(MarkDefaultTranslationAction::class)
     ;
 
     $routes

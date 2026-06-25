@@ -15,13 +15,6 @@
                     <th class="w-6" title="Status" data-controller="tooltip">
                         S
                     </th>
-                    <th
-                        class="w-1"
-                        title="Translation reference"
-                        data-controller="tooltip"
-                    >
-                        T
-                    </th>
                     <th>{{ 'title'|trans({}, 'admin') }}</th>
                     <th>{{ 'language'|trans({}, 'admin') }}</th>
                     <th class="w-15 text-end">
@@ -45,37 +38,8 @@
                                 {{ badges.publicationStatusBadge(translation) }}
                             </button>
                         </td>
-                        <td
-                            title="Translation reference"
-                            data-controller="tooltip"
-                        >
-                            {%
-                                if article.defaultTranslation.id == translation.id
-                            %}
-                                <span class="fw-bold text-green">
-                                    <twig:Xutim:Admin:Icon name="language" />
-                                </span>
-                            {% else %}
-                                <twig:Xutim:Admin:ModalDialog
-                                    class="btn-link d-sm-inline-block px-0 border-0"
-                                    action="{{ admin_path('admin_page_mark_default_translation', {id: article.id, transId: translation.id}) }}"
-                                    confirmActionLabel="{{ 'action.mark_as_default'|trans({}, 'admin')|capitalize }}"
-                                >
-                                    <span
-                                        class="badge text-bg-secondary"
-                                    ></span>
-                                </twig:Xutim:Admin:ModalDialog>
-                            {% endif %}
-                        </td>
                         <td class="text-muted">
                             {{ translation.title }}
-                            {%
-                                if article.defaultTranslation.id == translation.id
-                            %}
-                                ({{
-                                    'reference for translations'|trans({}, 'admin')
-                                }})
-                            {% endif %}
                         </td>
                         <td class="text-muted">
                             {{ translation.locale|locale_name }}
