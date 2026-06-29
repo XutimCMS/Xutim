@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\NotificationBundle\Dto\Admin\Notification\NotificationAlertDto;
 use Xutim\NotificationBundle\Form\Admin\NotificationAlertType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
@@ -45,7 +46,9 @@ final class NotifyArticleTranslatorsAction extends AbstractController
         $mainLocales = array_values(array_intersect($this->siteContext->getLocales(), $allowedLocales));
         $extendedLocales = array_values(array_intersect($this->siteContext->getExtendedContentLocales(), $allowedLocales));
 
-        $referenceTitle = $this->referenceTranslationResolver->resolveOrAny($article)?->getTitle() ?? '';
+        /** @var ContentTranslationInterface $reference */
+        $reference = $this->referenceTranslationResolver->resolve($article);
+        $referenceTitle = $reference->getTitle();
         $form = $this->createForm(NotificationAlertType::class, new NotificationAlertDto(
             locales: $mainLocales,
             title: sprintf('Translation needed: %s', $referenceTitle),

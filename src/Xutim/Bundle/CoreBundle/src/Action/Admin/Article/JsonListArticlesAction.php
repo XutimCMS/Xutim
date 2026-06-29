@@ -6,6 +6,7 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 
@@ -23,7 +24,9 @@ class JsonListArticlesAction extends AbstractController
 
         $titles = [];
         foreach ($articles as $article) {
-            $titles[$article->getId()->toRfc4122()] = $this->referenceTranslationResolver->resolveOrAny($article)?->getTitle() ?? '';
+            /** @var ContentTranslationInterface $reference */
+            $reference = $this->referenceTranslationResolver->resolve($article);
+            $titles[$article->getId()->toRfc4122()] = $reference->getTitle();
         }
 
         return $this->json($titles);

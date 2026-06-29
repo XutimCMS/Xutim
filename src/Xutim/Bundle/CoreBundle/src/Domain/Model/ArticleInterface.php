@@ -27,10 +27,6 @@ interface ArticleInterface extends TranslationLocaleAwareInterface, Translatable
      */
     public function getTranslations(): Collection;
 
-    public function getDefaultTranslation(): ContentTranslationInterface;
-
-    public function setDefaultTranslation(ContentTranslationInterface $trans): void;
-
     /**
      * @return array{total: int, translated: int}
      */
@@ -41,11 +37,6 @@ interface ArticleInterface extends TranslationLocaleAwareInterface, Translatable
     public function getLayout(): ?string;
 
     public function changeLayout(?Layout $layout): void;
-
-    /**
-     * @return ContentTranslationInterface
-     */
-    public function getTranslationByLocaleOrDefault(string $locale);
 
     /**
      * @return ?ContentTranslationInterface

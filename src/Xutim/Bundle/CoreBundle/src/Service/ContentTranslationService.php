@@ -51,19 +51,9 @@ class ContentTranslationService
                 return $this->deleteArticle($trans->getArticle());
             }
             throw new LogicException('Content translation should have either article or page.');
-        } else {
-            // Check if the translation is not a translation reference.
-            if ($object->getDefaultTranslation()->getId()->equals($trans->getId()) === true) {
-                /** @var ContentTranslationInterface $nextTrans */
-                foreach ($object->getTranslations() as $nextTrans) {
-                    if ($object->getDefaultTranslation()->getId()->equals($nextTrans->getId()) === false) {
-                        $object->setDefaultTranslation($nextTrans);
-                        break;
-                    }
-                }
-            }
-            $object->getTranslations()->removeElement($trans);
         }
+
+        $object->getTranslations()->removeElement($trans);
 
         $userIdentifier = $this->userStorage->getUserWithException()->getUserIdentifier();
         $event = new ContentTranslationDeletedEvent($trans->getId());
@@ -82,7 +72,8 @@ class ContentTranslationService
             return false;
         }
 
-        $defTrans = $article->getDefaultTranslation();
+        $defTrans = $article->getTranslations()->first();
+        assert($defTrans !== false);
 
         $userIdentifier = $this->userStorage->getUserWithException()->getUserIdentifier();
         $logEntryArt = $this->logEventFactory->create($article->getId(), $userIdentifier, Article::class, new ArticleDeletedEvent($article->getId()));
@@ -112,7 +103,8 @@ class ContentTranslationService
         if ($menuItem !== null || $page->canBeDeleted() === false) {
             return false;
         }
-        $trans = $page->getDefaultTranslation();
+        $trans = $page->getTranslations()->first();
+        assert($trans !== false);
 
         $userIdentifier = $this->userStorage->getUserWithException()->getUserIdentifier();
         $logEntrySec = $this->logEventFactory->create($page->getId(), $userIdentifier, Page::class, new PageDeletedEvent($page->getId()));

@@ -18,11 +18,9 @@ use Gedmo\Mapping\Annotation\SortablePosition;
 use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
-use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\MenuItemInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
-use Xutim\CoreBundle\Domain\Model\TagTranslationInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 
@@ -139,54 +137,9 @@ class MenuItem implements MenuItemInterface
         return $this->tag;
     }
 
-    public function getObjectTranslation(?string $locale): ContentTranslationInterface|TagTranslationInterface
-    {
-        if ($this->hasPage()) {
-            return $this->getPageTranslation($locale);
-        }
-
-        if ($this->hasArticle()) {
-            return $this->getArticleTranslation($locale);
-        }
-
-        return $this->getTagTranslation($locale);
-    }
-
-    public function getPageTranslation(?string $locale): ContentTranslationInterface
-    {
-        Assert::notNull($this->page);
-
-        if ($locale === null) {
-            return $this->page->getDefaultTranslation();
-        }
-        return $this->page->getTranslationByLocaleOrDefault($locale);
-    }
-
-    public function getArticleTranslation(?string $locale): ContentTranslationInterface
-    {
-        Assert::notNull($this->article);
-
-        if ($locale === null) {
-            return $this->article->getDefaultTranslation();
-        }
-        return $this->article->getTranslationByLocaleOrDefault($locale);
-    }
-
     public function getArticle(): ?ArticleInterface
     {
         return $this->article;
-    }
-
-    public function getTagTranslation(?string $locale): TagTranslationInterface
-    {
-        Assert::notNull($this->tag);
-
-        if ($locale === null) {
-            $trans = $this->tag->getTranslations()->first();
-            Assert::notFalse($trans);
-            return $trans;
-        }
-        return $this->tag->getTranslationByLocaleOrAny($locale);
     }
 
     public function getTag(): ?TagInterface

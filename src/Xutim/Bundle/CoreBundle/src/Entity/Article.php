@@ -17,7 +17,6 @@ use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Config\Layout\Layout;
@@ -25,7 +24,6 @@ use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
-use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 #[MappedSuperclass]
@@ -55,10 +53,6 @@ class Article implements ArticleInterface
     #[OneToMany(mappedBy: 'article', targetEntity: ContentTranslationInterface::class, indexBy: 'locale')]
     #[OrderBy(['locale' => 'ASC'])]
     private Collection $translations;
-
-    #[OneToOne(targetEntity: ContentTranslationInterface::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[JoinColumn(onDelete: 'SET NULL')]
-    private ContentTranslationInterface $defaultTranslation;
 
     /** @var Collection<int, TagInterface> */
     #[ManyToMany(targetEntity: TagInterface::class, inversedBy: 'articles')]
@@ -117,9 +111,6 @@ class Article implements ArticleInterface
             return;
         }
         $this->translations->add($trans);
-        if (count($this->translations) === 1) {
-            $this->defaultTranslation = $trans;
-        }
     }
 
     public function getId(): Uuid
@@ -133,29 +124,6 @@ class Article implements ArticleInterface
     public function getTranslations(): Collection
     {
         return $this->translations;
-    }
-
-    public function getDefaultTranslation(): ContentTranslationInterface
-    {
-        return $this->defaultTranslation;
-    }
-
-    public function setDefaultTranslation(ContentTranslationInterface $trans): void
-    {
-        if ($this->getTranslations()->contains($trans) === false) {
-            throw new LogicException(sprintf(
-                'Translation "%s" cannot be marked as default when it\'s not part of the the article "%s"',
-                $trans->getId()->toRfc4122(),
-                $this->getId()->toRfc4122()
-            ));
-        }
-
-        if ($this->defaultTranslation->getId() === $trans->getId()) {
-            throw new LogicException('Translation is already a default translation of the article');
-        }
-
-        $this->defaultTranslation = $trans;
-        $this->updatedAt = new DateTimeImmutable();
     }
 
     /**
@@ -177,7 +145,10 @@ class Article implements ArticleInterface
 
     public function getTitle(): string
     {
-        return $this->defaultTranslation->getTitle();
+        $first = $this->translations->first();
+        assert($first !== false);
+
+        return $first->getTitle();
     }
 
     public function getLayout(): ?string

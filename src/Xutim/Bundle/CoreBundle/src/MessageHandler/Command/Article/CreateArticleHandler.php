@@ -64,7 +64,6 @@ readonly class CreateArticleHandler implements CommandHandlerInterface
 
         $event = new ArticleCreatedEvent(
             $article->getId(),
-            $translation->getId(),
             $cmd->preTitle,
             $cmd->title,
             $cmd->subTitle,

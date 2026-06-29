@@ -8,8 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
 class HomepageAction extends AbstractController
@@ -19,6 +21,7 @@ class HomepageAction extends AbstractController
         private readonly PageRepository $pageRepository,
         private readonly LayoutLoader $layoutLoader,
         private readonly ThemeFinder $themeFinder,
+        private readonly ReferenceTranslationResolver $referenceTranslationResolver,
     ) {
     }
 
@@ -28,7 +31,8 @@ class HomepageAction extends AbstractController
         if ($homepageId !== null) {
             $page = $this->pageRepository->find($homepageId);
             if ($page !== null) {
-                $translation = $page->getTranslationByLocaleOrDefault($request->getLocale());
+                /** @var ContentTranslationInterface $translation */
+                $translation = $this->referenceTranslationResolver->resolveByLocale($page, $request->getLocale());
                 if ($this->isGranted('ROLE_USER') === true || $translation->isPublished() === true) {
                     return $this->render($this->themeFinder->getActiveThemePath('/page/show.html.twig'), [
                         'page' => $page,

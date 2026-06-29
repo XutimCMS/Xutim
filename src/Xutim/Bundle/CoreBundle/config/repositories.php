@@ -64,6 +64,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$contentTranslationEntityClass', '%xutim_core.model.content_translation.class%')
         ->arg('$contentContext', service(ContentContext::class))
         ->arg('$siteContext', service(SiteContext::class))
+        ->arg('$referenceTranslationResolver', service(\Xutim\CoreBundle\Service\ReferenceTranslationResolver::class))
         ->tag('doctrine.repository_service');
 
     $services->set(MenuItemRepository::class)

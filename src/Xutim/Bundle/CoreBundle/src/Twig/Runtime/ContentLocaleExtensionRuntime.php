@@ -6,11 +6,15 @@ namespace Xutim\CoreBundle\Twig\Runtime;
 
 use Twig\Extension\RuntimeExtensionInterface;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Model\LocaleAwareInterface;
+use Xutim\CoreBundle\Domain\Model\TranslatableInterface;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 
 class ContentLocaleExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        private readonly SiteContext $siteContext
+        private readonly SiteContext $siteContext,
+        private readonly ReferenceTranslationResolver $referenceTranslationResolver,
     ) {
     }
 
@@ -25,5 +29,24 @@ class ContentLocaleExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return true;
+    }
+
+    /**
+     * Lenient Twig wrapper around {@see ReferenceTranslationResolver::resolveByLocale()}:
+     * returns null when the entity is null or has no translations, so templates can use
+     * the result with `{% if %}` guards without each call needing a `entity ? ... : null` wrap.
+     *
+     * @param TranslatableInterface<LocaleAwareInterface>|null $entity
+     */
+    public function resolveTranslation(?TranslatableInterface $entity, string $locale): ?LocaleAwareInterface
+    {
+        if ($entity === null) {
+            return null;
+        }
+        foreach ($entity->getTranslations() as $first) {
+            return $this->referenceTranslationResolver->resolveByLocale($entity, $locale);
+        }
+
+        return null;
     }
 }

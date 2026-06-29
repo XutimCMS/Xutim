@@ -15,7 +15,6 @@ final readonly class ArticleCreatedEvent implements DomainEvent
     */
     public function __construct(
         public Uuid $id,
-        public Uuid $defaultTranslation,
         public string $preTitle,
         public string $title,
         public string $subTitle,

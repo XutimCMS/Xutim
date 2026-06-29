@@ -14,6 +14,7 @@ class ContentLocaleExtension extends AbstractExtension
     {
         return [
             new TwigFunction('is_extended_locale', [ContentLocaleExtensionRuntime::class, 'isExtendedLocale']),
+            new TwigFunction('resolve_translation', [ContentLocaleExtensionRuntime::class, 'resolveTranslation']),
         ];
     }
 }

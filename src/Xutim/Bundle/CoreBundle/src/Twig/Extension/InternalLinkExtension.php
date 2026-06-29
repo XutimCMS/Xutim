@@ -13,6 +13,7 @@ use Twig\TwigFilter;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 
 class InternalLinkExtension extends AbstractExtension
@@ -23,7 +24,8 @@ class InternalLinkExtension extends AbstractExtension
         private readonly ArticleRepository $articleRepo,
         private readonly TagRepository $tagRepo,
         private readonly MediaRepositoryInterface $mediaRepo,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
+        private readonly ReferenceTranslationResolver $referenceTranslationResolver,
     ) {
     }
     public function getFilters(): array
@@ -39,9 +41,10 @@ class InternalLinkExtension extends AbstractExtension
         $pageRepo = $this->pageRepo;
         $articleRepo = $this->articleRepo;
         $tagRepo = $this->tagRepo;
+        $resolver = $this->referenceTranslationResolver;
         $requestLocale = $this->requestStack->getMainRequest()?->getLocale() ?? '';
 
-        $crawler->filter('span[data-internal-link-id][data-internal-link-type]')->each(function (Crawler $node) use ($locale, $pageRepo, $articleRepo, $tagRepo, $requestLocale) {
+        $crawler->filter('span[data-internal-link-id][data-internal-link-type]')->each(function (Crawler $node) use ($locale, $pageRepo, $articleRepo, $tagRepo, $resolver, $requestLocale) {
             $id = $node->attr('data-internal-link-id');
             $type = $node->attr('data-internal-link-type');
             $text = $node->text();
@@ -49,8 +52,8 @@ class InternalLinkExtension extends AbstractExtension
             $href = null;
             if ($type === 'page') {
                 $page = $pageRepo->find($id);
-                $trans = $page?->getTranslationByLocaleOrDefault($locale);
-                if ($trans !== null) {
+                if ($page !== null) {
+                    $trans = $resolver->resolveByLocale($page, $locale);
                     $params = ['slug' => $trans->getSlug()];
                     if ($requestLocale !== $trans->getLocale()) {
                         $params['_content_locale'] = $trans->getLocale();
@@ -61,8 +64,8 @@ class InternalLinkExtension extends AbstractExtension
 
             if ($type === 'article') {
                 $article = $articleRepo->find($id);
-                $trans = $article?->getTranslationByLocaleOrDefault($locale);
-                if ($trans !== null) {
+                if ($article !== null) {
+                    $trans = $resolver->resolveByLocale($article, $locale);
                     $params = ['slug' => $trans->getSlug()];
                     if ($requestLocale !== $trans->getLocale()) {
                         $params['_content_locale'] = $trans->getLocale();

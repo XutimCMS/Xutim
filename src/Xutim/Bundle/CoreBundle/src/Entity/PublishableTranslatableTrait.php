@@ -14,40 +14,6 @@ use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 trait PublishableTranslatableTrait
 {
     /**
-     * @return T
-     */
-    public function getTranslationByLocaleOrDefault(string $locale)
-    {
-        $trans = $this->translations
-            ->filter(fn ($trans) => $trans->getLocale() === $locale);
-
-        if ($trans->first() === false) {
-            return $this->defaultTranslation;
-        }
-
-        return $trans->first();
-    }
-
-    /**
-     * @return T
-     */
-    public function getPublishedTranslationByLocaleOrFallback(string $locale, string $altLocale)
-    {
-        $trans = $this->translations
-            ->filter(fn ($trans) => $trans->getLocale() === $locale);
-
-        if ($trans->first() === false) {
-            $fallbackTrans = $this->getTranslationByLocale($altLocale);
-            if ($fallbackTrans !== null) {
-                return $fallbackTrans;
-            }
-            return $this->defaultTranslation;
-        }
-
-        return $trans->first();
-    }
-
-    /**
      * @return ?T
      */
     public function getPublishedTranslationByLocale(string $locale)

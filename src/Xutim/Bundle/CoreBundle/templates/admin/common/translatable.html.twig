@@ -11,9 +11,7 @@
         import '@XutimCore/admin/common/translatable.html.twig' as translatableMacro
     %}
     {% if altLocale is null %}
-        {%
-            set trans = translatable.getTranslationByLocaleOrDefault(content_context_language())
-        %}
+        {% set trans = resolve_translation(translatable, content_context_language()) %}
     {% else %}
         {%
             set trans = translatable.getTranslationByLocaleOrFallback(content_context_language(), altLocale)
@@ -25,8 +23,6 @@
 {% endmacro %}
 
 {% macro toString(translatable) %}
-    {%
-        set trans = translatable.getTranslationByLocaleOrDefault(content_context_language())
-    %}
+    {% set trans = resolve_translation(translatable, content_context_language()) %}
     {{ trans }}
 {% endmacro %}

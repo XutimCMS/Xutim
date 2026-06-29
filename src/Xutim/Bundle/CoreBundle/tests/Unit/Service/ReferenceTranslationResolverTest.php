@@ -24,53 +24,49 @@ final class ReferenceTranslationResolverTest extends TestCase
         $this->assertSame($en, $result);
     }
 
-    public function testResolveReturnsNullWhenReferenceLocaleIsMissing(): void
-    {
-        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
-        $result = $resolver->resolve($this->translatable([
-            $this->translation('pl'),
-            $this->translation('de'),
-        ]));
-
-        $this->assertNull($result);
-    }
-
-    public function testResolveReturnsNullForAnEntityWithoutTranslations(): void
-    {
-        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
-        $result = $resolver->resolve($this->translatable([]));
-
-        $this->assertNull($result);
-    }
-
-    public function testResolveOrAnyPrefersTheReferenceLocale(): void
-    {
-        $pl = $this->translation('pl');
-        $en = $this->translation('en');
-
-        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
-        $result = $resolver->resolveOrAny($this->translatable([$pl, $en]));
-
-        $this->assertSame($en, $result);
-    }
-
-    public function testResolveOrAnyFallsBackToFirstAvailableWhenReferenceMissing(): void
+    public function testResolveFallsBackToFirstWhenReferenceLocaleMissing(): void
     {
         $pl = $this->translation('pl');
         $de = $this->translation('de');
 
         $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
-        $result = $resolver->resolveOrAny($this->translatable([$pl, $de]));
+        $result = $resolver->resolve($this->translatable([$pl, $de]));
 
         $this->assertSame($pl, $result);
     }
 
-    public function testResolveOrAnyReturnsNullWhenNoTranslationsExist(): void
+    public function testResolveByLocalePrefersTheGivenLocale(): void
     {
-        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
-        $result = $resolver->resolveOrAny($this->translatable([]));
+        $pl = $this->translation('pl');
+        $en = $this->translation('en');
+        $de = $this->translation('de');
 
-        $this->assertNull($result);
+        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
+        $result = $resolver->resolveByLocale($this->translatable([$pl, $en, $de]), 'de');
+
+        $this->assertSame($de, $result);
+    }
+
+    public function testResolveByLocaleFallsBackToReferenceWhenGivenLocaleMissing(): void
+    {
+        $pl = $this->translation('pl');
+        $en = $this->translation('en');
+
+        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
+        $result = $resolver->resolveByLocale($this->translatable([$pl, $en]), 'de');
+
+        $this->assertSame($en, $result);
+    }
+
+    public function testResolveByLocaleFallsBackToFirstWhenLocaleAndReferenceBothMissing(): void
+    {
+        $pl = $this->translation('pl');
+        $cz = $this->translation('cz');
+
+        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
+        $result = $resolver->resolveByLocale($this->translatable([$pl, $cz]), 'de');
+
+        $this->assertSame($pl, $result);
     }
 
     private function siteContext(string $referenceLocale): SiteContext

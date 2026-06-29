@@ -1,7 +1,7 @@
 {% extends '@XutimCore/admin/modalBase.html.twig' %}
 {% import '@XutimCore/admin/common/forms.html.twig' as forms %}
 {%
-    set title = 'edit page'|trans({}, 'admin')|capitalize ~ ' - ' ~ page.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title
+    set title = 'edit page'|trans({}, 'admin')|capitalize ~ ' - ' ~ page.translationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title
 %}
 
 {% block pageTitle %}

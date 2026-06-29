@@ -125,7 +125,9 @@ final class NotificationTest extends AdminApplicationTestCase
         ));
 
         $articleRepository->save($article);
-        $translationRepository->save($article->getDefaultTranslation(), true);
+        $translation = $article->getTranslations()->first();
+        assert($translation !== false);
+        $translationRepository->save($translation, true);
 
         return $article;
     }

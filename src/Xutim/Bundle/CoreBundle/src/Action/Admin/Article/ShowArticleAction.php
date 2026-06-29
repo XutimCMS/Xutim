@@ -8,10 +8,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
 class ShowArticleAction extends AbstractController
@@ -22,7 +24,8 @@ class ShowArticleAction extends AbstractController
         private readonly ArticleRepository $articleRepo,
         private readonly ContentDraftRepository $draftRepo,
         private readonly LogEventRepository $eventRepo,
-        private readonly TagRepository $tagRepo
+        private readonly TagRepository $tagRepo,
+        private readonly ReferenceTranslationResolver $referenceTranslationResolver,
     ) {
     }
 
@@ -45,7 +48,8 @@ class ShowArticleAction extends AbstractController
         $translatedArticles = $this->articleRepo->countTranslatedTranslations($article, $locales);
 
         $locale = $this->contentContext->getLanguage();
-        $contextTranslation = $article->getTranslationByLocaleOrDefault($locale);
+        /** @var ContentTranslationInterface $contextTranslation */
+        $contextTranslation = $this->referenceTranslationResolver->resolveByLocale($article, $locale);
 
         $currentTrans = $article->getTranslationByLocale($locale);
         if ($currentTrans === null) {

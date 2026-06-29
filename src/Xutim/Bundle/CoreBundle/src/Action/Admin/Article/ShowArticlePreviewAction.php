@@ -7,10 +7,12 @@ namespace Xutim\CoreBundle\Action\Admin\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
 class ShowArticlePreviewAction extends AbstractController
@@ -21,6 +23,7 @@ class ShowArticlePreviewAction extends AbstractController
         private readonly ContentContext $contentContext,
         private readonly ArticleRepository $articleRepo,
         private readonly ContentDraftRepository $draftRepo,
+        private readonly ReferenceTranslationResolver $referenceTranslationResolver,
     ) {
     }
 
@@ -31,7 +34,8 @@ class ShowArticlePreviewAction extends AbstractController
             throw $this->createNotFoundException('The article does not exist');
         }
         $locale = $this->contentContext->getLanguage();
-        $translation = $article->getTranslationByLocaleOrDefault($locale);
+        /** @var ContentTranslationInterface $translation */
+        $translation = $this->referenceTranslationResolver->resolveByLocale($article, $locale);
 
         $draft = null;
         if ($translation->isPublished()) {

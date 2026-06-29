@@ -14,12 +14,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Traversable;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Entity\Article;
 use Xutim\CoreBundle\Entity\Tag;
 use Xutim\CoreBundle\Form\Admin\Dto\MenuItemDto;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 use Xutim\SnippetBundle\Domain\Model\SnippetInterface;
 use Xutim\SnippetBundle\Domain\Repository\SnippetRepositoryInterface;
 
@@ -35,6 +37,7 @@ class MenuItemType extends AbstractType implements DataMapperInterface
         private readonly SnippetRepositoryInterface $snippetRepository,
         private readonly TagRepository $tagRepository,
         private readonly ContentContext $contentContext,
+        private readonly ReferenceTranslationResolver $referenceTranslationResolver,
         private readonly string $articleClass,
         private readonly string $snippetClass,
         private readonly string $tagClass,
@@ -55,8 +58,11 @@ class MenuItemType extends AbstractType implements DataMapperInterface
             ])
             ->add('article', EntityType::class, [
                 'class' => $this->articleClass,
-                'choice_label' => fn (Article $article): string =>
-                $article->getTranslationByLocaleOrDefault($locale)->getTitle(),
+                'choice_label' => function (Article $article) use ($locale): string {
+                    /** @var ContentTranslationInterface $trans */
+                    $trans = $this->referenceTranslationResolver->resolveByLocale($article, $locale);
+                    return $trans->getTitle();
+                },
                 'label' => new TranslatableMessage('Article', [], 'admin'),
                 'required' => false,
                 'attr' => [

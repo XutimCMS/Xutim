@@ -101,12 +101,12 @@
         {% endif %}
         {% if item.hasArticle %}
             <a href="{{ admin_path('admin_article_show', {id: item.article.id}) }}">
-                {{ item.article.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title }}
+                {{ item.article.translationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title }}
             </a>
         {% endif %}
         {% if item.hasPage %}
             <a href="{{ admin_path('admin_page_list', {id: item.page.id}) }}">
-                {{ item.page.publishedTranslationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title }}
+                {{ item.page.translationByLocaleOrFallback(content_context_language(), content_context_reference_language()).title }}
             </a>
         {% endif %}
     </td>

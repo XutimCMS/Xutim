@@ -15,37 +15,55 @@ final readonly class ReferenceTranslationResolver
     }
 
     /**
+     * Site reference-locale translation, else first available.
+     * Caller must guarantee the entity has at least one translation.
+     *
      * @template T of LocaleAwareInterface
      * @param TranslatableInterface<T> $entity
-     * @return T|null
+     * @return T
      */
-    public function resolve(TranslatableInterface $entity): ?LocaleAwareInterface
+    public function resolve(TranslatableInterface $entity): LocaleAwareInterface
     {
         $refLocale = $this->siteContext->getReferenceLocale();
+        $first = null;
         foreach ($entity->getTranslations() as $trans) {
             if ($trans->getLocale() === $refLocale) {
                 return $trans;
             }
+            $first ??= $trans;
         }
+        assert($first !== null, 'Translatable entity must have at least one translation');
 
-        return null;
+        return $first;
     }
 
     /**
+     * Translation in the given locale, else site reference locale, else first available.
+     * Caller must guarantee the entity has at least one translation.
+     *
      * @template T of LocaleAwareInterface
      * @param TranslatableInterface<T> $entity
-     * @return T|null
+     * @return T
      */
-    public function resolveOrAny(TranslatableInterface $entity): ?LocaleAwareInterface
+    public function resolveByLocale(TranslatableInterface $entity, string $locale): LocaleAwareInterface
     {
-        $ref = $this->resolve($entity);
+        $refLocale = $this->siteContext->getReferenceLocale();
+        $ref = null;
+        $first = null;
+        foreach ($entity->getTranslations() as $trans) {
+            if ($trans->getLocale() === $locale) {
+                return $trans;
+            }
+            if ($trans->getLocale() === $refLocale) {
+                $ref = $trans;
+            }
+            $first ??= $trans;
+        }
         if ($ref !== null) {
             return $ref;
         }
-        foreach ($entity->getTranslations() as $trans) {
-            return $trans;
-        }
+        assert($first !== null, 'Translatable entity must have at least one translation');
 
-        return null;
+        return $first;
     }
 }

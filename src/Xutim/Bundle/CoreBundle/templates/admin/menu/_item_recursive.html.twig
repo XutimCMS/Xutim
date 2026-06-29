@@ -45,7 +45,7 @@
 
 {% macro itemLine(items, node, item, child, first, last, selectedItem) %}
     {% set isSelectedItem = selectedItem and selectedItem.id.equals(item.id) %}
-    {% set translation = item.objectTranslation(content_context_language()) %}
+    {% set translation = resolve_translation(item.object, content_context_language()) %}
 
     <span class="me-1"></span>
 

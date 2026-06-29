@@ -29,17 +29,9 @@ interface MenuItemInterface
 
     public function getObject(): PageInterface|ArticleInterface|TagInterface;
 
-    public function getObjectTranslation(?string $locale): ContentTranslationInterface|TagTranslationInterface;
-
-    public function getPageTranslation(?string $locale): ContentTranslationInterface;
-
-    public function getArticleTranslation(?string $locale): ContentTranslationInterface;
-
     public function getArticle(): ?ArticleInterface;
 
     public function getTag(): ?TagInterface;
-
-    public function getTagTranslation(?string $locale): TagTranslationInterface;
 
     public function getPosition(): int;
 

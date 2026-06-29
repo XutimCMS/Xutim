@@ -25,16 +25,9 @@ interface PageInterface extends TranslationLocaleAwareInterface, TranslatableInt
 
     public function changeParent(?PageInterface $parent): void;
 
-    public function setDefaultTranslation(ContentTranslationInterface $trans): void;
-
     public function getId(): Uuid;
 
     public function getColor(): Color;
-
-    /**
-     * @return ContentTranslationInterface
-     */
-    public function getTranslationByLocaleOrDefault(string $locale);
 
     /**
      * @return ?ContentTranslationInterface
@@ -55,8 +48,6 @@ interface PageInterface extends TranslationLocaleAwareInterface, TranslatableInt
      * @return array<string, string>
      */
     public function getExistingTranslationLocales(): array;
-
-    public function getDefaultTranslation(): ContentTranslationInterface;
 
     public function getRootPage(): PageInterface;
 

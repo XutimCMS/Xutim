@@ -15,7 +15,6 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\OrderBy;
 use Gedmo\Mapping\Annotation\SortableGroup;
 use Gedmo\Mapping\Annotation\SortablePosition;
@@ -24,7 +23,6 @@ use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
-use Xutim\CoreBundle\Exception\LogicException;
 use Xutim\MediaBundle\Domain\Model\MediaInterface;
 
 #[MappedSuperclass]
@@ -83,10 +81,6 @@ class Page implements PageInterface
     #[OrderBy(['locale' => 'ASC'])]
     private Collection $translations;
 
-    #[OneToOne(targetEntity: ContentTranslationInterface::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[JoinColumn(onDelete: 'SET NULL')]
-    private ContentTranslationInterface $defaultTranslation;
-
     /** @var Collection<int, BlockItemInterface> */
     #[OneToMany(mappedBy: 'page', targetEntity: BlockItemInterface::class)]
     private Collection $blockItems;
@@ -120,7 +114,10 @@ class Page implements PageInterface
 
     public function __toString(): string
     {
-        return $this->defaultTranslation->getTitle();
+        $first = $this->translations->first();
+        assert($first !== false);
+
+        return $first->getTitle();
     }
 
     /**
@@ -146,9 +143,6 @@ class Page implements PageInterface
             return;
         }
         $this->translations->add($trans);
-        if (count($this->translations) === 1) {
-            $this->defaultTranslation = $trans;
-        }
     }
 
     private function setRootParent(?PageInterface $parent): void
@@ -164,24 +158,6 @@ class Page implements PageInterface
     {
         $this->parent = $parent;
         $this->setRootParent($parent);
-    }
-
-    public function setDefaultTranslation(ContentTranslationInterface $trans): void
-    {
-        if ($this->getTranslations()->contains($trans) === false) {
-            throw new LogicException(sprintf(
-                'Translation "%s" cannot be marked as default when it\'s not part of the the page "%s"',
-                $trans->getId()->toRfc4122(),
-                $this->getId()->toRfc4122()
-            ));
-        }
-
-        if ($this->defaultTranslation->getId() === $trans->getId()) {
-            throw new LogicException('Translation is already a default translation of the page');
-        }
-
-        $this->defaultTranslation = $trans;
-        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function getId(): Uuid
@@ -204,11 +180,6 @@ class Page implements PageInterface
     public function getExistingTranslationLocales(): array
     {
         return $this->translations->map(fn (ContentTranslationInterface $trans) => $trans->getLocale())->toArray();
-    }
-
-    public function getDefaultTranslation(): ContentTranslationInterface
-    {
-        return $this->defaultTranslation;
     }
 
     public function getRootPage(): PageInterface

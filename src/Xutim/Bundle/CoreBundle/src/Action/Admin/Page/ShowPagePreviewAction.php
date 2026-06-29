@@ -8,9 +8,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Infra\Layout\LayoutLoader;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 use Xutim\CoreBundle\Twig\ThemeFinder;
 
 class ShowPagePreviewAction extends AbstractController
@@ -22,6 +24,7 @@ class ShowPagePreviewAction extends AbstractController
         private readonly SiteContext $siteContext,
         private readonly PageRepository $pageRepo,
         private readonly ContentDraftRepository $draftRepo,
+        private readonly ReferenceTranslationResolver $referenceTranslationResolver,
     ) {
     }
 
@@ -32,7 +35,8 @@ class ShowPagePreviewAction extends AbstractController
             throw $this->createNotFoundException('The page does not exist');
         }
         $locale = $this->contentContext->getLanguage();
-        $translation = $page->getTranslationByLocaleOrDefault($locale);
+        /** @var ContentTranslationInterface $translation */
+        $translation = $this->referenceTranslationResolver->resolveByLocale($page, $locale);
 
         $draft = null;
         if ($translation->isPublished()) {

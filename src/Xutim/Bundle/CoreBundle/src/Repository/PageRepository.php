@@ -14,6 +14,7 @@ use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\PageInterface;
 use Xutim\CoreBundle\Dto\Admin\FilterDto;
 use Xutim\CoreBundle\Entity\PublicationStatus;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 
 /**
  * @extends  ServiceEntityRepository<PageInterface>
@@ -33,6 +34,7 @@ class PageRepository extends ServiceEntityRepository
         private readonly string $contentTranslationEntityClass,
         private readonly ContentContext $contentContext,
         private readonly SiteContext $siteContext,
+        private readonly ReferenceTranslationResolver $referenceTranslationResolver,
     ) {
         parent::__construct($registry, $entityClass);
     }
@@ -45,13 +47,11 @@ class PageRepository extends ServiceEntityRepository
      */
     public function hierarchyByPublished(string $locale, bool $archived = false, bool $onlyTranslated = false): array
     {
+        $refLocale = $this->siteContext->getReferenceLocale();
         $builder = $this->createQueryBuilder('node');
         $builder
             ->leftJoin('node.parent', 'parent')
             ->addSelect('parent')
-            ->leftJoin('node.translations', 'transRef', 'WITH', 'transRef.locale = :refLocale')
-            ->addSelect('transRef')
-            ->setParameter('refLocale', $this->siteContext->getReferenceLocale())
             ->addOrderBy('parent.id', 'ASC')
             ->addOrderBy('node.position', 'ASC')
             ->addOrderBy('node.createdAt', 'ASC')
@@ -59,9 +59,7 @@ class PageRepository extends ServiceEntityRepository
 
         if ($onlyTranslated === true) {
             $builder
-                ->leftJoin('node.translations', 'transLoc')
-                ->andWhere('transLoc.locale = :locale')
-                ->addSelect('transLoc')
+                ->innerJoin('node.translations', 'transLoc', 'WITH', 'transLoc.locale = :locale')
                 ->setParameter('locale', $locale, Types::STRING);
         }
 
@@ -73,20 +71,18 @@ class PageRepository extends ServiceEntityRepository
         /** @var array<PageInterface> */
         $pages = $builder->getQuery()->getResult();
 
-        // Pre-fetch translations for the pages.
-        if ($onlyTranslated === false) {
-            if ($pages !== []) {
-                $this->getEntityManager()
-                    ->createQuery(<<<DQL
-                        SELECT t, p
-                        FROM {$this->contentTranslationEntityClass} t
-                        JOIN t.page p
-                        WHERE p IN (:pages) AND t.locale = :locale
-                    DQL)
-                    ->setParameter('pages', $pages)
-                    ->setParameter('locale', $locale)
-                    ->getResult();
-            }
+        // Pre-fetch the user-locale and reference-locale translations into the page collections.
+        if ($pages !== []) {
+            $this->getEntityManager()
+                ->createQuery(<<<DQL
+                    SELECT t, p
+                    FROM {$this->contentTranslationEntityClass} t
+                    JOIN t.page p
+                    WHERE p IN (:pages) AND t.locale IN (:locales)
+                DQL)
+                ->setParameter('pages', $pages)
+                ->setParameter('locales', array_unique([$locale, $refLocale]))
+                ->getResult();
         }
 
 
@@ -290,8 +286,12 @@ class PageRepository extends ServiceEntityRepository
     public function getPath(PageInterface $page, string $locale): string
     {
         $pages = $this->getPathHydrated($page);
-        $path = array_map(fn (PageInterface $page)
-            => $page->getTranslationByLocaleOrDefault($locale)->getTitle(), $pages);
+        $resolver = $this->referenceTranslationResolver;
+        $path = array_map(static function (PageInterface $page) use ($locale, $resolver): string {
+            /** @var ContentTranslationInterface $trans */
+            $trans = $resolver->resolveByLocale($page, $locale);
+            return $trans->getTitle();
+        }, $pages);
 
         return implode(' / ', $path);
     }
