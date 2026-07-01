@@ -500,10 +500,33 @@ export default class XutimLayoutTool {
                         if (!img.complete) img.addEventListener('load', resize);
                     });
                 }
+                this.forwardPreviewHover(iframe, doc);
             } catch (e) {
                 // ignore
             }
         });
+    }
+
+    // The iframe eats mousemove, so editor.js can't show the block toolbar
+    // while you hover the preview. Re-fire the iframe's mousemove on the
+    // iframe element in parent coordinates (adjusted for the CSS scale).
+    forwardPreviewHover(iframe, doc) {
+        if (!doc || this.readOnly) return;
+
+        const forward = (e) => {
+            const rect = iframe.getBoundingClientRect();
+            const scale = this.previewScale || 1;
+            iframe.dispatchEvent(
+                new MouseEvent('mousemove', {
+                    bubbles: true,
+                    cancelable: true,
+                    clientX: rect.left + e.clientX * scale,
+                    clientY: rect.top + e.clientY * scale,
+                }),
+            );
+        };
+
+        doc.addEventListener('mousemove', forward);
     }
 
     setupPreviewScaleObserver() {
