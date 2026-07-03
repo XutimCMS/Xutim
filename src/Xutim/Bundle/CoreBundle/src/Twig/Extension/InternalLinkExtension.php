@@ -52,8 +52,8 @@ class InternalLinkExtension extends AbstractExtension
             $href = null;
             if ($type === 'page') {
                 $page = $pageRepo->find($id);
-                if ($page !== null) {
-                    $trans = $resolver->resolveByLocale($page, $locale);
+                $trans = $page !== null ? $resolver->resolvePublishedByLocale($page, $locale) : null;
+                if ($trans !== null) {
                     $params = ['slug' => $trans->getSlug()];
                     if ($requestLocale !== $trans->getLocale()) {
                         $params['_content_locale'] = $trans->getLocale();
@@ -64,8 +64,8 @@ class InternalLinkExtension extends AbstractExtension
 
             if ($type === 'article') {
                 $article = $articleRepo->find($id);
-                if ($article !== null) {
-                    $trans = $resolver->resolveByLocale($article, $locale);
+                $trans = $article !== null ? $resolver->resolvePublishedByLocale($article, $locale) : null;
+                if ($trans !== null) {
                     $params = ['slug' => $trans->getSlug()];
                     if ($requestLocale !== $trans->getLocale()) {
                         $params['_content_locale'] = $trans->getLocale();
@@ -76,7 +76,7 @@ class InternalLinkExtension extends AbstractExtension
 
             if ($type === 'tag') {
                 $tag = $tagRepo->find($id);
-                $trans = $tag?->getTranslationByLocaleOrAny($locale);
+                $trans = $tag !== null ? $resolver->resolvePublishedByLocale($tag, $locale) : null;
                 if ($trans !== null) {
                     $params = ['slug' => $trans->getSlug()];
                     if ($requestLocale !== $trans->getLocale()) {

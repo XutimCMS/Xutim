@@ -167,7 +167,7 @@ class XutimLayoutExtensionRuntime implements RuntimeExtensionInterface
      *
      * @param array<string, mixed> $context
      */
-    public function editable(array $context, string $field, mixed $value): string
+    public function editable(array $context, string $field, mixed $value, ?string $placeholder = null): string
     {
         $layout = $context['layout'] ?? null;
         $fieldOption = $layout instanceof LayoutDefinition ? ($layout->getFields()[$field] ?? null) : null;
@@ -193,7 +193,7 @@ class XutimLayoutExtensionRuntime implements RuntimeExtensionInterface
             return $rendered;
         }
 
-        $placeholder = ucfirst(strtolower(preg_replace('/([a-z])([A-Z])/', '$1 $2', $field) ?? $field));
+        $placeholder ??= ucfirst(strtolower(preg_replace('/([a-z])([A-Z])/', '$1 $2', $field) ?? $field));
 
         return sprintf(
             '<span data-xutim-editable="%s" data-xutim-placeholder="%s"%s%s>%s</span>',

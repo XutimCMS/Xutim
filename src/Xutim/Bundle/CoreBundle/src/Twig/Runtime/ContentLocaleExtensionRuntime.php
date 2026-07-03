@@ -7,6 +7,7 @@ namespace Xutim\CoreBundle\Twig\Runtime;
 use Twig\Extension\RuntimeExtensionInterface;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\LocaleAwareInterface;
+use Xutim\CoreBundle\Domain\Model\PublishableTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\TranslatableInterface;
 use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 
@@ -48,5 +49,21 @@ class ContentLocaleExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return null;
+    }
+
+    /**
+     * Lenient Twig wrapper around {@see ReferenceTranslationResolver::resolvePublishedByLocale()}:
+     * returns null when the entity is null or has no published translation in any locale, so
+     * public templates can guard with `{% if %}` and never link to unpublished content.
+     *
+     * @param TranslatableInterface<LocaleAwareInterface&PublishableTranslationInterface>|null $entity
+     */
+    public function resolvePublishedTranslation(?TranslatableInterface $entity, string $locale): ?LocaleAwareInterface
+    {
+        if ($entity === null) {
+            return null;
+        }
+
+        return $this->referenceTranslationResolver->resolvePublishedByLocale($entity, $locale);
     }
 }

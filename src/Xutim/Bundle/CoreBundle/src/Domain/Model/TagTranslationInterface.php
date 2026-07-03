@@ -7,7 +7,7 @@ namespace Xutim\CoreBundle\Domain\Model;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 
-interface TagTranslationInterface extends LocaleAwareInterface
+interface TagTranslationInterface extends LocaleAwareInterface, PublishableTranslationInterface
 {
     public function change(string $name, string $slug): void;
 

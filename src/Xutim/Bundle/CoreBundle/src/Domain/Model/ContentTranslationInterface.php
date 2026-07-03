@@ -9,7 +9,7 @@ use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
-interface ContentTranslationInterface extends LocaleAwareInterface
+interface ContentTranslationInterface extends LocaleAwareInterface, PublishableTranslationInterface
 {
     public function __toString(): string;
 
