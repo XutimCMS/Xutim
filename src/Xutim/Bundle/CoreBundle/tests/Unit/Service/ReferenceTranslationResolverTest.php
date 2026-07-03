@@ -125,6 +125,38 @@ final class ReferenceTranslationResolverTest extends TestCase
         $this->assertNull($result);
     }
 
+    public function testResolvePublishedInLocaleReturnsThePublishedGivenLocale(): void
+    {
+        $pl = $this->publishableTranslation('pl', true);
+        $en = $this->publishableTranslation('en', true);
+
+        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
+        $result = $resolver->resolvePublishedInLocale($this->translatable([$pl, $en]), 'pl');
+
+        $this->assertSame($pl, $result);
+    }
+
+    public function testResolvePublishedInLocaleReturnsNullWhenGivenLocaleUnpublished(): void
+    {
+        $plDraft = $this->publishableTranslation('pl', false);
+        $en = $this->publishableTranslation('en', true);
+
+        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
+        $result = $resolver->resolvePublishedInLocale($this->translatable([$plDraft, $en]), 'pl');
+
+        $this->assertNull($result);
+    }
+
+    public function testResolvePublishedInLocaleReturnsNullWhenGivenLocaleMissing(): void
+    {
+        $en = $this->publishableTranslation('en', true);
+
+        $resolver = new ReferenceTranslationResolver($this->siteContext('en'));
+        $result = $resolver->resolvePublishedInLocale($this->translatable([$en]), 'pl');
+
+        $this->assertNull($result);
+    }
+
     private function siteContext(string $referenceLocale): SiteContext
     {
         $siteContext = $this->createStub(SiteContext::class);

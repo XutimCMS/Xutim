@@ -9,6 +9,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\TagTranslationRepository;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 use Xutim\SnippetBundle\Routing\RouteSnippetRegistry;
 use Xutim\SnippetBundle\Routing\SnippetUrlGenerator;
 
@@ -20,6 +21,7 @@ class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
         private readonly TagTranslationRepository $tagRepo,
         private readonly RouterInterface $router,
         private readonly SnippetUrlGenerator $snippetUrlGenerator,
+        private readonly ReferenceTranslationResolver $referenceTranslationResolver,
     ) {
     }
 
@@ -89,7 +91,7 @@ class RouteGuesserExtensionRuntime implements RuntimeExtensionInterface
                 if ($slug !== '') {
                     $content = $this->repo->findOneBy(['slug' => $slug]);
                     if ($content !== null) {
-                        $translation = $content->getObject()->getTranslationByLocale($locale);
+                        $translation = $this->referenceTranslationResolver->resolvePublishedInLocale($content->getObject(), $locale);
                         if ($translation !== null) {
                             return $this->router->generate('content_translation_show', ['_locale' => $locale, 'slug' => $translation->getSlug()]);
                         }

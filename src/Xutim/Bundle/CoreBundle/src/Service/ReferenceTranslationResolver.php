@@ -93,6 +93,24 @@ final readonly class ReferenceTranslationResolver
     }
 
     /**
+     * Published translation in exactly the given locale, or null. No fallback.
+     *
+     * @template T of LocaleAwareInterface&PublishableTranslationInterface
+     * @param  TranslatableInterface<T> $entity
+     * @return T|null
+     */
+    public function resolvePublishedInLocale(TranslatableInterface $entity, string $locale): ?LocaleAwareInterface
+    {
+        foreach ($entity->getTranslations() as $trans) {
+            if ($trans->getLocale() === $locale && $trans->isPublished()) {
+                return $trans;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Published translation in the given locale, else published reference locale, else first published.
      * Null when nothing is published.
      *
