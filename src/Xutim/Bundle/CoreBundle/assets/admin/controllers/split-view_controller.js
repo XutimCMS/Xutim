@@ -45,6 +45,8 @@ export default class extends Controller {
         fetchAllFilesUrl: String,
         fetchFileUrl: String,
         fetchAnchorSnippetsUrl: String,
+        xutimLayouts: Array,
+        xutimLayoutPreviewUrl: String,
         referenceDiffUrl: String,
         referenceHasChanged: Boolean,
     };
@@ -56,29 +58,10 @@ export default class extends Controller {
         const desiredRefLocale = this.#readPref('ref', 'xutim.splitViewReference');
         if (desiredRefLocale) this.#selectRefLocale(desiredRefLocale);
 
-        this.isOn = this.#readPref('split', 'xutim.splitView') === '1';
-
-        if (this.isOn) {
+        if (this.#readPref('split', 'xutim.splitView') === '1') {
             this.enable();
-            this.localeSelectTarget.hidden = false;
-            this.localeSelectClipboardTarget.hidden = false;
-            if (this.hasScrollLockBtnTarget)
-                this.scrollLockBtnTarget.hidden = false;
         } else {
-            this.leftTarget.classList.remove('col-lg-6');
-            this.rightTarget.classList.add('d-none');
-
-            if (this.hasIconOnTarget)
-                this.iconOnTarget.classList.remove('d-none');
-            if (this.hasIconOffTarget)
-                this.iconOffTarget.classList.add('d-none');
-
-            this.isOn = false;
-
-            this.localeSelectTarget.hidden = true;
-            this.localeSelectClipboardTarget.hidden = true;
-            if (this.hasScrollLockBtnTarget)
-                this.scrollLockBtnTarget.hidden = true;
+            this.disable();
         }
 
         this.#updateScrollLockButton();
@@ -87,16 +70,8 @@ export default class extends Controller {
     async toggle() {
         if (this.isOn) {
             this.disable();
-            this.localeSelectTarget.hidden = true;
-            this.localeSelectClipboardTarget.hidden = true;
-            if (this.hasScrollLockBtnTarget)
-                this.scrollLockBtnTarget.hidden = true;
         } else {
             await this.enable();
-            this.localeSelectTarget.hidden = false;
-            this.localeSelectClipboardTarget.hidden = false;
-            if (this.hasScrollLockBtnTarget)
-                this.scrollLockBtnTarget.hidden = false;
         }
     }
 
@@ -113,6 +88,11 @@ export default class extends Controller {
         this.iconOnTarget.classList.add('d-none');
         this.iconOffTarget.classList.remove('d-none');
 
+        this.localeSelectTarget.hidden = false;
+        this.localeSelectClipboardTarget.hidden = false;
+        if (this.hasScrollLockBtnTarget)
+            this.scrollLockBtnTarget.hidden = false;
+
         this.#applyScrollLock();
         this.#persistState();
     }
@@ -125,6 +105,11 @@ export default class extends Controller {
 
         this.iconOnTarget.classList.remove('d-none');
         this.iconOffTarget.classList.add('d-none');
+
+        this.localeSelectTarget.hidden = true;
+        this.localeSelectClipboardTarget.hidden = true;
+        if (this.hasScrollLockBtnTarget)
+            this.scrollLockBtnTarget.hidden = true;
 
         this.#persistState();
     }
@@ -144,18 +129,7 @@ export default class extends Controller {
 
         if (this.refEditor?.destroy) await this.refEditor.destroy();
 
-        const tools = buildEditorTools({
-            pageIdsUrl: this.pageIdsUrlValue,
-            articleIdsUrl: this.articleIdsUrlValue,
-            tagIdsUrl: this.tagIdsUrlValue,
-            fetchImagesUrl: this.fetchImagesUrlValue,
-            fetchFilesUrl: this.fetchFilesUrlValue,
-            fetchAllFilesUrl: this.fetchAllFilesUrlValue,
-            fetchFileUrl: this.fetchFileUrlValue,
-            fetchAnchorSnippetsUrl: this.fetchAnchorSnippetsUrlValue,
-            blockCodes: this.blockCodesValue,
-            tags: this.tagsValue,
-        });
+        const tools = this.buildTools();
 
         this.refEditor = new EditorJS({
             holder: this.referenceTarget,
@@ -203,8 +177,28 @@ export default class extends Controller {
         history.replaceState({}, '', url);
     }
 
-    toolsConfig() {
-        return window.XutimEditorTools || {};
+    /** Extension hook: override to inject downstream tools/tunes. */
+    buildTools(overrides = {}) {
+        return buildEditorTools({
+            pageIdsUrl: this.pageIdsUrlValue,
+            articleIdsUrl: this.articleIdsUrlValue,
+            tagIdsUrl: this.tagIdsUrlValue,
+            fetchImagesUrl: this.fetchImagesUrlValue,
+            fetchFilesUrl: this.fetchFilesUrlValue,
+            fetchAllFilesUrl: this.fetchAllFilesUrlValue,
+            fetchFileUrl: this.fetchFileUrlValue,
+            fetchAnchorSnippetsUrl: this.fetchAnchorSnippetsUrlValue,
+            blockCodes: this.blockCodesValue,
+            tags: this.tagsValue,
+            xutimLayouts: this.xutimLayoutsValue,
+            xutimLayoutPreviewUrl: this.#appendEditMode(this.xutimLayoutPreviewUrlValue),
+            ...overrides,
+        });
+    }
+
+    #appendEditMode(url) {
+        if (!url) return url;
+        return url + (url.includes('?') ? '&' : '?') + 'edit=1';
     }
 
     async decorateBlocksForCopy() {
@@ -238,10 +232,7 @@ export default class extends Controller {
 
                 Object.assign(btn.style, {
                     position: 'absolute',
-                    left: '-1rem',
-                    top: '0rem',
-                    fontSize: '12px',
-                    marginLeft: '-0.5rem',
+                    left: '-1.5rem',
                     top: '50%',
                     transform: 'translateY(-50%)',
                 });
@@ -269,7 +260,6 @@ export default class extends Controller {
         const src = this.refData?.blocks ?? [];
         if (!src.length) return;
 
-        // Build Editor.js ARRAY payload: [{ id, tool, data, tunes, time }]
         const payload = src.map((b) => ({
             id: b.id ?? this.#rid(10),
             tool: b.type,
@@ -279,7 +269,6 @@ export default class extends Controller {
         }));
         const payloadStr = JSON.stringify(payload);
 
-        // Fallback HTML/text (sanitized) from the rendered readonly area
         const htmlText = this.#buildHtmlTextFromNode(this.referenceTarget);
 
         await this.#writeClipboardViaCopyEvent({
@@ -416,6 +405,8 @@ export default class extends Controller {
         if (!this.referenceDiffUrlValue) return;
         if (!this.hasDiffContainerTarget || !this.hasReferenceContainerTarget)
             return;
+
+        if (!this.isOn) await this.enable();
 
         const res = await fetch(this.referenceDiffUrlValue);
         if (!res.ok) return;

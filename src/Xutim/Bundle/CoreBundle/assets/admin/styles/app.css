@@ -4,6 +4,25 @@
     --tblr-font-sans-serif: 'Inter';
 }
 
+/* Transparent hover bridge into the left gutter where .x-copy-btn sits. */
+#reference-editor .ce-block::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 0;
+    width: 2rem;
+    height: 100%;
+}
+.ce-block .x-copy-btn {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+.ce-block:hover .x-copy-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .mt-np1 {
     margin-top: -1px !important;
 }
