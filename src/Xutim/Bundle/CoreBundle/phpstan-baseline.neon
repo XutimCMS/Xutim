@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Property Xutim\CoreBundle\\Entity\\Article\:\:\$defaultTranslation type mapping mismatch\: database can contain Xutim\CoreBundle\\Entity\\ContentTranslation\|null but property expects Xutim\CoreBundle\\Entity\\ContentTranslation\.$#'
-			identifier: doctrine.associationType
-			count: 1
-			path: src/Entity/Article.php
-
-		-
-			message: '#^Property Xutim\CoreBundle\\Entity\\Page\:\:\$defaultTranslation type mapping mismatch\: database can contain Xutim\CoreBundle\\Entity\\ContentTranslation\|null but property expects Xutim\CoreBundle\\Entity\\ContentTranslation\.$#'
-			identifier: doctrine.associationType
-			count: 1
-			path: src/Entity/Page.php
-
-		-
 			message: '#^Instanceof between Xutim\CoreBundle\\Entity\\Page and Xutim\CoreBundle\\Entity\\Page will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
 			count: 1
