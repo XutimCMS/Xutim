@@ -50,9 +50,13 @@ export default class extends Controller {
     };
 
     connect() {
-        this.isOn = localStorage.getItem('xutim.splitView') === '1';
-        const stored = localStorage.getItem('xutim.splitViewScrollLock');
-        this.scrollLocked = stored === null || stored === '1';
+        const scrollLockRaw = this.#readPref('scroll_lock', 'xutim.splitViewScrollLock');
+        this.scrollLocked = scrollLockRaw === null || scrollLockRaw === '1';
+
+        const desiredRefLocale = this.#readPref('ref', 'xutim.splitViewReference');
+        if (desiredRefLocale) this.#selectRefLocale(desiredRefLocale);
+
+        this.isOn = this.#readPref('split', 'xutim.splitView') === '1';
 
         if (this.isOn) {
             this.enable();
@@ -98,7 +102,6 @@ export default class extends Controller {
 
     async enable() {
         this.isOn = true;
-        localStorage.setItem('xutim.splitView', '1');
 
         this.leftTarget.classList.add('col-lg-6');
         this.rightTarget.classList.remove('d-none');
@@ -111,17 +114,19 @@ export default class extends Controller {
         this.iconOffTarget.classList.remove('d-none');
 
         this.#applyScrollLock();
+        this.#persistState();
     }
 
     disable() {
         this.isOn = false;
-        localStorage.setItem('xutim.splitView', '0');
 
         this.leftTarget.classList.remove('col-lg-6');
         this.rightTarget.classList.add('d-none');
 
         this.iconOnTarget.classList.remove('d-none');
         this.iconOffTarget.classList.add('d-none');
+
+        this.#persistState();
     }
 
     async loadReference() {
@@ -159,6 +164,43 @@ export default class extends Controller {
             tools: tools,
             onReady: () => this.decorateBlocksForCopy(),
         });
+
+        this.#persistState();
+    }
+
+    /** URL param first, localStorage fallback for a fresh URL. */
+    #readPref(urlKey, storageKey) {
+        const fromUrl = new URLSearchParams(window.location.search).get(urlKey);
+        return fromUrl ?? localStorage.getItem(storageKey);
+    }
+
+    #selectRefLocale(locale) {
+        if (!this.hasLocaleSelectTarget) return;
+        const match = this.localeSelectTarget.querySelector(
+            `option[data-locale="${CSS.escape(locale)}"]`,
+        );
+        if (match) this.localeSelectTarget.value = match.value;
+    }
+
+    #currentRefLocale() {
+        return this.localeSelectTarget?.selectedOptions?.[0]?.dataset.locale ?? null;
+    }
+
+    #persistState() {
+        const url = new URL(window.location.href);
+        const write = (urlKey, storageKey, value) => {
+            if (value === null) {
+                url.searchParams.delete(urlKey);
+                localStorage.removeItem(storageKey);
+            } else {
+                url.searchParams.set(urlKey, value);
+                localStorage.setItem(storageKey, value);
+            }
+        };
+        write('split', 'xutim.splitView', this.isOn ? '1' : '0');
+        write('scroll_lock', 'xutim.splitViewScrollLock', this.scrollLocked ? '1' : '0');
+        write('ref', 'xutim.splitViewReference', this.#currentRefLocale());
+        history.replaceState({}, '', url);
     }
 
     toolsConfig() {
@@ -451,12 +493,9 @@ export default class extends Controller {
 
     toggleScrollLock() {
         this.scrollLocked = !this.scrollLocked;
-        localStorage.setItem(
-            'xutim.splitViewScrollLock',
-            this.scrollLocked ? '1' : '0',
-        );
         this.#applyScrollLock();
         this.#updateScrollLockButton();
+        this.#persistState();
     }
 
     #applyScrollLock() {

@@ -181,6 +181,7 @@
                     {% for tr in page.translations %}
                         <option
                             value="{{ admin_path('admin_json_content_translation_show', {id: tr.id}) }}"
+                            data-locale="{{ tr.locale }}"
                             {% if referenceTranslation and referenceTranslation.id == tr.id %}
                                 selected
                             {% endif %}
