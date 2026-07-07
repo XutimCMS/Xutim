@@ -40,6 +40,7 @@ import TranslationLocales from './controllers/translation-locales_controller.js'
 import NotificationSelect from './controllers/notification-select_controller.js';
 import PresetInput from './controllers/preset-input_controller.js';
 import TagInput from './controllers/tag-input_controller.js';
+import LocaleLinks from './controllers/locale-links_controller.js';
 app.register('sidebar', Sidebar);
 app.register('article-preview', ArticlePreview);
 app.register('auto-expand', AutoExpand);
@@ -74,3 +75,4 @@ app.register('translation-locales', TranslationLocales);
 app.register('notification-select', NotificationSelect);
 app.register('preset-input', PresetInput);
 app.register('tag-input', TagInput);
+app.register('locale-links', LocaleLinks);

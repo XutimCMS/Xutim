@@ -1,6 +1,6 @@
 {% import _self as macro %}
 
-<div class="d-flex flex-column justify-content-start">
+<div class="d-flex flex-column justify-content-start" data-controller="locale-links">
     {% set activeLocale = content_context_language() %}
     {% set translatedLabel = 'Translated'|trans({}, 'admin') %}
 

@@ -135,6 +135,22 @@ class ArticleRepository extends ServiceEntityRepository
         return $count;
     }
 
+    /**
+     * Order by updatedAt with the fallback current locale -> reference locale ->
+     * article's own updatedAt. Without the last fallback, articles missing both
+     * translations get a NULL sort key and scatter randomly.
+     */
+    private function orderByRepresentativeUpdatedAt(QueryBuilder $builder, string $direction): void
+    {
+        $builder
+            ->addSelect(
+                'COALESCE(translation.updatedAt, fallbackTranslation.updatedAt, article.updatedAt)'
+                . ' AS HIDDEN representativeUpdatedAt'
+            )
+            ->addOrderBy('representativeUpdatedAt', $direction)
+            ->addOrderBy('article.id', 'desc');
+    }
+
     public function queryByFilter(FilterDto $filter, ?string $locale = null): QueryBuilder
     {
         $builder = $this->createQueryBuilder('article')
@@ -185,23 +201,9 @@ class ArticleRepository extends ServiceEntityRepository
                 )
                 ->setParameter('scheduledParam', PublicationStatus::Scheduled);
         } elseif ($hasOrder === false) {
-            $builder
-                ->addOrderBy(
-                    'CASE
-                        WHEN translation.id IS NOT NULL THEN translation.updatedAt
-                        ELSE fallbackTranslation.updatedAt
-                     END',
-                    'desc'
-                );
+            $this->orderByRepresentativeUpdatedAt($builder, 'desc');
         } elseif ($filter->orderColumn === 'updatedAt') {
-            $builder
-                ->addOrderBy(
-                    'CASE
-                        WHEN translation.id IS NOT NULL THEN translation.updatedAt
-                        ELSE fallbackTranslation.updatedAt
-                     END',
-                    $filter->getOrderDir()
-                );
+            $this->orderByRepresentativeUpdatedAt($builder, $filter->getOrderDir());
         } else {
             $builder->orderBy(
                 self::FILTER_ORDER_COLUMN_MAP[$filter->orderColumn],
