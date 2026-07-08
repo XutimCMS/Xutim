@@ -238,8 +238,6 @@ class Page implements PageInterface
             return false;
         }
 
-        $this->parent = null;
-
         return true;
     }
 
