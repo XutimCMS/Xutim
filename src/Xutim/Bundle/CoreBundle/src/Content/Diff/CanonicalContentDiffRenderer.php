@@ -512,6 +512,7 @@ final class CanonicalContentDiffRenderer
                     'subtitle' => ['html' => $this->runsToHtml($block->parts['subtitle'] ?? [])],
                 ],
             ],
+            'xutim_layout' => array_merge($this->xutimLayoutDiffRow($block, $block, []), ['op' => $op]),
             default => [
                 'op' => $op,
                 'kind' => $block->kind,

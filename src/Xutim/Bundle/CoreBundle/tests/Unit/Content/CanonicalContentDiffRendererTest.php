@@ -292,4 +292,59 @@ final class CanonicalContentDiffRendererTest extends TestCase
         self::assertSame('p1', $legacyBlocks[1]['id']);
         self::assertSame('fold-1_end', $legacyBlocks[2]['id']);
     }
+
+    public function test_added_xutim_layout_block_has_layout_row_shape(): void
+    {
+        $old = $this->transformer->transform(['blocks' => []]);
+        $new = $this->transformer->transform([
+            'blocks' => [
+                [
+                    'id' => 'l1',
+                    'type' => 'xutimLayout',
+                    'data' => [
+                        'layoutCode' => 'two_columns',
+                        'values' => ['title' => 'Hello', 'pageId' => '42'],
+                    ],
+                    'tunes' => [],
+                ],
+            ],
+        ]);
+
+        $rows = $this->renderer->diffDocuments($old, $new);
+
+        self::assertSame('added', $rows[0]['op']);
+        self::assertSame('xutim_layout', $rows[0]['kind']);
+        self::assertSame('two_columns', $rows[0]['layout_code']);
+        self::assertFalse($rows[0]['layout_code_changed']);
+        self::assertContains('title', $rows[0]['fields']);
+        self::assertContains('pageId', $rows[0]['fields']);
+        self::assertArrayHasKey('title', $rows[0]['parts']);
+        self::assertArrayHasKey('title', $rows[0]['meta']);
+    }
+
+    public function test_removed_xutim_layout_block_has_layout_row_shape(): void
+    {
+        $old = $this->transformer->transform([
+            'blocks' => [
+                [
+                    'id' => 'l1',
+                    'type' => 'xutimLayout',
+                    'data' => [
+                        'layoutCode' => 'two_columns',
+                        'values' => ['title' => 'Hello'],
+                    ],
+                    'tunes' => [],
+                ],
+            ],
+        ]);
+        $new = $this->transformer->transform(['blocks' => []]);
+
+        $rows = $this->renderer->diffDocuments($old, $new);
+
+        self::assertSame('removed', $rows[0]['op']);
+        self::assertSame('xutim_layout', $rows[0]['kind']);
+        self::assertSame('two_columns', $rows[0]['layout_code']);
+        self::assertFalse($rows[0]['layout_code_changed']);
+        self::assertContains('title', $rows[0]['fields']);
+    }
 }
