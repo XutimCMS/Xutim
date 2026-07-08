@@ -59,6 +59,8 @@ final class NotificationAlertType extends AbstractType
             ])
             ->add('message', TextareaType::class, [
                 'label' => new TranslatableMessage('Message', [], 'admin'),
+                'required' => false,
+                'empty_data' => '',
             ])
             ->add('sendEmail', CheckboxType::class, [
                 'label' => new TranslatableMessage('Send email too', [], 'admin'),

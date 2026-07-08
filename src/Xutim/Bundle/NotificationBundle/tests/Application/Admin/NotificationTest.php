@@ -88,6 +88,31 @@ final class NotificationTest extends AdminApplicationTestCase
         $this->assertFalse($reloaded->isRead());
     }
 
+    public function testEditorCanNotifyTranslatorsWithoutMessage(): void
+    {
+        $client = static::createClient();
+        $translator = $this->createTranslator('fr');
+        $article = $this->createArticle();
+
+        $client->loginUser($this->getTestUser());
+
+        $crawler = $client->request('GET', '/admin/en/article/' . $article->getId()->toRfc4122() . '/notify-translators');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('Notify translators')->form();
+        $form['notification_alert[severity]'] = '0';
+        $form['notification_alert[message]'] = '';
+        $client->submit($form);
+        $this->assertResponseRedirects();
+
+        /** @var NotificationRepository $notificationRepository */
+        $notificationRepository = static::getContainer()->get(NotificationRepository::class);
+        $notifications = $notificationRepository->findLatestForRecipient($translator);
+
+        $this->assertCount(1, $notifications);
+        $this->assertStringContainsString('A new article translation is needed', $notifications[0]->getBody());
+    }
+
     private function createTranslator(string $locale)
     {
         /** @var UserFactoryInterface $userFactory */
@@ -130,7 +155,7 @@ final class NotificationTest extends AdminApplicationTestCase
             'en',
             LoadUserFixture::USER_EMAIL,
             null,
-            false,
+            true,
             [],
         ));
 
