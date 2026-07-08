@@ -85,12 +85,14 @@ class AdminHomepageAction extends AbstractController
         );
 
         $latestNotifications = $this->notificationRepository->findUnreadForRecipient($this->getUser(), 5);
+        $unreadNotificationCount = $this->notificationRepository->countUnreadForRecipient($this->getUser());
 
         return $this->render('@XutimCore/admin/homepage/homepage_translator.html.twig', [
             'latestArticles' => $latestArticles,
             'untranslatedPager' => $untranslatedPager,
             'changedPager' => $changedPager,
             'latestNotifications' => $latestNotifications,
+            'unreadNotificationCount' => $unreadNotificationCount,
             'translationStats' => $translationStats,
             'userLocales' => $this->getUser()->getTranslationLocales(),
             'referenceLocale' => $referenceLocale,

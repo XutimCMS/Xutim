@@ -15,7 +15,7 @@ use Xutim\SecurityBundle\Security\UserRoles;
 /**
  * @method UserInterface getUser()
  */
-final class BulkNotificationReadAction extends AbstractController
+final class MarkNotificationUnreadAction extends AbstractController
 {
     public function __construct(
         private readonly NotificationRepository $notificationRepository,
@@ -23,31 +23,19 @@ final class BulkNotificationReadAction extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request): RedirectResponse
+    public function __invoke(Request $request, string $id): RedirectResponse
     {
         $this->denyAccessUnlessGranted(UserRoles::ROLE_USER);
-
-        /** @var list<string> $ids */
-        $ids = $request->request->all('ids');
-        $action = $request->request->getString('action');
-
-        $user = $this->getUser();
-        foreach ($ids as $id) {
-            $notification = $this->notificationRepository->findOneForRecipient($id, $user);
-            if ($notification === null) {
-                continue;
-            }
-
-            match ($action) {
-                'read' => $notification->markRead(),
-                'unread' => $notification->markUnread(),
-                default => null,
-            };
-
-            $this->notificationRepository->save($notification);
+        $notification = $this->notificationRepository->findOneForRecipient($id, $this->getUser());
+        if ($notification !== null) {
+            $notification->markUnread();
+            $this->notificationRepository->save($notification, true);
         }
 
-        $this->notificationRepository->flush();
+        $referer = $request->headers->get('referer', '');
+        if ($referer !== '') {
+            return new RedirectResponse($referer);
+        }
 
         return new RedirectResponse($this->router->generate('admin_notification_list'));
     }

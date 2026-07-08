@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Xutim\NotificationBundle\Tests\Application\Admin;
 
 use App\Entity\Core\Notification;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Domain\Data\ArticleData;
 use Xutim\CoreBundle\Domain\Factory\ArticleFactory;
-use Xutim\CoreBundle\Message\Command\Article\EditArticleTranslationLocalesCommand;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
+use Xutim\CoreBundle\Service\TranslatorNotificationService;
 use Xutim\CoreBundle\Tests\Application\Admin\AdminApplicationTestCase;
 use Xutim\NotificationBundle\Entity\NotificationSeverity;
 use Xutim\NotificationBundle\Repository\NotificationRepository;
@@ -22,20 +22,15 @@ use Xutim\SecurityBundle\Security\UserRoles;
 
 final class NotificationTest extends AdminApplicationTestCase
 {
-    public function testAddingTranslationLocaleCreatesNotificationForMatchingTranslator(): void
+    public function testNotifyingTranslatorsCreatesNotificationForMatchingTranslator(): void
     {
         $translator = $this->createTranslator('de');
 
         $article = $this->createArticle();
 
-        /** @var MessageBusInterface $bus */
-        $bus = static::getContainer()->get(MessageBusInterface::class);
-        $bus->dispatch(new EditArticleTranslationLocalesCommand(
-            $article->getId(),
-            false,
-            ['de'],
-            LoadUserFixture::USER_EMAIL,
-        ));
+        /** @var TranslatorNotificationService $notificationService */
+        $notificationService = static::getContainer()->get(TranslatorNotificationService::class);
+        $notificationService->notifyNewTranslationLocales($article, ['de'], LoadUserFixture::USER_EMAIL);
 
         /** @var NotificationRepository $notificationRepository */
         $notificationRepository = static::getContainer()->get(NotificationRepository::class);
@@ -48,8 +43,11 @@ final class NotificationTest extends AdminApplicationTestCase
 
     public function testTranslatorCanMarkNotificationReadFromInbox(): void
     {
+        $client = static::createClient();
         $translator = $this->createTranslator('de');
 
+        /** @var EntityManagerInterface $em */
+        $em = static::getContainer()->get(EntityManagerInterface::class);
         /** @var NotificationRepository $notificationRepository */
         $notificationRepository = static::getContainer()->get(NotificationRepository::class);
         $notification = new Notification(
@@ -63,19 +61,31 @@ final class NotificationTest extends AdminApplicationTestCase
         );
         $notificationRepository->save($notification, true);
 
-        $client = static::createClient();
         $client->loginUser($translator);
 
         $client->request('GET', '/admin/de/notifications');
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('strong', 'Translation needed');
+        $this->assertSelectorTextContains('.list-group-item', 'Translation needed');
 
-        $client->request('POST', '/admin/de/notifications/' . $notification->getId()->toRfc4122() . '/read');
-        $this->assertResponseRedirects('/admin/de/article');
+        $client->request('POST', '/admin/de/notifications/' . $notification->getId()->toRfc4122() . '/read', server: [
+            'HTTP_REFERER' => '/admin/de/notifications',
+        ]);
+        $this->assertResponseRedirects('/admin/de/notifications');
 
+        $em->clear();
         $reloaded = $notificationRepository->find($notification->getId());
         $this->assertNotNull($reloaded);
         $this->assertTrue($reloaded->isRead());
+
+        $client->request('POST', '/admin/de/notifications/' . $notification->getId()->toRfc4122() . '/unread', server: [
+            'HTTP_REFERER' => '/admin/de/notifications',
+        ]);
+        $this->assertResponseRedirects('/admin/de/notifications');
+
+        $em->clear();
+        $reloaded = $notificationRepository->find($notification->getId());
+        $this->assertNotNull($reloaded);
+        $this->assertFalse($reloaded->isRead());
     }
 
     private function createTranslator(string $locale)

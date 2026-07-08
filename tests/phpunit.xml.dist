@@ -21,8 +21,7 @@
       <directory>../src/Xutim/Bundle/CoreBundle/tests/Application</directory>
       <directory>../src/Xutim/Bundle/MediaBundle/tests/Unit</directory>
       <directory>../src/Xutim/Bundle/MediaBundle/tests/Application</directory>
-      <file>../src/Xutim/Bundle/NotificationBundle/tests/Application/AdminAlertServiceTest.php</file>
-      <file>../src/Xutim/Bundle/NotificationBundle/tests/Application/FailedMessageSubscriberTest.php</file>
+      <directory>../src/Xutim/Bundle/NotificationBundle/tests/Application</directory>
       <exclude>./Stubs</exclude>
       <exclude>./Application</exclude>
     </testsuite>

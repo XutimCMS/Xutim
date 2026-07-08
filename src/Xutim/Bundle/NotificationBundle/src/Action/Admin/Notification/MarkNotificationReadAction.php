@@ -6,6 +6,7 @@ namespace Xutim\NotificationBundle\Action\Admin\Notification;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\NotificationBundle\Repository\NotificationRepository;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
@@ -22,28 +23,18 @@ final class MarkNotificationReadAction extends AbstractController
     ) {
     }
 
-    public function __invoke(string $id): RedirectResponse
+    public function __invoke(Request $request, string $id): RedirectResponse
     {
         $this->denyAccessUnlessGranted(UserRoles::ROLE_USER);
         $notification = $this->notificationRepository->findOneForRecipient($id, $this->getUser());
         if ($notification !== null) {
             $notification->markRead();
             $this->notificationRepository->save($notification, true);
+        }
 
-            $payload = $notification->getPayload();
-            if (isset($payload['routeName'], $payload['routeParameters'])
-                && is_string($payload['routeName'])
-                && str_starts_with($payload['routeName'], 'admin_')
-                && is_array($payload['routeParameters'])
-            ) {
-                /** @var array<string, mixed> $routeParameters */
-                $routeParameters = $payload['routeParameters'];
-                return new RedirectResponse($this->router->generate($payload['routeName'], $routeParameters));
-            }
-
-            if ($notification->getActionUrl() !== null && str_starts_with($notification->getActionUrl(), '/')) {
-                return new RedirectResponse($notification->getActionUrl());
-            }
+        $referer = $request->headers->get('referer', '');
+        if ($referer !== '') {
+            return new RedirectResponse($referer);
         }
 
         return new RedirectResponse($this->router->generate('admin_notification_list'));

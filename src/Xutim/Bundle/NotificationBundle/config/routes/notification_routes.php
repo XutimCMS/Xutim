@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
-use Xutim\NotificationBundle\Action\Admin\Notification\BulkNotificationReadAction;
 use Xutim\NotificationBundle\Action\Admin\Notification\ListNotificationsAction;
 use Xutim\NotificationBundle\Action\Admin\Notification\MarkAllNotificationsReadAction;
 use Xutim\NotificationBundle\Action\Admin\Notification\MarkNotificationReadAction;
+use Xutim\NotificationBundle\Action\Admin\Notification\MarkNotificationUnreadAction;
 
 return function (RoutingConfigurator $routes) {
     $routes
@@ -22,9 +22,9 @@ return function (RoutingConfigurator $routes) {
     ;
 
     $routes
-        ->add('admin_notification_bulk', '/admin/{_content_locale}/notifications/bulk')
+        ->add('admin_notification_unread', '/admin/{_content_locale}/notifications/{id}/unread')
         ->methods(['post'])
-        ->controller(BulkNotificationReadAction::class)
+        ->controller(MarkNotificationUnreadAction::class)
     ;
 
     $routes
