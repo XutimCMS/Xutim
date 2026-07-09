@@ -50,12 +50,12 @@
     </div>
 {% endmacro %}
 
-{% import _self as IR %}
+{% import _self as gallery %}
 
 {% if changed %}
-    {{ IR.render_row('Old', oldImages) }}
+    {{ gallery.render_row('Old', oldImages) }}
     <div class="text-muted my-1">→</div>
-    {{ IR.render_row('New', newImages) }}
+    {{ gallery.render_row('New', newImages) }}
 {% else %}
     {% set imgs = row.items ?? row.data.images ?? [] %}
     <div class="d-flex align-items-center gap-2 flex-wrap">

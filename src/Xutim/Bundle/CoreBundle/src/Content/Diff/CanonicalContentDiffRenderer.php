@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Content\Diff;
 
+use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
 use Xutim\CoreBundle\Content\Canonical\CanonicalBlock;
 use Xutim\CoreBundle\Content\Canonical\CanonicalDocument;
 use Xutim\CoreBundle\Content\Canonical\GalleryImage;
@@ -17,6 +18,7 @@ final class CanonicalContentDiffRenderer
     public function __construct(
         private readonly CanonicalContentExtractor $extractor,
         private readonly InlineDiffRenderer $inlineDiffRenderer,
+        private readonly LayoutDefinitionRegistry $layoutRegistry,
     ) {
     }
 
@@ -272,7 +274,11 @@ final class CanonicalContentDiffRenderer
                 ]),
                 'props' => $props,
             ],
-            'xutim_layout' => $this->xutimLayoutDiffRow($oldBlock, $newBlock, $props),
+            'xutim_layout' => $this->xutimLayoutDiffRow(
+                $oldBlock,
+                $newBlock,
+                $this->diffAttrs($oldBlock->attrs, $newBlock->attrs, ['layoutCode', 'values']),
+            ),
             'snippet', 'page_link', 'article_link', 'tag_link', 'image', 'file', 'image_gallery', 'embed', 'delimiter', 'unknown' => [
                 'op' => $props === [] && $this->attrsSignature($oldBlock) === $this->attrsSignature($newBlock) ? 'unchanged' : 'modified',
                 'kind' => $newBlock->kind,
@@ -347,6 +353,7 @@ final class CanonicalContentDiffRenderer
         /** @var array<string, mixed> $newValues */
 
         $layoutCodeChanged = $oldCode !== $newCode;
+        $definition = $this->layoutRegistry->getByCode($newCode) ?? $this->layoutRegistry->getByCode($oldCode);
 
         $fieldNames = array_values(array_unique(array_merge(
             array_keys($oldBlock->parts),
@@ -361,7 +368,10 @@ final class CanonicalContentDiffRenderer
         $anyTextChanged = false;
 
         foreach ($fieldNames as $fieldName) {
-            if (isset($oldBlock->parts[$fieldName]) || isset($newBlock->parts[$fieldName])) {
+            $option = $definition?->getFields()[$fieldName] ?? null;
+            $hasParts = isset($oldBlock->parts[$fieldName]) || isset($newBlock->parts[$fieldName]);
+
+            if ($hasParts && ($option === null || $option->isTranslatable())) {
                 $oldRuns = $oldBlock->parts[$fieldName] ?? [];
                 $newRuns = $newBlock->parts[$fieldName] ?? [];
 
@@ -379,7 +389,7 @@ final class CanonicalContentDiffRenderer
                 $meta[$fieldName] = [
                     'kind' => 'text',
                     'status' => $changed ? 'changed' : 'same',
-                    'translatable' => true,
+                    'translatable' => $option === null || $option->isTranslatable(),
                 ];
 
                 continue;
@@ -399,9 +409,11 @@ final class CanonicalContentDiffRenderer
             $meta[$fieldName] = [
                 'kind' => 'ref',
                 'status' => $changed ? 'changed' : 'same',
-                'translatable' => false,
+                'translatable' => $option !== null && $option->isTranslatable(),
                 'old' => $oldDisplay,
                 'new' => $newDisplay,
+                'old_raw' => $oldRaw,
+                'new_raw' => $newRaw,
             ];
 
             if ($changed) {

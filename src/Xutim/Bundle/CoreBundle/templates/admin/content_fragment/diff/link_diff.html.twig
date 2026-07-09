@@ -50,16 +50,16 @@
         {{ idValue }}
     {% endif %}
 {% endmacro %}
-{% import _self as H %}
+{% import _self as link %}
 
 <div class="small text-muted mb-1">
     <twig:ux:icon name="tabler:link" class="w-4 h-4" />
     <span class="fw-bold">{{ label }}:</span>
     {% if idChanged %}
-        <del>{{ H.link_for(route, oldId, type) }}</del> &nbsp;→&nbsp;
-        <ins>{{ H.link_for(route, newId, type) }}</ins>
+        <del>{{ link.link_for(route, oldId, type) }}</del> &nbsp;→&nbsp;
+        <ins>{{ link.link_for(route, newId, type) }}</ins>
     {% else %}
-        {{ H.link_for(route, id, type) }}
+        {{ link.link_for(route, id, type) }}
     {% endif %}
 </div>
 

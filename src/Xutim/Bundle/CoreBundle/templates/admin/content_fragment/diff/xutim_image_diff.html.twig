@@ -18,16 +18,16 @@
     </div>
 {% endmacro %}
 
-{% import _self as I %}
+{% import _self as image %}
 
 {% if op == 'added' or op == 'removed' or meta is not defined or meta is empty %}
-    {{ I.image_row('', currentUrl) }}
+    {{ image.image_row('', currentUrl) }}
 {% elseif changed %}
     {% set oldUrl = urlMeta.old ?? '' %}
     {% set newUrl = urlMeta.new ?? currentUrl %}
-    {{ I.image_row('Old', oldUrl) }}
+    {{ image.image_row('Old', oldUrl) }}
     <div class="text-muted my-1">→</div>
-    {{ I.image_row('New', newUrl) }}
+    {{ image.image_row('New', newUrl) }}
 {% else %}
-    {{ I.image_row('', currentUrl) }}
+    {{ image.image_row('', currentUrl) }}
 {% endif %}

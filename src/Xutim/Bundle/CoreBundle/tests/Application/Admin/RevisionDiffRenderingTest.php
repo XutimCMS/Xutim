@@ -435,6 +435,67 @@ final class RevisionDiffRenderingTest extends AdminApplicationTestCase
         $this->assertStringContainsString('Unknown block', $html);
     }
 
+    public function test_revision_page_renders_xutim_layout_diff_with_resolved_references(): void
+    {
+        $oldPage = $this->createPageWithTranslation('Old Promo Page', 'old-promo-page');
+        $newPage = $this->createPageWithTranslation('New Promo Page', 'new-promo-page');
+        $image = $this->createMediaWithTranslation('promo-image', 'Promo Image');
+
+        $replacements = [
+            'OLD_PAGE_ID' => $oldPage->getId()->toRfc4122(),
+            'NEW_PAGE_ID' => $newPage->getId()->toRfc4122(),
+            'IMAGE_ID' => $image->id()->toRfc4122(),
+        ];
+
+        $article = ArticleFactory::createOne();
+        $newContent = $this->loadFixtureContent('xutim_layout_new', $replacements);
+        $translation = ContentTranslationFactory::createOne([
+            'article' => $article,
+            'locale' => 'en',
+            'title' => 'Layout diff',
+            'slug' => 'layout-diff-' . uniqid(),
+            'content' => $newContent,
+        ]);
+
+        $oldRevision = $this->createLogEvent(
+            $translation,
+            new DateTimeImmutable('-2 hours'),
+            'Layout diff',
+            $this->loadFixtureContent('xutim_layout_old', $replacements),
+        );
+        $newRevision = $this->createLogEvent(
+            $translation,
+            new DateTimeImmutable('-1 hour'),
+            'Layout diff',
+            $newContent,
+        );
+
+        $this->client->request(
+            'GET',
+            sprintf(
+                '/admin/en/content-translation/revisions/%s/%s/%s',
+                $translation->getId()->toRfc4122(),
+                $oldRevision->getId()->toRfc4122(),
+                $newRevision->getId()->toRfc4122(),
+            )
+        );
+
+        $this->assertResponseIsSuccessful();
+        $html = (string) $this->client->getResponse()->getContent();
+        $this->assertStringContainsString('Two column promo', $html);
+        $this->assertStringNotContainsString('two-column-promo', $html);
+        $this->assertStringContainsString('Old Promo Page', $html);
+        $this->assertStringContainsString('New Promo Page', $html);
+        $this->assertStringContainsString(sprintf('/admin/en/page/edit/%s/en', $oldPage->getId()->toRfc4122()), $html);
+        $this->assertStringContainsString(sprintf('/admin/en/page/edit/%s/en', $newPage->getId()->toRfc4122()), $html);
+        $this->assertStringNotContainsString('>' . $oldPage->getId()->toRfc4122() . '<', $html);
+        $this->assertStringNotContainsString('>' . $newPage->getId()->toRfc4122() . '<', $html);
+        $this->assertStringContainsString('promo-image', $html);
+        $this->assertStringContainsString('https://example.com/old', $html);
+        $this->assertStringContainsString('https://example.com/new', $html);
+        $this->assertStringContainsString('Our <ins>great </ins>team', $html);
+    }
+
     public function test_revision_page_survives_malformed_historical_payloads(): void
     {
         $article = ArticleFactory::createOne();

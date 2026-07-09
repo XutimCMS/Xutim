@@ -1,12 +1,59 @@
+{% macro value(display) %}
+    {% import _self as field %}
+    {% if display.kind == 'empty' %}
+        <span class="text-secondary">—</span>
+    {% elseif display.kind == 'image' %}
+        <span class="d-inline-flex align-items-center gap-2">
+            <img
+                src="{{ media_url(display.media, 'thumb_small') }}"
+                alt=""
+                class="img-thumbnail"
+                style="max-width: 80px; height: auto"
+            >
+            {% if display.editUrl is defined %}
+                <a href="{{ display.editUrl }}" target="_blank" rel="noopener">{{ display.text }}</a>
+            {% else %}
+                {{ display.text }}
+            {% endif %}
+        </span>
+    {% elseif display.kind == 'entity' or display.kind == 'file' %}
+        {% if display.editUrl is defined %}
+            <a href="{{ display.editUrl }}" target="_blank" rel="noopener">{{ display.text }}</a>
+        {% else %}
+            {{ display.text }}
+        {% endif %}
+        {% if display.typeLabel is defined %}
+            <span class="badge bg-secondary-lt ms-1">{{ display.typeLabel }}</span>
+        {% endif %}
+    {% elseif display.kind == 'url' %}
+        <a href="{{ display.text }}" target="_blank" rel="noopener">{{ display.text }}</a>
+    {% elseif display.kind == 'html' %}
+        {{ display.text|raw }}
+    {% elseif display.kind == 'list' %}
+        {% for item in display.items %}
+            <div>{{ field.value(item) }}</div>
+        {% else %}
+            <span class="text-secondary">—</span>
+        {% endfor %}
+    {% elseif display.kind == 'missing' %}
+        <code>{{ display.text }}</code>
+        <span class="text-secondary">{{ 'not found'|trans({}, 'admin') }}</span>
+    {% else %}
+        {{ display.text }}
+    {% endif %}
+{% endmacro %}
+
+{% import _self as field %}
+
 <div class="xutim-layout-diff">
     <div class="small text-muted mb-2">
-        <span class="badge bg-purple-lt">xutimLayout</span>
         {% if row.layout_code_changed %}
-            <del class="text-danger">{{ row.old_layout_code }}</del>
+            <span class="badge bg-purple-lt">{{ 'Layout'|trans({}, 'admin') }}</span>
+            <del class="text-danger">{{ xutim_layout_name(row.old_layout_code) }}</del>
             →
-            <ins class="text-success">{{ row.layout_code }}</ins>
+            <ins class="text-success">{{ xutim_layout_name(row.layout_code) }}</ins>
         {% else %}
-            <code>{{ row.layout_code }}</code>
+            <span class="badge bg-purple-lt">{{ xutim_layout_name(row.layout_code) }}</span>
         {% endif %}
     </div>
 
@@ -27,11 +74,11 @@
                     <div class="diff-inline">{{ fieldPart.html|raw }}</div>
                 {% elseif fieldPart is not null and fieldPart.kind == 'ref' %}
                     {% if fieldStatus == 'changed' %}
-                        <del class="text-danger">{{ fieldMeta.old|default('') }}</del>
+                        <del class="text-danger">{{ field.value(xutim_layout_diff_field(row.old_layout_code, fieldName, fieldMeta.old_raw ?? null, app.locale)) }}</del>
                         →
-                        <ins class="text-success">{{ fieldMeta.new|default('') }}</ins>
+                        <ins class="text-success">{{ field.value(xutim_layout_diff_field(row.layout_code, fieldName, fieldMeta.new_raw ?? null, app.locale)) }}</ins>
                     {% else %}
-                        <code>{{ fieldPart.html|raw }}</code>
+                        {{ field.value(xutim_layout_diff_field(row.layout_code, fieldName, fieldMeta.new_raw ?? null, app.locale)) }}
                     {% endif %}
                 {% endif %}
             </dd>

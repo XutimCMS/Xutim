@@ -6,6 +6,7 @@ namespace Xutim\CoreBundle\Tests\Unit\Content;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
 use Xutim\CoreBundle\Content\Adapter\CanonicalEditorJsAdapter;
 use Xutim\CoreBundle\Content\CanonicalContentExtractor;
 use Xutim\CoreBundle\Content\Diff\CanonicalContentDiffRenderer;
@@ -28,6 +29,7 @@ final class ContentPipelineMalformedBehaviorTest extends TestCase
         $this->diffRenderer = new CanonicalContentDiffRenderer(
             $this->extractor,
             new InlineDiffRenderer(),
+            new LayoutDefinitionRegistry([]),
         );
     }
 

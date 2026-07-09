@@ -6,6 +6,7 @@ namespace Xutim\CoreBundle\Twig\Extension;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
+use Xutim\CoreBundle\Twig\Runtime\XutimLayoutDiffExtensionRuntime;
 use Xutim\CoreBundle\Twig\Runtime\XutimLayoutExtensionRuntime;
 
 class XutimLayoutExtension extends AbstractExtension
@@ -59,6 +60,14 @@ class XutimLayoutExtension extends AbstractExtension
             new TwigFunction(
                 'xutim_admin_edit_url',
                 [XutimLayoutExtensionRuntime::class, 'adminEditUrl']
+            ),
+            new TwigFunction(
+                'xutim_layout_name',
+                [XutimLayoutDiffExtensionRuntime::class, 'layoutName']
+            ),
+            new TwigFunction(
+                'xutim_layout_diff_field',
+                [XutimLayoutDiffExtensionRuntime::class, 'fieldDisplay']
             ),
         ];
     }
