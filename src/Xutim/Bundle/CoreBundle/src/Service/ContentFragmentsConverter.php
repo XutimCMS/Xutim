@@ -30,7 +30,7 @@ readonly class ContentFragmentsConverter
             return '';
         }
 
-        return $this->twig->render(sprintf('%s/content_fragment/content.html.twig', $themePath), [
+        return $this->twig->render(sprintf('%s/content/content.html.twig', $themePath), [
             'fragments' => $fragments,
             'themePath' => $themePath,
             'locale' => $locale
@@ -47,7 +47,7 @@ readonly class ContentFragmentsConverter
         string $locale,
         array $options = []
     ): string {
-        return $this->twig->render(sprintf('%s/content_fragment/content_fragment.html.twig', $themePath), [
+        return $this->twig->render(sprintf('%s/content/fragment.html.twig', $themePath), [
             'fragment' => $fragment,
             'themePath' => $themePath,
             'fragmentOptions' => $options,
@@ -69,7 +69,7 @@ readonly class ContentFragmentsConverter
             return '';
         }
 
-        return $this->twig->render(sprintf('%s/content_fragment/content.html.twig', $themePath), [
+        return $this->twig->render(sprintf('%s/content/content.html.twig', $themePath), [
             'fragments' => $fragments,
             'themePath' => $themePath,
             'fragmentOptions' => $options,
