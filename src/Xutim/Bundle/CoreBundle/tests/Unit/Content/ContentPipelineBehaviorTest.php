@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Tests\Unit\Content;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
+use Xutim\CoreBundle\Config\Section\SectionDefinitionRegistry;
 use Xutim\CoreBundle\Content\Adapter\CanonicalEditorJsAdapter;
 use Xutim\CoreBundle\Content\CanonicalContentExtractor;
 use Xutim\CoreBundle\Content\Diff\CanonicalContentDiffRenderer;
@@ -29,7 +29,7 @@ final class ContentPipelineBehaviorTest extends TestCase
         $this->diffRenderer = new CanonicalContentDiffRenderer(
             $this->extractor,
             new InlineDiffRenderer(),
-            new LayoutDefinitionRegistry([]),
+            new SectionDefinitionRegistry([]),
         );
     }
 
@@ -51,7 +51,7 @@ final class ContentPipelineBehaviorTest extends TestCase
                             'id' => 'p1',
                             'type' => 'paragraph',
                             'data' => ['text' => '<strong>Hello</strong> world'],
-                            'tunes' => ['alignment' => ['alignment' => 'center']],
+                            'tunes' => ['xutimAlignment' => ['alignment' => 'center']],
                         ],
                         [
                             'id' => 'q1',
@@ -63,7 +63,7 @@ final class ContentPipelineBehaviorTest extends TestCase
                 ],
                 'assertion' => static function (TestCase $test, array $roundTrip): void {
                     $test->assertSame('<strong>Hello</strong> world', $roundTrip['blocks'][0]['data']['text']);
-                    $test->assertSame('center', $roundTrip['blocks'][0]['tunes']['alignment']['alignment']);
+                    $test->assertSame('center', $roundTrip['blocks'][0]['tunes']['xutimAlignment']['alignment']);
                     $test->assertSame('<em>Caption</em>', $roundTrip['blocks'][1]['data']['caption']);
                 },
             ],
@@ -297,14 +297,14 @@ final class ContentPipelineBehaviorTest extends TestCase
             'foldable attribute change is semantic not text change' => [
                 'old' => [
                     'blocks' => [
-                        ['id' => 'f1', 'type' => 'foldableStart', 'data' => ['title' => 'Section', 'open' => false], 'tunes' => []],
-                        ['id' => 'f1e', 'type' => 'foldableEnd', 'data' => [], 'tunes' => []],
+                        ['id' => 'f1', 'type' => 'xutimFoldableStart', 'data' => ['title' => 'Section', 'open' => false], 'tunes' => []],
+                        ['id' => 'f1e', 'type' => 'xutimFoldableEnd', 'data' => [], 'tunes' => []],
                     ],
                 ],
                 'new' => [
                     'blocks' => [
-                        ['id' => 'f1', 'type' => 'foldableStart', 'data' => ['title' => 'Section', 'open' => true], 'tunes' => []],
-                        ['id' => 'f1e', 'type' => 'foldableEnd', 'data' => [], 'tunes' => []],
+                        ['id' => 'f1', 'type' => 'xutimFoldableStart', 'data' => ['title' => 'Section', 'open' => true], 'tunes' => []],
+                        ['id' => 'f1e', 'type' => 'xutimFoldableEnd', 'data' => [], 'tunes' => []],
                     ],
                 ],
                 'assertion' => static function (TestCase $test, array $rows): void {

@@ -9,7 +9,7 @@
         "text": "\nOur team includes engineers, designers and researchers from over twenty countries."
       },
       "tunes": {
-        "alignment": {
+        "xutimAlignment": {
           "alignment": "center"
         }
       }
@@ -22,7 +22,7 @@
         "level": 2
       },
       "tunes": {
-        "alignment": {
+        "xutimAlignment": {
           "alignment": "center"
         }
       }
@@ -59,7 +59,7 @@
     },
     {
       "id": "main-1",
-      "type": "mainHeader",
+      "type": "xutimHeroHeading",
       "data": {
         "pretitle": "Leadership",
         "title": "Meet the team",
@@ -74,7 +74,7 @@
         "text": "\n\"At the core of every great product is a team that communicates openly and iterates quickly.\"\n<i>(Internal Playbook)</i>\n"
       },
       "tunes": {
-        "alignment": {
+        "xutimAlignment": {
           "alignment": "center"
         }
       }

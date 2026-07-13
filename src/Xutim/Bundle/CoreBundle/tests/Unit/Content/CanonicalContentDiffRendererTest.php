@@ -7,8 +7,8 @@ namespace Xutim\CoreBundle\Tests\Unit\Content;
 use PHPUnit\Framework\TestCase;
 use Xutim\CoreBundle\Config\Layout\Block\Option\PageBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\TextBlockItemOption;
-use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinition;
-use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
+use Xutim\CoreBundle\Config\Section\SectionDefinition;
+use Xutim\CoreBundle\Config\Section\SectionDefinitionRegistry;
 use Xutim\CoreBundle\Content\Adapter\CanonicalEditorJsAdapter;
 use Xutim\CoreBundle\Content\CanonicalContentExtractor;
 use Xutim\CoreBundle\Content\Diff\CanonicalContentDiffRenderer;
@@ -31,7 +31,7 @@ final class CanonicalContentDiffRendererTest extends TestCase
         $this->renderer = new CanonicalContentDiffRenderer(
             $extractor,
             new InlineDiffRenderer(),
-            new LayoutDefinitionRegistry([]),
+            new SectionDefinitionRegistry([]),
         );
     }
 
@@ -249,14 +249,14 @@ final class CanonicalContentDiffRendererTest extends TestCase
     {
         $old = $this->transformer->transform([
             'blocks' => [
-                ['id' => 'f1', 'type' => 'foldableStart', 'data' => ['title' => 'Section', 'open' => false], 'tunes' => []],
-                ['id' => 'fe1', 'type' => 'foldableEnd', 'data' => [], 'tunes' => []],
+                ['id' => 'f1', 'type' => 'xutimFoldableStart', 'data' => ['title' => 'Section', 'open' => false], 'tunes' => []],
+                ['id' => 'fe1', 'type' => 'xutimFoldableEnd', 'data' => [], 'tunes' => []],
             ],
         ]);
         $new = $this->transformer->transform([
             'blocks' => [
-                ['id' => 'f1', 'type' => 'foldableStart', 'data' => ['title' => 'Section', 'open' => true], 'tunes' => []],
-                ['id' => 'fe1', 'type' => 'foldableEnd', 'data' => [], 'tunes' => []],
+                ['id' => 'f1', 'type' => 'xutimFoldableStart', 'data' => ['title' => 'Section', 'open' => true], 'tunes' => []],
+                ['id' => 'fe1', 'type' => 'xutimFoldableEnd', 'data' => [], 'tunes' => []],
             ],
         ]);
 
@@ -272,7 +272,7 @@ final class CanonicalContentDiffRendererTest extends TestCase
             'blocks' => [
                 [
                     'id' => 'fold-1',
-                    'type' => 'foldableStart',
+                    'type' => 'xutimFoldableStart',
                     'data' => ['title' => 'Section', 'open' => true],
                     'tunes' => [],
                 ],
@@ -284,7 +284,7 @@ final class CanonicalContentDiffRendererTest extends TestCase
                 ],
                 [
                     'id' => 'fold-end-1',
-                    'type' => 'foldableEnd',
+                    'type' => 'xutimFoldableEnd',
                     'data' => [],
                     'tunes' => [],
                 ],
@@ -298,16 +298,16 @@ final class CanonicalContentDiffRendererTest extends TestCase
         self::assertSame('fold-1_end', $legacyBlocks[2]['id']);
     }
 
-    public function test_added_xutim_layout_block_has_layout_row_shape(): void
+    public function test_added_xutim_section_block_has_layout_row_shape(): void
     {
         $old = $this->transformer->transform(['blocks' => []]);
         $new = $this->transformer->transform([
             'blocks' => [
                 [
                     'id' => 'l1',
-                    'type' => 'xutimLayout',
+                    'type' => 'xutimSection',
                     'data' => [
-                        'layoutCode' => 'two_columns',
+                        'sectionCode' => 'two_columns',
                         'values' => ['title' => 'Hello', 'pageId' => '42'],
                     ],
                     'tunes' => [],
@@ -318,9 +318,9 @@ final class CanonicalContentDiffRendererTest extends TestCase
         $rows = $this->renderer->diffDocuments($old, $new);
 
         self::assertSame('added', $rows[0]['op']);
-        self::assertSame('xutim_layout', $rows[0]['kind']);
-        self::assertSame('two_columns', $rows[0]['layout_code']);
-        self::assertFalse($rows[0]['layout_code_changed']);
+        self::assertSame('section', $rows[0]['kind']);
+        self::assertSame('two_columns', $rows[0]['section_code']);
+        self::assertFalse($rows[0]['section_code_changed']);
         self::assertContains('title', $rows[0]['fields']);
         self::assertContains('pageId', $rows[0]['fields']);
         self::assertArrayHasKey('title', $rows[0]['parts']);
@@ -329,14 +329,14 @@ final class CanonicalContentDiffRendererTest extends TestCase
 
     public function test_layout_string_ref_field_with_definition_is_exposed_as_ref(): void
     {
-        $renderer = $this->rendererWithLayoutDefinition();
+        $renderer = $this->rendererWithSectionDefinition();
         $old = $this->transformer->transform([
             'blocks' => [
                 [
                     'id' => 'l1',
-                    'type' => 'xutimLayout',
+                    'type' => 'xutimSection',
                     'data' => [
-                        'layoutCode' => 'two_columns',
+                        'sectionCode' => 'two_columns',
                         'values' => ['title' => 'Hello', 'page1' => '784305be-175d-4015-bf70-ce60ef40d34b'],
                     ],
                     'tunes' => [],
@@ -347,9 +347,9 @@ final class CanonicalContentDiffRendererTest extends TestCase
             'blocks' => [
                 [
                     'id' => 'l1',
-                    'type' => 'xutimLayout',
+                    'type' => 'xutimSection',
                     'data' => [
-                        'layoutCode' => 'two_columns',
+                        'sectionCode' => 'two_columns',
                         'values' => ['title' => 'Hello', 'page1' => '59603a51-c534-46ac-84c3-25d28484b483'],
                     ],
                     'tunes' => [],
@@ -369,15 +369,15 @@ final class CanonicalContentDiffRendererTest extends TestCase
         self::assertSame('modified', $rows[0]['op']);
     }
 
-    public function test_removed_xutim_layout_block_has_layout_row_shape(): void
+    public function test_removed_xutim_section_block_has_layout_row_shape(): void
     {
         $old = $this->transformer->transform([
             'blocks' => [
                 [
                     'id' => 'l1',
-                    'type' => 'xutimLayout',
+                    'type' => 'xutimSection',
                     'data' => [
-                        'layoutCode' => 'two_columns',
+                        'sectionCode' => 'two_columns',
                         'values' => ['title' => 'Hello'],
                     ],
                     'tunes' => [],
@@ -389,15 +389,15 @@ final class CanonicalContentDiffRendererTest extends TestCase
         $rows = $this->renderer->diffDocuments($old, $new);
 
         self::assertSame('removed', $rows[0]['op']);
-        self::assertSame('xutim_layout', $rows[0]['kind']);
-        self::assertSame('two_columns', $rows[0]['layout_code']);
-        self::assertFalse($rows[0]['layout_code_changed']);
+        self::assertSame('section', $rows[0]['kind']);
+        self::assertSame('two_columns', $rows[0]['section_code']);
+        self::assertFalse($rows[0]['section_code_changed']);
         self::assertContains('title', $rows[0]['fields']);
     }
 
-    private function rendererWithLayoutDefinition(): CanonicalContentDiffRenderer
+    private function rendererWithSectionDefinition(): CanonicalContentDiffRenderer
     {
-        $definition = new class implements LayoutDefinition {
+        $definition = new class implements SectionDefinition {
             public function getCode(): string
             {
                 return 'two_columns';
@@ -450,7 +450,7 @@ final class CanonicalContentDiffRendererTest extends TestCase
         return new CanonicalContentDiffRenderer(
             new CanonicalContentExtractor($this->adapter),
             new InlineDiffRenderer(),
-            new LayoutDefinitionRegistry([$definition]),
+            new SectionDefinitionRegistry([$definition]),
         );
     }
 }

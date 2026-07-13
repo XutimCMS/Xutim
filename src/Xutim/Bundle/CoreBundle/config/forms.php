@@ -14,24 +14,24 @@ use Xutim\CoreBundle\Form\Admin\BlockItemProvider\PageBlockItemProvider;
 use Xutim\CoreBundle\Form\Admin\BlockItemProvider\SnippetBlockItemProvider;
 use Xutim\CoreBundle\Form\Admin\BlockItemProvider\TagBlockItemProvider;
 use Xutim\CoreBundle\Form\Admin\BlockItemType;
-use Xutim\CoreBundle\Form\Admin\LayoutFormType;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\ArticleLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\CollectionLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\FileLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\ImageLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\LayoutCollectionEntryType;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\LayoutFieldProviderInterface;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\LayoutFieldProviderRegistry;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\LinkLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\MediaFolderLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\PageLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\PageOrArticleLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\SnippetLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\TagLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\RichTextLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\TextareaLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\TextLayoutFieldProvider;
-use Xutim\CoreBundle\Form\Admin\LayoutFieldProvider\UnionLayoutFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFormType;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\ArticleSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\CollectionSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\FileSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\ImageSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\SectionCollectionEntryType;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\SectionFieldProviderInterface;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\SectionFieldProviderRegistry;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\LinkSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\MediaFolderSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\PageSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\PageOrArticleSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\SnippetSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\TagSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\RichTextSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\TextareaSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\TextSectionFieldProvider;
+use Xutim\CoreBundle\Form\Admin\SectionFieldProvider\UnionSectionFieldProvider;
 use Xutim\CoreBundle\Form\Admin\MenuItemType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
@@ -89,76 +89,76 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$registry', service(BlockItemProviderRegistry::class))
         ->tag('form.type');
 
-    $services->instanceof(LayoutFieldProviderInterface::class)
-        ->tag('xutim.layout_field_provider');
+    $services->instanceof(SectionFieldProviderInterface::class)
+        ->tag('xutim.section_field_provider');
 
-    $services->set(TextLayoutFieldProvider::class)
-        ->tag('xutim.layout_field_provider');
+    $services->set(TextSectionFieldProvider::class)
+        ->tag('xutim.section_field_provider');
 
-    $services->set(TextareaLayoutFieldProvider::class)
-        ->tag('xutim.layout_field_provider');
+    $services->set(TextareaSectionFieldProvider::class)
+        ->tag('xutim.section_field_provider');
 
-    $services->set(RichTextLayoutFieldProvider::class)
-        ->tag('xutim.layout_field_provider');
+    $services->set(RichTextSectionFieldProvider::class)
+        ->tag('xutim.section_field_provider');
 
-    $services->set(LinkLayoutFieldProvider::class)
-        ->tag('xutim.layout_field_provider');
+    $services->set(LinkSectionFieldProvider::class)
+        ->tag('xutim.section_field_provider');
 
-    $services->set(PageLayoutFieldProvider::class)
+    $services->set(PageSectionFieldProvider::class)
         ->arg('$pageRepository', service(PageRepository::class))
-        ->tag('xutim.layout_field_provider');
+        ->tag('xutim.section_field_provider');
 
-    $services->set(ArticleLayoutFieldProvider::class)
+    $services->set(ArticleSectionFieldProvider::class)
         ->arg('$articleClass', '%xutim_core.model.article.class%')
         ->arg('$articleRepository', service(ArticleRepository::class))
-        ->tag('xutim.layout_field_provider');
+        ->tag('xutim.section_field_provider');
 
-    $services->set(PageOrArticleLayoutFieldProvider::class)
+    $services->set(PageOrArticleSectionFieldProvider::class)
         ->arg('$pageRepository', service(PageRepository::class))
         ->arg('$articleRepository', service(ArticleRepository::class))
-        ->tag('xutim.layout_field_provider');
+        ->tag('xutim.section_field_provider');
 
-    $services->set(TagLayoutFieldProvider::class)
+    $services->set(TagSectionFieldProvider::class)
         ->arg('$tagClass', '%xutim_core.model.tag.class%')
         ->arg('$tagRepository', service(TagRepository::class))
         ->arg('$localeSwitcher', service('translation.locale_switcher'))
         ->arg('$defaultLocale', '%kernel.default_locale%')
-        ->tag('xutim.layout_field_provider');
+        ->tag('xutim.section_field_provider');
 
-    $services->set(SnippetLayoutFieldProvider::class)
+    $services->set(SnippetSectionFieldProvider::class)
         ->arg('$snippetClass', '%xutim_snippet.model.snippet.class%')
         ->arg('$snippetRepository', service(SnippetRepositoryInterface::class))
-        ->tag('xutim.layout_field_provider');
+        ->tag('xutim.section_field_provider');
 
-    $services->set(ImageLayoutFieldProvider::class)
+    $services->set(ImageSectionFieldProvider::class)
         ->arg('$mediaClass', '%xutim_media.model.media.class%')
         ->arg('$mediaRepository', service(MediaRepositoryInterface::class))
-        ->tag('xutim.layout_field_provider');
+        ->tag('xutim.section_field_provider');
 
-    $services->set(FileLayoutFieldProvider::class)
+    $services->set(FileSectionFieldProvider::class)
         ->arg('$mediaClass', '%xutim_media.model.media.class%')
         ->arg('$mediaRepository', service(MediaRepositoryInterface::class))
-        ->tag('xutim.layout_field_provider');
+        ->tag('xutim.section_field_provider');
 
-    $services->set(MediaFolderLayoutFieldProvider::class)
+    $services->set(MediaFolderSectionFieldProvider::class)
         ->arg('$mediaFolderClass', '%xutim_media.model.media_folder.class%')
         ->arg('$mediaFolderRepository', service(MediaFolderRepositoryInterface::class))
-        ->tag('xutim.layout_field_provider');
+        ->tag('xutim.section_field_provider');
 
-    $services->set(CollectionLayoutFieldProvider::class)
-        ->tag('xutim.layout_field_provider');
+    $services->set(CollectionSectionFieldProvider::class)
+        ->tag('xutim.section_field_provider');
 
-    $services->set(UnionLayoutFieldProvider::class)
-        ->tag('xutim.layout_field_provider');
+    $services->set(UnionSectionFieldProvider::class)
+        ->tag('xutim.section_field_provider');
 
-    $services->set(LayoutCollectionEntryType::class)
-        ->arg('$registry', service(LayoutFieldProviderRegistry::class))
+    $services->set(SectionCollectionEntryType::class)
+        ->arg('$registry', service(SectionFieldProviderRegistry::class))
         ->tag('form.type');
 
-    $services->set(LayoutFieldProviderRegistry::class)
-        ->arg('$providers', tagged_iterator('xutim.layout_field_provider'));
+    $services->set(SectionFieldProviderRegistry::class)
+        ->arg('$providers', tagged_iterator('xutim.section_field_provider'));
 
-    $services->set(LayoutFormType::class)
-        ->arg('$registry', service(LayoutFieldProviderRegistry::class))
+    $services->set(SectionFormType::class)
+        ->arg('$registry', service(SectionFieldProviderRegistry::class))
         ->tag('form.type');
 };

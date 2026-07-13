@@ -2,7 +2,7 @@
   "blocks": [
     {
       "id": "page-link-1",
-      "type": "pageLink",
+      "type": "xutimPageLink",
       "data": {
         "id": "NEW_PAGE_ID"
       },
@@ -10,7 +10,7 @@
     },
     {
       "id": "article-link-1",
-      "type": "articleLink",
+      "type": "xutimArticleLink",
       "data": {
         "id": "NEW_ARTICLE_ID"
       },
@@ -18,7 +18,7 @@
     },
     {
       "id": "tag-link-1",
-      "type": "xutimTag",
+      "type": "xutimTagLink",
       "data": {
         "id": "NEW_TAG_ID",
         "layout": "cloud"

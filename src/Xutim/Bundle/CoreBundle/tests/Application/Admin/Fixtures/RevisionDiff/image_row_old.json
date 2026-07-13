@@ -4,7 +4,7 @@
   "blocks": [
     {
       "id": "gallery-1",
-      "type": "imageRow",
+      "type": "xutimImageRow",
       "data": {
         "images": [
           {

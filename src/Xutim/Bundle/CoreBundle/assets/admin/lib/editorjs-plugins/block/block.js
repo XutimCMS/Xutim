@@ -1,4 +1,4 @@
-export default class Block {
+export default class XutimBlockTool {
     constructor({ data, config, api, readOnly }) {
         this.api = api;
         this.data = data;

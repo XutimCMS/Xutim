@@ -1,0 +1,60 @@
+{#
+    IMPORTANT: This template renders the form fields in a <div> container,
+    NOT a <form> element, because it is injected inside the editor.js main
+    <form> and nested forms are invalid HTML (the browser closes the outer
+    form, causing submit to reload the page). The editor.js xutim-section
+    tool collects values via JS and POSTs them manually.
+#}
+{% form_theme form '@XutimCore/admin/xutim_section/_form_theme.html.twig' %}
+{% import '@XutimCore/admin/xutim_section/_fields.html.twig' as fields %}
+
+{% set descriptions = definition.getFieldDescriptions() %}
+{% set bodyTemplate = definition.getFormBodyTemplate() %}
+
+<div
+    class="xutim-section-form"
+    data-xutim-section-code="{{ definition.code }}"
+    data-xutim-section-form
+>
+    {{ form_errors(form) }}
+
+    {% if bodyTemplate %}
+        {{ include(bodyTemplate, {form: form, definition: definition, descriptions: descriptions}) }}
+    {% else %}
+        {#
+           Inline-editable fields (translatable text) render as hidden inputs 
+           so the modal shows only non-inline fields while values still 
+           round-trip on save.
+        #}
+        {% set sectionFields = definition.getFields() %}
+        {% for fieldName, field in form.children %}
+            {% if fieldName != '_token' %}
+                {% set option = sectionFields[fieldName]|default(null) %}
+                {% if option and xutim_is_inline_editable(option) %}
+                    {{ fields.hidden_field(field) }}
+                {% else %}
+                    {{ fields.field(field, descriptions) }}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {{ form_rest(form) }}
+
+    <div class="xutim-section-form__actions mt-2 d-flex gap-2">
+        <button
+            type="button"
+            class="btn btn-primary"
+            data-xutim-section-save-btn
+        >
+            {{ 'save'|trans({}, 'admin') }}
+        </button>
+        <button
+            type="button"
+            class="btn btn-link"
+            data-xutim-section-cancel-btn
+        >
+            {{ 'cancel'|trans({}, 'admin') }}
+        </button>
+    </div>
+</div>

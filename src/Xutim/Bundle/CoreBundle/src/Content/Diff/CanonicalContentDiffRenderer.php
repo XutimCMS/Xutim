@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Content\Diff;
 
-use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
+use Xutim\CoreBundle\Config\Section\SectionDefinitionRegistry;
 use Xutim\CoreBundle\Content\Canonical\CanonicalBlock;
 use Xutim\CoreBundle\Content\Canonical\CanonicalDocument;
 use Xutim\CoreBundle\Content\Canonical\GalleryImage;
@@ -18,7 +18,7 @@ final class CanonicalContentDiffRenderer
     public function __construct(
         private readonly CanonicalContentExtractor $extractor,
         private readonly InlineDiffRenderer $inlineDiffRenderer,
-        private readonly LayoutDefinitionRegistry $layoutRegistry,
+        private readonly SectionDefinitionRegistry $sectionRegistry,
     ) {
     }
 
@@ -274,10 +274,10 @@ final class CanonicalContentDiffRenderer
                 ]),
                 'props' => $props,
             ],
-            'xutim_layout' => $this->xutimLayoutDiffRow(
+            'section' => $this->xutimSectionDiffRow(
                 $oldBlock,
                 $newBlock,
-                $this->diffAttrs($oldBlock->attrs, $newBlock->attrs, ['layoutCode', 'values']),
+                $this->diffAttrs($oldBlock->attrs, $newBlock->attrs, ['sectionCode', 'values']),
             ),
             'snippet', 'page_link', 'article_link', 'tag_link', 'image', 'file', 'image_gallery', 'embed', 'delimiter', 'unknown' => [
                 'op' => $props === [] && $this->attrsSignature($oldBlock) === $this->attrsSignature($newBlock) ? 'unchanged' : 'modified',
@@ -342,18 +342,18 @@ final class CanonicalContentDiffRenderer
      * @param array<string, mixed> $props
      * @return array<string, mixed>
      */
-    private function xutimLayoutDiffRow(CanonicalBlock $oldBlock, CanonicalBlock $newBlock, array $props): array
+    private function xutimSectionDiffRow(CanonicalBlock $oldBlock, CanonicalBlock $newBlock, array $props): array
     {
-        $oldCode = is_string($oldBlock->attrs['layoutCode'] ?? null) ? $oldBlock->attrs['layoutCode'] : '';
-        $newCode = is_string($newBlock->attrs['layoutCode'] ?? null) ? $newBlock->attrs['layoutCode'] : '';
+        $oldCode = is_string($oldBlock->attrs['sectionCode'] ?? null) ? $oldBlock->attrs['sectionCode'] : '';
+        $newCode = is_string($newBlock->attrs['sectionCode'] ?? null) ? $newBlock->attrs['sectionCode'] : '';
         $oldValues = is_array($oldBlock->attrs['values'] ?? null) ? $oldBlock->attrs['values'] : [];
         $newValues = is_array($newBlock->attrs['values'] ?? null) ? $newBlock->attrs['values'] : [];
 
         /** @var array<string, mixed> $oldValues */
         /** @var array<string, mixed> $newValues */
 
-        $layoutCodeChanged = $oldCode !== $newCode;
-        $definition = $this->layoutRegistry->getByCode($newCode) ?? $this->layoutRegistry->getByCode($oldCode);
+        $sectionCodeChanged = $oldCode !== $newCode;
+        $definition = $this->sectionRegistry->getByCode($newCode) ?? $this->sectionRegistry->getByCode($oldCode);
 
         $fieldNames = array_values(array_unique(array_merge(
             array_keys($oldBlock->parts),
@@ -421,7 +421,7 @@ final class CanonicalContentDiffRenderer
             }
         }
 
-        if ($layoutCodeChanged) {
+        if ($sectionCodeChanged) {
             $op = 'modified';
         } elseif ($anyTextChanged && !$anyFieldChanged) {
             $op = 'modified_text';
@@ -433,16 +433,16 @@ final class CanonicalContentDiffRenderer
 
         return [
             'op' => $op,
-            'kind' => 'xutim_layout',
+            'kind' => 'section',
             'source_key' => $newBlock->sourceKey ?? $oldBlock->sourceKey,
             'render_key' => $newBlock->sourceKey ?? $oldBlock->sourceKey,
             'attrs' => $newBlock->attrs,
             'fields' => $fieldNames,
             'parts' => $parts,
             'meta' => $meta,
-            'layout_code' => $newCode,
-            'old_layout_code' => $oldCode,
-            'layout_code_changed' => $layoutCodeChanged,
+            'section_code' => $newCode,
+            'old_section_code' => $oldCode,
+            'section_code_changed' => $sectionCodeChanged,
             'props' => $props,
         ];
     }
@@ -524,7 +524,7 @@ final class CanonicalContentDiffRenderer
                     'subtitle' => ['html' => $this->runsToHtml($block->parts['subtitle'] ?? [])],
                 ],
             ],
-            'xutim_layout' => array_merge($this->xutimLayoutDiffRow($block, $block, []), ['op' => $op]),
+            'section' => array_merge($this->xutimSectionDiffRow($block, $block, []), ['op' => $op]),
             default => [
                 'op' => $op,
                 'kind' => $block->kind,

@@ -68,7 +68,7 @@ final class EditorJsToCanonicalDocumentTransformer
             $block = $blocks[$index];
             $type = is_string($block['type'] ?? null) ? $block['type'] : '';
 
-            if ($type === 'foldableEnd') {
+            if ($type === 'xutimFoldableEnd') {
                 if ($stopAtFoldableEnd) {
                     $index++;
                     break;
@@ -79,7 +79,7 @@ final class EditorJsToCanonicalDocumentTransformer
                 continue;
             }
 
-            if ($type === 'foldableStart') {
+            if ($type === 'xutimFoldableStart') {
                 $result[] = $this->transformFoldableBlock($blocks, $index);
                 continue;
             }
@@ -130,21 +130,21 @@ final class EditorJsToCanonicalDocumentTransformer
             'header' => $this->headingBlock($sourceKey, $commonAttrs, $block),
             'quote' => $this->quoteBlock($sourceKey, $commonAttrs, $block),
             'list' => $this->listBlock($sourceKey, $commonAttrs, $block),
-            'mainHeader' => $this->mainHeaderBlock($sourceKey, $commonAttrs, $block),
-            'block' => new CanonicalBlock('snippet', $sourceKey, array_merge($commonAttrs, [
+            'xutimHeroHeading' => $this->heroHeadingBlock($sourceKey, $commonAttrs, $block),
+            'xutimBlock' => new CanonicalBlock('snippet', $sourceKey, array_merge($commonAttrs, [
                 'code' => $this->readString($block, ['data', 'code']),
             ])),
-            'pageLink' => new CanonicalBlock('page_link', $sourceKey, array_merge($commonAttrs, [
+            'xutimPageLink' => new CanonicalBlock('page_link', $sourceKey, array_merge($commonAttrs, [
                 'targetId' => $this->readString($block, ['data', 'id']),
             ])),
-            'articleLink' => new CanonicalBlock('article_link', $sourceKey, array_merge($commonAttrs, [
+            'xutimArticleLink' => new CanonicalBlock('article_link', $sourceKey, array_merge($commonAttrs, [
                 'targetId' => $this->readString($block, ['data', 'id']),
             ])),
-            'xutimTag' => new CanonicalBlock('tag_link', $sourceKey, array_merge($commonAttrs, [
+            'xutimTagLink' => new CanonicalBlock('tag_link', $sourceKey, array_merge($commonAttrs, [
                 'targetId' => $this->readString($block, ['data', 'id']),
                 'layout' => $this->readString($block, ['data', 'layout']),
             ])),
-            'xutimImage', 'image' => new CanonicalBlock('image', $sourceKey, array_merge($commonAttrs, [
+            'xutimImage' => new CanonicalBlock('image', $sourceKey, array_merge($commonAttrs, [
                 'fileId' => $this->readString($block, ['data', 'file', 'id']),
                 'url' => $this->readString($block, ['data', 'file', 'url']),
                 'thumbnailUrl' => $this->readString($block, ['data', 'file', 'thumbnailUrl']),
@@ -153,12 +153,12 @@ final class EditorJsToCanonicalDocumentTransformer
                 'fileId' => $this->readString($block, ['data', 'file', 'id']),
                 'url' => $this->readString($block, ['data', 'file', 'url']),
             ])),
-            'imageRow', 'imagerow' => new CanonicalBlock('image_gallery', $sourceKey, array_merge($commonAttrs, [
+            'xutimImageRow' => new CanonicalBlock('image_gallery', $sourceKey, array_merge($commonAttrs, [
                 'imagesPerRow' => $this->readInt($block, ['data', 'imagesPerRow']),
             ]), galleryImages: $this->transformGalleryItems($block)),
             'embed' => $this->embedBlock($sourceKey, $commonAttrs, $block),
             'delimiter' => new CanonicalBlock('delimiter', $sourceKey, $commonAttrs),
-            'xutimLayout' => $this->xutimLayoutBlock($sourceKey, $commonAttrs, $block),
+            'xutimSection' => $this->xutimSectionBlock($sourceKey, $commonAttrs, $block),
             default => $this->unknownBlock($block, 'unsupported_block_type'),
         };
     }
@@ -167,14 +167,14 @@ final class EditorJsToCanonicalDocumentTransformer
      * @param array<string, mixed> $commonAttrs
      * @param array<string, mixed> $block
      */
-    private function xutimLayoutBlock(?string $sourceKey, array $commonAttrs, array $block): CanonicalBlock
+    private function xutimSectionBlock(?string $sourceKey, array $commonAttrs, array $block): CanonicalBlock
     {
         $data = is_array($block['data'] ?? null) ? $block['data'] : [];
-        $layoutCode = is_string($data['layoutCode'] ?? null) ? $data['layoutCode'] : '';
+        $sectionCode = is_string($data['sectionCode'] ?? null) ? $data['sectionCode'] : '';
         $rawValues = is_array($data['values'] ?? null) ? $data['values'] : [];
 
-        if ($layoutCode === '') {
-            return $this->unknownBlock($block, 'xutim_layout_missing_code');
+        if ($sectionCode === '') {
+            return $this->unknownBlock($block, 'xutim_section_missing_code');
         }
 
         /** @var array<string, mixed> $rawValues */
@@ -188,10 +188,10 @@ final class EditorJsToCanonicalDocumentTransformer
         }
 
         return new CanonicalBlock(
-            kind: 'xutim_layout',
+            kind: 'section',
             sourceKey: $sourceKey,
             attrs: array_merge($commonAttrs, [
-                'layoutCode' => $layoutCode,
+                'sectionCode' => $sectionCode,
                 'values' => $rawValues,
             ]),
             parts: $parts,
@@ -311,7 +311,7 @@ final class EditorJsToCanonicalDocumentTransformer
      * @param array<string, mixed> $commonAttrs
      * @param array<string, mixed> $block
      */
-    private function mainHeaderBlock(?string $sourceKey, array $commonAttrs, array $block): CanonicalBlock
+    private function heroHeadingBlock(?string $sourceKey, array $commonAttrs, array $block): CanonicalBlock
     {
         $pretitle = $this->parseInline($this->readString($block, ['data', 'pretitle']));
         $title = $this->parseInline($this->readString($block, ['data', 'title']));
@@ -389,7 +389,7 @@ final class EditorJsToCanonicalDocumentTransformer
     private function extractCommonAttrs(array $block): array
     {
         $attrs = [];
-        $alignment = $this->readString($block, ['tunes', 'alignment', 'alignment']);
+        $alignment = $this->readString($block, ['tunes', 'xutimAlignment', 'alignment']);
         if ($alignment !== '') {
             $attrs['align'] = $alignment;
         }

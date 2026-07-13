@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 import EditorJS from 'https://esm.sh/@editorjs/editorjs@2.31.0-rc.10';
 import { buildEditorTools } from '../lib/build_tools.js';
-import { decorateInternalLinks } from '../lib/editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
+import { decorateInternalLinks } from '../lib/editorjs-plugins/internal-inline-link/internal-inline-link.js';
 
 export default class extends Controller {
     static targets = ['editorHolder', 'contentInput', 'saveAction', 'primaryBtn'];
@@ -16,11 +16,11 @@ export default class extends Controller {
         fetchAllFilesUrl: String,
         fetchFileUrl: String,
         fetchAnchorSnippetsUrl: String,
-        xutimLayouts: Array,
-        xutimLayoutFormUrl: String,
-        xutimLayoutSaveUrl: String,
-        xutimLayoutRefreshUrl: String,
-        xutimLayoutPreviewUrl: String,
+        xutimSections: Array,
+        xutimSectionFormUrl: String,
+        xutimSectionSaveUrl: String,
+        xutimSectionRefreshUrl: String,
+        xutimSectionPreviewUrl: String,
         publishLabel: String,
         draftLabel: String,
     };
@@ -39,11 +39,11 @@ export default class extends Controller {
             fetchAnchorSnippetsUrl: this.fetchAnchorSnippetsUrlValue,
             blockCodes: this.blockCodesValue,
             tags: this.tagsValue,
-            xutimLayouts: this.xutimLayoutsValue,
-            xutimLayoutFormUrl: this.xutimLayoutFormUrlValue,
-            xutimLayoutSaveUrl: this.xutimLayoutSaveUrlValue,
-            xutimLayoutRefreshUrl: this.xutimLayoutRefreshUrlValue,
-            xutimLayoutPreviewUrl: this.xutimLayoutPreviewUrlValue,
+            xutimSections: this.xutimSectionsValue,
+            xutimSectionFormUrl: this.xutimSectionFormUrlValue,
+            xutimSectionSaveUrl: this.xutimSectionSaveUrlValue,
+            xutimSectionRefreshUrl: this.xutimSectionRefreshUrlValue,
+            xutimSectionPreviewUrl: this.xutimSectionPreviewUrlValue,
         });
 
         this.#editor = new EditorJS({

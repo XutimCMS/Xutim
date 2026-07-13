@@ -71,7 +71,7 @@ final class CanonicalEditorJsAdapter
             /** @var EditorBlocksUnion $start */
             $start = [
                 'id' => $block->sourceKey ?? uniqid('foldable_', true),
-                'type' => 'foldableStart',
+                'type' => 'xutimFoldableStart',
                 'data' => [
                     'title' => $this->runsToHtml($block->parts['title'] ?? []),
                     'open' => $block->attrs['open'] ?? false,
@@ -82,7 +82,7 @@ final class CanonicalEditorJsAdapter
             /** @var EditorBlocksUnion $end */
             $end = [
                 'id' => ($block->sourceKey ?? uniqid('foldable_end_', true)) . '_end',
-                'type' => 'foldableEnd',
+                'type' => 'xutimFoldableEnd',
                 'data' => [],
                 'tunes' => $this->attrsToTunes($block->attrs),
             ];
@@ -117,15 +117,15 @@ final class CanonicalEditorJsAdapter
                 ],
                 'items' => $this->listItemsToEditorJs($block->listItems),
             ]),
-            'hero_heading' => $this->makeBlock($block, 'mainHeader', [
+            'hero_heading' => $this->makeBlock($block, 'xutimHeroHeading', [
                 'pretitle' => $this->runsToHtml($block->parts['pretitle'] ?? []),
                 'title' => $this->runsToHtml($block->parts['title'] ?? []),
                 'subtitle' => $this->runsToHtml($block->parts['subtitle'] ?? []),
             ]),
-            'snippet' => $this->makeBlock($block, 'block', ['code' => $block->attrs['code'] ?? '']),
-            'page_link' => $this->makeBlock($block, 'pageLink', ['id' => $block->attrs['targetId'] ?? '']),
-            'article_link' => $this->makeBlock($block, 'articleLink', ['id' => $block->attrs['targetId'] ?? '']),
-            'tag_link' => $this->makeBlock($block, 'xutimTag', [
+            'snippet' => $this->makeBlock($block, 'xutimBlock', ['code' => $block->attrs['code'] ?? '']),
+            'page_link' => $this->makeBlock($block, 'xutimPageLink', ['id' => $block->attrs['targetId'] ?? '']),
+            'article_link' => $this->makeBlock($block, 'xutimArticleLink', ['id' => $block->attrs['targetId'] ?? '']),
+            'tag_link' => $this->makeBlock($block, 'xutimTagLink', [
                 'id' => $block->attrs['targetId'] ?? '',
                 'layout' => $block->attrs['layout'] ?? '',
             ]),
@@ -142,7 +142,7 @@ final class CanonicalEditorJsAdapter
                     'url' => $block->attrs['url'] ?? '',
                 ],
             ]),
-            'image_gallery' => $this->makeBlock($block, 'imageRow', [
+            'image_gallery' => $this->makeBlock($block, 'xutimImageRow', [
                 'imagesPerRow' => $block->attrs['imagesPerRow'] ?? null,
                 'images' => $this->galleryImagesToEditorJs($block->galleryImages),
             ]),
@@ -153,6 +153,10 @@ final class CanonicalEditorJsAdapter
                 'width' => $block->attrs['width'] ?? null,
                 'height' => $block->attrs['height'] ?? null,
                 'caption' => $this->runsToHtml($block->parts['caption'] ?? []),
+            ]),
+            'section' => $this->makeBlock($block, 'xutimSection', [
+                'sectionCode' => $block->attrs['sectionCode'] ?? '',
+                'values' => $block->attrs['values'] ?? [],
             ]),
             'delimiter' => $this->makeBlock($block, 'delimiter', []),
             default => $this->fallbackBlock($block),
@@ -230,7 +234,7 @@ final class CanonicalEditorJsAdapter
     {
         $tunes = [];
         if (($attrs['align'] ?? '') !== '') {
-            $tunes['alignment'] = ['alignment' => $attrs['align']];
+            $tunes['xutimAlignment'] = ['alignment' => $attrs['align']];
         }
         if (($attrs['anchor'] ?? '') !== '') {
             $tunes['xutimAnchor'] = ['anchor' => $attrs['anchor']];

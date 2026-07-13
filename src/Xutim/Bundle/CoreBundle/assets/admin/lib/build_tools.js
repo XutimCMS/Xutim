@@ -6,21 +6,21 @@ import List from '@editorjs/list';
 import Delimiter from '@editorjs/delimiter';
 import Embed from '@editorjs/embed';
 
-import MainHeader from './editorjs-plugins/header/main_header.js';
-import Block from './editorjs-plugins/block/block.js';
-import ImageRowTool from './editorjs-plugins/image-row/ImageRowTool.js';
-import XutimImageTool from './editorjs-plugins/image/XutimImageTool.js';
-import XutimFileTool from './editorjs-plugins/file/XutimFileTool.js';
-import AlignmentBlockTune from './editorjs-plugins/alignment-tune/AlignmentBlockTune.js';
-import XutimTagListTool from './editorjs-plugins/tag-list/XutimTagListTool.js';
-import XutimAnchorTune from './editorjs-plugins/anchor-tune/XutimAnchorTune.js';
-import XutimFootnoteInline from './editorjs-plugins/footnotes-tune/XutimFootnoteInline.js';
-import FoldableStart from './editorjs-plugins/foldable/FoldableStart.js';
-import FoldableEnd from './editorjs-plugins/foldable/FoldableEnd.js';
-import XutimLayoutTool from './editorjs-plugins/xutim-layout/xutim-layout.js';
+import XutimHeroHeadingTool from './editorjs-plugins/hero-heading/hero-heading.js';
+import XutimBlockTool from './editorjs-plugins/block/block.js';
+import XutimImageRowTool from './editorjs-plugins/image-row/image-row.js';
+import XutimImageTool from './editorjs-plugins/image/image.js';
+import XutimFileTool from './editorjs-plugins/file/file.js';
+import XutimAlignmentTune from './editorjs-plugins/alignment-tune/alignment-tune.js';
+import XutimTagLinkTool from './editorjs-plugins/tag-link/tag-link.js';
+import XutimAnchorTune from './editorjs-plugins/anchor-tune/anchor-tune.js';
+import XutimFootnoteInline from './editorjs-plugins/footnotes-tune/footnotes-tune.js';
+import XutimFoldableStartTool from './editorjs-plugins/foldable/foldable-start.js';
+import XutimFoldableEndTool from './editorjs-plugins/foldable/foldable-end.js';
+import XutimSectionTool from './editorjs-plugins/section/section.js';
 
 import createContentLink from './editorjs-plugins/content-link/content-link.js';
-import createInternalLink from './editorjs-plugins/internal-inline-link/XutimInternalLinkInlineTool.js';
+import createInternalLink from './editorjs-plugins/internal-inline-link/internal-inline-link.js';
 
 const pageLinkIcon =
     '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-folder" stroke="none" width="24" height="24" viewBox="0 0 24 24" stroke-width="0" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-11a2 2 0 0 1 2 -2"></path></svg>';
@@ -42,17 +42,17 @@ export function buildEditorTools({
     fetchAnchorSnippetsUrl,
     blockCodes,
     tags,
-    xutimLayouts,
-    xutimLayoutFormUrl,
-    xutimLayoutSaveUrl,
-    xutimLayoutRefreshUrl,
-    xutimLayoutPreviewUrl,
+    xutimSections,
+    xutimSectionFormUrl,
+    xutimSectionSaveUrl,
+    xutimSectionRefreshUrl,
+    xutimSectionPreviewUrl,
     extraTools = {},
     headerExtraTunes = [],
-    mainHeaderExtraTunes = [],
+    heroHeadingExtraTunes = [],
 }) {
     return {
-        alignment: { class: AlignmentBlockTune },
+        xutimAlignment: { class: XutimAlignmentTune },
 
         xutimAnchor: {
             class: XutimAnchorTune,
@@ -99,7 +99,7 @@ export function buildEditorTools({
 
         paragraph: {
             class: Paragraph,
-            tunes: ['xutimAnchor', 'alignment'],
+            tunes: ['xutimAnchor', 'xutimAlignment'],
             inlineToolbar: [
                 'link',
                 'bold',
@@ -119,18 +119,18 @@ export function buildEditorTools({
                 levels: [2, 3, 4],
                 defaultLevel: 2,
             },
-            tunes: ['xutimAnchor', 'alignment', ...headerExtraTunes],
+            tunes: ['xutimAnchor', 'xutimAlignment', ...headerExtraTunes],
         },
 
-        mainHeader: {
-            class: MainHeader,
-            name: 'Main header',
+        xutimHeroHeading: {
+            class: XutimHeroHeadingTool,
+            name: 'Hero heading',
             config: {
                 placeholder: 'Enter a header',
                 levels: [1, 2, 3],
                 defaultLevel: 2,
             },
-            tunes: ['xutimAnchor', ...mainHeaderExtraTunes],
+            tunes: ['xutimAnchor', ...heroHeadingExtraTunes],
         },
 
         quote: {
@@ -179,11 +179,11 @@ export function buildEditorTools({
             class: XutimImageTool,
             config: { galleryUrl: fetchImagesUrl },
             inlineToolbar: ['link', 'bold', 'italic'],
-            tunes: ['xutimAnchor', 'alignment'],
+            tunes: ['xutimAnchor', 'xutimAlignment'],
         },
 
-        imageRow: {
-            class: ImageRowTool,
+        xutimImageRow: {
+            class: XutimImageRowTool,
             config: {
                 galleryUrl: fetchImagesUrl,
                 allowedImagesPerRow: [2, 3, 4, 5],
@@ -192,48 +192,48 @@ export function buildEditorTools({
             tunes: ['xutimAnchor'],
         },
 
-        pageLink: {
+        xutimPageLink: {
             class: createContentLink('Page link', pageLinkIcon),
             config: { listUrl: pageIdsUrl, title: 'Select a page' },
             tunes: ['xutimAnchor'],
         },
 
-        articleLink: {
+        xutimArticleLink: {
             class: createContentLink('Article link', articleLinkIcon),
             config: { listUrl: articleIdsUrl, title: 'Select an article' },
             tunes: ['xutimAnchor'],
         },
 
-        block: {
-            class: Block,
+        xutimBlock: {
+            class: XutimBlockTool,
             config: { codes: blockCodes },
             tunes: ['xutimAnchor'],
         },
 
-        xutimTag: {
-            class: XutimTagListTool,
+        xutimTagLink: {
+            class: XutimTagLinkTool,
             config: { tags },
             tunes: ['xutimAnchor'],
         },
 
-        foldableStart: {
-            class: FoldableStart,
+        xutimFoldableStart: {
+            class: XutimFoldableStartTool,
             tunes: ['xutimAnchor'],
         },
 
-        foldableEnd: {
-            class: FoldableEnd,
+        xutimFoldableEnd: {
+            class: XutimFoldableEndTool,
             tunes: ['xutimAnchor'],
         },
 
-        xutimLayout: {
-            class: XutimLayoutTool,
+        xutimSection: {
+            class: XutimSectionTool,
             config: {
-                layouts: xutimLayouts || [],
-                formUrl: xutimLayoutFormUrl || '',
-                saveUrl: xutimLayoutSaveUrl || '',
-                refreshUrl: xutimLayoutRefreshUrl || '',
-                previewUrl: xutimLayoutPreviewUrl || '',
+                sections: xutimSections || [],
+                formUrl: xutimSectionFormUrl || '',
+                saveUrl: xutimSectionSaveUrl || '',
+                refreshUrl: xutimSectionRefreshUrl || '',
+                previewUrl: xutimSectionPreviewUrl || '',
             },
             tunes: ['xutimAnchor'],
         },

@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Tests\Unit\Content;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
+use Xutim\CoreBundle\Config\Section\SectionDefinitionRegistry;
 use Xutim\CoreBundle\Content\Adapter\CanonicalEditorJsAdapter;
 use Xutim\CoreBundle\Content\CanonicalContentExtractor;
 use Xutim\CoreBundle\Content\Diff\CanonicalContentDiffRenderer;
@@ -29,7 +29,7 @@ final class ContentPipelineMalformedBehaviorTest extends TestCase
         $this->diffRenderer = new CanonicalContentDiffRenderer(
             $this->extractor,
             new InlineDiffRenderer(),
-            new LayoutDefinitionRegistry([]),
+            new SectionDefinitionRegistry([]),
         );
     }
 
@@ -48,7 +48,7 @@ final class ContentPipelineMalformedBehaviorTest extends TestCase
             'orphan foldable end' => [
                 'document' => ['blocks' => [[
                     'id' => 'end-1',
-                    'type' => 'foldableEnd',
+                    'type' => 'xutimFoldableEnd',
                     'data' => [],
                     'tunes' => [],
                 ]]],

@@ -156,8 +156,8 @@
         data-split-view-article-ids-url-value="{{ admin_path('admin_json_article_list') }}"
         data-split-view-tag-ids-url-value="{{ admin_path('admin_json_tag_list') }}"
         data-split-view-fetch-anchor-snippets-url-value="{{ admin_path('admin_json_snippet_list', {type: 'anchor'}) }}"
-        data-split-view-xutim-layouts-value="{{ fetch_xutim_layouts()|json_encode }}"
-        data-split-view-xutim-layout-preview-url-value="{{ admin_path('admin_xutim_layout_preview', {code: ':code:'}) }}"
+        data-split-view-xutim-sections-value="{{ fetch_xutim_sections()|json_encode }}"
+        data-split-view-xutim-section-preview-url-value="{{ admin_path('admin_xutim_section_preview', {code: ':code:'}) }}"
         {% if translation %}
         data-split-view-reference-diff-url-value="{{ admin_path('admin_content_translation_reference_diff', {id: translation.id}) }}"
         data-split-view-reference-has-changed-value="{{ referenceHasChanged ? 'true' : 'false' }}"

@@ -435,7 +435,7 @@ final class RevisionDiffRenderingTest extends AdminApplicationTestCase
         $this->assertStringContainsString('Unknown block', $html);
     }
 
-    public function test_revision_page_renders_xutim_layout_diff_with_resolved_references(): void
+    public function test_revision_page_renders_xutim_section_diff_with_resolved_references(): void
     {
         $oldPage = $this->createPageWithTranslation('Old Promo Page', 'old-promo-page');
         $newPage = $this->createPageWithTranslation('New Promo Page', 'new-promo-page');
@@ -448,7 +448,7 @@ final class RevisionDiffRenderingTest extends AdminApplicationTestCase
         ];
 
         $article = ArticleFactory::createOne();
-        $newContent = $this->loadFixtureContent('xutim_layout_new', $replacements);
+        $newContent = $this->loadFixtureContent('xutim_section_new', $replacements);
         $translation = ContentTranslationFactory::createOne([
             'article' => $article,
             'locale' => 'en',
@@ -461,7 +461,7 @@ final class RevisionDiffRenderingTest extends AdminApplicationTestCase
             $translation,
             new DateTimeImmutable('-2 hours'),
             'Layout diff',
-            $this->loadFixtureContent('xutim_layout_old', $replacements),
+            $this->loadFixtureContent('xutim_section_old', $replacements),
         );
         $newRevision = $this->createLogEvent(
             $translation,

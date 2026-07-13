@@ -2,7 +2,7 @@
   "blocks": [
     {
       "id": "snippet-1",
-      "type": "block",
+      "type": "xutimBlock",
       "data": {
         "code": "new-snippet-code"
       },
@@ -29,7 +29,7 @@
     },
     {
       "id": "fold-1",
-      "type": "foldableStart",
+      "type": "xutimFoldableStart",
       "data": {
         "title": "Foldable revised title",
         "open": true
@@ -46,7 +46,7 @@
     },
     {
       "id": "fold-end-1",
-      "type": "foldableEnd",
+      "type": "xutimFoldableEnd",
       "data": {},
       "tunes": []
     }

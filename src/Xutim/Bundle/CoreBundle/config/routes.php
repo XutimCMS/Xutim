@@ -70,7 +70,7 @@ return function (RoutingConfigurator $routes) {
         ->defaults($defaults)
     ;
 
-    $routes->import('routes/xutim_layout_routes.php')
+    $routes->import('routes/xutim_section_routes.php')
         ->requirements($requirements)
         ->defaults($defaults)
     ;

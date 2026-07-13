@@ -45,8 +45,8 @@ export default class extends Controller {
         fetchAllFilesUrl: String,
         fetchFileUrl: String,
         fetchAnchorSnippetsUrl: String,
-        xutimLayouts: Array,
-        xutimLayoutPreviewUrl: String,
+        xutimSections: Array,
+        xutimSectionPreviewUrl: String,
         referenceDiffUrl: String,
         referenceHasChanged: Boolean,
     };
@@ -190,8 +190,8 @@ export default class extends Controller {
             fetchAnchorSnippetsUrl: this.fetchAnchorSnippetsUrlValue,
             blockCodes: this.blockCodesValue,
             tags: this.tagsValue,
-            xutimLayouts: this.xutimLayoutsValue,
-            xutimLayoutPreviewUrl: this.#appendEditMode(this.xutimLayoutPreviewUrlValue),
+            xutimSections: this.xutimSectionsValue,
+            xutimSectionPreviewUrl: this.#appendEditMode(this.xutimSectionPreviewUrlValue),
             ...overrides,
         });
     }

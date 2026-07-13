@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Service;
 
-use Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinitionRegistry;
+use Xutim\CoreBundle\Config\Section\SectionDefinitionRegistry;
 use Xutim\CoreBundle\Content\Diff\CanonicalContentDiffRenderer;
 use Xutim\CoreBundle\Content\Transform\EditorJsToCanonicalDocumentTransformer;
 
@@ -13,7 +13,7 @@ final class EditorJsDiffRenderer
     public function __construct(
         private readonly EditorJsToCanonicalDocumentTransformer $transformer,
         private readonly CanonicalContentDiffRenderer $canonicalDiffRenderer,
-        private readonly LayoutDefinitionRegistry $layoutRegistry,
+        private readonly SectionDefinitionRegistry $sectionRegistry,
     ) {
     }
 
@@ -43,9 +43,9 @@ final class EditorJsDiffRenderer
 
     /**
      * For reference-diff (cross-locale drift) — strip rows that only
-     * differ on translatable xutimLayout fields, since translatable
+     * differ on translatable xutimSection fields, since translatable
      * content is expected to differ across locales. Leaves structural
-     * changes (missing blocks, different layoutCode, non-translatable
+     * changes (missing blocks, different sectionCode, non-translatable
      * ref field changes) intact so genuine drift still surfaces.
      *
      * @param list<array<string, mixed>> $rows
@@ -56,18 +56,18 @@ final class EditorJsDiffRenderer
         $filtered = [];
 
         foreach ($rows as $row) {
-            if (($row['kind'] ?? null) !== 'xutim_layout' || ($row['op'] ?? null) === 'unchanged') {
+            if (($row['kind'] ?? null) !== 'section' || ($row['op'] ?? null) === 'unchanged') {
                 $filtered[] = $row;
                 continue;
             }
 
-            if (($row['layout_code_changed'] ?? false) === true) {
+            if (($row['section_code_changed'] ?? false) === true) {
                 $filtered[] = $row;
                 continue;
             }
 
-            $layoutCode = is_string($row['layout_code'] ?? null) ? $row['layout_code'] : '';
-            $definition = $layoutCode === '' ? null : $this->layoutRegistry->getByCode($layoutCode);
+            $sectionCode = is_string($row['section_code'] ?? null) ? $row['section_code'] : '';
+            $definition = $sectionCode === '' ? null : $this->sectionRegistry->getByCode($sectionCode);
 
             /** @var array<string, array<string, mixed>> $meta */
             $meta = is_array($row['meta'] ?? null) ? $row['meta'] : [];
@@ -95,7 +95,7 @@ final class EditorJsDiffRenderer
      * @param array<string, mixed> $fieldMeta
      */
     private function isFieldTranslatable(
-        ?\Xutim\CoreBundle\Config\Layout\Definition\LayoutDefinition $definition,
+        ?\Xutim\CoreBundle\Config\Section\SectionDefinition $definition,
         string $fieldName,
         array $fieldMeta,
     ): bool {

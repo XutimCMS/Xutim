@@ -24,7 +24,7 @@
     },
     {
       "id": "orphan-end-1",
-      "type": "foldableEnd",
+      "type": "xutimFoldableEnd",
       "data": [],
       "tunes": []
     },

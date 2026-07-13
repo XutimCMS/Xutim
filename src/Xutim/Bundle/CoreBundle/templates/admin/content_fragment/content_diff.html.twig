@@ -81,22 +81,22 @@
             {{ include('@XutimCore/admin/content_fragment/quote.html.twig', {row: row, meta: meta}) }}
         {% elseif row.kind == 'list' %}
             {{ include('@XutimCore/admin/content_fragment/list.html.twig', {row: row}) }}
-        {% elseif row.kind == 'image' or row.kind == 'xutimImage' %}
+        {% elseif row.kind == 'image' %}
             {{ include('@XutimCore/admin/content_fragment/diff/xutim_image_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
-        {% elseif row.kind == 'file' or row.kind == 'xutimFile' %}
+        {% elseif row.kind == 'file' %}
             {{ include('@XutimCore/admin/content_fragment/diff/xutim_file_diff.html.twig', {row: row, meta: meta, op: opEff, locale: locale}) }}
-        {% elseif row.kind == 'image_gallery' or row.kind == 'imageRow' %}
+        {% elseif row.kind == 'image_gallery' %}
             {{ include('@XutimCore/admin/content_fragment/diff/image_row_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
-        {% elseif row.kind == 'page_link' or row.kind == 'article_link' or row.kind == 'tag_link' or row.kind == 'pageLink' or row.kind == 'articleLink' or row.kind == 'xutimTag' %}
+        {% elseif row.kind == 'page_link' or row.kind == 'article_link' or row.kind == 'tag_link' %}
             {{ include('@XutimCore/admin/content_fragment/diff/link_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
-        {% elseif row.kind == 'hero_heading' or row.kind == 'mainHeader' %}
+        {% elseif row.kind == 'hero_heading' %}
             {{ include('@XutimCore/admin/content_fragment/diff/main_header_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
         {% elseif row.kind == 'embed' %}
             {{ include('@XutimCore/admin/content_fragment/diff/embed_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
-        {% elseif row.kind == 'snippet' or row.kind == 'block' %}
+        {% elseif row.kind == 'snippet' %}
             {{ include('@XutimCore/admin/content_fragment/diff/code_block_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
-        {% elseif row.kind == 'xutim_layout' %}
-            {{ include('@XutimCore/admin/content_fragment/diff/xutim_layout_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
+        {% elseif row.kind == 'section' %}
+            {{ include('@XutimCore/admin/content_fragment/diff/xutim_section_diff.html.twig', {row: row, meta: meta, op: opEff}) }}
         {% elseif row.kind == 'delimiter' %}
             {{ include('@XutimCore/admin/content_fragment/delimiter.html.twig') }}
         {% elseif row.kind == 'foldable_start' %}

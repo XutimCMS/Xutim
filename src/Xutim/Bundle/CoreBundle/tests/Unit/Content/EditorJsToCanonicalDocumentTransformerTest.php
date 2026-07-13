@@ -27,11 +27,11 @@ final class EditorJsToCanonicalDocumentTransformerTest extends TestCase
                     'id' => 'p1',
                     'type' => 'paragraph',
                     'data' => ['text' => '<em>Hello</em> world'],
-                    'tunes' => ['alignment' => ['alignment' => 'center']],
+                    'tunes' => ['xutimAlignment' => ['alignment' => 'center']],
                 ],
                 [
                     'id' => 'fold-start',
-                    'type' => 'foldableStart',
+                    'type' => 'xutimFoldableStart',
                     'data' => ['title' => 'More', 'open' => true],
                     'tunes' => [],
                 ],
@@ -43,7 +43,7 @@ final class EditorJsToCanonicalDocumentTransformerTest extends TestCase
                 ],
                 [
                     'id' => 'fold-end',
-                    'type' => 'foldableEnd',
+                    'type' => 'xutimFoldableEnd',
                     'data' => [],
                     'tunes' => [],
                 ],
@@ -132,61 +132,16 @@ final class EditorJsToCanonicalDocumentTransformerTest extends TestCase
         self::assertSame('Grandchild', $canonical->blocks[0]->listItems[0]->children[0]->children[0]->body[0]->text);
     }
 
-    public function test_transform_maps_lowercase_legacy_image_block(): void
-    {
-        $document = [
-            'blocks' => [[
-                'id' => 'img-1',
-                'type' => 'image',
-                'data' => [
-                    'file' => [
-                        'url' => '/file/d0603a.png',
-                    ],
-                    'caption' => '',
-                    'stretched' => false,
-                ],
-                'tunes' => [],
-            ]],
-        ];
 
-        $canonical = $this->transformer->transform($document);
 
-        self::assertCount(1, $canonical->blocks);
-        self::assertSame('image', $canonical->blocks[0]->kind);
-        self::assertSame('/file/d0603a.png', $canonical->blocks[0]->attrs['url']);
-    }
-
-    public function test_transform_maps_lowercase_legacy_imagerow_block(): void
-    {
-        $document = [
-            'blocks' => [[
-                'id' => 'gallery-1',
-                'type' => 'imagerow',
-                'data' => [
-                    'images' => [[
-                        'url' => 'https://example.com/file/c96faa.jpg',
-                    ]],
-                    'imagesPerRow' => 5,
-                ],
-                'tunes' => [],
-            ]],
-        ];
-
-        $canonical = $this->transformer->transform($document);
-
-        self::assertCount(1, $canonical->blocks);
-        self::assertSame('image_gallery', $canonical->blocks[0]->kind);
-        self::assertSame('https://example.com/file/c96faa.jpg', $canonical->blocks[0]->galleryImages[0]->url);
-    }
-
-    public function test_transform_xutim_layout_parses_text_values_into_parts(): void
+    public function test_transform_xutim_section_parses_text_values_into_parts(): void
     {
         $document = [
             'blocks' => [[
                 'id' => 'xl1',
-                'type' => 'xutimLayout',
+                'type' => 'xutimSection',
                 'data' => [
-                    'layoutCode' => 'page-preview',
+                    'sectionCode' => 'page-preview',
                     'values' => [
                         'title' => '<strong>Hello</strong>',
                         'description' => 'Welcome',
@@ -201,21 +156,21 @@ final class EditorJsToCanonicalDocumentTransformerTest extends TestCase
 
         self::assertCount(1, $canonical->blocks);
         $block = $canonical->blocks[0];
-        self::assertSame('xutim_layout', $block->kind);
+        self::assertSame('section', $block->kind);
         self::assertSame('xl1', $block->sourceKey);
-        self::assertSame('page-preview', $block->attrs['layoutCode']);
+        self::assertSame('page-preview', $block->attrs['sectionCode']);
         self::assertIsArray($block->attrs['values']);
         self::assertSame('11111111-2222-3333-4444-555555555555', $block->attrs['values']['image']);
         self::assertArrayHasKey('title', $block->parts);
         self::assertArrayHasKey('description', $block->parts);
     }
 
-    public function test_transform_xutim_layout_missing_code_falls_back_to_unknown(): void
+    public function test_transform_xutim_section_missing_code_falls_back_to_unknown(): void
     {
         $document = [
             'blocks' => [[
                 'id' => 'xl2',
-                'type' => 'xutimLayout',
+                'type' => 'xutimSection',
                 'data' => ['values' => ['title' => 'x']],
                 'tunes' => [],
             ]],

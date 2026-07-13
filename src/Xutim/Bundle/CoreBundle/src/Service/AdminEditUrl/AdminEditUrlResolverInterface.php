@@ -6,7 +6,7 @@ namespace Xutim\CoreBundle\Service\AdminEditUrl;
 
 /**
  * Resolves an entity to the URL of its admin edit screen for a given
- * locale, used by the xutim-layout preview to let translators jump
+ * locale, used by the xutim-section preview to let translators jump
  * from a referenced entity in a block to that entity's own editor.
  *
  * Multiple resolvers can be registered; the registry dispatches to the
