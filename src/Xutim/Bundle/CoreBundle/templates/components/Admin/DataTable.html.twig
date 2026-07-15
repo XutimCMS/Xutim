@@ -316,7 +316,7 @@
                     {% endfor %}
                 {% endblock %}
 
-                <div class="ms-auto text-muted" data-turbo-permanent id="{{ this.frameId }}-search-container">
+                <div class="ms-auto text-muted" id="{{ this.frameId }}-search-container">
                     {{ 'search'|trans({}, 'admin')|capitalize }}:
                     <div class="ms-2 d-inline-block">
                         <form
@@ -336,6 +336,7 @@
                             <input
                                 type="text"
                                 id="{{ this.frameId }}-searchTerm"
+                                data-turbo-permanent
                                 name="searchTerm"
                                 autofocus
                                 class="form-control form-control-sm"
