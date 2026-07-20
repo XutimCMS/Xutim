@@ -91,6 +91,52 @@ class ArticleTest extends AdminApplicationTestCase
         $this->assertTrue($translation->isPublished(), 'Translation should be published after status change');
     }
 
+    public function testArticleCreationLogsTranslationCreatedEvent(): void
+    {
+        $uniqueId = uniqid();
+        $slug = 'created-event-article-' . $uniqueId;
+        $description = 'Description ' . $uniqueId;
+
+        $client = $this->createAuthenticatedClient();
+        $crawler = $client->request('GET', '/admin/en/article/new');
+        $this->assertResponseIsSuccessful('Article create form should be accessible');
+
+        $form = $crawler->selectButton('article_translation_submit')->form();
+        $form['article[layout]'] = 'standard';
+        $form['article[preTitle]'] = 'Intro ' . $uniqueId;
+        $form['article[title]'] = 'Title ' . $uniqueId;
+        $form['article[subTitle]'] = 'Sub ' . $uniqueId;
+        $form['article[slug]'] = $slug;
+        $form['article[content]'] = json_encode([], JSON_THROW_ON_ERROR);
+        $form['article[description]'] = $description;
+        $form['article[locale]'] = 'en';
+        $form['article[allTranslationLocales]'] = '1';
+        $client->submit($form);
+        $this->assertResponseRedirects(message: 'Creating article should redirect');
+
+        /** @var ContentTranslationRepository $contentTransRepo */
+        $contentTransRepo = static::getContainer()->get(ContentTranslationRepository::class);
+        $translation = $contentTransRepo->findOneBy(['slug' => $slug, 'locale' => 'en']);
+        $this->assertNotNull($translation, 'Translation should exist after article creation');
+
+        /** @var LogEventRepository $logEventRepo */
+        $logEventRepo = static::getContainer()->get(LogEventRepository::class);
+        $events = $logEventRepo->findByTranslation($translation);
+        $contentEvents = array_values(array_filter($events, static fn ($e) => $e->getEvent() instanceof ContentTranslationCreatedEvent
+            || $e->getEvent() instanceof ContentTranslationUpdatedEvent));
+
+        $this->assertNotEmpty($contentEvents, 'Article creation should log a content event for the default translation');
+
+        $firstEvent = $contentEvents[0]->getEvent();
+        $this->assertInstanceOf(
+            ContentTranslationCreatedEvent::class,
+            $firstEvent,
+            'The first content event of a newly created article translation should be a Created event',
+        );
+        $this->assertSame($description, $firstEvent->description, 'description must not be swapped with language');
+        $this->assertSame('en', $firstEvent->language, 'language must not be swapped with description');
+    }
+
     public function testDraftMechanismForPublishedArticle(): void
     {
         $uniqueId = uniqid();

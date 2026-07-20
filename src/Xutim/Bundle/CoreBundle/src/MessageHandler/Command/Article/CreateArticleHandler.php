@@ -6,9 +6,11 @@ namespace Xutim\CoreBundle\MessageHandler\Command\Article;
 
 use Xutim\CoreBundle\Domain\Data\ArticleData;
 use Xutim\CoreBundle\Domain\Event\Article\ArticleCreatedEvent;
+use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Factory\ArticleFactory;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\Article;
+use Xutim\CoreBundle\Entity\ContentTranslation;
 use Xutim\CoreBundle\Message\Command\Article\CreateArticleCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
 use Xutim\CoreBundle\Repository\ArticleRepository;
@@ -81,6 +83,16 @@ readonly class CreateArticleHandler implements CommandHandlerInterface
             Article::class,
             $event
         );
-        $this->eventRepository->save($logEntry, true);
+
+        $translationCreatedEvent = ContentTranslationCreatedEvent::fromContentTranslation($translation);
+        $translationLog = $this->logEventFactory->create(
+            $translation->getId(),
+            $cmd->userIdentifier,
+            ContentTranslation::class,
+            $translationCreatedEvent
+        );
+
+        $this->eventRepository->save($logEntry);
+        $this->eventRepository->save($translationLog, true);
     }
 }
