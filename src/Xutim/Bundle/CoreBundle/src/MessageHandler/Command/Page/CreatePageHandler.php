@@ -60,19 +60,7 @@ readonly class CreatePageHandler implements CommandHandlerInterface
             $cmd->featuredImageId
         );
 
-        $translationCreatedEvent = new ContentTranslationCreatedEvent(
-            $translation->getId(),
-            $cmd->preTitle,
-            $cmd->title,
-            $cmd->subTitle,
-            $cmd->slug,
-            $cmd->content,
-            $cmd->defaultLanguage,
-            $cmd->description,
-            $translation->getCreatedAt(),
-            $page->getId(),
-            null
-        );
+        $translationCreatedEvent = ContentTranslationCreatedEvent::fromContentTranslation($translation);
 
         $logEntrySec = $this->logEventFactory->create(
             $page->getId(),

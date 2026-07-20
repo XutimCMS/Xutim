@@ -7,8 +7,10 @@ namespace Xutim\CoreBundle\Tests\Application\Admin;
 use App\Factory\ArticleFactory;
 use App\Factory\ContentTranslationFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\CreateContentTranslationCommand;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 use Zenstruck\Foundry\Test\Factories;
 
 class CreateContentTranslationHandlerTest extends AdminApplicationTestCase
@@ -45,6 +47,47 @@ class CreateContentTranslationHandlerTest extends AdminApplicationTestCase
         $frReloaded = $contentTransRepo->find($fr->getId());
 
         $this->assertNotNull($frReloaded->getReferenceSyncedAt(), 'fr should have referenceSyncedAt set after en was created');
+    }
+
+    /**
+     * The logged ContentTranslationCreatedEvent must store description and
+     * language in their own fields, not swapped.
+     */
+    public function testCreatedEventStoresDescriptionAndLanguageUnswapped(): void
+    {
+        $article = ArticleFactory::createOne();
+        $description = 'Une description distincte';
+
+        $bus = static::getContainer()->get(MessageBusInterface::class);
+        $bus->dispatch(new CreateContentTranslationCommand(
+            pageId: null,
+            articleId: $article->getId(),
+            preTitle: '',
+            title: 'Titre',
+            subTitle: '',
+            slug: 'titre-' . uniqid(),
+            content: ['blocks' => []],
+            description: $description,
+            locale: 'fr',
+            userIdentifier: 'test@example.com',
+        ));
+
+        $contentTransRepo = static::getContainer()->get(ContentTranslationRepository::class);
+        $fr = $contentTransRepo->findOneBy(['article' => $article->getId(), 'locale' => 'fr']);
+        $this->assertNotNull($fr);
+
+        $logEventRepo = static::getContainer()->get(LogEventRepository::class);
+        $created = null;
+        foreach ($logEventRepo->findByTranslation($fr) as $logEvent) {
+            if ($logEvent->getEvent() instanceof ContentTranslationCreatedEvent) {
+                $created = $logEvent->getEvent();
+                break;
+            }
+        }
+
+        $this->assertNotNull($created, 'a ContentTranslationCreatedEvent should be logged');
+        $this->assertSame($description, $created->description, 'description must not be swapped with language');
+        $this->assertSame('fr', $created->language, 'language must not be swapped with description');
     }
 
     /**

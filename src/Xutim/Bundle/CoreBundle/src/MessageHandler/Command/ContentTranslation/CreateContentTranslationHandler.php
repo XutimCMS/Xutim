@@ -90,19 +90,7 @@ readonly class CreateContentTranslationHandler implements CommandHandlerInterfac
             $this->referenceSyncService->markSiblingsAsSynced($object);
         }
 
-        $event = new ContentTranslationCreatedEvent(
-            $translation->getId(),
-            $cmd->preTitle,
-            $cmd->title,
-            $cmd->subTitle,
-            $cmd->slug,
-            $cmd->content,
-            $cmd->locale,
-            $cmd->description,
-            $translation->getCreatedAt(),
-            $cmd->pageId,
-            $cmd->articleId,
-        );
+        $event = ContentTranslationCreatedEvent::fromContentTranslation($translation);
 
         $log = $this->logEventFactory->create(
             $translation->getId(),

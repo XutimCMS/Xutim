@@ -5,11 +5,56 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Tests\Application\Admin;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Repository\ContentDraftRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
+use Xutim\CoreBundle\Repository\LogEventRepository;
 
 class PageTest extends AdminApplicationTestCase
 {
+    public function testPageCreationLogsCreatedEventWithUnswappedDescriptionAndLanguage(): void
+    {
+        $uniqueId = uniqid();
+        $slug = 'created-event-page-' . $uniqueId;
+        $description = 'Description ' . $uniqueId;
+
+        $client = $this->createAuthenticatedClient();
+        $crawler = $client->request('GET', '/admin/en/page/new');
+        $this->assertResponseIsSuccessful('Page create form should be accessible');
+
+        $form = $crawler->selectButton('article_translation_submit')->form();
+        $form['page[layout]'] = 'standard';
+        $form['page[preTitle]'] = 'Intro ' . $uniqueId;
+        $form['page[title]'] = 'Title ' . $uniqueId;
+        $form['page[subTitle]'] = 'Sub ' . $uniqueId;
+        $form['page[slug]'] = $slug;
+        $form['page[content]'] = json_encode([], JSON_THROW_ON_ERROR);
+        $form['page[description]'] = $description;
+        $form['page[locale]'] = 'en';
+        $form['page[allTranslationLocales]'] = '1';
+        $client->submit($form);
+        $this->assertResponseRedirects(message: 'Creating page should redirect');
+
+        /** @var ContentTranslationRepository $contentTransRepo */
+        $contentTransRepo = static::getContainer()->get(ContentTranslationRepository::class);
+        $translation = $contentTransRepo->findOneBy(['slug' => $slug, 'locale' => 'en']);
+        $this->assertNotNull($translation, 'Translation should exist after page creation');
+
+        /** @var LogEventRepository $logEventRepo */
+        $logEventRepo = static::getContainer()->get(LogEventRepository::class);
+        $created = null;
+        foreach ($logEventRepo->findByTranslation($translation) as $logEvent) {
+            if ($logEvent->getEvent() instanceof ContentTranslationCreatedEvent) {
+                $created = $logEvent->getEvent();
+                break;
+            }
+        }
+
+        $this->assertNotNull($created, 'Page creation should log a ContentTranslationCreatedEvent');
+        $this->assertSame($description, $created->description, 'description must not be swapped with language');
+        $this->assertSame('en', $created->language, 'language must not be swapped with description');
+    }
+
     public function testPageLifecycle(): void
     {
         $uniqueId = uniqid();
