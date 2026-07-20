@@ -68,6 +68,17 @@ readonly class CreateContentTranslationHandler implements CommandHandlerInterfac
             $article
         );
 
+        $object = $page ?? $article;
+        $refLocale = $this->siteContext->getReferenceLocale();
+        $isReferenceTranslation = $cmd->locale === $refLocale;
+
+        if (!$isReferenceTranslation) {
+            $refTrans = $object->getTranslationByLocale($refLocale);
+            if ($refTrans !== null) {
+                $translation->changeReferenceSyncedAt($refTrans->getUpdatedAt());
+            }
+        }
+
         $searchContent = $this->searchContentBuilder->build($translation);
         $searchTagContent = $this->searchContentBuilder->buildTagContent($translation);
         $translation->changeSearchContent($searchContent);
@@ -75,8 +86,8 @@ readonly class CreateContentTranslationHandler implements CommandHandlerInterfac
 
         $this->contentTransRepo->save($translation, true);
 
-        if ($cmd->locale === $this->siteContext->getReferenceLocale()) {
-            $this->referenceSyncService->markSiblingsAsSynced($page ?? $article);
+        if ($isReferenceTranslation) {
+            $this->referenceSyncService->markSiblingsAsSynced($object);
         }
 
         $event = new ContentTranslationCreatedEvent(

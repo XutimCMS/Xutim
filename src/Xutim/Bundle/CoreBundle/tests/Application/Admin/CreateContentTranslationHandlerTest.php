@@ -48,6 +48,70 @@ class CreateContentTranslationHandlerTest extends AdminApplicationTestCase
     }
 
     /**
+     * Article created with en (reference) first, then fr is created.
+     * The new fr translation should be stamped with en.updatedAt so it
+     * starts in sync with the reference instead of a NULL snapshot.
+     */
+    public function testCreatingTranslationAgainstExistingReferenceStampsItAsSynced(): void
+    {
+        $article = ArticleFactory::createOne();
+        $en = ContentTranslationFactory::createOne(['article' => $article, 'locale' => 'en']);
+
+        $bus = static::getContainer()->get(MessageBusInterface::class);
+        $bus->dispatch(new CreateContentTranslationCommand(
+            pageId: null,
+            articleId: $article->getId(),
+            preTitle: '',
+            title: 'Titre français',
+            subTitle: '',
+            slug: 'titre-francais-' . uniqid(),
+            content: ['blocks' => []],
+            description: '',
+            locale: 'fr',
+            userIdentifier: 'test@example.com',
+        ));
+
+        $contentTransRepo = static::getContainer()->get(ContentTranslationRepository::class);
+        $fr = $contentTransRepo->findOneBy(['article' => $article->getId(), 'locale' => 'fr']);
+
+        $this->assertNotNull($fr, 'fr translation should have been created');
+        $this->assertEquals(
+            $en->getUpdatedAt(),
+            $fr->getReferenceSyncedAt(),
+            'fr should be stamped with en.updatedAt at creation, not left NULL',
+        );
+    }
+
+    /**
+     * Creating a translation when no reference exists yet leaves
+     * referenceSyncedAt NULL - there is nothing to be in sync with.
+     */
+    public function testCreatingTranslationWithoutReferenceLeavesSnapshotNull(): void
+    {
+        $article = ArticleFactory::createOne();
+
+        $bus = static::getContainer()->get(MessageBusInterface::class);
+        $bus->dispatch(new CreateContentTranslationCommand(
+            pageId: null,
+            articleId: $article->getId(),
+            preTitle: '',
+            title: 'Titre français',
+            subTitle: '',
+            slug: 'titre-francais-' . uniqid(),
+            content: ['blocks' => []],
+            description: '',
+            locale: 'fr',
+            userIdentifier: 'test@example.com',
+        ));
+
+        $contentTransRepo = static::getContainer()->get(ContentTranslationRepository::class);
+        $fr = $contentTransRepo->findOneBy(['article' => $article->getId(), 'locale' => 'fr']);
+
+        $this->assertNotNull($fr, 'fr translation should have been created');
+        $this->assertNull($fr->getReferenceSyncedAt(), 'no reference exists, so snapshot stays NULL');
+    }
+
+    /**
      * Creating a non-reference translation (e.g. de) should NOT affect
      * existing siblings' referenceSyncedAt.
      */
