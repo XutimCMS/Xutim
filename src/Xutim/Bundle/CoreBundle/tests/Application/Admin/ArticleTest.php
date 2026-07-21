@@ -255,6 +255,103 @@ class ArticleTest extends AdminApplicationTestCase
         $this->assertNotEmpty($publishEvents, 'Content revision event should be persisted after draft publish');
     }
 
+    public function testPublishingUnchangedDraftDoesNotCreateDuplicateRevision(): void
+    {
+        $uniqueId = uniqid();
+        $slug = 'noop-draft-article-' . $uniqueId;
+        $title = 'Noop Article ' . $uniqueId;
+
+        $client = $this->createAuthenticatedClient();
+
+        $crawler = $client->request('GET', '/admin/en/article/new');
+        $form = $crawler->selectButton('article_translation_submit')->form();
+        $form['article[layout]'] = 'standard';
+        $form['article[preTitle]'] = 'Intro';
+        $form['article[title]'] = $title;
+        $form['article[subTitle]'] = 'Sub';
+        $form['article[slug]'] = $slug;
+        $form['article[content]'] = json_encode([], JSON_THROW_ON_ERROR);
+        $form['article[description]'] = 'Description';
+        $form['article[locale]'] = 'en';
+        $form['article[allTranslationLocales]'] = '1';
+        $client->submit($form);
+        $client->followRedirect();
+
+        /** @var ContentTranslationRepository $contentTransRepo */
+        $contentTransRepo = static::getContainer()->get(ContentTranslationRepository::class);
+        $translation = $contentTransRepo->findOneBy(['slug' => $slug, 'locale' => 'en']);
+        $this->assertNotNull($translation);
+        $articleId = $translation->getArticle()->getId()->toRfc4122();
+        $translationId = $translation->getId()->toRfc4122();
+
+        $csrfToken = $this->extractCsrfToken($client, '/admin/en/article/' . $articleId);
+        $client->request('POST', '/admin/en/publication-status/edit/' . $translationId . '/published', [
+            'form' => ['_token' => $csrfToken],
+        ]);
+        $this->assertResponseRedirects();
+
+        /** @var LogEventRepository $logEventRepo */
+        $logEventRepo = static::getContainer()->get(LogEventRepository::class);
+        $translation = $contentTransRepo->find($translationId);
+        $contentRevisionsBefore = $this->countContentRevisions($logEventRepo->findByTranslation($translation));
+
+        // Save a draft that changes the title...
+        $crawler = $client->request('GET', '/admin/en/article/edit/' . $articleId);
+        $form = $crawler->filter('form[name="content_translation"]')->form();
+        $form['content_translation[title]'] = 'Temporary ' . $uniqueId;
+        $form['content_translation[content]'] = json_encode([], JSON_THROW_ON_ERROR);
+        $form['_save_action'] = 'draft';
+        $client->submit($form);
+        $crawler = $client->followRedirect();
+
+        // ...then revert the draft back to the published content.
+        $form = $crawler->filter('form[name="content_translation"]')->form();
+        $form['content_translation[title]'] = $title;
+        $form['content_translation[content]'] = json_encode([], JSON_THROW_ON_ERROR);
+        $form['_save_action'] = 'draft';
+        $client->submit($form);
+        $crawler = $client->followRedirect();
+
+        $csrfToken = $crawler->filter('[data-dialog-modal-csrf-token-value]')->first()->attr('data-dialog-modal-csrf-token-value');
+
+        /** @var ContentDraftRepository $draftRepo */
+        $draftRepo = static::getContainer()->get(ContentDraftRepository::class);
+        $translation = $contentTransRepo->find($translationId);
+        $draft = $draftRepo->findDraft($translation);
+        $this->assertNotNull($draft);
+        $draftId = $draft->getId()->toRfc4122();
+
+        $client->request('POST', '/admin/en/content-draft/' . $draftId . '/publish', [
+            'form' => ['_token' => $csrfToken],
+        ], [], ['HTTP_REFERER' => '/admin/en/article/edit/' . $articleId]);
+        $this->assertResponseRedirects();
+
+        $translation = $contentTransRepo->find($translationId);
+        $this->assertNull($draftRepo->findDraft($translation), 'Draft should be removed after publishing');
+
+        $events = $logEventRepo->findByTranslation($translation);
+        $this->assertSame(
+            $contentRevisionsBefore,
+            $this->countContentRevisions($events),
+            'Publishing an unchanged draft must not add a duplicate content revision',
+        );
+
+        $discardedEvents = array_filter($events, static fn ($e) => $e->getEvent() instanceof ContentDraftDiscardedEvent);
+        $this->assertCount(1, $discardedEvents, 'Publishing an unchanged draft should close it as a discard');
+    }
+
+    /**
+     * @param array<\Xutim\CoreBundle\Domain\Model\LogEventInterface> $events
+     */
+    private function countContentRevisions(array $events): int
+    {
+        return count(array_filter(
+            $events,
+            static fn ($e) => $e->getEvent() instanceof ContentTranslationCreatedEvent
+                || $e->getEvent() instanceof ContentTranslationUpdatedEvent,
+        ));
+    }
+
     public function testDraftDiscardForPublishedArticle(): void
     {
         $uniqueId = uniqid();

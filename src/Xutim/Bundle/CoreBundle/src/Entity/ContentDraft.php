@@ -189,9 +189,9 @@ class ContentDraft implements ContentDraftInterface
         $this->description = $this->translation->getDescription();
     }
 
-    public function applyToTranslation(): void
+    public function applyToTranslation(): bool
     {
-        $this->translation->change(
+        return $this->translation->change(
             $this->preTitle,
             $this->title,
             $this->subTitle,

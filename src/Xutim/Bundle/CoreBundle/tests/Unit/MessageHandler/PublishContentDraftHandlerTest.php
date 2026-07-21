@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Context\SiteContext;
+use Xutim\CoreBundle\Domain\Event\ContentDraft\ContentDraftDiscardedEvent;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\ContentDraftInterface;
@@ -74,6 +75,35 @@ final class PublishContentDraftHandlerTest extends TestCase
         $this->assertSame('user@example.com', $savedLog->getUserIdentifier());
     }
 
+    public function testPublishWithoutContentChangeDiscardsDraftWithoutContentRevision(): void
+    {
+        $draftRepo = $this->createMock(ContentDraftRepository::class);
+        $contentTransRepo = $this->createMock(ContentTranslationRepository::class);
+        $eventRepo = $this->createMock(LogEventRepository::class);
+        $handler = $this->buildHandler($draftRepo, $contentTransRepo, $eventRepo);
+
+        $translation = $this->translationStub();
+        $draft = $this->draftStub($translation, contentChanged: false);
+        $draftRepo->method('find')->willReturn($draft);
+
+        $contentTransRepo->expects($this->never())->method('save');
+        $draftRepo->expects($this->once())->method('remove');
+        $draftRepo->expects($this->once())->method('flush');
+
+        $savedLog = null;
+        $eventRepo->expects($this->once())->method('save')
+            ->willReturnCallback(function (LogEventInterface $log) use (&$savedLog) { $savedLog = $log; });
+
+        $handler(new PublishContentDraftCommand(Uuid::v4(), 'user@example.com'));
+
+        $this->assertNotNull($savedLog);
+        $this->assertInstanceOf(
+            ContentDraftDiscardedEvent::class,
+            $savedLog->getEvent(),
+            'Publishing an unchanged draft should close it as a discard, not log a content revision',
+        );
+    }
+
     private function buildHandler(
         ContentDraftRepository $draftRepo,
         ContentTranslationRepository $contentTransRepo,
@@ -124,11 +154,12 @@ final class PublishContentDraftHandlerTest extends TestCase
         return $translation;
     }
 
-    private function draftStub(ContentTranslationInterface $translation): ContentDraftInterface
+    private function draftStub(ContentTranslationInterface $translation, bool $contentChanged = true): ContentDraftInterface
     {
         $draft = $this->createStub(ContentDraftInterface::class);
         $draft->method('getId')->willReturn(Uuid::v4());
         $draft->method('getTranslation')->willReturn($translation);
+        $draft->method('applyToTranslation')->willReturn($contentChanged);
 
         return $draft;
     }

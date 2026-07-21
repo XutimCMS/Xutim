@@ -60,7 +60,7 @@ interface ContentDraftInterface
 
     public function snapshotFromTranslation(): void;
 
-    public function applyToTranslation(): void;
+    public function applyToTranslation(): bool;
 
     public function updates(): void;
 
