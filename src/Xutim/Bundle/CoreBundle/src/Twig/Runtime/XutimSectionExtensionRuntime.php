@@ -13,6 +13,7 @@ use Xutim\CoreBundle\Config\Layout\Block\Option\RichTextBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\TextareaBlockItemOption;
 use Xutim\CoreBundle\Config\Section\SectionDefinition;
 use Xutim\CoreBundle\Config\Section\SectionDefinitionRegistry;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Service\AdminEditUrl\AdminEditUrlResolver;
 use Xutim\CoreBundle\Service\XutimSectionValueResolver;
 
@@ -24,6 +25,7 @@ class XutimSectionExtensionRuntime implements RuntimeExtensionInterface
         private readonly Environment $twig,
         private readonly LoggerInterface $logger,
         private readonly AdminEditUrlResolver $adminEditUrlResolver,
+        private readonly SiteContext $siteContext,
     ) {
     }
 

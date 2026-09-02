@@ -6,8 +6,11 @@
 
 {% block body %}
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h3>{{ title }}</h3>
+            <twig:Xutim:Admin:Badge class="bg-outline-primary border-3 border-primary">
+                {{ content_context_language() }}
+            </twig:Xutim:Admin:Badge>
         </div>
         <div class="card-body">
             {{ include('@XutimCore/admin/block/_block_form.html.twig') }}

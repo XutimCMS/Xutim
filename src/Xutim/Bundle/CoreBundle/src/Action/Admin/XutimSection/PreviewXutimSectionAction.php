@@ -27,7 +27,7 @@ class PreviewXutimSectionAction extends AbstractController
     ) {
     }
 
-    public function __invoke(Request $request, string $code): Response
+    public function __invoke(Request $request, string $code, string $contentLocale): Response
     {
         if (!$request->isXmlHttpRequest()) {
             throw $this->createAccessDeniedException();
@@ -57,6 +57,7 @@ class PreviewXutimSectionAction extends AbstractController
             'fragmentData' => $fragmentData,
             'definition' => $definition,
             'editable' => $request->query->getBoolean('edit'),
+            'locale' => $contentLocale,
         ]);
     }
 }
