@@ -8,13 +8,19 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Xutim\CoreBundle\Config\Layout\Block\Option\ArticleBlockItemOption;
+use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
+use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
+use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 
 final readonly class ArticleBlockItemProvider implements BlockItemProviderInterface
 {
-    public function __construct(private string $articleClass)
-    {
+    public function __construct(
+        private string $articleClass,
+        private ContentContext $contentContext,
+        private ReferenceTranslationResolver $referenceTranslationResolver,
+    ) {
     }
 
     public function getOptionClass(): string
@@ -25,12 +31,22 @@ final readonly class ArticleBlockItemProvider implements BlockItemProviderInterf
     /** @param FormBuilderInterface<mixed> $builder */
     public function buildFormFields(FormBuilderInterface $builder): void
     {
+        $locale = $this->contentContext->getLanguage();
+
         $builder->add('article', EntityType::class, [
             'class' => $this->articleClass,
             'label' => new TranslatableMessage('article', [], 'admin'),
             'required' => false,
             'choice_value' => 'id',
-            'choice_label' => static fn (ArticleInterface $article) => $article->getTitle(),
+            'choice_label' => function (ArticleInterface $article) use ($locale): string {
+                /** @var ContentTranslationInterface $translation */
+                $translation = $this->referenceTranslationResolver->resolveByLocale($article, $locale);
+                if ($translation->getLocale() === $locale) {
+                    return $translation->getTitle();
+                }
+
+                return sprintf('%s (%s)', $translation->getTitle(), $translation->getLocale());
+            },
         ]);
     }
 

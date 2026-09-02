@@ -7,6 +7,8 @@ namespace Xutim\CoreBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Uid\Uuid;
+use Xutim\CoreBundle\Context\Admin\ContentContext;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\TagInterface;
@@ -33,6 +35,7 @@ class ArticleRepository extends ServiceEntityRepository
         string $entityClass,
         public string $tagEntityClass,
         private readonly SiteContext $siteContext,
+        private readonly ContentContext $contentContext,
     ) {
         parent::__construct($registry, $entityClass);
     }
@@ -58,12 +61,14 @@ class ArticleRepository extends ServiceEntityRepository
      */
     public function findAllForPicker(): array
     {
-        /** @var list<array{id: \Symfony\Component\Uid\Uuid, title: string}> $rows */
+        $locale = $this->contentContext->getLanguage();
+        $refLocale = $this->siteContext->getReferenceLocale();
+
+        /** @var list<array{id: Uuid, title: string, locale: string}> $rows */
         $rows = $this->createQueryBuilder('article')
-            ->select('article.id AS id', 'translation.title AS title')
-            ->innerJoin('article.translations', 'translation', 'WITH', 'translation.locale = :refLocale')
-            ->setParameter('refLocale', $this->siteContext->getReferenceLocale())
-            ->orderBy('translation.title', 'ASC')
+            ->select('article.id AS id', 'translation.title AS title', 'translation.locale AS locale')
+            ->innerJoin('article.translations', 'translation', 'WITH', 'translation.locale IN (:locales)')
+            ->setParameter('locales', array_unique([$locale, $refLocale]))
             ->getQuery()
             ->getArrayResult();
 
@@ -73,8 +78,17 @@ class ArticleRepository extends ServiceEntityRepository
             if ($title === '') {
                 continue;
             }
-            $result[$row['id']->toRfc4122()] = $title;
+            $id = $row['id']->toRfc4122();
+            if ($row['locale'] !== $locale) {
+                if (array_key_exists($id, $result)) {
+                    continue;
+                }
+                $title = sprintf('%s (%s)', $title, $row['locale']);
+            }
+            $result[$id] = $title;
         }
+
+        asort($result, SORT_NATURAL | SORT_FLAG_CASE);
 
         return $result;
     }
