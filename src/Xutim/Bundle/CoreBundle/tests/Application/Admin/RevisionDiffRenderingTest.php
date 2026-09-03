@@ -80,6 +80,42 @@ final class RevisionDiffRenderingTest extends AdminApplicationTestCase
         $this->assertStringContainsString('<ins>technical</ins>', $html);
     }
 
+    public function test_reference_changes_link_opens_the_reference_revisions_since_the_last_sync(): void
+    {
+        $article = ArticleFactory::createOne();
+        $referenceTranslation = ContentTranslationFactory::createOne([
+            'article' => $article,
+            'locale' => 'en',
+            'title' => 'Reference',
+            'slug' => 'reference-changes-' . uniqid(),
+        ]);
+        $siblingTranslation = ContentTranslationFactory::createOne([
+            'article' => $article,
+            'locale' => 'fr',
+            'title' => 'Sibling',
+            'slug' => 'sibling-changes-' . uniqid(),
+        ]);
+
+        $syncedRevision = $this->createLogEvent($referenceTranslation, new DateTimeImmutable('-3 hours'), 'Reference', []);
+        $this->createLogEvent($referenceTranslation, new DateTimeImmutable('-2 hours'), 'Reference v2', []);
+        $latestRevision = $this->createLogEvent($referenceTranslation, new DateTimeImmutable('-1 hour'), 'Reference v3', []);
+
+        $siblingTranslation->changeReferenceSyncedAt(new DateTimeImmutable('-150 minutes'));
+        $this->em->flush();
+
+        $this->client->request(
+            'GET',
+            sprintf('/admin/fr/content-translation/%s/reference-changes', $siblingTranslation->getId()->toRfc4122())
+        );
+
+        $this->assertResponseRedirects(sprintf(
+            '/admin/en/content-translation/revisions/%s/%s/%s',
+            $referenceTranslation->getId()->toRfc4122(),
+            $syncedRevision->getId()->toRfc4122(),
+            $latestRevision->getId()->toRfc4122(),
+        ));
+    }
+
     public function test_reference_diff_renders_middle_removal_in_position(): void
     {
         $article = ArticleFactory::createOne();

@@ -9,6 +9,7 @@ use Xutim\CoreBundle\Action\Admin\ContentTranslation\HeartbeatAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\MarkReferenceReviewedAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\JsonGenerateSlugAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\ShowTranslationRevisionsAction;
+use Xutim\CoreBundle\Action\Admin\ContentTranslation\ShowReferenceChangesAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\ShowReferenceDiffAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\SidebarHistoryAction;
 use Xutim\CoreBundle\Action\Admin\ContentTranslation\StopEditingAction;
@@ -58,6 +59,12 @@ return function (RoutingConfigurator $routes) {
         ->add('admin_content_translation_reference_diff', '/admin/{_content_locale}/content-translation/{id}/reference-diff')
         ->methods(['get'])
         ->controller(ShowReferenceDiffAction::class)
+    ;
+
+    $routes
+        ->add('admin_content_translation_reference_changes', '/admin/{_content_locale}/content-translation/{id}/reference-changes')
+        ->methods(['get'])
+        ->controller(ShowReferenceChangesAction::class)
     ;
 
     $routes
