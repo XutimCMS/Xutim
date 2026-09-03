@@ -116,6 +116,54 @@ final class RevisionDiffRenderingTest extends AdminApplicationTestCase
         ));
     }
 
+    public function test_revisions_page_switches_to_the_sibling_translation_of_the_context_locale(): void
+    {
+        $article = ArticleFactory::createOne();
+        $english = ContentTranslationFactory::createOne([
+            'article' => $article,
+            'locale' => 'en',
+            'title' => 'English',
+            'slug' => 'switch-en-' . uniqid(),
+        ]);
+        $french = ContentTranslationFactory::createOne([
+            'article' => $article,
+            'locale' => 'fr',
+            'title' => 'French',
+            'slug' => 'switch-fr-' . uniqid(),
+        ]);
+        $this->createLogEvent($english, new DateTimeImmutable('-1 hour'), 'English', []);
+        $this->createLogEvent($french, new DateTimeImmutable('-1 hour'), 'French', []);
+
+        $this->client->request(
+            'GET',
+            sprintf('/admin/fr/content-translation/revisions/%s', $english->getId()->toRfc4122())
+        );
+
+        $this->assertResponseRedirects(sprintf(
+            '/admin/fr/content-translation/revisions/%s',
+            $french->getId()->toRfc4122(),
+        ));
+    }
+
+    public function test_revisions_page_falls_back_to_the_edit_page_when_the_context_locale_is_not_translated(): void
+    {
+        $article = ArticleFactory::createOne();
+        $english = ContentTranslationFactory::createOne([
+            'article' => $article,
+            'locale' => 'en',
+            'title' => 'English',
+            'slug' => 'missing-fr-' . uniqid(),
+        ]);
+        $this->createLogEvent($english, new DateTimeImmutable('-1 hour'), 'English', []);
+
+        $this->client->request(
+            'GET',
+            sprintf('/admin/fr/content-translation/revisions/%s', $english->getId()->toRfc4122())
+        );
+
+        $this->assertResponseRedirects(sprintf('/admin/fr/article/edit/%s', $article->getId()->toRfc4122()));
+    }
+
     public function test_reference_diff_renders_middle_removal_in_position(): void
     {
         $article = ArticleFactory::createOne();

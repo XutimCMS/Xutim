@@ -61,7 +61,7 @@
                                     if app.user.canTranslate(translation.locale)
                                 %}
                                     <a
-                                        href="{{ admin_path('admin_content_translation_revisions', {id: translation.id}) }}"
+                                        href="{{ admin_path('admin_content_translation_revisions', {id: translation.id, _content_locale: translation.locale}) }}"
                                         class="btn-link"
                                         aria-label="{{ 'revisions'|trans({}, 'admin') }}"
                                     >

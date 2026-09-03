@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Action\Admin\ContentTranslation;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
@@ -49,6 +50,11 @@ class ShowTranslationRevisionsAction extends AbstractController
 
         if (($oldId === null && $newId !== null) || ($oldId !== null && $newId === null)) {
             throw $this->createNotFoundException('Either both (oldId and newId) should be set or both have to be null.');
+        }
+
+        $contentLocale = $this->contentContext->getLanguage();
+        if ($translation->getLocale() !== $contentLocale) {
+            return $this->redirectToSibling($translation, $contentLocale);
         }
 
         $allEvents = $this->eventRepository->findByTranslation($translation);
@@ -152,6 +158,23 @@ class ShowTranslationRevisionsAction extends AbstractController
         }
 
         return $this->renderPageRevisions($translation, $revisionData);
+    }
+
+    private function redirectToSibling(ContentTranslationInterface $translation, string $locale): RedirectResponse
+    {
+        $object = $translation->getObject();
+        $sibling = $object->getTranslationByLocale($locale);
+        if ($sibling !== null) {
+            return $this->redirectToRoute('admin_content_translation_revisions', [
+                'id' => $sibling->getId(),
+                '_content_locale' => $locale,
+            ]);
+        }
+
+        return $this->redirectToRoute($translation->hasArticle() ? 'admin_article_edit' : 'admin_page_edit', [
+            'id' => $object->getId(),
+            '_content_locale' => $locale,
+        ]);
     }
 
     /**

@@ -33,7 +33,7 @@
             <twig:Xutim:Admin:Button
                 tag="a"
                 variant="nav"
-                href="{{ admin_path('admin_content_translation_revisions', {id: trans.id}) }}"
+                href="{{ admin_path('admin_content_translation_revisions', {id: trans.id, _content_locale: trans.locale}) }}"
             >
                 <twig:Xutim:Admin:Icon name="history" class="me-1" />
                 History
