@@ -10,11 +10,14 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Xutim\CoreBundle\Config\Layout\Block\Option\MediaFolderBlockItemOption;
 use Xutim\CoreBundle\Form\Admin\Dto\BlockItemDto;
 use Xutim\MediaBundle\Domain\Model\MediaFolderInterface;
+use Xutim\MediaBundle\Repository\MediaFolderRepositoryInterface;
 
 final readonly class MediaFolderBlockItemProvider implements BlockItemProviderInterface
 {
-    public function __construct(private string $mediaFolderClass)
-    {
+    public function __construct(
+        private string $mediaFolderClass,
+        private MediaFolderRepositoryInterface $mediaFolderRepository,
+    ) {
     }
 
     public function getOptionClass(): string
@@ -25,10 +28,14 @@ final readonly class MediaFolderBlockItemProvider implements BlockItemProviderIn
     /** @param FormBuilderInterface<mixed> $builder */
     public function buildFormFields(FormBuilderInterface $builder): void
     {
+        $folders = $this->mediaFolderRepository->findAll();
+        usort($folders, fn (MediaFolderInterface $a, MediaFolderInterface $b) => strcasecmp($a->fullName(), $b->fullName()));
+
         $builder->add('mediaFolder', EntityType::class, [
             'class' => $this->mediaFolderClass,
+            'choices' => $folders,
             'label' => 'Media folder',
-            'choice_label' => 'name',
+            'choice_label' => fn (MediaFolderInterface $folder) => $folder->fullName(),
             'placeholder' => new TranslatableMessage('select media folder', [], 'admin'),
             'required' => false,
         ]);

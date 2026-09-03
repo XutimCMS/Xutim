@@ -137,7 +137,7 @@
     <td>
         {% if item.hasMediaFolder() %}
             <a href="{{ admin_path('admin_media_list', {id: item.mediaFolder.id}) }}">
-                {{ item.mediaFolder.name }}
+                {{ item.mediaFolder.fullName }}
             </a>
         {% endif %}
     </td>

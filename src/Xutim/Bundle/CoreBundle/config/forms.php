@@ -85,6 +85,7 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(MediaFolderBlockItemProvider::class)
         ->arg('$mediaFolderClass', '%xutim_media.model.media_folder.class%')
+        ->arg('$mediaFolderRepository', service(MediaFolderRepositoryInterface::class))
         ->tag('xutim.block_item_provider');
 
     $services->set(BlockItemProviderRegistry::class)

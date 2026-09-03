@@ -37,6 +37,8 @@ interface MediaFolderInterface
      */
     public function folderPath(): array;
 
+    public function fullName(): string;
+
     public function createdAt(): DateTimeImmutable;
 
     public function updatedAt(): DateTimeImmutable;

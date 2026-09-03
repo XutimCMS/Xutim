@@ -156,6 +156,11 @@ class MediaFolder implements MediaFolderInterface
         return array_reverse($path);
     }
 
+    public function fullName(): string
+    {
+        return implode(' / ', array_map(fn (MediaFolderInterface $folder) => $folder->name(), $this->folderPath()));
+    }
+
     public function createdAt(): DateTimeImmutable
     {
         return $this->createdAt;

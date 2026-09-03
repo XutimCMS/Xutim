@@ -31,9 +31,14 @@ final readonly class MediaFolderSectionFieldProvider implements SectionFieldProv
         string $fieldName,
         BlockItemOption $option
     ): void {
+        $folders = $this->mediaFolderRepository->findAll();
+        usort($folders, fn (MediaFolderInterface $a, MediaFolderInterface $b) => strcasecmp($a->fullName(), $b->fullName()));
+
         $builder->add($fieldName, EntityType::class, [
             'class' => $this->mediaFolderClass,
+            'choices' => $folders,
             'choice_value' => 'id',
+            'choice_label' => fn (MediaFolderInterface $folder) => $folder->fullName(),
             'label' => $this->humanize($fieldName),
             'required' => false,
         ]);

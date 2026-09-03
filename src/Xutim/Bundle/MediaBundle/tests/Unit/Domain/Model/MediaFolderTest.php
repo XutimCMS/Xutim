@@ -119,4 +119,20 @@ final class MediaFolderTest extends TestCase
         $this->assertCount(1, $path);
         $this->assertSame($folder, $path[0]);
     }
+
+    public function testFullNameJoinsAncestorNamesFromTheRoot(): void
+    {
+        $root = new MediaFolder(code: 'root', name: 'Root', basePath: 'media');
+        $child = new MediaFolder(code: 'child', name: 'Child', basePath: 'media/child', parent: $root);
+        $grandchild = new MediaFolder(code: 'gc', name: 'Grandchild', basePath: 'media/child/gc', parent: $child);
+
+        $this->assertSame('Root / Child / Grandchild', $grandchild->fullName());
+    }
+
+    public function testFullNameOfARootFolderIsItsName(): void
+    {
+        $folder = new MediaFolder(code: 'root', name: 'Root', basePath: 'media');
+
+        $this->assertSame('Root', $folder->fullName());
+    }
 }
