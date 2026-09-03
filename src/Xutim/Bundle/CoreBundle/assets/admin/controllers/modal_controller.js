@@ -13,6 +13,7 @@ export default class extends Controller {
                 const shouldOpen =
                     this.dynamicContentTarget.innerHTML.trim().length > 0;
 
+                this.applySize();
                 if (shouldOpen && !this.dialogTarget.open) {
                     this.open();
                 } else if (!shouldOpen && this.dialogTarget.open) {
@@ -56,6 +57,14 @@ export default class extends Controller {
             this.close();
         }
         this.mouseDownOutside = false;
+    }
+
+    applySize() {
+        const size =
+            this.dynamicContentTarget.querySelector('[data-dialog-size]')?.dataset.dialogSize ?? 'md';
+        ['dialog-sm', 'dialog-md', 'dialog-lg'].forEach((cls) =>
+            this.dialogTarget.classList.toggle(cls, cls === `dialog-${size}`)
+        );
     }
 
     showLoading() {

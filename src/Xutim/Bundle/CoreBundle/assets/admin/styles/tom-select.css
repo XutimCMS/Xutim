@@ -22,3 +22,9 @@
     background: var(--tblr-body-bg);
     cursor: text;
 }
+
+.ts-wrapper.dropdown-up .ts-dropdown {
+    top: auto;
+    bottom: 100%;
+    margin: 0 0 0.25rem 0;
+}
