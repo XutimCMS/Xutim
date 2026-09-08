@@ -11,7 +11,7 @@
  * admin's shared dialog classes (`dialog-lg`, `overflow-y-auto`).
  *
  * Config expected from caller:
- *   sections: [{code, name, fields: [{name, translatable, type}]}, ...]
+ *   sections: [{code, name, unscaledPreview, fields: [{name, translatable, type}]}, ...]
  *   formUrl:   URL template with `:code:` placeholder returning form HTML
  *   saveUrl:   URL template with `:code:` placeholder accepting POST, returns JSON
  */
@@ -49,7 +49,8 @@ export default class XutimSectionTool {
         // breakpoints trigger even inside a narrow editor column. The iframe
         // is CSS-scaled down to fit the actual editor width. 900 keeps the
         // section clearly past the smartphone threshold while minimising how
-        // much the content has to shrink.
+        // much the content has to shrink. Sections flagged unscaledPreview
+        // skip this and render at the column width instead.
         this.PREVIEW_DESKTOP_WIDTH = 900;
 
         this.wrapper = null;
@@ -343,6 +344,13 @@ export default class XutimSectionTool {
         }
     }
 
+    isUnscaledPreview() {
+        const section = this.sections.find(
+            (l) => l.code === this.data.sectionCode,
+        );
+        return Boolean(section && section.unscaledPreview);
+    }
+
     hasFormFields() {
         const section = this.sections.find(
             (l) => l.code === this.data.sectionCode,
@@ -366,7 +374,10 @@ export default class XutimSectionTool {
             iframe.setAttribute('scrolling', 'no');
             iframe.style.display = 'block';
             iframe.style.border = '0';
-            iframe.style.width = this.PREVIEW_DESKTOP_WIDTH + 'px';
+            const unscaled = this.isUnscaledPreview();
+            iframe.style.width = unscaled
+                ? '100%'
+                : this.PREVIEW_DESKTOP_WIDTH + 'px';
             iframe.style.height = '120px';
             iframe.style.transformOrigin = 'top left';
             // In edit mode the iframe receives keystrokes via contenteditable
@@ -380,7 +391,9 @@ export default class XutimSectionTool {
             previewWrap.appendChild(iframe);
             this.wrapper.appendChild(previewWrap);
 
-            this.setupPreviewScaleObserver();
+            if (!unscaled) {
+                this.setupPreviewScaleObserver();
+            }
             this.refreshPreview();
         } else {
             const preview = document.createElement('div');

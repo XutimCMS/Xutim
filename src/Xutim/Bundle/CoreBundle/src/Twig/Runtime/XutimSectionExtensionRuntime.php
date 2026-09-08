@@ -13,6 +13,7 @@ use Xutim\CoreBundle\Config\Layout\Block\Option\RichTextBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\TextareaBlockItemOption;
 use Xutim\CoreBundle\Config\Section\SectionDefinition;
 use Xutim\CoreBundle\Config\Section\SectionDefinitionRegistry;
+use Xutim\CoreBundle\Config\Section\UnscaledPreview;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Service\AdminEditUrl\AdminEditUrlResolver;
 use Xutim\CoreBundle\Service\XutimSectionValueResolver;
@@ -33,7 +34,7 @@ class XutimSectionExtensionRuntime implements RuntimeExtensionInterface
      * Returns all registered section definitions in a JS-friendly shape
      * for the editor.js xutimSection tool picker.
      *
-     * @return list<array{code: string, name: string, description: string, category: string, previewImage: string, fields: list<array{name: string, translatable: bool, inlineEditable: bool, type: string}>}>
+     * @return list<array{code: string, name: string, description: string, category: string, previewImage: string, unscaledPreview: bool, fields: list<array{name: string, translatable: bool, inlineEditable: bool, type: string}>}>
      */
     public function fetchSections(): array
     {
@@ -56,6 +57,7 @@ class XutimSectionExtensionRuntime implements RuntimeExtensionInterface
                 'description' => $definition->getDescription(),
                 'category' => $definition->getCategory(),
                 'previewImage' => $definition->getPreviewImage(),
+                'unscaledPreview' => $definition instanceof UnscaledPreview,
                 'fields' => $fields,
             ];
         }
