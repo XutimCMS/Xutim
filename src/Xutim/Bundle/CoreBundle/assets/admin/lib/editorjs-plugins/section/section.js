@@ -9,12 +9,6 @@
  * The editor form opens in a native `<dialog>` so field changes only
  * propagate to the preview after explicit Save. Styling comes from the
  * admin's shared dialog classes (`dialog-lg`, `overflow-y-auto`).
- *
- * Config expected from caller:
- *   sections: [{code, name, category, unscaledPreview, fields: [{name, translatable, type}]}, ...]
- *   defaultCategory: category chip preselected in the picker; falls back to "All"
- *   formUrl:   URL template with `:code:` placeholder returning form HTML
- *   saveUrl:   URL template with `:code:` placeholder accepting POST, returns JSON
  */
 export default class XutimSectionTool {
     static get toolbox() {
@@ -215,7 +209,10 @@ export default class XutimSectionTool {
             ? this.defaultCategory
             : '';
         chipButtons.forEach((chip) =>
-            chip.classList.toggle('active', chip.dataset.category === initialCategory),
+            chip.classList.toggle(
+                'active',
+                chip.dataset.category === initialCategory,
+            ),
         );
         container.appendChild(chipsBar);
 
@@ -232,6 +229,7 @@ export default class XutimSectionTool {
             const query = search.value.trim().toLowerCase();
             cardWrappers.forEach((card) => {
                 const matchesCategory =
+                    query !== '' ||
                     activeCategory === '' ||
                     card.dataset.category === activeCategory;
                 const haystack = card.dataset.haystack || '';
@@ -413,7 +411,8 @@ export default class XutimSectionTool {
         } else {
             const preview = document.createElement('div');
             preview.className = 'small text-muted text-truncate p-2';
-            preview.textContent = this.previewText() || this.sectionDisplayName();
+            preview.textContent =
+                this.previewText() || this.sectionDisplayName();
             this.wrapper.appendChild(preview);
         }
     }
@@ -470,7 +469,12 @@ export default class XutimSectionTool {
 
         const field = data.field;
         if (typeof field !== 'string' || field === '') return;
-        if (field === '__proto__' || field === 'constructor' || field === 'prototype') return;
+        if (
+            field === '__proto__' ||
+            field === 'constructor' ||
+            field === 'prototype'
+        )
+            return;
 
         const value = data.value;
         if (typeof value === 'string') {
@@ -521,8 +525,12 @@ export default class XutimSectionTool {
                     if (this.previewContentResizeObserver) {
                         this.previewContentResizeObserver.disconnect();
                     }
-                    this.previewContentResizeObserver = new ResizeObserver(resize);
-                    this.previewContentResizeObserver.observe(doc.documentElement);
+                    this.previewContentResizeObserver = new ResizeObserver(
+                        resize,
+                    );
+                    this.previewContentResizeObserver.observe(
+                        doc.documentElement,
+                    );
                 }
                 // Also re-measure when images finish loading.
                 if (doc) {
@@ -715,7 +723,9 @@ export default class XutimSectionTool {
             }
         });
 
-        const saveBtn = container.querySelector('[data-xutim-section-save-btn]');
+        const saveBtn = container.querySelector(
+            '[data-xutim-section-save-btn]',
+        );
         if (saveBtn) {
             saveBtn.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -940,7 +950,8 @@ export default class XutimSectionTool {
         let box = container.querySelector('.xutim-section-form__errors');
         if (!box) {
             box = document.createElement('div');
-            box.className = 'xutim-section-form__errors alert alert-danger mt-2';
+            box.className =
+                'xutim-section-form__errors alert alert-danger mt-2';
             container.prepend(box);
         }
 
@@ -1028,7 +1039,9 @@ export default class XutimSectionTool {
     }
 
     validate(saved) {
-        return typeof saved.sectionCode === 'string' && saved.sectionCode !== '';
+        return (
+            typeof saved.sectionCode === 'string' && saved.sectionCode !== ''
+        );
     }
 
     buildUrl(template, code) {
