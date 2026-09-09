@@ -11,7 +11,8 @@
  * admin's shared dialog classes (`dialog-lg`, `overflow-y-auto`).
  *
  * Config expected from caller:
- *   sections: [{code, name, unscaledPreview, fields: [{name, translatable, type}]}, ...]
+ *   sections: [{code, name, category, unscaledPreview, fields: [{name, translatable, type}]}, ...]
+ *   defaultCategory: category chip preselected in the picker; falls back to "All"
  *   formUrl:   URL template with `:code:` placeholder returning form HTML
  *   saveUrl:   URL template with `:code:` placeholder accepting POST, returns JSON
  */
@@ -44,6 +45,7 @@ export default class XutimSectionTool {
         this.saveUrl = this.config.saveUrl || '';
         this.refreshUrl = this.config.refreshUrl || '';
         this.previewUrl = this.config.previewUrl || '';
+        this.defaultCategory = this.config.defaultCategory || '';
 
         // Fixed logical width used by the preview iframe so desktop
         // breakpoints trigger even inside a narrow editor column. The iframe
@@ -207,9 +209,14 @@ export default class XutimSectionTool {
             return chip;
         };
 
-        const allChip = makeChip('All', '');
-        allChip.classList.add('active');
+        makeChip('All', '');
         categories.forEach((cat) => makeChip(cat, cat));
+        const initialCategory = categories.includes(this.defaultCategory)
+            ? this.defaultCategory
+            : '';
+        chipButtons.forEach((chip) =>
+            chip.classList.toggle('active', chip.dataset.category === initialCategory),
+        );
         container.appendChild(chipsBar);
 
         const grid = document.createElement('div');
@@ -220,7 +227,7 @@ export default class XutimSectionTool {
         cardWrappers.forEach((card) => grid.appendChild(card));
         container.appendChild(grid);
 
-        let activeCategory = '';
+        let activeCategory = initialCategory;
         const applyFilter = () => {
             const query = search.value.trim().toLowerCase();
             cardWrappers.forEach((card) => {
@@ -234,6 +241,7 @@ export default class XutimSectionTool {
             });
         };
 
+        applyFilter();
         search.addEventListener('input', applyFilter);
         chipButtons.forEach((chip) => {
             chip.addEventListener('click', (event) => {
@@ -274,6 +282,15 @@ export default class XutimSectionTool {
             ' d-flex align-items-center justify-content-center overflow-hidden border-bottom';
         thumb.style.aspectRatio = '16 / 9';
 
+        const showNoPreview = () => {
+            thumb.replaceChildren();
+            thumb.classList.replace('bg-white', 'bg-light');
+            const empty = document.createElement('span');
+            empty.className = 'text-muted small';
+            empty.textContent = 'No preview';
+            thumb.appendChild(empty);
+        };
+
         if (hasImage) {
             const img = document.createElement('img');
             img.src = section.previewImage;
@@ -284,12 +301,10 @@ export default class XutimSectionTool {
             img.style.width = 'auto';
             img.style.height = 'auto';
             img.style.objectFit = 'contain';
+            img.addEventListener('error', showNoPreview);
             thumb.appendChild(img);
         } else {
-            const empty = document.createElement('span');
-            empty.className = 'text-muted small';
-            empty.textContent = 'No preview';
-            thumb.appendChild(empty);
+            showNoPreview();
         }
         card.appendChild(thumb);
 
@@ -480,9 +495,11 @@ export default class XutimSectionTool {
             try {
                 const doc = iframe.contentDocument;
                 if (!doc || !doc.body) return;
+                // documentElement.scrollHeight never reports less than the
+                // frame's own height, so it could never shrink a short section.
                 const h = Math.max(
                     doc.body.scrollHeight,
-                    doc.documentElement.scrollHeight,
+                    doc.documentElement.offsetHeight,
                 );
                 if (h > 0) {
                     iframe.style.height = h + 'px';
