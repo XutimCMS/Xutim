@@ -34,7 +34,7 @@
         data-turbo-frame="_top"
         modalDialogColor="danger"
         action="{{ admin_path('admin_user_delete', {id: user.id}) }}"
-        confirmActionLabel="{{ 'action.delete'|trans({}, 'admin')|capitalize }}"
+        confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
     >
         <twig:Xutim:Admin:Icon name="trash" />
         {{ 'Delete'|trans({}, 'admin') }}

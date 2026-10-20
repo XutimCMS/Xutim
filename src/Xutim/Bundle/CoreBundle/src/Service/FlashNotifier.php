@@ -39,7 +39,7 @@ class FlashNotifier
 
     public function error(string $message): void
     {
-        $this->flash('error', $message);
+        $this->flash('danger', $message);
     }
 
     public function warning(string $message): void

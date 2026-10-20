@@ -20,7 +20,7 @@
                     data-turbo-frame="_top"
                     modalDialogColor="danger"
                     action="{{ admin_path('admin_snippet_delete', {id: snippet.id}) }}"
-                    confirmActionLabel="{{ 'action.delete'|trans({}, 'admin')|capitalize }}"
+                    confirmActionLabel="{{ 'delete'|trans({}, 'admin')|capitalize }}"
                 >
                     <twig:Xutim:Admin:Icon name="trash" />
                     {{ 'Delete snippet'|trans({}, 'admin') }}

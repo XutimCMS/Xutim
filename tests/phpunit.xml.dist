@@ -22,6 +22,7 @@
       <directory>../src/Xutim/Bundle/MediaBundle/tests/Unit</directory>
       <directory>../src/Xutim/Bundle/MediaBundle/tests/Application</directory>
       <directory>../src/Xutim/Bundle/NotificationBundle/tests/Application</directory>
+      <directory>../src/Xutim/Bundle/SnippetBundle/tests/Application</directory>
       <exclude>./Stubs</exclude>
       <exclude>./Application</exclude>
     </testsuite>

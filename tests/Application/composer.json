@@ -71,7 +71,8 @@
             "Xutim\\EventBundle\\Tests\\": "../../src/Xutim/Bundle/EventBundle/tests/",
             "Xutim\\MediaBundle\\Tests\\": "../../src/Xutim/Bundle/MediaBundle/tests/",
             "Xutim\\NotificationBundle\\Tests\\": "../../src/Xutim/Bundle/NotificationBundle/tests/",
-            "Xutim\\RedirectBundle\\Tests\\": "../../src/Xutim/Bundle/RedirectBundle/tests/"
+            "Xutim\\RedirectBundle\\Tests\\": "../../src/Xutim/Bundle/RedirectBundle/tests/",
+            "Xutim\\SnippetBundle\\Tests\\": "../../src/Xutim/Bundle/SnippetBundle/tests/"
         }
     },
     "config": {

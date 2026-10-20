@@ -8,8 +8,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Xutim\CoreBundle\Context\Admin\ContentContext;
+use Xutim\CoreBundle\Repository\BlockItemRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\FlashNotifier;
 use Xutim\CoreBundle\Service\ListFilterBuilder;
@@ -78,6 +80,8 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$authChecker', service(AuthorizationCheckerInterface::class))
         ->arg('$router', service(AdminUrlGenerator::class))
         ->arg('$flashNotifier', service(FlashNotifier::class))
+        ->arg('$blockItemRepo', service(BlockItemRepository::class))
+        ->arg('$translator', service(TranslatorInterface::class))
         ->tag('controller.service_arguments')
     ;
 
