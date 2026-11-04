@@ -250,7 +250,7 @@ class EventRepository extends ServiceEntityRepository
             ->setParameter('status', PublicationStatus::Published)
             ->setParameter('now', new DateTimeImmutable());
 
-        return count($qb->getQuery()->getResult());
+        return count($qb->getQuery()->getArrayResult());
     }
 
     public function save(EventInterface $entity, bool $flush = false): void

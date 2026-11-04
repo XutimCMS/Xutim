@@ -9,6 +9,7 @@ use Doctrine\ORM\Query\AST\Node;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 use Doctrine\ORM\Query\TokenType;
+use Webmozart\Assert\Assert;
 
 /**
  * Implementation of PostgreSQL CAST().
@@ -28,6 +29,14 @@ class Cast extends FunctionNode
     public Node|string $sourceType;
     public string $targetType;
 
+    private function parseTypeParameter(Parser $parser): string
+    {
+        $value = $parser->Literal()->value;
+        Assert::string($value);
+
+        return $value;
+    }
+
     public function parse(Parser $parser): void
     {
         $parser->match(TokenType::T_IDENTIFIER);
@@ -46,16 +55,14 @@ class Cast extends FunctionNode
         // Handle parameterized types (e.g., DECIMAL(10, 2))
         if ($lexer->isNextToken(TokenType::T_OPEN_PARENTHESIS)) {
             $parser->match(TokenType::T_OPEN_PARENTHESIS);
-            $parameter = $parser->Literal();
-            $parameters = [$parameter->value];
+            $parameters = [$this->parseTypeParameter($parser)];
             while ($lexer->isNextToken(TokenType::T_COMMA)) {
                 $parser->match(TokenType::T_COMMA);
-                $parameter = $parser->Literal();
-                $parameters[] = $parameter->value;
+                $parameters[] = $this->parseTypeParameter($parser);
             }
 
             $parser->match(TokenType::T_CLOSE_PARENTHESIS);
-            $type .= '(' . \implode(', ', $parameters) . ')';
+            $type .= '(' . implode(', ', $parameters) . ')';
         }
 
         // Handle array types (e.g., TEXT[])

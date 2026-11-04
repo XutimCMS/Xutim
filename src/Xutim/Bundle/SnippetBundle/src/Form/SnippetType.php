@@ -138,7 +138,7 @@ class SnippetType extends AbstractType implements DataMapperInterface
 
         $contents = [];
         foreach ($forms as $name => $form) {
-            if (in_array($name, ['code', 'description', 'category', 'submit'], true)) {
+            if (!is_string($name) || in_array($name, ['code', 'description', 'category', 'submit'], true)) {
                 continue;
             }
             /** @var string|null $content */

@@ -35,6 +35,9 @@ interface BlockItemInterface
 
     public function getPosition(): int;
 
+    /**
+     * @phpstan-assert-if-true !null $this->getFile()
+     */
     public function hasFile(): bool;
     public function getFile(): ?MediaInterface;
     public function getText(): ?string;
@@ -53,20 +56,35 @@ interface BlockItemInterface
 
     public function getArticle(): ?ArticleInterface;
 
+    /**
+     * @phpstan-assert-if-true !null $this->getPage()
+     */
     public function hasPage(): bool;
 
+    /**
+     * @phpstan-assert-if-true !null $this->getArticle()
+     */
     public function hasArticle(): bool;
 
     public function getSnippet(): ?SnippetInterface;
 
+    /**
+     * @phpstan-assert-if-true !null $this->getSnippet()
+     */
     public function hasSnippet(): bool;
 
     public function getTag(): ?TagInterface;
 
+    /**
+     * @phpstan-assert-if-true !null $this->getTag()
+     */
     public function hasTag(): bool;
 
     public function getMediaFolder(): ?MediaFolderInterface;
 
+    /**
+     * @phpstan-assert-if-true !null $this->getMediaFolder()
+     */
     public function hasMediaFolder(): bool;
 
     public function isSimpleItem(): bool;

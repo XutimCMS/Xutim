@@ -92,7 +92,7 @@ final class BackfillAggregatesCommand extends Command
         $totalDays = 0;
         $totalRows = 0;
 
-        $io->progressStart((int) $fromDate->diff($toDate)->days + 1);
+        $io->progressStart($fromDate->diff($toDate)->days + 1);
 
         while ($currentDate <= $toDate) {
             $eventCount = $this->aggregationService->countEventsForDate($currentDate);

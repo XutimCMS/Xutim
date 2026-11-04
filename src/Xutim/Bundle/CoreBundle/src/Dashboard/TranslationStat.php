@@ -7,7 +7,7 @@ namespace Xutim\CoreBundle\Dashboard;
 final readonly class TranslationStat
 {
     /**
-     * @param array<string, LocaleStat> $localeBreakdown per-locale counts and links (optional)
+     * @param list<LocaleStat> $localeBreakdown per-locale counts and links (optional)
      */
     public function __construct(
         public string $label,

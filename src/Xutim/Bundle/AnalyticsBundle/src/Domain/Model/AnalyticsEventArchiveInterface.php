@@ -31,9 +31,9 @@ interface AnalyticsEventArchiveInterface
      *     class?: string,
      *     role?: string,
      *     text?: string
-     * }>
+     * }>|null
      */
-    public function getClickedElements(): array;
+    public function getClickedElements(): ?array;
 
     public function getCountry(): ?string;
 

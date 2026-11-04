@@ -44,10 +44,10 @@ class AnalyticsEventArchive implements AnalyticsEventArchiveInterface
      *     class?: string,
      *     role?: string,
      *     text?: string
-     * }>
+     * }>|null
      */
     #[Column(type: 'json', nullable: true)]
-    private readonly array $clickedElements;
+    private readonly ?array $clickedElements;
 
     #[Column(type: 'string', length: 2, nullable: true)]
     private readonly ?string $country;
@@ -167,9 +167,9 @@ class AnalyticsEventArchive implements AnalyticsEventArchiveInterface
      *     class?: string,
      *     role?: string,
      *     text?: string
-     * }>
+     * }>|null
      */
-    public function getClickedElements(): array
+    public function getClickedElements(): ?array
     {
         return $this->clickedElements;
     }

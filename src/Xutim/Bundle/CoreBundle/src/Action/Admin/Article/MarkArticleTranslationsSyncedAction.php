@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\MarkRecentlyOutdatedSiblingsAsSyncedCommand;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\SecurityBundle\Security\CsrfTokenChecker;
@@ -41,6 +42,7 @@ class MarkArticleTranslationsSyncedAction extends AbstractController
             userIdentifier: $this->userStorage->getUserWithException()->getUserIdentifier(),
         ));
         $count = $envelope->last(HandledStamp::class)?->getResult() ?? 0;
+        Assert::integer($count);
 
         $this->addFlash('success', $this->buildFlashMessage($count));
 

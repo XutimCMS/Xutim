@@ -217,7 +217,7 @@ class TagRepository extends ServiceEntityRepository
             ->setParameter('localeCount', count($locales))
             ->setParameter('status', PublicationStatus::Published);
 
-        return count($qb->getQuery()->getResult());
+        return count($qb->getQuery()->getArrayResult());
     }
 
     /**

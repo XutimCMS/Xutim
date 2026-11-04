@@ -52,7 +52,7 @@ final readonly class DateRange
 
     public function getDays(): int
     {
-        return (int) $this->from->diff($this->to)->days + 1;
+        return $this->from->diff($this->to)->days + 1;
     }
 
     public function previousPeriod(): self

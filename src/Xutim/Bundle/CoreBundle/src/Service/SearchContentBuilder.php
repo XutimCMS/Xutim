@@ -46,7 +46,10 @@ readonly class SearchContentBuilder
                     $this->collectListItemText($block->listItems, $parts);
                     break;
                 case 'snippet':
-                    $parts = array_merge($parts, $this->extractBlockContent((string) ($block->attrs['code'] ?? ''), $locale));
+                    $code = $block->attrs['code'] ?? null;
+                    if (is_string($code)) {
+                        $parts = array_merge($parts, $this->extractBlockContent($code, $locale));
+                    }
                     break;
             }
         }

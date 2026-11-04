@@ -72,7 +72,7 @@ class ShowTranslationRevisionsAction extends AbstractController
         $contentEvents = array_values(array_filter($allEvents, $isComparable));
         $contentEventsNewestFirst = array_reverse($contentEvents);
 
-        if ($oldId === null && $newId === null) {
+        if ($oldId === null) {
             $newRevision = $contentEventsNewestFirst[0];
             $oldRevision = $contentEventsNewestFirst[count($contentEvents) === 1 ? 0 : 1];
         } else {

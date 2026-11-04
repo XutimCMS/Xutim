@@ -116,7 +116,6 @@ final class SitemapGeneratorTest extends TestCase
             $pageRepo,
             $articleRepo,
             $tagRepo,
-            $snippetRepo,
             $siteContext,
             $transRouteGenerator,
             $twig,

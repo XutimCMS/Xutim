@@ -405,7 +405,7 @@ class PageRepository extends ServiceEntityRepository
         }
         $qb->andWhere($qb->expr()->orX(...$localeConditions));
 
-        return count($qb->getQuery()->getResult());
+        return count($qb->getQuery()->getArrayResult());
     }
 
     public function moveUp(PageInterface $page, int $step = 1): void

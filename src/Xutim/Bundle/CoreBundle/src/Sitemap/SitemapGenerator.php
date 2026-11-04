@@ -19,7 +19,6 @@ use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Routing\ContentTranslationRouteGenerator;
-use Xutim\SnippetBundle\Repository\SnippetRepository;
 use Xutim\SnippetBundle\Routing\RouteSnippetRegistry;
 use Xutim\SnippetBundle\Routing\SnippetUrlGenerator;
 
@@ -30,7 +29,6 @@ readonly class SitemapGenerator
         private PageRepository $pageRepo,
         private ArticleRepository $articleRepo,
         private TagRepository $tagRepo,
-        private SnippetRepository $snippetRepo,
         private SiteContext $siteContext,
         private ContentTranslationRouteGenerator $transRouteGenerator,
         private Environment $twig,

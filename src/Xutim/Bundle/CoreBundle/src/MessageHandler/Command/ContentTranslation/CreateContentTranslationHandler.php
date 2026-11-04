@@ -69,6 +69,7 @@ readonly class CreateContentTranslationHandler implements CommandHandlerInterfac
         );
 
         $object = $page ?? $article;
+        assert($object !== null);
         $refLocale = $this->siteContext->getReferenceLocale();
         $isReferenceTranslation = $cmd->locale === $refLocale;
 
