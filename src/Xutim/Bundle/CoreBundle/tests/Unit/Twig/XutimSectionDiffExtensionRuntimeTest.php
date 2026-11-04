@@ -158,6 +158,7 @@ final class XutimSectionDiffExtensionRuntimeTest extends TestCase
                 $this->createStub(Environment::class),
                 $logger,
                 $adminEditUrlResolver,
+                $this->createStub(SiteContext::class),
             ),
             $this->createStub(SiteContext::class),
         );

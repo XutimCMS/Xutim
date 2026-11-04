@@ -13,6 +13,7 @@ use Xutim\CoreBundle\Config\Layout\Block\Option\TextareaBlockItemOption;
 use Xutim\CoreBundle\Config\Layout\Block\Option\TextBlockItemOption;
 use Xutim\CoreBundle\Config\Section\SectionDefinition;
 use Xutim\CoreBundle\Config\Section\SectionDefinitionRegistry;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\PageRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
@@ -46,6 +47,7 @@ final class XutimSectionExtensionRuntimeTest extends TestCase
             $this->createStub(Environment::class),
             $logger,
             new AdminEditUrlResolver([]),
+            $this->createStub(SiteContext::class),
         );
     }
 
