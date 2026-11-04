@@ -93,7 +93,7 @@ class SiteType extends AbstractType implements DataMapperInterface
                     'data-tag-input-max-value' => '20',
                 ],
                 'constraints' => [
-                    new All(['constraints' => [new Email()]]),
+                    new All([new Email()]),
                     new Count(max: 20),
                 ],
             ])
@@ -103,14 +103,36 @@ class SiteType extends AbstractType implements DataMapperInterface
             ->setDataMapper($this);
 
         $builder->get('adminAlertEmails')->addModelTransformer(new CallbackTransformer(
-            fn (?array $value) => $value === null ? '' : implode(',', $value),
-            fn (?string $value) => $value === null || trim($value) === ''
-                ? []
-                : array_values(array_unique(array_filter(array_map(
-                    fn (string $entry) => strtolower(trim($entry)),
-                    preg_split('/[\s,]+/', $value) ?: []
-                )))),
+            $this->emailsToString(...),
+            $this->stringToEmails(...),
         ));
+    }
+
+    /**
+     * @param list<string>|null $emails
+     */
+    private function emailsToString(?array $emails): string
+    {
+        return $emails === null ? '' : implode(',', $emails);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function stringToEmails(?string $value): array
+    {
+        if ($value === null) {
+            return [];
+        }
+
+        $entries = preg_split('/[\s,]+/', $value);
+        if ($entries === false) {
+            return [];
+        }
+
+        $emails = array_map(static fn (string $entry) => strtolower(trim($entry)), $entries);
+
+        return array_values(array_unique(array_filter($emails, static fn (string $email) => $email !== '')));
     }
 
     public function mapDataToForms(mixed $viewData, Traversable $forms): void
