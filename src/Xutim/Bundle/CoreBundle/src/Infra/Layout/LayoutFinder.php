@@ -60,6 +60,10 @@ class LayoutFinder
     {
         $themePath = $this->themeFinder->getActiveThemePath();
         $layoutPath = sprintf('%s/%s/%s', $this->templatesDir, $themePath, $path);
+        if (!is_dir($layoutPath)) {
+            return [];
+        }
+
         $finder = new Finder();
         $finder->files()->name('config.php')->in($layoutPath);
 
