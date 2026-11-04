@@ -42,7 +42,7 @@
     {% set wrapperClass = diff.wrapper_class(opEff) %}
     {% set renderKey = row.render_key is defined ? row.render_key : null %}
 
-    <div class="{{ wrapperClass }} {% if row.body_html is defined and row.body_html %}diff-inline{% endif %}">
+    <div class="{{ wrapperClass }} {% if row.body_html is defined and row.body_html %}diff-inline{% endif %}{% if opEff == 'unchanged' and hideUnchanged|default(false) %} d-none{% endif %}">
         <div class="mb-2">
             {% if opEff == 'added' %}
                 <span class="badge bg-success text-white">{{ 'Added'|trans({}, 'admin') }}</span>

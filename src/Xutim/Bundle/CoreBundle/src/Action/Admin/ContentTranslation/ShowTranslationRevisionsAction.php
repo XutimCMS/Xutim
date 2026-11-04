@@ -151,6 +151,7 @@ class ShowTranslationRevisionsAction extends AbstractController
             'usersData' => $usersData,
             'changeSummary' => $changeSummary,
             'blockAuthors' => $blockAuthors,
+            'showAll' => $request->query->get('filter') === 'all',
         ];
 
         if ($translation->hasArticle()) {

@@ -12,7 +12,7 @@
             {% set canLink = is_comparable_event(event) and latestComparable is not null %}
             {% if canLink %}
                 <a
-                    href="{{ admin_path('admin_content_translation_revisions', {id: translationId, oldId: event.id, newId: latestComparable.id}) }}"
+                    href="{{ admin_path('admin_content_translation_revisions', {id: translationId, oldId: event.id, newId: latestComparable.id, filter: app.request.query.get('filter')}) }}"
                     class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2"
                     data-turbo-frame="_top"
                 >
@@ -49,7 +49,7 @@
     </div>
     {% if events|length > 10 %}
         <a
-            href="{{ admin_path('admin_content_translation_revisions', {id: translationId}) }}"
+            href="{{ admin_path('admin_content_translation_revisions', {id: translationId, filter: app.request.query.get('filter')}) }}"
             class="small d-block text-center py-2 border-top"
             data-turbo-frame="_top"
         >

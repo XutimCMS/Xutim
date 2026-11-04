@@ -102,7 +102,7 @@
                 <div id="history-tab" class="tab-pane" role="tabpanel">
                     <turbo-frame
                         id="sidebar-history"
-                        src="{{ admin_path('admin_content_translation_sidebar_history', {id: translation.id}) }}"
+                        src="{{ admin_path('admin_content_translation_sidebar_history', {id: translation.id, filter: app.request.query.get('filter')}) }}"
                         loading="lazy"
                     >
                         <div class="p-3 text-muted small">{{ 'Loading...'|trans({}, 'admin') }}</div>

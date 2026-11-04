@@ -136,19 +136,13 @@
                 <h3 class="card-title mb-0">
                     {{ 'Revision comparison'|trans({}, 'admin') }}
                 </h3>
-                <button
-                    type="button"
+                <a
+                    href="{{ admin_current_path_with({filter: showAll ? null : 'all'}) }}"
                     class="btn btn-sm btn-outline-primary"
-                    data-action="revision-filter#toggle"
                 >
                     <twig:ux:icon name="tabler:filter" class="icon" />
-                    <span data-revision-filter-target="showAllText">
-                        {{ 'Show All'|trans({}, 'admin') }}
-                    </span>
-                    <span data-revision-filter-target="onlyChangedText" class="d-none">
-                        {{ 'Only Changed'|trans({}, 'admin') }}
-                    </span>
-                </button>
+                    {{ (showAll ? 'Only Changed' : 'Show All')|trans({}, 'admin') }}
+                </a>
             </div>
             <div class="card-body">
                 <h2>{{ 'Intro title'|trans({}, 'admin') }}</h2>
@@ -195,6 +189,7 @@
                             locale: content_context_language(),
                             blockAuthors: blockAuthors|default({}),
                             usersData: usersData|default({}),
+                            hideUnchanged: not showAll,
                         })
                     }}
                 {% else %}

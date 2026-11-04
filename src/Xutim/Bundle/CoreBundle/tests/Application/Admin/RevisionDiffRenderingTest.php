@@ -164,6 +164,38 @@ final class RevisionDiffRenderingTest extends AdminApplicationTestCase
         $this->assertResponseRedirects(sprintf('/admin/fr/article/edit/%s', $article->getId()->toRfc4122()));
     }
 
+    public function test_revision_filter_state_lives_in_the_url(): void
+    {
+        $article = ArticleFactory::createOne();
+        $newContent = $this->loadFixtureContent('community_page_new');
+        $translation = ContentTranslationFactory::createOne([
+            'article' => $article,
+            'locale' => 'en',
+            'title' => 'Filtered title',
+            'slug' => 'revision-filter-' . uniqid(),
+            'content' => $newContent,
+        ]);
+        $oldRevision = $this->createLogEvent($translation, new DateTimeImmutable('-2 hours'), 'Filtered title', $this->loadFixtureContent('community_page_old'));
+        $newRevision = $this->createLogEvent($translation, new DateTimeImmutable('-1 hour'), 'Filtered title', $newContent);
+        $comparisonPath = sprintf(
+            '/admin/en/content-translation/revisions/%s/%s/%s',
+            $translation->getId()->toRfc4122(),
+            $oldRevision->getId()->toRfc4122(),
+            $newRevision->getId()->toRfc4122(),
+        );
+
+        $this->client->request('GET', $comparisonPath);
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.block-unchanged.d-none');
+        $this->assertSelectorTextContains('a[href="' . $comparisonPath . '?filter=all"]', 'Show All');
+
+        $this->client->request('GET', $comparisonPath . '?filter=all');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.block-unchanged');
+        $this->assertSelectorNotExists('.block-unchanged.d-none');
+        $this->assertSelectorTextContains('a[href="' . $comparisonPath . '"]', 'Only Changed');
+    }
+
     public function test_reference_diff_renders_middle_removal_in_position(): void
     {
         $article = ArticleFactory::createOne();

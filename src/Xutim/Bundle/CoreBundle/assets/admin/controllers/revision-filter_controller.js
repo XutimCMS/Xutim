@@ -1,25 +1,10 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['checkbox', 'showAllText', 'onlyChangedText'];
+    static targets = ['checkbox'];
     static values = {
         baseUrl: String,
     };
-
-    connect() {
-        const params = new URLSearchParams(window.location.search);
-        this.filterEnabled = params.get('filter') !== 'all';
-
-        this.#applyFilter();
-        this.#updateToggleButton();
-    }
-
-    toggle() {
-        this.filterEnabled = !this.filterEnabled;
-        this.#applyFilter();
-        this.#updateToggleButton();
-        this.#updateFilterUrl();
-    }
 
     selectRevision(event) {
         const checkbox = event.target;
@@ -46,38 +31,8 @@ export default class extends Controller {
         const oldId = sorted[0].value;
         const newId = sorted[1].value;
 
-        let url = `${this.baseUrlValue}/${oldId}/${newId}`;
-        if (!this.filterEnabled) {
-            url += '?filter=all';
-        }
-        window.location.href = url;
-    }
-
-    #applyFilter() {
-        const unchangedBlocks =
-            this.element.querySelectorAll('.block-unchanged');
-
-        unchangedBlocks.forEach((block) => {
-            block.classList.toggle('d-none', this.filterEnabled);
-        });
-    }
-
-    #updateToggleButton() {
-        if (this.hasShowAllTextTarget) {
-            this.showAllTextTarget.classList.toggle('d-none', !this.filterEnabled);
-        }
-        if (this.hasOnlyChangedTextTarget) {
-            this.onlyChangedTextTarget.classList.toggle('d-none', this.filterEnabled);
-        }
-    }
-
-    #updateFilterUrl() {
-        const url = new URL(window.location.href);
-        if (this.filterEnabled) {
-            url.searchParams.delete('filter');
-        } else {
-            url.searchParams.set('filter', 'all');
-        }
-        window.history.replaceState({}, '', url.toString());
+        const url = new URL(`${this.baseUrlValue}/${oldId}/${newId}`, window.location.href);
+        url.search = window.location.search;
+        window.location.href = url.toString();
     }
 }
