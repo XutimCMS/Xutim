@@ -50,6 +50,7 @@ return static function (ContainerConfigurator $container): void {
         ->arg('$tagRepository', service(TagRepository::class))
         ->arg('$snippetRepository', service(SnippetRepositoryInterface::class))
         ->arg('$contentContext', service(ContentContext::class))
+        ->arg('$referenceTranslationResolver', service(ReferenceTranslationResolver::class))
         ->arg('$articleClass', '%xutim_core.model.article.class%')
         ->arg('$snippetClass', '%xutim_snippet.model.snippet.class%')
         ->arg('$tagClass', '%xutim_core.model.tag.class%')
