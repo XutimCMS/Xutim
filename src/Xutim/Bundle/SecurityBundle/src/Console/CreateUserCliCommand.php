@@ -66,8 +66,8 @@ final class CreateUserCliCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $userRepository = $this->userRepository;
 
-        $email = $io->ask('Email', null, function (string $answer) use ($userRepository) {
-            if ($answer === '') {
+        $email = $io->ask('Email', null, function (mixed $answer) use ($userRepository) {
+            if (!is_string($answer) || $answer === '') {
                 throw new RuntimeException('The email cannot be empty.');
             }
             if ($userRepository->findOneByEmail($answer) !== null) {
@@ -76,8 +76,8 @@ final class CreateUserCliCommand extends Command
 
             return $answer;
         });
-        $name = $io->ask('Name', null, function (string $answer) use ($userRepository) {
-            if ($answer === '') {
+        $name = $io->ask('Name', null, function (mixed $answer) use ($userRepository) {
+            if (!is_string($answer) || $answer === '') {
                 throw new RuntimeException('The name cannot be empty.');
             }
             if ($userRepository->findOneByName($answer) !== null) {
@@ -86,8 +86,8 @@ final class CreateUserCliCommand extends Command
 
             return $answer;
         });
-        $password = $io->askHidden('Password', function (string $answer) {
-            if ($answer === '') {
+        $password = $io->askHidden('Password', function (mixed $answer) {
+            if (!is_string($answer) || $answer === '') {
                 throw new RuntimeException('The password cannot be empty.');
             }
 
@@ -100,8 +100,8 @@ final class CreateUserCliCommand extends Command
 
         $roles = [];
         while ($io->confirm('Do you want to add more roles to this user?') === true) {
-            $roles [] = $io->ask('Role', null, function (string $answer) {
-                if ($answer === '') {
+            $roles [] = $io->ask('Role', null, function (mixed $answer) {
+                if (!is_string($answer) || $answer === '') {
                     throw new RuntimeException('The role cannot be empty.');
                 }
 
