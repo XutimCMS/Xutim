@@ -123,9 +123,13 @@ readonly class ContentFragmentsConverter
         $copyrights = [];
         foreach ($this->extractor->flattenBlocks($document->blocks) as $block) {
             if ($block->kind === 'image') {
-                $media = $this->mediaRepo->findById(new UuidV4((string) ($block->attrs['fileId'] ?? '')));
+                $fileId = $block->attrs['fileId'] ?? null;
+                if (!is_string($fileId) || $fileId === '') {
+                    continue;
+                }
+                $media = $this->mediaRepo->findById(new UuidV4($fileId));
                 if ($media === null) {
-                    throw new NotFoundHttpException('Media with an id ' . ($block->attrs['fileId'] ?? '') . ' was not found');
+                    throw new NotFoundHttpException('Media with an id ' . $fileId . ' was not found');
                 }
                 if ($media->copyright() !== null && $media->copyright() !== '') {
                     $copyrights[$media->id()->toRfc4122()] = $media->copyright();
