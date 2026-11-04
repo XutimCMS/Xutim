@@ -29,10 +29,10 @@ final class ReplaceMediaType extends AbstractType
                 'label' => false,
                 'required' => true,
                 'constraints' => [
-                    new File([
-                        'maxSize' => '20M',
-                        'extensions' => [$allowedExtension],
-                    ]),
+                    new File(
+                        maxSize: '20M',
+                        extensions: [$allowedExtension],
+                    ),
                     new UniqueMedia(),
                 ],
             ])

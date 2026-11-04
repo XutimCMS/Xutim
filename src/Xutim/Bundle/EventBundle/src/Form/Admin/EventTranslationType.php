@@ -41,7 +41,7 @@ class EventTranslationType extends AbstractType implements DataMapperInterface
                 'label' => new TranslatableMessage('title', [], 'admin'),
                 'required' => true,
                 'constraints' => [
-                    new Length(['min' => 1]),
+                    new Length(min: 1),
                     new NotNull()
                 ]
             ])
@@ -49,7 +49,7 @@ class EventTranslationType extends AbstractType implements DataMapperInterface
                 'label' => new TranslatableMessage('location', [], 'admin'),
                 'required' => true,
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(min: 3),
                     new NotNull()
                 ]
             ])
@@ -58,7 +58,7 @@ class EventTranslationType extends AbstractType implements DataMapperInterface
                 'label' => new TranslatableMessage('description', [], 'admin'),
                 'required' => true,
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(min: 3),
                     new NotNull()
                 ]
             ])

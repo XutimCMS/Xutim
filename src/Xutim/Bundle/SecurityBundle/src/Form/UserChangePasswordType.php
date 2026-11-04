@@ -24,9 +24,9 @@ class UserChangePasswordType extends AbstractType
                 'first_options' => ['label' => 'Password'],
                 'second_options' => ['label' => 'Repeat Password'],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter your password',
-                    ]),
+                    new NotBlank(
+                        message: 'Please enter your password',
+                    ),
                 ],
             ]);
     }

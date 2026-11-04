@@ -10,9 +10,9 @@ use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface as Mod
 use SymfonyCasts\Bundle\ResetPassword\Persistence\Repository\ResetPasswordRequestRepositoryTrait;
 use SymfonyCasts\Bundle\ResetPassword\Persistence\ResetPasswordRequestRepositoryInterface;
 use Xutim\CoreBundle\Exception\LogicException;
+use Xutim\SecurityBundle\Domain\Factory\ResetPasswordRequestFactoryInterface;
 use Xutim\SecurityBundle\Domain\Model\ResetPasswordRequestInterface;
 use Xutim\SecurityBundle\Domain\Model\User;
-use Xutim\SecurityBundle\Factory\ResetPasswordRequestFactory;
 
 /**
  * @extends ServiceEntityRepository<ResetPasswordRequestInterface>
@@ -24,7 +24,7 @@ class ResetPasswordRequestRepository extends ServiceEntityRepository implements 
     public function __construct(
         ManagerRegistry $registry,
         string $entityClass,
-        private readonly ResetPasswordRequestFactory $factory
+        private readonly ResetPasswordRequestFactoryInterface $factory
     ) {
         parent::__construct($registry, $entityClass);
     }

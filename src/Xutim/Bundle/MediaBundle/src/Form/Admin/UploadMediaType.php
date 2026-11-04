@@ -36,9 +36,9 @@ final class UploadMediaType extends AbstractType
                 'label' => false,
                 'required' => true,
                 'constraints' => [
-                    new File([
-                        'maxSize' => '20M',
-                    ]),
+                    new File(
+                        maxSize: '20M',
+                    ),
                     new UniqueMedia(),
                 ],
             ])

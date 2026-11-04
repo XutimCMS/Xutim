@@ -47,14 +47,14 @@ class CreateUserType extends AbstractType implements DataMapperInterface
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('name', [], 'admin'),
                 'constraints' => [
-                    new Length(['min' => 1]),
+                    new Length(min: 1),
                     new UniqueUsername()
                 ]
             ])
             ->add('email', EmailType::class, [
                 'label' => new TranslatableMessage('email', [], 'admin'),
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(min: 3),
                     new UniqueEmail()
                 ]
             ])

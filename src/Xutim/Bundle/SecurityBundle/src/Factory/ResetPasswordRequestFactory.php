@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Xutim\SecurityBundle\Factory;
 
+use Xutim\SecurityBundle\Domain\Factory\ResetPasswordRequestFactoryInterface;
 use Xutim\SecurityBundle\Domain\Model\ResetPasswordRequestInterface;
 use Xutim\SecurityBundle\Domain\Model\UserInterface;
 
-class ResetPasswordRequestFactory
+class ResetPasswordRequestFactory implements ResetPasswordRequestFactoryInterface
 {
     public function __construct(private readonly string $entityClass)
     {

@@ -43,7 +43,7 @@ class ContentTranslationType extends AbstractType implements DataMapperInterface
             ->add('title', TextType::class, [
                 'label' => new TranslatableMessage('title', [], 'admin'),
                 'constraints' => [
-                    new Length(['min' => 1]),
+                    new Length(min: 1),
                 ]
             ])
             ->add('subTitle', TextType::class, [
@@ -58,10 +58,10 @@ class ContentTranslationType extends AbstractType implements DataMapperInterface
                 ],
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['min' => 1]),
+                    new Length(min: 1),
                     new NotNull(),
                     new UniqueSlugLocale($existingTranslation),
-                    new Regex(['pattern' => '/^[a-z0-9]+(-[a-z0-9]+)*$/', 'message' => 'The slug should be written in kebab-case.'])
+                    new Regex(pattern: '/^[a-z0-9]+(-[a-z0-9]+)*$/', message: 'The slug should be written in kebab-case.')
                 ]
             ])
             ->add('content', TextareaType::class, [

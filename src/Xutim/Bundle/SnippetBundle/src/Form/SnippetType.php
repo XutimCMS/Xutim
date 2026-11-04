@@ -45,12 +45,12 @@ class SnippetType extends AbstractType implements DataMapperInterface
                 'required' => true,
                 'disabled' => $options['can_edit'] === false,
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(min: 3),
                     new NotNull(),
-                    new Regex([
-                        'pattern' => '/^[a-z0-9]+(-[a-z0-9]+)*$/',
-                        'message' => 'The code should be written in kebab-case.'
-                    ])
+                    new Regex(
+                        pattern: '/^[a-z0-9]+(-[a-z0-9]+)*$/',
+                        message: 'The code should be written in kebab-case.'
+                    )
                 ],
                 'help' => 'The code will be used in twig files directly and it should be in kebab-case e.g. main-menu',
             ])

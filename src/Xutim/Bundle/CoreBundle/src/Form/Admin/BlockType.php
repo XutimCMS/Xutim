@@ -52,15 +52,15 @@ class BlockType extends AbstractType implements DataMapperInterface
                 'label' => new TranslatableMessage('code', [], 'admin'),
                 'help' => 'The code will be used in twig files directly and it should be in kebab-case e.g. main-menu',
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(min: 3),
                     new NotNull(),
-                    new Regex(['pattern' => '/^[a-z0-9]+(-[a-z0-9]+)*$/', 'message' => 'The code should be written in kebab-case.'])
+                    new Regex(pattern: '/^[a-z0-9]+(-[a-z0-9]+)*$/', message: 'The code should be written in kebab-case.')
                 ]
             ])
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('name', [], 'admin'),
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(min: 3),
                     new NotNull(),
                 ]
             ])

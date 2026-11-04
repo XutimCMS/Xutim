@@ -19,8 +19,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Traversable;
+use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\SecurityBundle\Domain\Model\User;
+use Xutim\SecurityBundle\Domain\Model\UserInterface;
 use Xutim\SecurityBundle\Service\UserRoleDescriptorProviderInterface;
 use Xutim\SecurityBundle\Service\UserRolesProviderInterface;
 use Xutim\SecurityBundle\Validator\UniqueUsername;
@@ -44,13 +46,14 @@ class EditUserType extends AbstractType implements DataMapperInterface
         $names = array_map(fn (string $locale) => Languages::getName($locale), $locales);
         $localeChoices = array_combine($names, $locales);
         $existingUser = $options['existing_user'];
+        Assert::nullOrIsInstanceOf($existingUser, UserInterface::class);
 
         $builder
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('name', [], 'admin'),
                 'constraints' => [
-                    new Length(['min' => 1]),
-                    new UniqueUsername(['existingUser' => $existingUser ])
+                    new Length(min: 1),
+                    new UniqueUsername(existingUser: $existingUser)
                 ]
             ])
             ->add('email', EmailType::class, [

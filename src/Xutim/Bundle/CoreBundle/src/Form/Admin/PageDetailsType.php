@@ -44,7 +44,7 @@ class PageDetailsType extends AbstractType implements DataMapperInterface
                 'label' => new TranslatableMessage('color', [], 'admin'),
                 'required' => false,
                 'constraints' => [
-                    new Length(['max' => 6])
+                    new Length(max: 6)
                 ]
             ])
             ->add('submit', SubmitType::class, [

@@ -7,3 +7,4 @@ framework:
         enabled: true
         collect: true
         only_exceptions: false
+        collect_serializer_data: true

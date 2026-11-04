@@ -55,7 +55,7 @@ class TagType extends AbstractType implements DataMapperInterface
             ->add('name', TextType::class, [
                 'label' => new TranslatableMessage('name', [], 'admin'),
                 'constraints' => [
-                    new Length(['min' => 3]),
+                    new Length(min: 3),
                 ]
             ])
             ->add('slug', TextType::class, [
@@ -65,7 +65,7 @@ class TagType extends AbstractType implements DataMapperInterface
                     'class' => 'text-bg-light'
                 ],
                 'constraints' => [
-                    new Length(['min' => 1]),
+                    new Length(min: 1),
                     new NotNull(),
                     new UniqueTagSlugLocale($existingTrans)
                 ]
@@ -74,7 +74,7 @@ class TagType extends AbstractType implements DataMapperInterface
                 'label' => new TranslatableMessage('color', [], 'admin'),
                 'required' => false,
                 'constraints' => [
-                    new Length(['max' => 6])
+                    new Length(max: 6)
                 ]
             ])
             ->add('locale', ChoiceType::class, [

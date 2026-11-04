@@ -11,5 +11,9 @@ use Xutim\SecurityBundle\Domain\Model\UserInterface;
 class UniqueUsername extends Constraint
 {
     public string $message = 'The user with the name "{{ value }}" already exists.';
-    public ?UserInterface $existingUser = null;
+
+    public function __construct(public ?UserInterface $existingUser = null)
+    {
+        parent::__construct();
+    }
 }

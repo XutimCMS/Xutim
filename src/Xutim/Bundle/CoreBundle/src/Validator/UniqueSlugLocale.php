@@ -14,9 +14,9 @@ class UniqueSlugLocale extends Constraint
 
     public ?ContentTranslationInterface $existingTranslation = null;
 
-    public function __construct(?ContentTranslationInterface $existingTranslation = null, $options = null)
+    public function __construct(?ContentTranslationInterface $existingTranslation = null)
     {
-        parent::__construct($options);
+        parent::__construct();
         $this->existingTranslation = $existingTranslation;
     }
 }

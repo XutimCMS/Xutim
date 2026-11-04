@@ -14,9 +14,9 @@ class UniqueTagSlugLocale extends Constraint
 
     public ?TagTranslationInterface $existingTranslation = null;
 
-    public function __construct(?TagTranslationInterface $existingTranslation = null, $options = null)
+    public function __construct(?TagTranslationInterface $existingTranslation = null)
     {
-        parent::__construct($options);
+        parent::__construct();
         $this->existingTranslation = $existingTranslation;
     }
 }

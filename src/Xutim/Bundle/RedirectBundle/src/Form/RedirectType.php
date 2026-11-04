@@ -44,10 +44,10 @@ class RedirectType extends AbstractType implements DataMapperInterface
                 'required' => true,
                 'constraints' => [
                     new NotNull(),
-                    new Regex([
-                        'pattern' => '~^/[\w\-/.#]*$~',
-                        'message' => 'The path must start with a "/" and may contain letters, numbers, dashes, underscores, slashes, dots, and hashes.',
-                    ]),
+                    new Regex(
+                        pattern: '~^/[\w\-/.#]*$~',
+                        message: 'The path must start with a "/" and may contain letters, numbers, dashes, underscores, slashes, dots, and hashes.',
+                    ),
                 ]
             ])
             ->add('target', TextType::class, [
@@ -55,10 +55,10 @@ class RedirectType extends AbstractType implements DataMapperInterface
                 'required' => true,
                 'constraints' => [
                     new NotNull(),
-                    new Regex([
-                        'pattern' => '~^(https://[\w\-\.]+(\:[0-9]+)?(/[\w\-./#?%=&]*)?|/[\w\-/.#]*)$~i',
-                        'message' => 'The path must start with a "/" or "https://" and may contain letters, numbers, dashes, underscores, slashes, dots, and hashes.',
-                    ]),
+                    new Regex(
+                        pattern: '~^(https://[\w\-\.]+(\:[0-9]+)?(/[\w\-./#?%=&]*)?|/[\w\-/.#]*)$~i',
+                        message: 'The path must start with a "/" or "https://" and may contain letters, numbers, dashes, underscores, slashes, dots, and hashes.',
+                    ),
                 ],
             ])
             ->add('permanent', CheckboxType::class, [
