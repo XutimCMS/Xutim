@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\Tests\Unit\MessageHandler;
 
 use DateTimeImmutable;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Context\SiteContext;
@@ -46,7 +45,15 @@ final class EditContentTranslationHandlerTest extends TestCase
         $eventRepo->expects($this->never())->method('save');
 
         $handler(new EditContentTranslationCommand(
-            $translationId, 'Intro', 'Title', 'Sub', 'slug', [], 'Desc', 'en', 'user@example.com',
+            $translationId,
+            'Intro',
+            'Title',
+            'Sub',
+            'slug',
+            [],
+            'Desc',
+            'en',
+            'user@example.com',
         ));
     }
 
@@ -85,7 +92,15 @@ final class EditContentTranslationHandlerTest extends TestCase
         $draftRepo->expects($this->once())->method('flush');
 
         $handler(new EditContentTranslationCommand(
-            $translationId, '', 'New Title', '', 'slug', [], '', 'en', 'user@example.com',
+            $translationId,
+            '',
+            'New Title',
+            '',
+            'slug',
+            [],
+            '',
+            'en',
+            'user@example.com',
         ));
     }
 
@@ -116,7 +131,15 @@ final class EditContentTranslationHandlerTest extends TestCase
         $eventRepo->expects($this->never())->method('save');
 
         $handler(new EditContentTranslationCommand(
-            $translationId, '', 'Draft Title', '', 'slug', [], '', 'en', 'user@example.com',
+            $translationId,
+            '',
+            'Draft Title',
+            '',
+            'slug',
+            [],
+            '',
+            'en',
+            'user@example.com',
         ));
     }
 
@@ -153,7 +176,15 @@ final class EditContentTranslationHandlerTest extends TestCase
         $draftRepo->expects($this->once())->method('save');
 
         $handler(new EditContentTranslationCommand(
-            $translationId, '', 'Title', '', 'slug', $newBlocks, '', 'en', 'user@example.com',
+            $translationId,
+            '',
+            'Title',
+            '',
+            'slug',
+            $newBlocks,
+            '',
+            'en',
+            'user@example.com',
         ));
     }
 

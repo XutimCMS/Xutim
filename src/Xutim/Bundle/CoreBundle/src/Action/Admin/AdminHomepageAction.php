@@ -35,8 +35,10 @@ class AdminHomepageAction extends AbstractController
     }
 
     public function __invoke(
-        #[MapQueryParameter] int $untranslatedPage = 1,
-        #[MapQueryParameter] int $changedPage = 1,
+        #[MapQueryParameter]
+        int $untranslatedPage = 1,
+        #[MapQueryParameter]
+        int $changedPage = 1,
     ): Response {
         $latestArticles = $this->articleRepository->findBy([], ['createdAt' => 'desc'], 10);
 

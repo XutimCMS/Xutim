@@ -16,8 +16,8 @@ use App\Factory\ContentTranslationFactory;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEvent;
+use Xutim\CoreBundle\Entity\Color;
 use Xutim\CoreBundle\Entity\ContentTranslation;
 use Zenstruck\Foundry\Test\Factories;
 

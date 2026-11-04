@@ -48,7 +48,7 @@ final class EditorJsDiffRenderer
      * changes (missing blocks, different sectionCode, non-translatable
      * ref field changes) intact so genuine drift still surfaces.
      *
-     * @param list<array<string, mixed>> $rows
+     * @param  list<array<string, mixed>> $rows
      * @return list<array<string, mixed>>
      */
     public function filterTranslatableNoise(array $rows): array

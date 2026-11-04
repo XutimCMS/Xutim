@@ -175,7 +175,7 @@ class XutimSectionDiffExtensionRuntime implements RuntimeExtensionInterface
     }
 
     /**
-     * @param array<string, mixed> $display
+     * @param  array<string, mixed> $display
      * @return array<string, mixed>
      */
     private function withEditUrl(array $display, object $entity, string $locale): array

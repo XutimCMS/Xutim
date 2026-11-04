@@ -354,7 +354,7 @@ final class EditorJsToCanonicalDocumentTransformer
     }
 
     /**
-     * @param array<string, mixed> $block
+     * @param  array<string, mixed> $block
      * @return list<GalleryImage>
      */
     private function transformGalleryItems(array $block): array

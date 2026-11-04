@@ -248,7 +248,9 @@ class ArticleTest extends AdminApplicationTestCase
         /** @var LogEventRepository $logEventRepo */
         $logEventRepo = static::getContainer()->get(LogEventRepository::class);
         $events = $logEventRepo->findByTranslation($translation);
-        $publishEvents = array_filter($events, static fn ($e) =>
+        $publishEvents = array_filter(
+            $events,
+            static fn ($e) =>
             $e->getEvent() instanceof ContentTranslationCreatedEvent
             || $e->getEvent() instanceof ContentTranslationUpdatedEvent
         );

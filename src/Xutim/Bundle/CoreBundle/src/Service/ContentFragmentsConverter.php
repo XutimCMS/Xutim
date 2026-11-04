@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Xutim\CoreBundle\Service;
 
-use Xutim\CoreBundle\Content\CanonicalContentExtractor;
-use Xutim\CoreBundle\Content\Transform\EditorJsToCanonicalDocumentTransformer;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Uid\UuidV4;
 use Twig\Environment;
+use Xutim\CoreBundle\Content\CanonicalContentExtractor;
+use Xutim\CoreBundle\Content\Transform\EditorJsToCanonicalDocumentTransformer;
 use Xutim\MediaBundle\Repository\MediaRepositoryInterface;
 
 readonly class ContentFragmentsConverter

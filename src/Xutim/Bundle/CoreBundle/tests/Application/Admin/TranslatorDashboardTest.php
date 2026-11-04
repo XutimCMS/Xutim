@@ -9,7 +9,6 @@ use App\Factory\ArticleFactory;
 use App\Factory\ContentTranslationFactory;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\PublicationStatus;
 use Xutim\SecurityBundle\Security\UserRoles;

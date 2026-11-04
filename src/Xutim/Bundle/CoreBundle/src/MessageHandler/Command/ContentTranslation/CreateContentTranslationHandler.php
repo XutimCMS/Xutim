@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Xutim\CoreBundle\MessageHandler\Command\ContentTranslation;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationCreatedEvent;
 use Xutim\CoreBundle\Domain\Factory\ContentTranslationFactory;
 use Xutim\CoreBundle\Domain\Factory\LogEventFactory;
 use Xutim\CoreBundle\Entity\ContentTranslation;
 use Xutim\CoreBundle\Message\Command\ContentTranslation\CreateContentTranslationCommand;
 use Xutim\CoreBundle\MessageHandler\CommandHandlerInterface;
-use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
 use Xutim\CoreBundle\Repository\LogEventRepository;

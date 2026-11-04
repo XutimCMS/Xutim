@@ -160,8 +160,8 @@ class SectionCollectionEntryType extends AbstractType
     }
 
     /**
-     * @param FormInterface<mixed>              $form
-     * @param array<string, BlockItemOption>    $membersByShortName
+     * @param FormInterface<mixed>           $form
+     * @param array<string, BlockItemOption> $membersByShortName
      */
     private function addValueField(FormInterface $form, array $membersByShortName, ?string $type): ?BlockItemOption
     {

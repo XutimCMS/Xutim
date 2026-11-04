@@ -47,7 +47,7 @@ final readonly class XutimSectionValueResolver
     }
 
     /**
-     * @param array<string, mixed> $storedValues
+     * @param  array<string, mixed> $storedValues
      * @return array<string, mixed>
      */
     public function resolve(SectionDefinition $definition, array $storedValues): array

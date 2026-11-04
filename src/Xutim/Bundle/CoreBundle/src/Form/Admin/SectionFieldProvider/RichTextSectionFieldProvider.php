@@ -62,7 +62,7 @@ final readonly class RichTextSectionFieldProvider implements SectionFieldProvide
      * schema we support (text spans + bold/italic marks only). Any
      * non-text nodes or unknown marks are dropped silently.
      *
-     * @param array<mixed> $nodes
+     * @param  array<mixed>                                                               $nodes
      * @return list<array{type: string, text: string, marks?: list<array{type: string}>}>
      */
     private function sanitize(array $nodes): array

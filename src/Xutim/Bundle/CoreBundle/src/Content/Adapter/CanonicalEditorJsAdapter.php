@@ -166,7 +166,7 @@ final class CanonicalEditorJsAdapter
     /**
      * @param list<array<string, mixed>> $items
      *
-     * @param list<ListItem> $items
+     * @param  list<ListItem>             $items
      * @return list<array<string, mixed>>
      */
     private function listItemsToEditorJs(array $items): array
@@ -184,7 +184,7 @@ final class CanonicalEditorJsAdapter
     }
 
     /**
-     * @param list<GalleryImage> $images
+     * @param  list<GalleryImage>         $images
      * @return list<array<string, mixed>>
      */
     private function galleryImagesToEditorJs(array $images): array

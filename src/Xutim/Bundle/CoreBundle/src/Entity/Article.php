@@ -76,7 +76,7 @@ class Article implements ArticleInterface
     private ?DateTimeImmutable $scheduledAt;
 
     /**
-     * @param list<string> $translationLocales
+     * @param list<string>                  $translationLocales
      * @param Collection<int, TagInterface> $tags
      */
     public function __construct(

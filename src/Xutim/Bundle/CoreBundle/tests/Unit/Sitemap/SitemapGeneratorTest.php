@@ -69,14 +69,14 @@ final class SitemapGeneratorTest extends TestCase
     }
 
     /**
-     * @param list<PageInterface> $pages
+     * @param  list<PageInterface>           $pages
      * @return list<array{loc: string, ...}>
      */
     private function captureSitemapItems(array $pages, ?string $homepageId): array
     {
         $router = $this->createStub(RouterInterface::class);
         $router->method('generate')->willReturnCallback(
-            fn (string $name, array $params = []) => $name === 'homepage' ? '/' : '/'.$name
+            fn (string $name, array $params = []) => $name === 'homepage' ? '/' : '/' . $name
         );
 
         $pageRepo = $this->createStub(PageRepository::class);
@@ -97,7 +97,7 @@ final class SitemapGeneratorTest extends TestCase
 
         $transRouteGenerator = $this->createStub(ContentTranslationRouteGenerator::class);
         $transRouteGenerator->method('generatePath')->willReturnCallback(
-            fn (ContentTranslationInterface $trans) => '/en/'.$trans->getSlug()
+            fn (ContentTranslationInterface $trans) => '/en/' . $trans->getSlug()
         );
 
         $captured = [];

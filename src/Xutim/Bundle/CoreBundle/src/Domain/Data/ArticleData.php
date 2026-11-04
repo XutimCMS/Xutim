@@ -9,8 +9,8 @@ use Xutim\MediaBundle\Domain\Model\MediaInterface;
 final readonly class ArticleData implements ArticleDataInterface
 {
     /**
-     * @param EditorBlock    $content
-     * @param list<string>   $translationLocales
+     * @param EditorBlock  $content
+     * @param list<string> $translationLocales
      */
     public function __construct(
         private ?string $layout,

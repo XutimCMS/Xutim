@@ -397,7 +397,7 @@ final class CanonicalContentDiffRendererTest extends TestCase
 
     private function rendererWithSectionDefinition(): CanonicalContentDiffRenderer
     {
-        $definition = new class implements SectionDefinition {
+        $definition = new class() implements SectionDefinition {
             public function getCode(): string
             {
                 return 'two_columns';

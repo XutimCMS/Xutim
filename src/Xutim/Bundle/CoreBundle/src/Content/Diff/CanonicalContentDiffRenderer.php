@@ -339,7 +339,7 @@ final class CanonicalContentDiffRenderer
     }
 
     /**
-     * @param array<string, mixed> $props
+     * @param  array<string, mixed> $props
      * @return array<string, mixed>
      */
     private function xutimSectionDiffRow(CanonicalBlock $oldBlock, CanonicalBlock $newBlock, array $props): array
@@ -617,7 +617,7 @@ final class CanonicalContentDiffRenderer
     }
 
     /**
-     * @param list<ListItem> $items
+     * @param  list<ListItem>                                   $items
      * @return list<array{html: string, children: list<mixed>}>
      */
     private function renderListItems(array $items): array
@@ -634,7 +634,7 @@ final class CanonicalContentDiffRenderer
     }
 
     /**
-     * @param list<GalleryImage> $images
+     * @param  list<GalleryImage>                                            $images
      * @return list<array{id: ?string, url: ?string, thumbnailUrl: ?string}>
      */
     private function renderGalleryItems(array $images): array

@@ -91,7 +91,7 @@ class RevisionExtension extends AbstractExtension
      *   author (redundant). Kept when author differs (preserves attribution)
      *   or no content event follows (active unpublished draft).
      *
-     * @param array<LogEventInterface> $events oldest-first
+     * @param  array<LogEventInterface> $events oldest-first
      * @return list<LogEventInterface>
      */
     public function filterRevisionEvents(array $events): array

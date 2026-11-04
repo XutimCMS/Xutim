@@ -63,7 +63,7 @@ final class SectionDefinitionRegistryTest extends TestCase
      */
     private function makeDefinition(string $code, string $name, array $fields = []): SectionDefinition
     {
-        return new class ($code, $name, $fields) implements SectionDefinition {
+        return new class($code, $name, $fields) implements SectionDefinition {
             /**
              * @param array<string, BlockItemOption> $fields
              */

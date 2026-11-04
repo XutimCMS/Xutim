@@ -9,12 +9,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Xutim\CoreBundle\Context\SiteContext;
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
-use Xutim\NotificationBundle\Dto\Admin\Notification\NotificationAlertDto;
-use Xutim\NotificationBundle\Form\Admin\NotificationAlertType;
 use Xutim\CoreBundle\Repository\ArticleRepository;
 use Xutim\CoreBundle\Routing\AdminUrlGenerator;
 use Xutim\CoreBundle\Service\ReferenceTranslationResolver;
 use Xutim\CoreBundle\Service\TranslatorNotificationService;
+use Xutim\NotificationBundle\Dto\Admin\Notification\NotificationAlertDto;
+use Xutim\NotificationBundle\Form\Admin\NotificationAlertType;
 use Xutim\SecurityBundle\Security\UserRoles;
 use Xutim\SecurityBundle\Service\UserStorage;
 

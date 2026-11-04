@@ -17,12 +17,12 @@ use Xutim\CoreBundle\Domain\Event\ContentTranslation\ContentTranslationUpdatedEv
 use Xutim\CoreBundle\Domain\Model\ContentTranslationInterface;
 use Xutim\CoreBundle\Domain\Model\LogEventInterface;
 use Xutim\CoreBundle\Repository\ContentTranslationRepository;
-use Xutim\CoreBundle\Twig\Extension\RevisionExtension;
 use Xutim\CoreBundle\Repository\LogEventRepository;
 use Xutim\CoreBundle\Repository\TagRepository;
 use Xutim\CoreBundle\Service\BlockAuthorTracker;
 use Xutim\CoreBundle\Service\EditorJsDiffRenderer;
 use Xutim\CoreBundle\Service\RevisionChangeSummaryCalculator;
+use Xutim\CoreBundle\Twig\Extension\RevisionExtension;
 use Xutim\SecurityBundle\Repository\UserRepositoryInterface;
 
 class ShowTranslationRevisionsAction extends AbstractController

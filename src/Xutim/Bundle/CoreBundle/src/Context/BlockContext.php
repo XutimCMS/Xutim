@@ -59,7 +59,7 @@ class BlockContext
     }
 
     /**
-     * @param list<string> $snippetCodes
+     * @param  list<string> $snippetCodes
      * @return list<string>
      */
     private function buildTagsForBlock(string $code, array $snippetCodes): array

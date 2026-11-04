@@ -35,12 +35,30 @@ final class RevisionExtensionTest extends TestCase
     {
         $this->assertTrue($this->extension->isContentEvent(
             $this->logEvent(new ContentTranslationCreatedEvent(
-                Uuid::v4(), '', 'Title', '', 'slug', [], '', 'en', new DateTimeImmutable(), null, null,
+                Uuid::v4(),
+                '',
+                'Title',
+                '',
+                'slug',
+                [],
+                '',
+                'en',
+                new DateTimeImmutable(),
+                null,
+                null,
             ))
         ));
         $this->assertTrue($this->extension->isContentEvent(
             $this->logEvent(new ContentTranslationUpdatedEvent(
-                Uuid::v4(), '', 'Title', '', 'slug', [], '', 'en', new DateTimeImmutable(),
+                Uuid::v4(),
+                '',
+                'Title',
+                '',
+                'slug',
+                [],
+                '',
+                'en',
+                new DateTimeImmutable(),
             ))
         ));
     }
@@ -59,7 +77,17 @@ final class RevisionExtensionTest extends TestCase
     {
         $this->assertTrue($this->extension->isComparableEvent(
             $this->logEvent(new ContentTranslationCreatedEvent(
-                Uuid::v4(), '', 'Title', '', 'slug', [], '', 'en', new DateTimeImmutable(), null, null,
+                Uuid::v4(),
+                '',
+                'Title',
+                '',
+                'slug',
+                [],
+                '',
+                'en',
+                new DateTimeImmutable(),
+                null,
+                null,
             ))
         ));
         $this->assertTrue($this->extension->isComparableEvent(
@@ -196,28 +224,62 @@ final class RevisionExtensionTest extends TestCase
     private function contentCreatedEvent(): ContentTranslationCreatedEvent
     {
         return new ContentTranslationCreatedEvent(
-            Uuid::v4(), '', 'Title', '', 'slug', [], '', 'en', new DateTimeImmutable(), null, null,
+            Uuid::v4(),
+            '',
+            'Title',
+            '',
+            'slug',
+            [],
+            '',
+            'en',
+            new DateTimeImmutable(),
+            null,
+            null,
         );
     }
 
     private function contentUpdatedEvent(): ContentTranslationUpdatedEvent
     {
         return new ContentTranslationUpdatedEvent(
-            Uuid::v4(), '', 'Title', '', 'slug', [], '', 'en', new DateTimeImmutable(),
+            Uuid::v4(),
+            '',
+            'Title',
+            '',
+            'slug',
+            [],
+            '',
+            'en',
+            new DateTimeImmutable(),
         );
     }
 
     private function draftCreatedEvent(): ContentDraftCreatedEvent
     {
         return new ContentDraftCreatedEvent(
-            Uuid::v4(), Uuid::v4(), '', 'Draft Title', '', 'slug', [], '', new DateTimeImmutable(),
+            Uuid::v4(),
+            Uuid::v4(),
+            '',
+            'Draft Title',
+            '',
+            'slug',
+            [],
+            '',
+            new DateTimeImmutable(),
         );
     }
 
     private function draftUpdatedEvent(): ContentDraftUpdatedEvent
     {
         return new ContentDraftUpdatedEvent(
-            Uuid::v4(), Uuid::v4(), '', 'Draft Updated', '', 'slug', [], '', new DateTimeImmutable(),
+            Uuid::v4(),
+            Uuid::v4(),
+            '',
+            'Draft Updated',
+            '',
+            'slug',
+            [],
+            '',
+            new DateTimeImmutable(),
         );
     }
 
