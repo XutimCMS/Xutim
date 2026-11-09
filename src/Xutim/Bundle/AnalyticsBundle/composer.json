@@ -43,7 +43,7 @@
         "ua-parser/uap-php": "^3.10",
         "xutimcms/core-bundle": "dev-main",
         "xutimcms/domain": "dev-main",
-        "webmozart/assert": "^1.11",
+        "webmozart/assert": "^2.0",
         "symfony/doctrine-messenger": "8.1.*",
         "symfony/scheduler": "8.1.*"
     },

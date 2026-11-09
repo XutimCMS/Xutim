@@ -30,7 +30,7 @@
         "symfony/framework-bundle": "8.1.*",
         "symfony/http-client": "8.1.*",
         "twig/twig": "^3.20",
-        "webmozart/assert": "^1.11",
+        "webmozart/assert": "^2.0",
         "spatie/image": "^3.8",
         "spatie/image-optimizer": "^1.8"
     },
