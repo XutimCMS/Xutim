@@ -60,7 +60,7 @@ export default class extends Controller {
 
         try {
             const url = new URL(this.mercureTopicValue);
-            this.#eventSource = new EventSource(url);
+            this.#eventSource = new EventSource(url, { withCredentials: true });
         } catch {
             return;
         }

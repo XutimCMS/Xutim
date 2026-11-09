@@ -128,7 +128,7 @@
     <div data-controller="editing-presence"
          data-editing-presence-heartbeat-url-value="{{ admin_path('admin_content_translation_heartbeat', {id: translation.id}) }}"
          data-editing-presence-stop-url-value="{{ admin_path('admin_content_translation_stop_editing', {id: translation.id}) }}"
-         data-editing-presence-mercure-topic-value="{{ mercure('content-translation/' ~ translation.id ~ '/presence') }}"
+         data-editing-presence-mercure-topic-value="{{ mercure('content-translation/' ~ translation.id ~ '/presence', { subscribe: 'content-translation/' ~ translation.id ~ '/presence' }) }}"
          data-editing-presence-current-user-id-value="{{ app.user.id }}">
         {{ include('@XutimCore/admin/content_translation/_editing_presence_banner.html.twig') }}
         {{ include('@XutimCore/admin/content_translation/_draft_changed_banner.html.twig') }}
