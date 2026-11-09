@@ -41,7 +41,7 @@
         "symfony/debug-bundle": "8.1.*",
         "symfony/phpunit-bridge": "8.1.*",
         "symfony/stopwatch": "8.1.*",
-        "symfony/ux-chartjs": "^2.32",
+        "symfony/ux-chartjs": "^3.0",
         "symfony/web-profiler-bundle": "8.1.*",
         "zenstruck/foundry": "^2.0"
     },
