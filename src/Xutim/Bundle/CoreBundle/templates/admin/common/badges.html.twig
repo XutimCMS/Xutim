@@ -58,12 +58,6 @@
     {{ badges.squareBadge(page.color.HTMLHex, extraClass) }}
 {% endmacro %}
 
-{% macro translatedBadge(translation, extraClass) %}
-    {% import '@XutimCore/admin/common/badges.html.twig' as badges %}
-
-    {{ badges.squareBadge(page.color.HTMLHex, extraClass) }}
-{% endmacro %}
-
 {% macro badge(extraClass, title) %}
     {% if extraClass %}
         {% set class = extraClass ~ ' badge' %}

@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
 use Gedmo\Mapping\Annotation\SortableGroup;
 use Gedmo\Mapping\Annotation\SortablePosition;
+use SortDirection;
 use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
@@ -59,7 +60,7 @@ class MenuItem implements MenuItemInterface
 
     /** @var Collection<int, MenuItemInterface> */
     #[OneToMany(mappedBy: 'parent', targetEntity: MenuItemInterface::class)]
-    #[OrderBy(['position' => 'ASC'])]
+    #[OrderBy(['position' => SortDirection::Ascending])]
     private Collection $children;
 
     public function __construct(

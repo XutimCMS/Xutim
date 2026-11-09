@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use SortDirection;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Entity\BasicTranslatableTrait;
 use Xutim\CoreBundle\Entity\TimestampableTrait;
@@ -40,7 +41,7 @@ class Snippet implements SnippetInterface
 
     /** @var Collection<int, SnippetTranslationInterface> */
     #[OneToMany(mappedBy: 'snippet', targetEntity: SnippetTranslationInterface::class, indexBy: 'locale')]
-    #[OrderBy(['locale' => 'ASC'])]
+    #[OrderBy(['locale' => SortDirection::Ascending])]
     private Collection $translations;
 
     public function __construct(string $code, string $description, SnippetCategory $category)

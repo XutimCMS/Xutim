@@ -56,6 +56,13 @@ return static function (ContainerConfigurator $container): void {
         ->bind('string $tagLayoutRelativeDir', 'layout/tag')
         ->bind('string $defaultLocale', '%kernel.default_locale%')
         ->bind('string $appHost', '%env(APP_HOST)%')
+        ->bind('$eventBus', service('event.bus'))
+        ->bind('$blockContextCache', service('block_context.cache'))
+        ->bind('$siteContextCache', service('site_context.cache'))
+        ->bind('$snippetsContextCache', service('snippets_context.cache'))
+        ->bind('$pageTreeCache', service('page_tree.cache'))
+        ->bind('$adminContentContextCache', service('admin_content_context.cache'))
+        ->bind('$layoutCache', service('layout.cache'))
     ;
 
     $services->load('Xutim\\CoreBundle\\', '../src/')

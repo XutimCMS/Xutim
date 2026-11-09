@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
 use Gedmo\Mapping\Annotation\SortableGroup;
 use Gedmo\Mapping\Annotation\SortablePosition;
+use SortDirection;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Domain\Model\BlockItemInterface;
@@ -73,12 +74,12 @@ class Page implements PageInterface
 
     /** @var Collection<int, PageInterface> */
     #[OneToMany(mappedBy: 'parent', targetEntity: PageInterface::class)]
-    #[OrderBy(['position' => 'ASC'])]
+    #[OrderBy(['position' => SortDirection::Ascending])]
     private Collection $children;
 
     /** @var Collection<string, ContentTranslationInterface> */
     #[OneToMany(mappedBy: 'page', targetEntity: ContentTranslationInterface::class, indexBy: 'locale')]
-    #[OrderBy(['locale' => 'ASC'])]
+    #[OrderBy(['locale' => SortDirection::Ascending])]
     private Collection $translations;
 
     /** @var Collection<int, BlockItemInterface> */

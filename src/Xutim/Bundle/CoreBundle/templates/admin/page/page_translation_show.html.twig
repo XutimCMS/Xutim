@@ -17,7 +17,7 @@
                     %}
                         <option
                             value="{{ trans.locale }}"
-                            {% if trans.locale == translation.locale ?? null %}
+                            {% if trans.locale == (translation.locale ?? null) %}
                                 selected="selected"
                             {% endif %}
                             data-url-value="{{ admin_path('admin_page_translation_show', {id: page.id, locale: trans.locale}) }}"

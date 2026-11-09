@@ -96,7 +96,7 @@
                 {% endif %}
             {% endfor %}
             {% if hasUntranslated %}
-                {{ badges.untranslatedBadge }}
+                {{ badges.untranslatedBadge() }}
             {% endif %}
         {% endif %}
         {% if item.hasArticle %}

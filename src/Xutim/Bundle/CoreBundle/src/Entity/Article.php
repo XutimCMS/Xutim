@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use SortDirection;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Config\Layout\Layout;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
@@ -51,7 +52,7 @@ class Article implements ArticleInterface
 
     /** @var Collection<string, ContentTranslationInterface> */
     #[OneToMany(mappedBy: 'article', targetEntity: ContentTranslationInterface::class, indexBy: 'locale')]
-    #[OrderBy(['locale' => 'ASC'])]
+    #[OrderBy(['locale' => SortDirection::Ascending])]
     private Collection $translations;
 
     /** @var Collection<int, TagInterface> */

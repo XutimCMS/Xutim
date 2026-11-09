@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use SortDirection;
 use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
@@ -48,7 +49,7 @@ class Event implements EventInterface
 
     /** @var Collection<int, EventTranslationInterface> */
     #[OneToMany(mappedBy: 'event', targetEntity: EventTranslationInterface::class, indexBy: 'locale')]
-    #[OrderBy(['locale' => 'ASC'])]
+    #[OrderBy(['locale' => SortDirection::Ascending])]
     private Collection $translations;
 
     #[Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]

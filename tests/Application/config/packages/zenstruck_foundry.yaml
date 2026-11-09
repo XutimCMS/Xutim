@@ -5,6 +5,9 @@ when@dev: &dev
             flush_once: true
         faker:
             locale: en_US
+        orm:
+            reset:
+                mode: schema
 
 when@test:
     <<: *dev

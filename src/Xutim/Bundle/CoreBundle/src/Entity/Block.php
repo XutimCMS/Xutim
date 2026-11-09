@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use SortDirection;
 use Symfony\Component\Uid\Uuid;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
 use Xutim\CoreBundle\Domain\Model\BlockInterface;
@@ -47,7 +48,7 @@ class Block implements BlockInterface
 
     /** @var Collection<int, BlockItemInterface> */
     #[OneToMany(mappedBy: 'block', targetEntity: BlockItemInterface::class)]
-    #[OrderBy(['position' => 'ASC'])]
+    #[OrderBy(['position' => SortDirection::Ascending])]
     private Collection $blockItems;
 
     public function __construct(

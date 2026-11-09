@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\OrderBy;
+use SortDirection;
 use Symfony\Component\Uid\Uuid;
 use Webmozart\Assert\Assert;
 use Xutim\CoreBundle\Domain\Model\ArticleInterface;
@@ -50,7 +51,7 @@ class Tag implements TagInterface
 
     /** @var Collection<int, TagTranslationInterface> */
     #[OneToMany(mappedBy: 'tag', targetEntity: TagTranslationInterface::class, indexBy: 'locale')]
-    #[OrderBy(['locale' => 'ASC'])]
+    #[OrderBy(['locale' => SortDirection::Ascending])]
     private Collection $translations;
 
     /** @var Collection<int, ArticleInterface> */

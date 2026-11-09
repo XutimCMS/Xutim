@@ -5,9 +5,9 @@
         style="position: absolute; width: 0; height: 0; overflow: hidden"
     >
         {% for name in names %}
-            {% set svg %}{% apply spaceless %}<twig:ux:icon
+            {% set svg %}<twig:ux:icon
                         :name="'tabler:'~name"
-                    />{% endapply %}{% endset %}
+                    />{% endset %}
 
             {# Replace outer <svg …>…</svg> with <symbol id="icon-name">…</symbol> #}
             {{
