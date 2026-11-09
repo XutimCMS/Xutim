@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use PhpCsFixer\Fixer\Phpdoc\PhpdocAlignFixer;
+use PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer;
+use PhpCsFixer\Fixer\Strict\StrictComparisonFixer;
+use PhpCsFixer\Fixer\Strict\StrictParamFixer;
 use PhpCsFixer\Fixer\Whitespace\MethodChainingIndentationFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
@@ -22,11 +25,13 @@ return ECSConfig::configure()
     ->withSets([
         SetList::CLEAN_CODE,
         SetList::PSR_12,
-        SetList::STRICT,
     ])
     ->withRules([
         PhpdocAlignFixer::class,
-        MethodChainingIndentationFixer::class
+        MethodChainingIndentationFixer::class,
+        StrictComparisonFixer::class,
+        StrictParamFixer::class,
+        DeclareStrictTypesFixer::class,
     ])
     ->withSkip([
         MethodChainingIndentationFixer::class => [

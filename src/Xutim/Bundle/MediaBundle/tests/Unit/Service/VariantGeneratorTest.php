@@ -85,7 +85,7 @@ final class VariantGeneratorTest extends TestCase
         $storage->method('absolutePath')->willReturn('/public/media/photo.jpg');
 
         $processor = $this->createMock(ImageProcessorInterface::class);
-        $processor->method('supportsFormat')->with('avif')->willReturn(false);
+        $processor->expects($this->once())->method('supportsFormat')->with('avif')->willReturn(false);
         $processor->expects($this->never())->method('process');
 
         $generator = $this->createGenerator($processor, $storage);
