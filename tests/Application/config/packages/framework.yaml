@@ -5,6 +5,5 @@ framework:
     session:
         storage_factory_id: session.storage.factory.mock_file
     csrf_protection: true
-    annotations: false
     http_method_override: false
     handle_all_throwables: true

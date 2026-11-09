@@ -8,7 +8,6 @@
     "require": {
         "php": ">=8.4",
         "xutimcms/core-bundle": "dev-main",
-        "xutimcms/editor-bundle": "dev-main",
         "xutimcms/security-bundle": "dev-main",
         "xutimcms/analytics-bundle": "dev-main",
         "xutimcms/event-bundle": "dev-main",
@@ -16,40 +15,39 @@
         "xutimcms/notification-bundle": "dev-main",
         "xutimcms/redirect-bundle": "dev-main",
         "xutimcms/snippet-bundle": "dev-main",
-        "symfony/clock": "7.4.*",
-        "symfony/error-handler": "7.4.*",
-        "symfony/event-dispatcher": "7.4.*",
-        "symfony/filesystem": "7.4.*",
-        "symfony/finder": "7.4.*",
-        "symfony/http-foundation": "7.4.*",
-        "symfony/options-resolver": "7.4.*",
-        "symfony/password-hasher": "7.4.*",
-        "symfony/process": "7.4.*",
-        "symfony/routing": "7.4.*",
-        "symfony/security-core": "7.4.*",
-        "symfony/security-csrf": "7.4.*",
-        "symfony/security-http": "7.4.*",
-        "symfony/twig-bridge": "7.4.*",
-        "symfony/type-info": "7.4.*",
-        "symfony/var-dumper": "7.4.*",
-        "symfony/var-exporter": "7.4.*"
+        "symfony/clock": "8.1.*",
+        "symfony/error-handler": "8.1.*",
+        "symfony/event-dispatcher": "8.1.*",
+        "symfony/filesystem": "8.1.*",
+        "symfony/finder": "8.1.*",
+        "symfony/http-foundation": "8.1.*",
+        "symfony/options-resolver": "8.1.*",
+        "symfony/password-hasher": "8.1.*",
+        "symfony/process": "8.1.*",
+        "symfony/routing": "8.1.*",
+        "symfony/security-core": "8.1.*",
+        "symfony/security-csrf": "8.1.*",
+        "symfony/security-http": "8.1.*",
+        "symfony/twig-bridge": "8.1.*",
+        "symfony/type-info": "8.1.*",
+        "symfony/var-dumper": "8.1.*",
+        "symfony/var-exporter": "8.1.*"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",
         "doctrine/doctrine-fixtures-bundle": "^4.0",
         "phpunit/phpunit": "^12.0",
-        "symfony/browser-kit": "7.4.*",
-        "symfony/debug-bundle": "7.4.*",
-        "symfony/phpunit-bridge": "7.4.*",
-        "symfony/stopwatch": "7.4.*",
+        "symfony/browser-kit": "8.1.*",
+        "symfony/debug-bundle": "8.1.*",
+        "symfony/phpunit-bridge": "8.1.*",
+        "symfony/stopwatch": "8.1.*",
         "symfony/ux-chartjs": "^2.32",
-        "symfony/web-profiler-bundle": "7.4.*",
+        "symfony/web-profiler-bundle": "8.1.*",
         "zenstruck/foundry": "^2.0"
     },
     "repositories": [
         {"type": "path", "url": "../../src/Xutim/Domain"},
         {"type": "path", "url": "../../src/Xutim/Bundle/CoreBundle"},
-        {"type": "path", "url": "../../src/Xutim/Bundle/EditorBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/SecurityBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/AnalyticsBundle"},
         {"type": "path", "url": "../../src/Xutim/Bundle/EventBundle"},
@@ -67,7 +65,6 @@
         "psr-4": {
             "Xutim\\AnalyticsBundle\\Tests\\": "../../src/Xutim/Bundle/AnalyticsBundle/tests/",
             "Xutim\\CoreBundle\\Tests\\": "../../src/Xutim/Bundle/CoreBundle/tests/",
-            "Xutim\\EditorBundle\\Tests\\": "../../src/Xutim/Bundle/EditorBundle/tests/",
             "Xutim\\EventBundle\\Tests\\": "../../src/Xutim/Bundle/EventBundle/tests/",
             "Xutim\\MediaBundle\\Tests\\": "../../src/Xutim/Bundle/MediaBundle/tests/",
             "Xutim\\NotificationBundle\\Tests\\": "../../src/Xutim/Bundle/NotificationBundle/tests/",
@@ -84,7 +81,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.4.*"
+            "require": "8.1.*"
         }
     }
 }

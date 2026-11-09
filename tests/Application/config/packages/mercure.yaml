@@ -3,6 +3,11 @@ mercure:
         default:
             url: '%env(MERCURE_URL)%'
             public_url: '%env(MERCURE_PUBLIC_URL)%'
+            cookie_name: mercure_access_token
             jwt:
                 secret: '%env(MERCURE_JWT_SECRET)%'
                 publish: '*'
+                claims:
+                    iss: https://example.com
+                    sub: xutim-test-app
+                    client_id: xutim-test-app

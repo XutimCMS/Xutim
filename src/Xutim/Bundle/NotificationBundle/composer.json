@@ -1,8 +1,6 @@
 {
     "name": "xutimcms/notification-bundle",
-    "type": "symfony-bundle",
     "description": "Generic notification infrastructure for Xutim CMS.",
-    "prefer-stable": true,
     "keywords": [
         "cms",
         "xutim",
@@ -16,17 +14,18 @@
             "email": "tomasjakll@gmail.com"
         }
     ],
+    "type": "symfony-bundle",
     "require": {
         "php": ">=8.4",
-        "doctrine/doctrine-bundle": "^2.13",
-        "doctrine/orm": "^3.3",
-        "symfony/form": "7.4.*",
-        "symfony/framework-bundle": "7.4.*",
-        "symfony/mailer": "7.4.*",
-        "symfony/messenger": "7.4.*",
-        "symfony/twig-bundle": "7.4.*",
-        "symfony/uid": "7.4.*",
-        "symfony/validator": "7.4.*",
+        "doctrine/doctrine-bundle": "^3.3",
+        "doctrine/orm": "^3.7",
+        "symfony/form": "8.1.*",
+        "symfony/framework-bundle": "8.1.*",
+        "symfony/mailer": "8.1.*",
+        "symfony/messenger": "8.1.*",
+        "symfony/twig-bundle": "8.1.*",
+        "symfony/uid": "8.1.*",
+        "symfony/validator": "8.1.*",
         "twig/twig": "^3.20",
         "xutimcms/core-bundle": "dev-main",
         "xutimcms/security-bundle": "dev-main"
@@ -43,5 +42,6 @@
         "psr-4": {
             "Xutim\\NotificationBundle\\Tests\\": "tests/"
         }
-    }
+    },
+    "prefer-stable": true
 }

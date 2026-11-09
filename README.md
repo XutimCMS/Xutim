@@ -1,6 +1,6 @@
 # Xutim ("Shoo-teem")
 
-A modular CMS system built with Symfony 7.3, Doctrine ORM, Turbo/Stimulus, and Editor.js.
+A modular CMS system built with Symfony, Doctrine ORM, Turbo/Stimulus, and Editor.js.
 
 > **Warning**: This project is in active development and is **not yet stable**. While it powers production websites, the API, database schema, and bundle interfaces may change significantly without prior notice. Use at your own risk.
 

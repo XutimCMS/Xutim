@@ -1,9 +1,6 @@
 {
     "name": "xutimcms/snippet-bundle",
-    "type": "symfony-bundle",
     "description": "Symfony bundle providing snippet and snippet translation entities, forms, repositories, and templates for localized CMS content.",
-    "prefer-stable": true,
-    "minimum-stability": "dev",
     "keywords": [
         "cms",
         "xutim",
@@ -19,18 +16,19 @@
             "email": "tomasjakll@gmail.com"
         }
     ],
+    "type": "symfony-bundle",
     "require": {
         "php": ">=8.4",
         "babdev/pagerfanta-bundle": "^4.5",
-        "doctrine/doctrine-bundle": "^2.13",
-        "doctrine/orm": "^3.3",
+        "doctrine/doctrine-bundle": "^3.3",
+        "doctrine/orm": "^3.7",
         "pagerfanta/doctrine-orm-adapter": "^4.7",
-        "symfony/form": "7.4.*",
-        "symfony/framework-bundle": "7.4.*",
-        "symfony/uid": "7.4.*",
+        "symfony/form": "8.1.*",
+        "symfony/framework-bundle": "8.1.*",
+        "symfony/uid": "8.1.*",
         "symfony/ux-icons": "^2.23",
         "symfony/ux-twig-component": "^2.17",
-        "symfony/validator": "7.4.*",
+        "symfony/validator": "8.1.*",
         "twig/extra-bundle": "^3.20",
         "twig/string-extra": "^3.20",
         "twig/twig": "^3.20",
@@ -49,13 +47,13 @@
         "phpstan/phpstan-strict-rules": "^2.1",
         "phpstan/phpstan-symfony": "^2.1",
         "phpstan/phpstan-webmozart-assert": "^2.0",
-        "phpunit/phpunit": "^9.6",
-        "symfony/browser-kit": "7.4.*",
-        "symfony/debug-bundle": "7.4.*",
+        "phpunit/phpunit": "^12.0",
+        "symfony/browser-kit": "8.1.*",
+        "symfony/debug-bundle": "8.1.*",
         "symfony/maker-bundle": "^1.62",
-        "symfony/phpunit-bridge": "7.4.*",
-        "symfony/stopwatch": "7.4.*",
-        "symfony/web-profiler-bundle": "7.4.*",
+        "symfony/phpunit-bridge": "8.1.*",
+        "symfony/stopwatch": "8.1.*",
+        "symfony/web-profiler-bundle": "8.1.*",
         "symplify/easy-coding-standard": "^12.5",
         "vincentlanglet/twig-cs-fixer": "^3.5"
     },
@@ -71,5 +69,7 @@
         "psr-4": {
             "Xutim\\SnippetBundle\\Tests\\": "tests/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

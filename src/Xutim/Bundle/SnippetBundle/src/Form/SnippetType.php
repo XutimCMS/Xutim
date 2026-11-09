@@ -17,6 +17,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Traversable;
 use Xutim\SecurityBundle\Service\TranslatorAuthChecker;
 use Xutim\SnippetBundle\Domain\Model\SnippetCategory;
@@ -28,7 +29,8 @@ use Xutim\SnippetBundle\Domain\Model\SnippetCategory;
 class SnippetType extends AbstractType implements DataMapperInterface
 {
     public function __construct(
-        private readonly TranslatorAuthChecker $authChecker
+        private readonly TranslatorAuthChecker $authChecker,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -70,7 +72,7 @@ class SnippetType extends AbstractType implements DataMapperInterface
         if ($activeLocale !== $defaultLocale) {
             $builder->add($defaultLocale, TextareaType::class, [
                 'required' => false,
-                'label' => strtoupper($defaultLocale) . ' (' . (new TranslatableMessage('reference', [], 'admin')) . ')',
+                'label' => strtoupper($defaultLocale) . ' (' . $this->translator->trans('reference', [], 'admin') . ')',
                 'disabled' => !$this->authChecker->canTranslate($defaultLocale),
             ]);
         }

@@ -28,8 +28,8 @@ jobs:
       matrix:
         include:
           - php: '8.5'
-            symfony: '7.4.*'
-            symfony-label: '7.4'
+            symfony: '8.1.*'
+            symfony-label: '8.1'
 
     services:
       postgres:

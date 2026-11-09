@@ -1,9 +1,6 @@
 {
     "name": "xutimcms/redirect-bundle",
-    "type": "symfony-bundle",
     "description": "Reusable Symfony bundle for managing flexible URL redirects in a CMS or web application.",
-    "prefer-stable": true,
-    "minimum-stability": "dev",
     "keywords": [
         "cms",
         "xutim",
@@ -17,14 +14,15 @@
             "email": "tomasjakll@gmail.com"
         }
     ],
+    "type": "symfony-bundle",
     "require": {
         "php": ">=8.4",
         "babdev/pagerfanta-bundle": "^4.5",
-        "doctrine/doctrine-bundle": "^2.13",
-        "doctrine/doctrine-migrations-bundle": "^3.4",
-        "doctrine/orm": "^3.3",
-        "symfony/form": "7.4.*",
-        "symfony/framework-bundle": "7.4.*",
+        "doctrine/doctrine-bundle": "^3.3",
+        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/orm": "^3.7",
+        "symfony/form": "8.1.*",
+        "symfony/framework-bundle": "8.1.*",
         "twig/twig": "^3.20",
         "webmozart/assert": "^1.11",
         "xutimcms/core-bundle": "dev-main"
@@ -41,14 +39,14 @@
         "phpstan/phpstan-strict-rules": "^2.1",
         "phpstan/phpstan-symfony": "^2.1",
         "phpstan/phpstan-webmozart-assert": "^2.0",
-        "phpunit/phpunit": "^9.6",
-        "symfony/browser-kit": "7.4.*",
-        "symfony/css-selector": "7.4.*",
-        "symfony/debug-bundle": "7.4.*",
+        "phpunit/phpunit": "^12.0",
+        "symfony/browser-kit": "8.1.*",
+        "symfony/css-selector": "8.1.*",
+        "symfony/debug-bundle": "8.1.*",
         "symfony/maker-bundle": "^1.62",
-        "symfony/phpunit-bridge": "7.4.*",
-        "symfony/stopwatch": "7.4.*",
-        "symfony/web-profiler-bundle": "7.4.*",
+        "symfony/phpunit-bridge": "8.1.*",
+        "symfony/stopwatch": "8.1.*",
+        "symfony/web-profiler-bundle": "8.1.*",
         "symplify/easy-coding-standard": "^12.5",
         "vincentlanglet/twig-cs-fixer": "^3.5"
     },
@@ -64,5 +62,7 @@
         "psr-4": {
             "Xutim\\RedirectBundle\\Tests\\": "tests/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
