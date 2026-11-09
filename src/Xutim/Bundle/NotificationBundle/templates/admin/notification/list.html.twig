@@ -46,7 +46,7 @@
                 </div>
                 <div class="list-group list-group-flush list-group-hoverable">
                     {% for notification in unread %}
-                        {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
+                        {{ include('@XutimNotification/admin/notification/_notification_row.html.twig') }}
                     {% endfor %}
                 </div>
             </div>
@@ -61,7 +61,7 @@
                 {% endif %}
                 <div class="list-group list-group-flush list-group-hoverable">
                     {% for notification in read %}
-                        {% include '@XutimNotification/admin/notification/_notification_row.html.twig' %}
+                        {{ include('@XutimNotification/admin/notification/_notification_row.html.twig') }}
                     {% endfor %}
                 </div>
             </div>

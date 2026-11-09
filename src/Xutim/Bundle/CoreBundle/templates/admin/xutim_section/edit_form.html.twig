@@ -22,8 +22,8 @@
         {{ include(bodyTemplate, {form: form, definition: definition, descriptions: descriptions}) }}
     {% else %}
         {#
-           Inline-editable fields (translatable text) render as hidden inputs 
-           so the modal shows only non-inline fields while values still 
+           Inline-editable fields (translatable text) render as hidden inputs
+           so the modal shows only non-inline fields while values still
            round-trip on save.
         #}
         {% set sectionFields = definition.getFields() %}

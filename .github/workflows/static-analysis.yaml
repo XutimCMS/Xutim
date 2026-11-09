@@ -55,3 +55,6 @@ jobs:
 
       - name: Run ECS
         run: vendor/bin/ecs check --output-format=checkstyle | cs2pr
+
+      - name: Run Twig CS Fixer
+        run: vendor/bin/twig-cs-fixer lint src/Xutim/Bundle/*/templates --report=checkstyle | cs2pr

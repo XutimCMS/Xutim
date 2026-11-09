@@ -32,6 +32,16 @@ ecs-fix: vendor/
 	vendor/bin/ecs check --fix
 .PHONY: ecs-fix
 
+TWIG_TEMPLATES=$(wildcard src/Xutim/Bundle/*/templates)
+
+twig-lint: vendor/
+	vendor/bin/twig-cs-fixer lint $(TWIG_TEMPLATES)
+.PHONY: twig-lint
+
+twig-lint-fix: vendor/
+	vendor/bin/twig-cs-fixer fix $(TWIG_TEMPLATES)
+.PHONY: twig-lint-fix
+
 # Test application setup
 init-test: $(TEST_APP)/vendor/
 	cd $(TEST_APP) && bin/console importmap:install
