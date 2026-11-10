@@ -4,7 +4,7 @@ import { buildEditorTools } from '../lib/build_tools.js';
 import { decorateInternalLinks } from '../lib/editorjs-plugins/internal-inline-link/internal-inline-link.js';
 
 export default class extends Controller {
-    static targets = ['editorHolder', 'contentInput', 'saveAction', 'primaryBtn'];
+    static targets = ['editorHolder', 'contentInput', 'saveAction', 'saveDialog', 'saveChoice'];
     static values = {
         blockCodes: Array,
         tags: Array,
@@ -21,8 +21,6 @@ export default class extends Controller {
         xutimSectionSaveUrl: String,
         xutimSectionRefreshUrl: String,
         xutimSectionPreviewUrl: String,
-        publishLabel: String,
-        draftLabel: String,
     };
 
     #editor;
@@ -55,35 +53,31 @@ export default class extends Controller {
                 decorateInternalLinks(this.editorHolderTarget);
             },
         });
+    }
 
-        if (this.hasPrimaryBtnTarget) {
-            const action = localStorage.getItem('xutim.saveAction') || 'publish';
-            this.primaryBtnTarget.textContent = this.#labelFor(action);
-        }
+    openSaveDialog() {
+        this.saveDialogTarget.showModal();
+    }
+
+    closeSaveDialog() {
+        this.saveDialogTarget.close();
     }
 
     save(event) {
+        this.saveChoiceTargets.forEach((button) => (button.disabled = true));
+        if (this.hasSaveActionTarget) {
+            this.saveActionTarget.value = event.params.action;
+        }
+
         this.#editor
             .save()
             .then((outputData) => {
                 this.contentInputTarget.value = JSON.stringify(outputData);
-                if (this.hasSaveActionTarget) {
-                    this.saveActionTarget.value = localStorage.getItem('xutim.saveAction') || 'publish';
-                }
                 this.element.submit();
             })
             .catch((error) => {
+                this.saveChoiceTargets.forEach((button) => (button.disabled = false));
                 console.warn('Saving failed: ', error);
             });
-    }
-
-    chooseSaveAction(event) {
-        const action = event.params.action;
-        localStorage.setItem('xutim.saveAction', action);
-        this.primaryBtnTarget.textContent = this.#labelFor(action);
-    }
-
-    #labelFor(action) {
-        return action === 'publish' ? this.publishLabelValue : this.draftLabelValue;
     }
 }

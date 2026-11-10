@@ -4,7 +4,7 @@
             attr: {
                 id: form.vars.id,
                 'data-controller': 'editorjs-form slug-generator',
-                'data-action': 'submit->editorjs-form#save:prevent',
+                'data-action': 'submit->editorjs-form#openSaveDialog:prevent',
                 'data-editorjs-form-block-codes-value': fetch_block_codes()|json_encode,
                 'data-editorjs-form-tags-value': fetch_tags()|json_encode,
                 'data-editorjs-form-fetch-files-url-value': admin_path('admin_json_file_list'),
@@ -20,8 +20,6 @@
                 'data-editorjs-form-xutim-section-save-url-value': admin_path('admin_xutim_section_save', {code: ':code:'}),
                 'data-editorjs-form-xutim-section-refresh-url-value': admin_path('admin_xutim_section_refresh', {code: ':code:'}),
                 'data-editorjs-form-xutim-section-preview-url-value': admin_path('admin_xutim_section_preview', {code: ':code:'}),
-                'data-editorjs-form-publish-label-value': 'Save and publish'|trans({}, 'admin'),
-                'data-editorjs-form-draft-label-value': 'Save as draft'|trans({}, 'admin'),
                 'data-slug-generator-url-value': admin_path('admin_json_content_translation_generate_slug'),
                 'data-slug-generator-enabled-value': translation == null ? 'true' : 'false',
                 'data-slug-generator-self-id-value': translation ? translation.id : '',
@@ -83,7 +81,7 @@
         <div data-editorjs-form-target="editorHolder"></div>
     </div>
 
-    <input type="hidden" name="_save_action" value="publish" data-editorjs-form-target="saveAction">
+    <input type="hidden" name="_save_action" value="draft" data-editorjs-form-target="saveAction">
 
     <div class="d-none">
         <button type="submit" id="content_translation_submit"></button>
@@ -97,30 +95,58 @@
     }}
 
     {% if form.vars.disabled == false %}
+    {% set isPublished = translation is not null and translation.isPublished() %}
     <div class="py-3 bg-white border-top mt-4" style="position: sticky; bottom: 0; z-index: 10;">
-        <div class="btn-group">
-            <button type="submit" class="btn btn-primary" data-editorjs-form-target="primaryBtn">
-                {{ 'Save and publish'|trans({}, 'admin') }}
-            </button>
-            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="visually-hidden">{{ 'Toggle dropdown'|trans({}, 'admin') }}</span>
-            </button>
-            <div class="dropdown-menu dropdown-menu-end">
-                <button type="button" class="dropdown-item"
-                    data-action="click->editorjs-form#chooseSaveAction"
-                    data-editorjs-form-action-param="publish"
-                >
-                    {{ 'Save and publish'|trans({}, 'admin') }}
-                </button>
-                <button type="button" class="dropdown-item"
-                    data-action="click->editorjs-form#chooseSaveAction"
+        <button type="submit" class="btn btn-primary">
+            {{ 'Save'|trans({}, 'admin') }}
+        </button>
+    </div>
+
+    <dialog class="save-dialog" data-editorjs-form-target="saveDialog">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h3 class="m-0">{{ 'Save changes'|trans({}, 'admin') }}</h3>
+            <button
+                type="button"
+                class="btn-close"
+                aria-label="{{ 'cancel'|trans({}, 'admin')|capitalize }}"
+                data-action="editorjs-form#closeSaveDialog"
+            ></button>
+        </div>
+        <div class="row g-4">
+            <div class="col-sm-6 d-flex flex-column">
+                <p class="fw-semibold mb-1"><span class="status-dot status-blue me-2"></span>{{ 'Draft'|trans({}, 'admin') }}</p>
+                <p class="text-secondary small">
+                    {% if isPublished %}
+                        {{ 'The website keeps showing the last published version.'|trans({}, 'admin') }}
+                    {% else %}
+                        {{ 'Not visible on the website yet.'|trans({}, 'admin') }}
+                    {% endif %}
+                </p>
+                <button
+                    type="button"
+                    class="btn w-100 mt-auto"
+                    data-action="editorjs-form#save"
                     data-editorjs-form-action-param="draft"
+                    data-editorjs-form-target="saveChoice"
                 >
                     {{ 'Save as draft'|trans({}, 'admin') }}
                 </button>
             </div>
+            <div class="col-sm-6 d-flex flex-column">
+                <p class="fw-semibold mb-1"><span class="status-dot status-green me-2"></span>{{ 'Published'|trans({}, 'admin') }}</p>
+                <p class="text-secondary small">{{ 'Your changes appear on the website right away.'|trans({}, 'admin') }}</p>
+                <button
+                    type="button"
+                    class="btn btn-success w-100 mt-auto"
+                    data-action="editorjs-form#save"
+                    data-editorjs-form-action-param="publish"
+                    data-editorjs-form-target="saveChoice"
+                >
+                    {{ 'Save and publish'|trans({}, 'admin') }}
+                </button>
+            </div>
         </div>
-    </div>
+    </dialog>
     {% endif %}
 
     {{ form_end(form) }}

@@ -203,6 +203,13 @@ dialog::backdrop {
     --tblr-modal-width: 720px;
 }
 
+dialog.save-dialog {
+    width: min(520px, calc(100vw - 2rem));
+    padding: 1.25rem;
+    border: 1px solid var(--tblr-border-color);
+    border-radius: 0.75rem;
+}
+
 /* Foldable Editor.js Blocks */
 .foldable-start-block {
     border: 1px dashed var(--tblr-border-color);
