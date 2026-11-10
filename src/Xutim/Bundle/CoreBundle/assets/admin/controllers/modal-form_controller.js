@@ -70,6 +70,7 @@ export default class extends Controller {
     submitForm(modalElem) {
         event.preventDefault();
         const form = modalElem.querySelector('form');
+        form.dispatchEvent(new CustomEvent('unsaved-changes:clear', { bubbles: true }));
         const formData = new FormData(form);
         const params = new URLSearchParams({ ajax: 1 });
 

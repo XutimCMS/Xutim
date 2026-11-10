@@ -30,7 +30,19 @@
         {% endblock head %}
     </head>
 
-    <body>
+    <body
+        data-controller="unsaved-changes"
+        data-unsaved-changes-message-value="{{ 'Your changes are not saved and will be lost. Leave anyway?'|trans({}, 'admin') }}"
+        data-action="
+            input->unsaved-changes#markDirty
+            change->unsaved-changes#markDirty
+            submit->unsaved-changes#markSubmitted
+            turbo:submit-end->unsaved-changes#restoreOnFailure
+            unsaved-changes:clear->unsaved-changes#markClean
+            turbo:before-visit@document->unsaved-changes#confirmVisit
+            beforeunload@window->unsaved-changes#warnBeforeUnload
+        "
+    >
         <div class="page">
             {% if block('publicLink') is defined %}
                 {% set _publicLinkBlock = block('publicLink') %}

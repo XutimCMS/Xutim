@@ -73,6 +73,7 @@ export default class extends Controller {
             .save()
             .then((outputData) => {
                 this.contentInputTarget.value = JSON.stringify(outputData);
+                this.element.dispatchEvent(new CustomEvent('unsaved-changes:clear', { bubbles: true }));
                 this.element.submit();
             })
             .catch((error) => {
