@@ -26,7 +26,19 @@ export default class extends Controller {
     #editor;
 
     connect() {
-        const tools = buildEditorTools({
+        this.#editor = new EditorJS({
+            holder: this.editorHolderTarget,
+            placeholder: 'Start writing or type / to choose a block',
+            tools: this.buildTools(),
+            data: JSON.parse(this.contentInputTarget.value),
+            onReady: () => {
+                decorateInternalLinks(this.editorHolderTarget);
+            },
+        });
+    }
+
+    buildTools(overrides = {}) {
+        return buildEditorTools({
             pageIdsUrl: this.pageIdsUrlValue,
             articleIdsUrl: this.articleIdsUrlValue,
             tagIdsUrl: this.tagIdsUrlValue,
@@ -42,16 +54,7 @@ export default class extends Controller {
             xutimSectionSaveUrl: this.xutimSectionSaveUrlValue,
             xutimSectionRefreshUrl: this.xutimSectionRefreshUrlValue,
             xutimSectionPreviewUrl: this.xutimSectionPreviewUrlValue,
-        });
-
-        this.#editor = new EditorJS({
-            holder: this.editorHolderTarget,
-            placeholder: 'Start writing or type / to choose a block',
-            tools: tools,
-            data: JSON.parse(this.contentInputTarget.value),
-            onReady: () => {
-                decorateInternalLinks(this.editorHolderTarget);
-            },
+            ...overrides,
         });
     }
 
