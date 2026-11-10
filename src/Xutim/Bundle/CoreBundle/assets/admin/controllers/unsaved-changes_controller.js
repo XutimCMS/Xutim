@@ -5,6 +5,7 @@ export default class extends Controller {
 
     #dirtyForms = new Set();
     #submittedForms = new WeakSet();
+    #revertingHistory = false;
 
     markDirty(event) {
         const form = event.target.form ?? event.target.closest?.('form');
@@ -33,6 +34,25 @@ export default class extends Controller {
     confirmVisit(event) {
         if (this.#hasUnsavedChanges() && !window.confirm(this.messageValue)) {
             event.preventDefault();
+        }
+    }
+
+    confirmHistoryVisit(event) {
+        const index = event.state?.turbo?.restorationIndex;
+        if (index === undefined) {
+            return;
+        }
+
+        if (this.#revertingHistory) {
+            this.#revertingHistory = false;
+            event.stopImmediatePropagation();
+            return;
+        }
+
+        if (this.#hasUnsavedChanges() && !window.confirm(this.messageValue)) {
+            event.stopImmediatePropagation();
+            this.#revertingHistory = true;
+            history.go(window.Turbo.session.history.currentIndex - index);
         }
     }
 
