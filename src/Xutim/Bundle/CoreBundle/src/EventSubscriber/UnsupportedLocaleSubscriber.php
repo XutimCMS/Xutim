@@ -15,7 +15,6 @@ class UnsupportedLocaleSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly SiteContext $siteContext,
-        private readonly string $defaultLocale
     ) {
     }
 
@@ -24,16 +23,28 @@ class UnsupportedLocaleSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
         $path = $request->getPathInfo();
 
-        $supportedLocales = $this->siteContext->getMainLocales();
-
-        if (preg_match('#^/([a-z]{2})(/|$)#', $path, $matches) === 1) {
-            $locale = $matches[1];
-            if (!in_array($locale, $supportedLocales, true)) {
-                $newPath = preg_replace("#^/{$locale}#", '/' . $this->defaultLocale, $path);
-                Assert::string($newPath);
-                $event->setResponse(new RedirectResponse($newPath, 302));
-            }
+        if (preg_match('#^/([a-z]{2})(/|$)#', $path, $matches) !== 1) {
+            return;
         }
+
+        $supportedLocales = $this->siteContext->getMainLocales();
+        if ($supportedLocales === [] || in_array($matches[1], $supportedLocales, true)) {
+            return;
+        }
+
+        $newPath = preg_replace('#^/[a-z]{2}#', '/' . $this->redirectLocale($supportedLocales), $path);
+        Assert::string($newPath);
+        $event->setResponse(new RedirectResponse($newPath, 302));
+    }
+
+    /**
+     * @param non-empty-array<string> $supportedLocales
+     */
+    private function redirectLocale(array $supportedLocales): string
+    {
+        $referenceLocale = $this->siteContext->getReferenceLocale();
+
+        return in_array($referenceLocale, $supportedLocales, true) ? $referenceLocale : reset($supportedLocales);
     }
 
     public static function getSubscribedEvents(): array
