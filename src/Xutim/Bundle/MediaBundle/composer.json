@@ -9,7 +9,8 @@
         "image",
         "video",
         "audio",
-        "gallery"
+        "gallery",
+        "symfony-ux"
     ],
     "homepage": "https://xutim.com",
     "license": "MIT",
