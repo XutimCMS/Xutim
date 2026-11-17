@@ -193,12 +193,7 @@
                         })
                     }}
                 {% else %}
-                    {{
-                        include('@XutimCore/admin/content_fragment/content.html.twig', {
-                            fragments: translation.content,
-                            locale: content_context_language(),
-                        })
-                    }}
+                    {{ translation.content|content_fragments_to_admin_html(content_context_language()) }}
                 {% endif %}
             </div>
         </div>

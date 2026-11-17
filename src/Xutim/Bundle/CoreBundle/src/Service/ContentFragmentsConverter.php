@@ -18,6 +18,7 @@ readonly class ContentFragmentsConverter
         private readonly MediaRepositoryInterface $mediaRepo,
         private readonly EditorJsToCanonicalDocumentTransformer $transformer,
         private readonly CanonicalContentExtractor $extractor,
+        private readonly EditorJsDiffRenderer $diffRenderer,
     ) {
     }
 
@@ -86,9 +87,9 @@ readonly class ContentFragmentsConverter
             return '';
         }
 
-        return $this->twig->render('@XutimCore/admin/content_fragment/content.html.twig', [
-            'fragments' => $fragments,
-            'locale' => $locale
+        return $this->twig->render('@XutimCore/admin/content_fragment/content_diff.html.twig', [
+            'rows' => $this->diffRenderer->diffContent($fragments, $fragments),
+            'locale' => $locale,
         ]);
     }
 

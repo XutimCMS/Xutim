@@ -14,7 +14,7 @@
 {% import _self as lists %}
 
 {% set tag = row.attrs.style == 'ordered' ? 'ol' : 'ul' -%}
-{% if row.body_html is defined and row.body_html %}
+{% if row.op|default('') != 'unchanged' and row.body_html is defined and row.body_html %}
     <div class="diff-inline">{{ row.body_html|raw }}</div>
 {% else %}
     <{{ tag }}>
